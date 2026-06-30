@@ -44,6 +44,60 @@ async function hent<T>(path: string, nokkel: string): Promise<T[]> {
 
 const erNorge = (n: string) => n.toLowerCase() === "norway";
 
+// --- Brreg (selskapsdata) ---
+type Selskap = {
+  navn: string;
+  organisasjonsnummer: string;
+  organisasjonsform?: { beskrivelse: string };
+  naeringskode1?: { beskrivelse: string };
+  stiftelsesdato?: string;
+  antallAnsatte?: number;
+  forretningsadresse?: { poststed: string };
+};
+
+async function hentSelskap(orgnr: string): Promise<Selskap | null> {
+  const res = await fetch(
+    `https://data.brreg.no/enhetsregisteret/api/enheter/${orgnr}`,
+    { headers: { Accept: "application/json" }, next: { revalidate: 3600 } }
+  );
+  if (!res.ok) return null;
+  return res.json();
+}
+
+// --- MET / yr.no (værdata) ---
+type Vaer = { temp: number; vind: number; symbol: string } | null;
+
+async function hentVaer(lat: number, lon: number): Promise<Vaer> {
+  const res = await fetch(
+    `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`,
+    {
+      // MET krever en identifiserende User-Agent
+      headers: { "User-Agent": "vm2026-app/1.0 anish.sharma@sprint.no" },
+      next: { revalidate: 1800 },
+    }
+  );
+  if (!res.ok) return null;
+  const data = await res.json();
+  const naa = data.properties.timeseries[0];
+  return {
+    temp: naa.data.instant.details.air_temperature,
+    vind: naa.data.instant.details.wind_speed,
+    symbol: naa.data.next_1_hours?.summary?.symbol_code ?? "",
+  };
+}
+
+function vaerEmoji(symbol: string): string {
+  if (symbol.includes("clearsky")) return "☀️";
+  if (symbol.includes("fair")) return "🌤️";
+  if (symbol.includes("partlycloudy")) return "⛅";
+  if (symbol.includes("cloudy")) return "☁️";
+  if (symbol.includes("rain")) return "🌧️";
+  if (symbol.includes("snow")) return "❄️";
+  if (symbol.includes("fog")) return "🌫️";
+  if (symbol.includes("thunder")) return "⛈️";
+  return "🌡️";
+}
+
 function formatTid(ts: string | null) {
   if (!ts) return "";
   return new Date(ts + "Z").toLocaleString("nb-NO", {
@@ -87,10 +141,12 @@ function Badge({ src }: { src: string | null }) {
 }
 
 export default async function Home() {
-  const [tabell, resultater, neste] = await Promise.all([
+  const [tabell, resultater, neste, selskap, vaer] = await Promise.all([
     hent<Rad>(`lookuptable.php?l=${LEAGUE}&s=${SEASON}`, "table"),
     hent<Kamp>(`eventsseason.php?id=${LEAGUE}&s=${SEASON}`, "events"),
     hent<Kamp>(`eventsnextleague.php?id=${LEAGUE}`, "events"),
+    hentSelskap("988497711"), // SPRINT CONSULTING AS
+    hentVaer(59.91, 10.75), // Oslo
   ]);
 
   const ferdige = resultater
@@ -238,8 +294,59 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* To kort side om side: selskapsdata (Brreg) og vær (yr.no) */}
+        <section className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Brreg */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-5">
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zinc-500">
+              🏢 Selskapsdata (Brreg)
+            </h3>
+            {selskap ? (
+              <div className="space-y-1.5 text-sm">
+                <p className="text-lg font-bold text-zinc-900">{selskap.navn}</p>
+                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-zinc-600">
+                  <dt className="text-zinc-400">Org.nr</dt>
+                  <dd className="tabular-nums">{selskap.organisasjonsnummer}</dd>
+                  <dt className="text-zinc-400">Form</dt>
+                  <dd>{selskap.organisasjonsform?.beskrivelse}</dd>
+                  <dt className="text-zinc-400">Bransje</dt>
+                  <dd>{selskap.naeringskode1?.beskrivelse}</dd>
+                  <dt className="text-zinc-400">Stiftet</dt>
+                  <dd>{selskap.stiftelsesdato?.slice(0, 4)}</dd>
+                  <dt className="text-zinc-400">Ansatte</dt>
+                  <dd>{selskap.antallAnsatte}</dd>
+                  <dt className="text-zinc-400">Sted</dt>
+                  <dd>{selskap.forretningsadresse?.poststed}</dd>
+                </dl>
+              </div>
+            ) : (
+              <p className="text-sm text-zinc-400">Fikk ikke hentet selskapsdata.</p>
+            )}
+          </div>
+
+          {/* Vær */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-5">
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zinc-500">
+              🌤️ Været i Oslo (yr.no)
+            </h3>
+            {vaer ? (
+              <div className="flex flex-col items-center justify-center py-2">
+                <div className="text-6xl">{vaerEmoji(vaer.symbol)}</div>
+                <div className="mt-2 text-4xl font-extrabold text-zinc-900">
+                  {Math.round(vaer.temp)}°C
+                </div>
+                <div className="mt-1 text-sm text-zinc-500">
+                  Vind {vaer.vind} m/s
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-zinc-400">Fikk ikke hentet værdata.</p>
+            )}
+          </div>
+        </section>
+
         <footer className="mt-10 text-center text-xs text-zinc-400">
-          Data fra TheSportsDB · oppdateres automatisk
+          Data fra TheSportsDB, Brønnøysundregistrene og MET/yr.no · oppdateres automatisk
         </footer>
       </main>
     </div>

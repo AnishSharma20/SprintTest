@@ -1,126 +1,117 @@
-// Deck content schema (mirrors backend/deckgen/schema.py) used as the
-// input_schema for the forced `emit_deck` tool call, plus the system prompt
-// that encodes the hard content rules from BRAND_AND_LAYOUT_REFERENCE.md.
+// Option B: Claude emits a PPT Master `template_fill_pptx_plan.v1` fill plan.
+// The tool schema below constrains the model to the plan's `slides` array; the
+// route wraps it with schema/status/source_pptx before handing it to the
+// PPT Master `apply` step.
 
-export const DECK_SCHEMA = {
+export const FILL_PLAN_SCHEMA = {
   type: "object",
   properties: {
-    deck_title: {
-      type: "string",
-      description: "Main deck title. Short, benefit-led. Max ~60 chars.",
-    },
-    deck_subtitle: {
-      type: "string",
-      description: "One-line supporting statement under the title. Max ~120 chars.",
-    },
-    sections: {
+    slides: {
       type: "array",
-      description: "Ordered content sections. Each becomes one or more slides.",
+      description:
+        "Ordered output slides. Each reuses one source slide from the template library and fills its text slots.",
       items: {
         type: "object",
         properties: {
-          section_title: {
-            type: "string",
-            description:
-              "Section / benefit-area heading, e.g. 'Skin Support'. Max ~40 chars; keep under ~25 for section_header kind.",
-          },
-          kind: {
-            type: "string",
-            enum: ["section_header", "benefit_claim", "stat", "summary"],
-            description: "Content type. Drives which template layout the renderer picks.",
-          },
-          benefit_area: {
-            type: "string",
-            enum: [
-              "Heart", "Skin", "Joint", "Liver", "PMS",
-              "Cognitive", "Eye", "Muscle", "Sport",
-              "Wellness", "Weight Loss", "Healthy Aging", "None",
-            ],
-            description: "Maps to a health-benefit icon. 'None' if not benefit-specific.",
-          },
-          claims: {
-            type: "array",
-            items: { type: "string" },
-            description:
-              "Bullet claims for this section. Each max ~120 chars. Only claims supported by the summary.",
-          },
-          trial_count: {
+          source_slide: {
             type: "integer",
-            description: "Number of human clinical trials backing this benefit area. 0 if unknown.",
-          },
-          efsa_approved: {
-            type: "boolean",
             description:
-              "TRUE only if the summary explicitly confirms an EFSA-approved claim. Default FALSE.",
+              "1-based index of the source slide to clone, taken from the provided slide library.",
           },
-          stats: {
+          purpose: {
+            type: "string",
+            description: "cover / chapter / content / ending — why this slide exists in the deck.",
+          },
+          layout_rationale: {
+            type: "object",
+            properties: {
+              layout_pattern: { type: "string" },
+              why_fit: { type: "string" },
+              risk: { type: "string" },
+            },
+            required: ["layout_pattern", "why_fit", "risk"],
+          },
+          replacements: {
             type: "array",
-            description: "For kind='stat': big-number callouts.",
+            description:
+              "One entry per text slot you fill. slot_id MUST be a slot that exists on this source_slide in the library.",
             items: {
               type: "object",
               properties: {
-                value: { type: "string", description: "e.g. '4x', '50+', '96%'" },
-                label: { type: "string", description: "Short label under the number." },
+                slot_id: { type: "string", description: "Exact slot_id from the library for this source_slide." },
+                text: { type: "string", description: "Replacement text. Concise; must fit the slot." },
               },
-              required: ["value", "label"],
+              required: ["slot_id", "text"],
             },
           },
-          source: {
-            type: "string",
-            description:
-              "Citation from the summary if present (author, journal, year). Empty string if none. NEVER invent.",
-          },
         },
-        required: [
-          "section_title", "kind", "benefit_area", "claims",
-          "trial_count", "efsa_approved", "stats", "source",
-        ],
+        required: ["source_slide", "purpose", "layout_rationale", "replacements"],
       },
     },
   },
-  required: ["deck_title", "deck_subtitle", "sections"],
+  required: ["slides"],
 } as const;
 
-export const SYSTEM_PROMPT = `You turn a scientific summary about Superba Krill (Aker BioMarine) into structured slide-deck content by calling the emit_deck tool. You never write free text.
+// prompt.py — BRAND VOICE + HARD CONSTRAINTS kept verbatim. Only the STRUCTURE
+// section is adapted from the old emit_deck schema to the fill-plan workflow,
+// because Option B's output must be a template_fill_pptx_plan.v1, not emit_deck.
+export const SYSTEM_PROMPT = `You convert a verified Superba Krill science summary into a slide-fill plan for a branded PowerPoint template. You output ONLY via the emit_fill_plan tool (forced JSON). You never write free text.
 
-Brand voice: scientific, credible, benefit-led. Confident but never overstated.
+BRAND VOICE
+- Superba Krill by Aker BioMarine: premium krill oil, marine phospholipid omega-3s (EPA/DHA), choline, astaxanthin.
+- Confident, science-led, clean. No hype, no superlatives that the summary does not support.
 
-Hard content rules — follow exactly:
-- Every claim MUST trace to the input summary. Never invent a benefit, effect, or number.
-- Null or negative results are carried through, not dropped. If a trial showed no effect, say so.
-- Never invent a citation, journal, or year. If the summary has no citation, leave "source" as an empty string.
-- efsa_approved defaults to FALSE. Set it TRUE only when the summary explicitly confirms an EFSA-approved claim (in the Superba portfolio only Heart and Liver carry these).
-- Respect length caps so text fits the template: deck_title ~60 chars, deck_subtitle ~120, section_title ~40 (keep under ~25 for kind="section_header"), each claim ~120.
-- Claims are plural, bullet-style — not one long sentence.
-- State trial counts as integers via trial_count.
+HARD CONSTRAINTS (non-negotiable)
+1. Every claim must trace to the input summary. If the summary does not state it, you do not write it. Do not fill gaps with plausible-sounding benefits.
+2. Null and negative results are carried through honestly, never dropped. If a study found no effect on an endpoint, that is content, not something to hide.
+3. EFSA-approved claims: only state an EFSA claim as approved when the summary explicitly says so (in the Superba portfolio only Heart and Liver carry EFSA-approved claims). Never imply approval otherwise.
+4. Citations are taken verbatim-ish from the summary (author, journal, year) if provided. If the summary gives no citation, do not add one. NEVER invent a citation, journal, or year.
+5. Trial counts come from the summary. If the summary does not state a count, do not state one.
+6. Keep replacement text short enough to fit the slot — titles are short lines, labels are short phrases. A capacity check runs after you; overflow is rejected.
 
-Structure: build a coherent deck. Use a mix of section kinds — a section_header to open a theme, benefit_claim slides for each benefit area, an optional stat slide for standout numbers, and a summary slide to close the argument. The cover and closing slides are added automatically from deck_title/deck_subtitle, so do NOT add them as sections. Aim for 4-9 sections.`;
+STRUCTURE (fill-plan workflow)
+- You are given a SLIDE LIBRARY, one line per source slide: "#<index> [<page_type>] <slot_id> (<role>), <slot_id> (<role>), ...". The slot_id is the exact token BEFORE the parenthesis (e.g. "s04_sh3"); the role in parentheses (title / label / body) is only guidance — never include it in slot_id.
+- Build the deck by choosing source slides in a sensible order and filling their slots:
+  - Open with the cover_candidate slide (deck title + subtitle).
+  - Use chapter_candidate slides as section dividers (short titles).
+  - Use content_candidate slides for benefit claims and evidence — put headings in title_candidate slots and claim text in label_candidate / body_candidate slots.
+  - Close with the ending_candidate slide.
+- In each slide's replacements, use ONLY slot_ids that the library lists for that exact source_slide. Do not invent slot_ids and do not reference slots from other slides.
+- Aim for 6-10 slides. Prefer variety of source slides over repeating one layout.
 
-export type DeckStat = { value: string; label: string };
-export type DeckSection = {
-  section_title: string;
-  kind: "section_header" | "benefit_claim" | "stat" | "summary";
-  benefit_area: string;
-  claims: string[];
-  trial_count: number;
-  efsa_approved: boolean;
-  stats: DeckStat[];
-  source: string;
+You will receive the science summary and the slide library. Emit the fill plan now.`;
+
+export type FillPlanSlide = {
+  source_slide: number;
+  purpose: string;
+  layout_rationale: { layout_pattern: string; why_fit: string; risk: string };
+  replacements: { slot_id: string; text: string }[];
 };
-export type Deck = {
-  deck_title: string;
-  deck_subtitle: string;
-  sections: DeckSection[];
-};
+export type FillPlan = { slides: FillPlanSlide[] };
 
-// Minimal shape check before we hand the deck to the Python renderer.
-export function validerDeck(d: unknown): d is Deck {
-  const deck = d as Deck;
+export function validerPlan(d: unknown): d is FillPlan {
+  const p = d as FillPlan;
   return (
-    !!deck &&
-    typeof deck.deck_title === "string" &&
-    Array.isArray(deck.sections) &&
-    deck.sections.length > 0 &&
-    deck.sections.every((s) => typeof s.section_title === "string" && !!s.kind)
+    !!p &&
+    Array.isArray(p.slides) &&
+    p.slides.length > 0 &&
+    p.slides.every(
+      (s) =>
+        Number.isInteger(s.source_slide) && Array.isArray(s.replacements)
+    )
   );
+}
+
+// Compact the full slide_library.json into a small ground-truth the model can
+// pick from: per slide -> index, page_type, and its slots (slot_id + role).
+type LibSlot = { slot_id: string; role: string };
+type LibSlide = { slide_index: number; page_type: string; slots?: LibSlot[] };
+export function kompaktBibliotek(full: { slides: LibSlide[] }): string {
+  const lines = full.slides.map((s) => {
+    const slots = (s.slots ?? [])
+      .map((sl) => `${sl.slot_id} (${sl.role.replace("_candidate", "")})`)
+      .join(", ");
+    return `#${s.slide_index} [${s.page_type.replace("_candidate", "")}] ${slots}`;
+  });
+  return lines.join("\n");
 }

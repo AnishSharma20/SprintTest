@@ -1,0 +1,5751 @@
+{
+  "schema": "template_fill_pptx_library.v1",
+  "source_pptx": "C:\\Users\\AnishDeepSharma\\Documents\\min-forste-app\\backend\\deckgen\\Superba_refresh_power_point_template.pptx",
+  "slide_count": 64,
+  "canvas_px": {
+    "width": 1280,
+    "height": 720
+  },
+  "slides": [
+    {
+      "slide_index": 1,
+      "page_type": "cover_candidate",
+      "text_summary": "1",
+      "slots": [
+        {
+          "slot_id": "s01_sh2",
+          "role": "title_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 2,
+      "page_type": "chapter_candidate",
+      "text_summary": "2",
+      "slots": [
+        {
+          "slot_id": "s02_sh2",
+          "role": "title_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 3,
+      "page_type": "chapter_candidate",
+      "text_summary": "3",
+      "slots": [
+        {
+          "slot_id": "s03_sh2",
+          "role": "title_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 4,
+      "page_type": "content_candidate",
+      "text_summary": "4",
+      "slots": [
+        {
+          "slot_id": "s04_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s04_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s04_sh2",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 5,
+      "page_type": "content_candidate",
+      "text_summary": "5",
+      "slots": [
+        {
+          "slot_id": "s05_sh9",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s05_sh10",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s05_sh3",
+          "role": "label_candidate",
+          "text": "5",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 6,
+      "page_type": "content_candidate",
+      "text_summary": "6",
+      "slots": [
+        {
+          "slot_id": "s06_sh20",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s06_sh4",
+          "role": "label_candidate",
+          "text": "6",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s06_sh21",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 7,
+      "page_type": "content_candidate",
+      "text_summary": "7\n1\n2\n3\n4\n5\n6\n7\n8",
+      "slots": [
+        {
+          "slot_id": "s07_sh2",
+          "role": "title_candidate",
+          "text": "7",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh3",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh5",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh10",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh11",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s07_sh12",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 286,
+            "width": 40,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh13",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 286,
+            "width": 50,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh14",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 497,
+            "y": 286,
+            "width": 49,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh15",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 699,
+            "y": 286,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh16",
+          "role": "label_candidate",
+          "text": "5",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh17",
+          "role": "label_candidate",
+          "text": "6",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 442,
+            "width": 53,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh18",
+          "role": "label_candidate",
+          "text": "7",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 499,
+            "y": 442,
+            "width": 46,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s07_sh19",
+          "role": "label_candidate",
+          "text": "8",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 701,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 8,
+      "page_type": "chapter_candidate",
+      "text_summary": "8",
+      "slots": [
+        {
+          "slot_id": "s08_sh2",
+          "role": "title_candidate",
+          "text": "8",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s08_sh9",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 48,
+            "y": 323,
+            "width": 381,
+            "height": 56
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 9,
+      "page_type": "content_candidate",
+      "text_summary": "9",
+      "slots": [
+        {
+          "slot_id": "s09_sh4",
+          "role": "title_candidate",
+          "text": "9",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s09_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s09_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 10,
+      "page_type": "content_candidate",
+      "text_summary": "10\n1\n2",
+      "slots": [
+        {
+          "slot_id": "s10_sh36",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh4",
+          "role": "label_candidate",
+          "text": "10",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s10_sh37",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 300,
+            "y": 356,
+            "width": 245,
+            "height": 33
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh38",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 227,
+            "y": 401,
+            "width": 349,
+            "height": 195
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh39",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 641,
+            "y": 401,
+            "width": 349,
+            "height": 195
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh42",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 714,
+            "y": 356,
+            "width": 245,
+            "height": 33
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh43",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 227,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh44",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 245,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s10_sh45",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 641,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s10_sh46",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 659,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 11,
+      "page_type": "content_candidate",
+      "text_summary": "11\n1\n2\n3",
+      "slots": [
+        {
+          "slot_id": "s11_sh26",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh5",
+          "role": "label_candidate",
+          "text": "11",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s11_sh27",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh28",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh29",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh32",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh34",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh35",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh36",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 47,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh37",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 66,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s11_sh38",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 461,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh39",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 480,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s11_sh40",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 875,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s11_sh41",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 894,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 12,
+      "page_type": "content_candidate",
+      "text_summary": "12\n1\n2\n3\n4",
+      "slots": [
+        {
+          "slot_id": "s12_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh5",
+          "role": "label_candidate",
+          "text": "12",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s12_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh10",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh13",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh15",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh16",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh57",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 48,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh58",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 66,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s12_sh59",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 353,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh60",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 371,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s12_sh61",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 658,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh62",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 676,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s12_sh63",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 963,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s12_sh64",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 981,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 13,
+      "page_type": "chapter_candidate",
+      "text_summary": "13",
+      "slots": [
+        {
+          "slot_id": "s13_sh29",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s13_sh5",
+          "role": "label_candidate",
+          "text": "13",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 14,
+      "page_type": "content_candidate",
+      "text_summary": "14",
+      "slots": [
+        {
+          "slot_id": "s14_sh5",
+          "role": "title_candidate",
+          "text": "14",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s14_sh33",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s14_sh34",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s14_sh32",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 15,
+      "page_type": "content_candidate",
+      "text_summary": "15\nCopy and paste containers from here as needed\nAdd heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\nAdd heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco la",
+      "slots": [
+        {
+          "slot_id": "s15_sh2",
+          "role": "title_candidate",
+          "text": "15",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s15_sh28",
+          "role": "title_candidate",
+          "text": "Copy and paste containers from here as needed",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s15_sh24",
+          "role": "body_candidate",
+          "text": "Add heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "paragraph_count": 2,
+          "geometry": {
+            "x": 863,
+            "y": 218,
+            "width": 362,
+            "height": 312
+          },
+          "text_metrics": {
+            "font_size_px": 21.33,
+            "paragraph_count": 2
+          }
+        },
+        {
+          "slot_id": "s15_sh25",
+          "role": "body_candidate",
+          "text": "Add heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "paragraph_count": 2,
+          "geometry": {
+            "x": 466,
+            "y": 218,
+            "width": 362,
+            "height": 312
+          },
+          "text_metrics": {
+            "font_size_px": 21.33,
+            "paragraph_count": 2
+          }
+        },
+        {
+          "slot_id": "s15_sh26",
+          "role": "label_candidate",
+          "text": "Right Click > Change Picture",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 106,
+            "y": 563,
+            "width": 288,
+            "height": 27
+          },
+          "text_metrics": {
+            "font_size_px": 14.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 16,
+      "page_type": "chapter_candidate",
+      "text_summary": "16",
+      "slots": [
+        {
+          "slot_id": "s16_sh2",
+          "role": "title_candidate",
+          "text": "16",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s16_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 17,
+      "page_type": "chapter_candidate",
+      "text_summary": "17",
+      "slots": [
+        {
+          "slot_id": "s17_sh2",
+          "role": "title_candidate",
+          "text": "17",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s17_sh7",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 18,
+      "page_type": "content_candidate",
+      "text_summary": "18",
+      "slots": [
+        {
+          "slot_id": "s18_sh2",
+          "role": "title_candidate",
+          "text": "18",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s18_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s18_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 19,
+      "page_type": "chapter_candidate",
+      "text_summary": "19",
+      "slots": [
+        {
+          "slot_id": "s19_sh2",
+          "role": "title_candidate",
+          "text": "19",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 20,
+      "page_type": "content_candidate",
+      "text_summary": "20\nCopy and paste numbers from here as needed\n1\n1\n1\n1",
+      "slots": [
+        {
+          "slot_id": "s20_sh2",
+          "role": "title_candidate",
+          "text": "20",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s20_sh6",
+          "role": "title_candidate",
+          "text": "Copy and paste numbers from here as needed",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s20_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 199,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s20_sh8",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 241,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s20_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 649,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s20_sh13",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 691,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s20_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 432,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s20_sh15",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 474,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s20_sh16",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 883,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s20_sh17",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 925,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 21,
+      "page_type": "chapter_candidate",
+      "text_summary": "21",
+      "slots": [
+        {
+          "slot_id": "s21_sh2",
+          "role": "title_candidate",
+          "text": "21",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 22,
+      "page_type": "content_candidate",
+      "text_summary": "22",
+      "slots": [
+        {
+          "slot_id": "s22_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s22_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s22_sh2",
+          "role": "label_candidate",
+          "text": "22",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 23,
+      "page_type": "content_candidate",
+      "text_summary": "23",
+      "slots": [
+        {
+          "slot_id": "s23_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s23_sh3",
+          "role": "label_candidate",
+          "text": "23",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s23_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 24,
+      "page_type": "content_candidate",
+      "text_summary": "24\n1\n2\n3\n4\n5\n6\n7\n8",
+      "slots": [
+        {
+          "slot_id": "s24_sh3",
+          "role": "title_candidate",
+          "text": "24",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh16",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh15",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh17",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh18",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh19",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh20",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh21",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh22",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh23",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s24_sh24",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 286,
+            "width": 40,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh25",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 286,
+            "width": 50,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh26",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 497,
+            "y": 286,
+            "width": 49,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh27",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 699,
+            "y": 286,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh28",
+          "role": "label_candidate",
+          "text": "5",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh29",
+          "role": "label_candidate",
+          "text": "6",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 442,
+            "width": 53,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh30",
+          "role": "label_candidate",
+          "text": "7",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 499,
+            "y": 442,
+            "width": 46,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s24_sh31",
+          "role": "label_candidate",
+          "text": "8",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 701,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 25,
+      "page_type": "content_candidate",
+      "text_summary": "25",
+      "slots": [
+        {
+          "slot_id": "s25_sh2",
+          "role": "title_candidate",
+          "text": "25",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s25_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s25_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 26,
+      "page_type": "content_candidate",
+      "text_summary": "26",
+      "slots": [
+        {
+          "slot_id": "s26_sh2",
+          "role": "title_candidate",
+          "text": "26",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s26_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s26_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 27,
+      "page_type": "chapter_candidate",
+      "text_summary": "27",
+      "slots": [
+        {
+          "slot_id": "s27_sh16",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s27_sh4",
+          "role": "label_candidate",
+          "text": "27",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 28,
+      "page_type": "content_candidate",
+      "text_summary": "28",
+      "slots": [
+        {
+          "slot_id": "s28_sh2",
+          "role": "title_candidate",
+          "text": "28",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s28_sh7",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s28_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s28_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 29,
+      "page_type": "chapter_candidate",
+      "text_summary": "29",
+      "slots": [
+        {
+          "slot_id": "s29_sh2",
+          "role": "title_candidate",
+          "text": "29",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s29_sh7",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 30,
+      "page_type": "chapter_candidate",
+      "text_summary": "30",
+      "slots": [
+        {
+          "slot_id": "s30_sh2",
+          "role": "title_candidate",
+          "text": "30",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s30_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 31,
+      "page_type": "content_candidate",
+      "text_summary": "31",
+      "slots": [
+        {
+          "slot_id": "s31_sh2",
+          "role": "title_candidate",
+          "text": "31",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s31_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s31_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 32,
+      "page_type": "chapter_candidate",
+      "text_summary": "32",
+      "slots": [
+        {
+          "slot_id": "s32_sh16",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s32_sh4",
+          "role": "label_candidate",
+          "text": "32",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 33,
+      "page_type": "chapter_candidate",
+      "text_summary": "33",
+      "slots": [
+        {
+          "slot_id": "s33_sh2",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s33_sh3",
+          "role": "label_candidate",
+          "text": "33",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 34,
+      "page_type": "chapter_candidate",
+      "text_summary": "34",
+      "slots": [
+        {
+          "slot_id": "s34_sh2",
+          "role": "title_candidate",
+          "text": "34",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 35,
+      "page_type": "chapter_candidate",
+      "text_summary": "35",
+      "slots": [
+        {
+          "slot_id": "s35_sh2",
+          "role": "title_candidate",
+          "text": "35",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 36,
+      "page_type": "chapter_candidate",
+      "text_summary": "36",
+      "slots": [
+        {
+          "slot_id": "s36_sh2",
+          "role": "title_candidate",
+          "text": "36",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s36_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 37,
+      "page_type": "content_candidate",
+      "text_summary": "37\n1\n2\n3\n4\n5\n6\n7\n8",
+      "slots": [
+        {
+          "slot_id": "s37_sh4",
+          "role": "title_candidate",
+          "text": "37",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh5",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh10",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh11",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s37_sh2",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 286,
+            "width": 40,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh13",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 286,
+            "width": 50,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh14",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 497,
+            "y": 286,
+            "width": 49,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh15",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 699,
+            "y": 286,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh16",
+          "role": "label_candidate",
+          "text": "5",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh17",
+          "role": "label_candidate",
+          "text": "6",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 442,
+            "width": 53,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh18",
+          "role": "label_candidate",
+          "text": "7",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 499,
+            "y": 442,
+            "width": 46,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s37_sh19",
+          "role": "label_candidate",
+          "text": "8",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 701,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 38,
+      "page_type": "content_candidate",
+      "text_summary": "38",
+      "slots": [
+        {
+          "slot_id": "s38_sh2",
+          "role": "title_candidate",
+          "text": "38",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s38_sh32",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s38_sh33",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s38_sh34",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 39,
+      "page_type": "content_candidate",
+      "text_summary": "39",
+      "slots": [
+        {
+          "slot_id": "s39_sh2",
+          "role": "title_candidate",
+          "text": "39",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s39_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s39_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 40,
+      "page_type": "content_candidate",
+      "text_summary": "40",
+      "slots": [
+        {
+          "slot_id": "s40_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s40_sh5",
+          "role": "label_candidate",
+          "text": "40",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s40_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 121,
+            "y": 356,
+            "width": 245,
+            "height": 33
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s40_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 48,
+            "y": 401,
+            "width": 349,
+            "height": 195
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s40_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 462,
+            "y": 401,
+            "width": 349,
+            "height": 195
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s40_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 535,
+            "y": 356,
+            "width": 245,
+            "height": 33
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 41,
+      "page_type": "content_candidate",
+      "text_summary": "41",
+      "slots": [
+        {
+          "slot_id": "s41_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh5",
+          "role": "label_candidate",
+          "text": "41",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s41_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh11",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s41_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 42,
+      "page_type": "content_candidate",
+      "text_summary": "42",
+      "slots": [
+        {
+          "slot_id": "s42_sh13",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh5",
+          "role": "label_candidate",
+          "text": "42",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s42_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh15",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh18",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh19",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh21",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh22",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh24",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s42_sh25",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 43,
+      "page_type": "chapter_candidate",
+      "text_summary": "43",
+      "slots": [
+        {
+          "slot_id": "s43_sh2",
+          "role": "title_candidate",
+          "text": "43",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 44,
+      "page_type": "chapter_candidate",
+      "text_summary": "44",
+      "slots": [
+        {
+          "slot_id": "s44_sh2",
+          "role": "title_candidate",
+          "text": "44",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 45,
+      "page_type": "content_candidate",
+      "text_summary": "45",
+      "slots": [
+        {
+          "slot_id": "s45_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s45_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s45_sh2",
+          "role": "label_candidate",
+          "text": "45",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 46,
+      "page_type": "chapter_candidate",
+      "text_summary": "46",
+      "slots": [
+        {
+          "slot_id": "s46_sh2",
+          "role": "title_candidate",
+          "text": "46",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 47,
+      "page_type": "content_candidate",
+      "text_summary": "47",
+      "slots": [
+        {
+          "slot_id": "s47_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s47_sh2",
+          "role": "label_candidate",
+          "text": "47",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s47_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 48,
+      "page_type": "content_candidate",
+      "text_summary": "48",
+      "slots": [
+        {
+          "slot_id": "s48_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh4",
+          "role": "label_candidate",
+          "text": "48",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s48_sh5",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh8",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh9",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh11",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s48_sh15",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 49,
+      "page_type": "content_candidate",
+      "text_summary": "49\n1\n2\n3\n4\n5\n6\n7\n8",
+      "slots": [
+        {
+          "slot_id": "s49_sh2",
+          "role": "title_candidate",
+          "text": "49",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh13",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh12",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh15",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh16",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh17",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh18",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh19",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh20",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s49_sh21",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 286,
+            "width": 40,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh22",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 286,
+            "width": 50,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh23",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 497,
+            "y": 286,
+            "width": 49,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh24",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 699,
+            "y": 286,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh25",
+          "role": "label_candidate",
+          "text": "5",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 93,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh26",
+          "role": "label_candidate",
+          "text": "6",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 295,
+            "y": 442,
+            "width": 53,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh27",
+          "role": "label_candidate",
+          "text": "7",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 499,
+            "y": 442,
+            "width": 46,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s49_sh28",
+          "role": "label_candidate",
+          "text": "8",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 701,
+            "y": 442,
+            "width": 51,
+            "height": 74
+          },
+          "text_metrics": {
+            "font_size_px": 53.33,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 50,
+      "page_type": "content_candidate",
+      "text_summary": "50\n1\n2",
+      "slots": [
+        {
+          "slot_id": "s50_sh17",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh2",
+          "role": "label_candidate",
+          "text": "50",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s50_sh18",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh19",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh20",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh23",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 48,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh13",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 66,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s50_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 462,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s50_sh15",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 480,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 51,
+      "page_type": "content_candidate",
+      "text_summary": "51\n1\n2\n3",
+      "slots": [
+        {
+          "slot_id": "s51_sh27",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh5",
+          "role": "label_candidate",
+          "text": "51",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s51_sh28",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh29",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh30",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh33",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh35",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh36",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh20",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 47,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh21",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 66,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s51_sh22",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 461,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh23",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 480,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s51_sh24",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 875,
+            "y": 360,
+            "width": 59,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s51_sh25",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 894,
+            "y": 344,
+            "width": 36,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 52,
+      "page_type": "content_candidate",
+      "text_summary": "52\n1\n2\n3\n4",
+      "slots": [
+        {
+          "slot_id": "s52_sh13",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh5",
+          "role": "label_candidate",
+          "text": "52",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s52_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh15",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh18",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh19",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh21",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh22",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh24",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh25",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh26",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 48,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh27",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 66,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s52_sh28",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 353,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh29",
+          "role": "label_candidate",
+          "text": "2",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 371,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s52_sh30",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 658,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh31",
+          "role": "label_candidate",
+          "text": "3",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 676,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s52_sh32",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 963,
+            "y": 360,
+            "width": 51,
+            "height": 26
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s52_sh33",
+          "role": "label_candidate",
+          "text": "4",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 981,
+            "y": 344,
+            "width": 31,
+            "height": 39
+          },
+          "text_metrics": {
+            "font_size_px": 26.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 53,
+      "page_type": "content_candidate",
+      "text_summary": "53",
+      "slots": [
+        {
+          "slot_id": "s53_sh3",
+          "role": "title_candidate",
+          "text": "53",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s53_sh5",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s53_sh6",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s53_sh4",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 54,
+      "page_type": "chapter_candidate",
+      "text_summary": "54",
+      "slots": [
+        {
+          "slot_id": "s54_sh2",
+          "role": "title_candidate",
+          "text": "54",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s54_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 55,
+      "page_type": "content_candidate",
+      "text_summary": "55\nCopy and paste containers from here as needed\nAdd heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\nAdd heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco la",
+      "slots": [
+        {
+          "slot_id": "s55_sh2",
+          "role": "title_candidate",
+          "text": "55",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s55_sh28",
+          "role": "title_candidate",
+          "text": "Copy and paste containers from here as needed",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s55_sh24",
+          "role": "body_candidate",
+          "text": "Add heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "paragraph_count": 2,
+          "geometry": {
+            "x": 863,
+            "y": 218,
+            "width": 362,
+            "height": 312
+          },
+          "text_metrics": {
+            "font_size_px": 21.33,
+            "paragraph_count": 2
+          }
+        },
+        {
+          "slot_id": "s55_sh25",
+          "role": "body_candidate",
+          "text": "Add heading here\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "paragraph_count": 2,
+          "geometry": {
+            "x": 466,
+            "y": 218,
+            "width": 362,
+            "height": 312
+          },
+          "text_metrics": {
+            "font_size_px": 21.33,
+            "paragraph_count": 2
+          }
+        },
+        {
+          "slot_id": "s55_sh26",
+          "role": "label_candidate",
+          "text": "Right Click > Change Picture",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 106,
+            "y": 563,
+            "width": 288,
+            "height": 27
+          },
+          "text_metrics": {
+            "font_size_px": 14.67,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 56,
+      "page_type": "chapter_candidate",
+      "text_summary": "56",
+      "slots": [
+        {
+          "slot_id": "s56_sh2",
+          "role": "title_candidate",
+          "text": "56",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 57,
+      "page_type": "chapter_candidate",
+      "text_summary": "57",
+      "slots": [
+        {
+          "slot_id": "s57_sh2",
+          "role": "title_candidate",
+          "text": "57",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 58,
+      "page_type": "content_candidate",
+      "text_summary": "58",
+      "slots": [
+        {
+          "slot_id": "s58_sh2",
+          "role": "title_candidate",
+          "text": "58",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s58_sh12",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s58_sh13",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 59,
+      "page_type": "chapter_candidate",
+      "text_summary": "59",
+      "slots": [
+        {
+          "slot_id": "s59_sh2",
+          "role": "title_candidate",
+          "text": "59",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s59_sh5",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 60,
+      "page_type": "content_candidate",
+      "text_summary": "60",
+      "slots": [
+        {
+          "slot_id": "s60_sh2",
+          "role": "title_candidate",
+          "text": "60",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s60_sh3",
+          "role": "title_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s60_sh4",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 61,
+      "page_type": "chapter_candidate",
+      "text_summary": "61",
+      "slots": [
+        {
+          "slot_id": "s61_sh2",
+          "role": "title_candidate",
+          "text": "61",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 62,
+      "page_type": "content_candidate",
+      "text_summary": "62\nCopy and paste numbers from here as needed\n1\n1\n1\n1",
+      "slots": [
+        {
+          "slot_id": "s62_sh2",
+          "role": "title_candidate",
+          "text": "62",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s62_sh6",
+          "role": "title_candidate",
+          "text": "Copy and paste numbers from here as needed",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s62_sh7",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 199,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s62_sh8",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 241,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s62_sh12",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 649,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s62_sh13",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 691,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s62_sh14",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 432,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s62_sh15",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 474,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s62_sh16",
+          "role": "label_candidate",
+          "text": "",
+          "paragraph_count": 0,
+          "geometry": {
+            "x": 883,
+            "y": 320,
+            "width": 157,
+            "height": 79
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 0
+          }
+        },
+        {
+          "slot_id": "s62_sh17",
+          "role": "label_candidate",
+          "text": "1",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 925,
+            "y": 275,
+            "width": 108,
+            "height": 114
+          },
+          "text_metrics": {
+            "font_size_px": 96.0,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 63,
+      "page_type": "chapter_candidate",
+      "text_summary": "63\nCopy Krill Swarm Gradients from here for custom usage",
+      "slots": [
+        {
+          "slot_id": "s63_sh2",
+          "role": "title_candidate",
+          "text": "63",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": null,
+            "y": null,
+            "width": null,
+            "height": null
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        },
+        {
+          "slot_id": "s63_sh12",
+          "role": "title_candidate",
+          "text": "Copy Krill Swarm Gradients from here for custom usage",
+          "paragraph_count": 1,
+          "geometry": {
+            "x": 48,
+            "y": 72,
+            "width": 1185,
+            "height": 56
+          },
+          "text_metrics": {
+            "font_size_px": null,
+            "paragraph_count": 1
+          }
+        }
+      ],
+      "tables": [],
+      "charts": []
+    },
+    {
+      "slide_index": 64,
+      "page_type": "ending_candidate",
+      "text_summary": "",
+      "slots": [],
+      "tables": [],
+      "charts": []
+    }
+  ],
+  "plan_contract": {
+    "schema": "template_fill_pptx_plan.v1",
+    "slides": [
+      {
+        "source_slide": 1,
+        "purpose": "封面 / 章节 / 内容 / 结尾",
+        "replacements": [
+          {
+            "slot_id": "s01_sh2",
+            "text": "替换后的文字"
+          }
+        ],
+        "table_edits": [
+          {
+            "table_id": "s01_tbl3",
+            "cells": [
+              {
+                "row": 0,
+                "col": 0,
+                "text": "替换后的单元格"
+              }
+            ]
+          }
+        ],
+        "chart_edits": [
+          {
+            "chart_id": "s01_ch4",
+            "categories": [
+              "A",
+              "B"
+            ],
+            "series": [
+              {
+                "name": "系列1",
+                "values": [
+                  1,
+                  2
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

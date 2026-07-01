@@ -28,6 +28,11 @@ export async function POST(req: Request) {
 
     const forward = new FormData();
     for (const f of filer) forward.append("filer", f, f.name);
+    // Forward the generation options (length / tone) when present.
+    for (const key of ["lengde", "tone"] as const) {
+      const v = incoming.get(key);
+      if (typeof v === "string" && v) forward.append(key, v);
+    }
 
     const res = await fetch(`${base.replace(/\/$/, "")}/generate`, {
       method: "POST",

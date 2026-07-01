@@ -34,3 +34,21 @@ SLIDE_H_IN = 7.5
 MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 8000
 MAX_PLAN_ATTEMPTS = 2
+
+# ---- User-selectable generation options (surfaced as controls in Tab 2) --------
+LENGTH_TARGETS = {"kort": 6, "standard": 9, "detaljert": 13}
+TONE_HINTS = {
+    "salg": "Lean hard into benefits and punchy headlines; keep on-slide text minimal, prefer stat/evidence layouts, and push most numbers into notes.",
+    "balansert": "Balance benefit-led headlines with visible proof — a few key stats/badges on the slide, the rest in notes.",
+    "vitenskap": "Evidence-forward: surface more study detail on-slide (effect sizes, sample sizes, trial design) while keeping a benefit frame; favour stat / evidence / two_col layouts.",
+}
+DEFAULT_LENGTH = "standard"
+DEFAULT_TONE = "balansert"
+
+
+def resolve_length(value: str | None) -> int:
+    return LENGTH_TARGETS.get((value or "").lower(), LENGTH_TARGETS[DEFAULT_LENGTH])
+
+
+def resolve_tone(value: str | None) -> str:
+    return TONE_HINTS.get((value or "").lower(), TONE_HINTS[DEFAULT_TONE])

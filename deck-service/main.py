@@ -17,7 +17,7 @@ import os
 import zipfile
 
 import anthropic
-from fastapi import FastAPI, Header, UploadFile
+from fastapi import FastAPI, Form, Header, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 from deckgen import DeckResult, generate_deck
@@ -42,7 +42,12 @@ def health():
 
 
 @app.post("/generate")
-async def generate(filer: list[UploadFile], x_deck_token: str | None = Header(default=None)):
+async def generate(
+    filer: list[UploadFile],
+    lengde: str = Form(default="standard"),
+    tone: str = Form(default="balansert"),
+    x_deck_token: str | None = Header(default=None),
+):
     # Optional shared secret: if the service has DECK_SERVICE_TOKEN set, callers must
     # send the same value in X-Deck-Token. Blocks public abuse.
     expected = os.environ.get("DECK_SERVICE_TOKEN")
@@ -64,7 +69,7 @@ async def generate(filer: list[UploadFile], x_deck_token: str | None = Header(de
             if not text:
                 return JSONResponse({"feil": f"No text found in {uf.filename}."}, status_code=400)
             base = (uf.filename or f"deck-{i + 1}").rsplit(".", 1)[0]
-            decks.append(generate_deck(client, text, base))
+            decks.append(generate_deck(client, text, base, length=lengde, tone=tone))
 
         if len(decks) == 1:
             d = decks[0]

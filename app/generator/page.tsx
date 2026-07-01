@@ -4,6 +4,8 @@ import { useState } from "react";
 
 export default function DeckGenerator() {
   const [filer, setFiler] = useState<File[]>([]);
+  const [lengde, setLengde] = useState("standard");
+  const [tone, setTone] = useState("balansert");
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
   const [ferdig, setFerdig] = useState(false);
@@ -28,6 +30,8 @@ export default function DeckGenerator() {
     try {
       const form = new FormData();
       filer.forEach((f) => form.append("filer", f));
+      form.append("lengde", lengde);
+      form.append("tone", tone);
 
       const res = await fetch("/api/generate-deck", {
         method: "POST",
@@ -116,6 +120,63 @@ export default function DeckGenerator() {
         <p className="mt-3 text-xs text-zinc-500">
           One deck is generated per summary. Multiple summaries download as a zip.
         </p>
+
+        {/* Options */}
+        <div className="mt-6 space-y-4">
+          <div>
+            <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+              Length
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                ["kort", "Short", "~6 slides"],
+                ["standard", "Standard", "~9 slides"],
+                ["detaljert", "Detailed", "~13 slides"],
+              ].map(([val, label, hint]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setLengde(val)}
+                  className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                    lengde === val
+                      ? "border-[#E30917] bg-[#FDECEC]"
+                      : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                  }`}
+                >
+                  <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                  <div className="text-xs text-zinc-500">{hint}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+              Tone
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                ["salg", "Sales", "Benefit-led"],
+                ["balansert", "Balanced", "Benefit + proof"],
+                ["vitenskap", "Scientific", "More evidence"],
+              ].map(([val, label, hint]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setTone(val)}
+                  className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                    tone === val
+                      ? "border-[#E30917] bg-[#FDECEC]"
+                      : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                  }`}
+                >
+                  <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                  <div className="text-xs text-zinc-500">{hint}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Generate */}
         <button

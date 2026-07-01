@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import AkbmLogo from "./AkbmLogo";
 
 export type Studie = {
   pmid: string;
@@ -15,18 +14,6 @@ export type Studie = {
   url: string;
   doiUrl: string | null;
 };
-
-// Header lockup: official Aker BioMarine logo (white) + tagline.
-function Logo() {
-  return (
-    <div>
-      <AkbmLogo className="h-6 w-auto text-white" />
-      <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.22em] text-[#7FD4E6]">
-        Research Wiki
-      </div>
-    </div>
-  );
-}
 
 export default function Wiki({ studier }: { studier: Studie[] }) {
   const [sok, setSok] = useState("");
@@ -56,8 +43,10 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
       {/* Header */}
       <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-12 pt-8">
         <div className="mx-auto max-w-4xl">
-          <Logo />
-          <h1 className="mt-10 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7FD4E6]">
+            Research Wiki
+          </div>
+          <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
             Krill Oil Research
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">

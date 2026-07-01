@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import AkbmLogo from "./AkbmLogo";
 
 export type Studie = {
   pmid: string;
@@ -15,36 +16,13 @@ export type Studie = {
   doiUrl: string | null;
 };
 
-// Our own geometric mark, inspired by Aker BioMarine's identity
-// (upward arrowhead / "A" inside a hexagon). Replace with the official
-// logo file from the brand book when available.
+// Header lockup: official Aker BioMarine logo (white) + tagline.
 function Logo() {
   return (
-    <div className="flex items-center gap-3">
-      <svg
-        viewBox="0 0 48 48"
-        className="h-11 w-11"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden
-      >
-        {/* Hexagon outline (science / molecule) */}
-        <path
-          d="M24 3 42 13.5V34.5L24 45 6 34.5V13.5Z"
-          stroke="#3FD0C9"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-        {/* Upward arrowhead / A (momentum, Antarctic, vessel bow) */}
-        <path d="M24 14 33 32H27L24 25 21 32H15Z" fill="#3FD0C9" />
-      </svg>
-      <div className="leading-none">
-        <div className="text-lg font-extrabold tracking-tight text-white">
-          AKER BIOMARINE
-        </div>
-        <div className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#7FD4E6]">
-          Research Wiki
-        </div>
+    <div>
+      <AkbmLogo className="h-6 w-auto text-white" />
+      <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.22em] text-[#7FD4E6]">
+        Research Wiki
       </div>
     </div>
   );

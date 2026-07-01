@@ -15,11 +15,12 @@ export type Studie = {
   doiUrl: string | null;
 };
 
-// Egen logo (bytt gjerne ut med den offisielle logofilen senere).
-// Et bølge-/krillsymbol i Aker BioMarine sine havfarger.
-function Logo({ className = "" }: { className?: string }) {
+// Our own geometric mark, inspired by Aker BioMarine's identity
+// (upward arrowhead / "A" inside a hexagon). Replace with the official
+// logo file from the brand book when available.
+function Logo() {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className="flex items-center gap-3">
       <svg
         viewBox="0 0 48 48"
         className="h-11 w-11"
@@ -27,28 +28,22 @@ function Logo({ className = "" }: { className?: string }) {
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
       >
-        <circle cx="24" cy="24" r="23" fill="#00A9CE" />
+        {/* Hexagon outline (science / molecule) */}
         <path
-          d="M6 30c4 0 4-4 8-4s4 4 8 4 4-4 8-4 4 4 8 4"
-          stroke="#fff"
-          strokeWidth="2.4"
-          strokeLinecap="round"
+          d="M24 3 42 13.5V34.5L24 45 6 34.5V13.5Z"
+          stroke="#3FD0C9"
+          strokeWidth="2"
+          strokeLinejoin="round"
         />
-        <path
-          d="M6 22c4 0 4-4 8-4s4 4 8 4 4-4 8-4 4 4 8 4"
-          stroke="#ffffff"
-          strokeOpacity="0.55"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-        />
-        <circle cx="24" cy="14" r="2.6" fill="#fff" />
+        {/* Upward arrowhead / A (momentum, Antarctic, vessel bow) */}
+        <path d="M24 14 33 32H27L24 25 21 32H15Z" fill="#3FD0C9" />
       </svg>
       <div className="leading-none">
         <div className="text-lg font-extrabold tracking-tight text-white">
           AKER BIOMARINE
         </div>
-        <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#7FD4E6]">
-          Forskningswiki
+        <div className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#7FD4E6]">
+          Research Wiki
         </div>
       </div>
     </div>
@@ -79,46 +74,34 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
   }, [studier, sok, valgtKategori]);
 
   return (
-    <div className="min-h-screen bg-[#F4F8FA]">
-      {/* Toppfelt med logo og tittel */}
-      <header className="relative overflow-hidden bg-gradient-to-br from-[#002A4E] to-[#004A73]">
-        <div className="mx-auto max-w-4xl px-4 pb-20 pt-8">
+    <div className="min-h-screen bg-[#F2F7F9]">
+      {/* Header */}
+      <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-12 pt-8">
+        <div className="mx-auto max-w-4xl">
           <Logo />
           <h1 className="mt-10 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-            Krilloljeforskning
+            Krill Oil Research
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Et levende bibliotek over vitenskapelige studier på krillolje og
-            omega-3. Hentet direkte fra PubMed og oppdatert automatisk.
+            A living library of scientific studies on krill oil and omega-3.
+            Pulled directly from PubMed and updated automatically.
           </p>
         </div>
-        {/* Bølgekant nederst */}
-        <svg
-          className="absolute bottom-0 left-0 w-full"
-          viewBox="0 0 1440 80"
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          <path
-            d="M0 40c180 30 360 30 540 10s360-50 540-30 180 40 360 40v20H0z"
-            fill="#F4F8FA"
-          />
-        </svg>
       </header>
 
-      <main className="mx-auto -mt-8 max-w-4xl px-4 pb-16">
-        {/* Statistikk-kort */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <main className="mx-auto max-w-4xl px-4 py-8">
+        {/* Stats */}
+        <div className="mb-6 grid grid-cols-3 gap-3">
           {[
-            { tall: studier.length, tekst: "studier i wikien" },
-            { tall: kategorier.length, tekst: "temaer" },
-            { tall: "PubMed", tekst: "datakilde" },
+            { tall: studier.length, tekst: "studies in the wiki" },
+            { tall: kategorier.length, tekst: "topics" },
+            { tall: "PubMed", tekst: "data source" },
           ].map((s) => (
             <div
               key={s.tekst}
               className="rounded-2xl border border-[#D6E6EE] bg-white p-4 shadow-sm"
             >
-              <div className="text-2xl font-extrabold text-[#007A99]">
+              <div className="text-2xl font-extrabold text-[#0A7A8A]">
                 {s.tall}
               </div>
               <div className="text-xs text-zinc-500">{s.tekst}</div>
@@ -126,7 +109,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
           ))}
         </div>
 
-        {/* Søk */}
+        {/* Search */}
         <div className="relative mb-4">
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
             🔍
@@ -135,18 +118,18 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
             type="text"
             value={sok}
             onChange={(e) => setSok(e.target.value)}
-            placeholder="Søk i titler, tidsskrift eller forfattere…"
-            className="w-full rounded-xl border border-[#D6E6EE] bg-white py-3 pl-11 pr-4 text-sm shadow-sm outline-none focus:border-[#00A9CE] focus:ring-2 focus:ring-[#00A9CE]/20"
+            placeholder="Search titles, journals or authors…"
+            className="w-full rounded-xl border border-[#D6E6EE] bg-white py-3 pl-11 pr-4 text-sm shadow-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
           />
         </div>
 
-        {/* Kategorifiltre */}
+        {/* Category filters */}
         <div className="mb-6 flex flex-wrap gap-2">
           <FilterKnapp
             aktiv={valgtKategori === null}
             onClick={() => setValgtKategori(null)}
           >
-            Alle ({studier.length})
+            All ({studier.length})
           </FilterKnapp>
           {kategorier.map(([navn, antall]) => (
             <FilterKnapp
@@ -160,25 +143,25 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         </div>
 
         <p className="mb-3 text-sm text-zinc-500">
-          Viser {filtrert.length} av {studier.length} studier
+          Showing {filtrert.length} of {studier.length} studies
         </p>
 
-        {/* Liste */}
+        {/* List */}
         {filtrert.length === 0 ? (
           <p className="rounded-xl border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-400">
             {studier.length === 0
-              ? "Fikk ikke hentet studier akkurat nå. Prøv å laste siden på nytt."
-              : "Ingen studier matcher søket."}
+              ? "Couldn't load studies right now. Try reloading the page."
+              : "No studies match your search."}
           </p>
         ) : (
           <ul className="space-y-3">
             {filtrert.map((s) => (
               <li
                 key={s.pmid}
-                className="group rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#00A9CE] hover:shadow-md"
+                className="group rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md"
               >
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded-full bg-[#E1F2F7] px-2.5 py-0.5 text-xs font-semibold text-[#007A99]">
+                  <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
                     {s.kategori}
                   </span>
                   <span className="text-xs text-zinc-400">{s.dato}</span>
@@ -187,7 +170,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold leading-snug text-[#002A4E] group-hover:text-[#007A99] hover:underline"
+                  className="font-semibold leading-snug text-[#052A4E] group-hover:text-[#0A7A8A] hover:underline"
                 >
                   {s.tittel}
                 </a>
@@ -206,7 +189,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-[#00A9CE] hover:underline"
+                    className="font-semibold text-[#0A7A8A] hover:underline"
                   >
                     PubMed →
                   </a>
@@ -215,7 +198,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
                       href={s.doiUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-[#00A9CE] hover:underline"
+                      className="font-semibold text-[#0A7A8A] hover:underline"
                     >
                       DOI →
                     </a>
@@ -227,7 +210,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         )}
 
         <footer className="mt-12 border-t border-[#D6E6EE] pt-6 text-center text-xs text-zinc-400">
-          Kilde: PubMed / NCBI · søkeord «krill oil» · oppdateres daglig
+          Source: PubMed / NCBI · search term “krill oil” · updated daily
         </footer>
       </main>
     </div>
@@ -248,8 +231,8 @@ function FilterKnapp({
       onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
         aktiv
-          ? "bg-[#00A9CE] text-white shadow-sm"
-          : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F2F7]"
+          ? "bg-[#0A7A8A] text-white shadow-sm"
+          : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
       }`}
     >
       {children}

@@ -17,20 +17,20 @@ type Esummary = {
   articleids?: { idtype: string; value: string }[];
 };
 
-// Kategoriser en studie ut fra nøkkelord i tittelen.
+// Categorise a study based on keywords in its title.
 function kategori(tittel: string): string {
   const t = tittel.toLowerCase();
   if (/(heart|cardio|lipid|cholesterol|triglycerid|blood pressure|vascular)/.test(t))
-    return "Hjerte & blodfett";
+    return "Heart & lipids";
   if (/(brain|cognit|memory|neuro|mood|depress|mental)/.test(t))
-    return "Hjerne & kognisjon";
+    return "Brain & cognition";
   if (/(inflamm|arthritis|joint|pain|rheumat)/.test(t))
-    return "Betennelse & ledd";
+    return "Inflammation & joints";
   if (/(metabol|liver|glucose|diabet|obes|weight|gut|microbiom|fatty liver)/.test(t))
-    return "Metabolisme & tarm";
+    return "Metabolism & gut";
   if (/(emulsion|oxidation|extraction|encapsul|stability|phospholipid|chemistry)/.test(t))
-    return "Kjemi & utvinning";
-  return "Annet";
+    return "Chemistry & extraction";
+  return "Other";
 }
 
 async function hentStudier(): Promise<Studie[]> {

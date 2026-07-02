@@ -22,8 +22,22 @@ from fastapi.responses import JSONResponse, Response
 
 from deckgen import DeckResult, generate_deck
 from deckgen.layouts import LAYOUTS
+import svcgen
 
 app = FastAPI(title="Superba Deck Generator")
+
+# Which renderer to use. "svg" = the AKBM-native hybrid SVG pipeline (frozen hero
+# templates + generated body slides + charts + quality gate). "pptx" = the legacy
+# python-pptx direct renderer. Default to the hybrid.
+PIPELINE = os.environ.get("DECK_PIPELINE", "svg")
+
+
+def _build_deck(client, text: str, base: str, *, length: str, tone: str) -> DeckResult:
+    if PIPELINE == "svg":
+        r = svcgen.generate(client, text, base, length=length, tone=tone)
+        return DeckResult(pptx=r["pptx"], filename=r["filename"],
+                          wording_md=r["wording_md"], slide_count=r["slide_count"])
+    return generate_deck(client, text, base, length=length, tone=tone)
 
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
@@ -69,7 +83,7 @@ async def generate(
             if not text:
                 return JSONResponse({"feil": f"No text found in {uf.filename}."}, status_code=400)
             base = (uf.filename or f"deck-{i + 1}").rsplit(".", 1)[0]
-            decks.append(generate_deck(client, text, base, length=lengde, tone=tone))
+            decks.append(_build_deck(client, text, base, length=lengde, tone=tone))
 
         if len(decks) == 1:
             d = decks[0]

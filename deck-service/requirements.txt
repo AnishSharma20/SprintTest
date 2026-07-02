@@ -5,3 +5,5 @@ anthropic==0.42.0
 python-pptx==1.0.2
 lxml==5.3.0
 python-docx==1.1.2
+Pillow==12.2.0
+resvg-py==0.3.3

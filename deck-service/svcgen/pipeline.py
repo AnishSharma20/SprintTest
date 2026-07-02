@@ -56,8 +56,17 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
 - Real assets by bare filename via <image xlink:href>: superba_white.png / aker_white.png (on dark),
   superba_green.png / aker_green.png (on light); benefit hexagon icons heart/liver/joint/muscle/skin.png.
   NEVER draw a fake wordmark. Put Superba + Aker logos in the footer.
-- Restraint, but not emptiness: use the space. Lead with the benefit; support it with 2-4 tight proof points
-  (stat cards / badges) and one short context line. A premium slide breathes — but should not look half-empty."""
+- DESIGN DISCIPLINE (this is what separates a designed slide from a generic AI one — follow it strictly):
+  * NO multi-card grids. Do NOT arrange content as multiple parallel rounded boxes (3-card row, 4-up KPI grid,
+    2x2 matrix of cards, or a big card holding a stack of sub-cards). That uniform card-grid IS the "AI look".
+  * ONE visual-weight tool per container: shadow OR border OR tint-fill OR gradient — never stack them on one
+    box. Most text needs NO box at all; naked text on the background reads cleaner and more premium.
+  * ONE focal point per slide: the single most important thing (a hero number, the chart, the claim) is clearly
+    the largest / boldest; everything else is visibly secondary. Never 4-6 equal-weight boxes competing.
+  * Restraint over density: whitespace is a design element, not a gap to fill. NEVER repeat the same fact twice
+    on one slide, and never pad with a box you don't need.
+  * Accent red is punctuation — a thin bar or one keyword, a few % of the canvas. Don't tint every box and
+    don't give boxes arbitrary different colours."""
 
 OVERFLOW_RULES = """LAYOUT SAFETY (hard):
 - Canvas 1280x720; keep content within a 64px margin (x:[64..1216]). ONE <text> per logical block.
@@ -77,6 +86,8 @@ PLAN_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "kind": {"type": "string", "enum": ["hero", "body"]},
+                    "rhythm": {"type": "string", "enum": ["anchor", "dense", "breathing"],
+                               "description": "Visual density. Heroes=anchor. Body: 'dense'=2-4 proof points allowed; 'breathing'=ONE focal idea, NO card grid. Vary it across the deck: <=2 dense in a row, include breathing slides."},
                     "template": {"type": "string", "enum": ["cover", "section", "ending"]},
                     "fields": {"type": "object", "additionalProperties": {"type": "string"}},
                     "role": {"type": "string", "enum": ["stat", "evidence", "benefit", "content", "two_col", "chart"]},
@@ -118,8 +129,15 @@ Emit ONLY via the emit_plan tool. The deck is built two ways and you drive both:
 
 STRUCTURE: open with a `cover` hero, close with an `ending` hero; use `section` heroes as dividers; put proof
 in body slides. Benefit-first: the buyer sees the BENEFIT as the headline, studies are proof points. Keep hero
-copy short. In body briefs be substantive — 2-4 proof points and a short context line so slides aren't
-near-empty — but push heavy detail (effect sizes, CI, p-values, dose, design, citation) into `notes`.
+copy short.
+
+RHYTHM (critical — this is what stops the deck looking AI-generated): tag EVERY slide with `rhythm`. Heroes
+are `anchor`. For body slides, ALTERNATE `dense` and `breathing` — never more than two `dense` in a row, and
+include at least one or two `breathing` slides in the deck. A `breathing` slide is built on ONE focal idea (a
+single hero stat, one chart, one short claim, or a photo with a one-line caption) — NOT a grid of cards. A
+`dense` slide may carry 2-4 DISTINCT proof points. Do NOT put the same fact in two places on one slide, and do
+NOT repeat a proof point another slide already made — every slide earns its place with distinct content. Push
+heavy detail (effect sizes, CI, p-values, dose, design, citation) into `notes`.
 
 CHARTS: when the summary has a clear numeric comparison (treatment vs comparator, or before vs after), include
 ONE body slide with role='chart' and fill the `chart` object with EXACT values from the summary. Never invent
@@ -154,13 +172,23 @@ def build_plan(client, summary, length="standard", tone="balansert"):
     raise ValueError("Planner returned no slides.")
 
 
-def _exec_body(client, summary, role, brief, benefit, *, prior=None, fixes=None):
+RHYTHM_NOTE = {
+    "breathing": ("SLIDE RHYTHM = BREATHING: build this on ONE focal idea (a single large number, one chart, "
+                  "one short claim, or a photo with a one-line caption). Use naked text, a divider and "
+                  "whitespace as the structure — NO grid of cards. Calm and confident, lots of air."),
+    "dense": ("SLIDE RHYTHM = DENSE: you may present 2-4 DISTINCT proof points, but as varied elements — not "
+              "identical rounded cards — and with ONE clear focal point sitting above the rest."),
+    "anchor": "SLIDE RHYTHM = ANCHOR: one unique, high-impact composition — never a card grid.",
+}
+
+
+def _exec_body(client, summary, role, brief, benefit, rhythm="dense", *, prior=None, fixes=None):
     sys_p = ("You render ONE self-contained SVG (xmlns+xmlns:xlink, viewBox=\"0 0 1280 720\") for a single "
              f"Superba body slide (role: {role}). Match the house style EXACTLY so it sits inside the same "
              "deck as the frozen hero slides. Return ONLY the SVG (starts <svg, ends </svg>), no prose, no "
              "code fences.\n\n" + HOUSE_STYLE + "\n\n" + CLAIM_RULES + "\n\n" + OVERFLOW_RULES)
-    content = (f"SCIENCE SUMMARY (source of every claim):\n{summary}\n\nRender this slide:\n{brief}\n"
-               f"Benefit area (for hexagon icon, or 'none'): {benefit}")
+    content = (f"SCIENCE SUMMARY (source of every claim):\n{summary}\n\n{RHYTHM_NOTE.get(rhythm, '')}\n\n"
+               f"Render this slide:\n{brief}\nBenefit area (for hexagon icon, or 'none'): {benefit}")
     if prior is not None:
         content += ("\n\nYour previous SVG had these mechanical defects (fix EVERY one, keep the house style, "
                     "keep number+unit in one <text>):\n" + fixes + "\n\nPREVIOUS SVG:\n" + prior)
@@ -250,11 +278,12 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
                 role = s.get("role") or "content"
                 brief = s.get("brief") or ""
                 benefit = (s.get("benefit") or "none").lower()
+                rhythm = (s.get("rhythm") or "dense").lower()
                 path = out / f"{idx:02d}_{role}.svg"
                 _gated_write(
                     client, path, out,
-                    lambda role=role, brief=brief, benefit=benefit: _exec_body(client, summary_text, role, brief, benefit),
-                    lambda prior, fixes, role=role, brief=brief, benefit=benefit: _exec_body(client, summary_text, role, brief, benefit, prior=prior, fixes=fixes),
+                    lambda role=role, brief=brief, benefit=benefit, rhythm=rhythm: _exec_body(client, summary_text, role, brief, benefit, rhythm),
+                    lambda prior, fixes, role=role, brief=brief, benefit=benefit, rhythm=rhythm: _exec_body(client, summary_text, role, brief, benefit, rhythm, prior=prior, fixes=fixes),
                 )
         _p(93, "Converting to PowerPoint")
         _load_converter().main([str(tmp)])

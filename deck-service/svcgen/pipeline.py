@@ -77,15 +77,10 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
   (soft, atmospheric, never over text or a number).
 - Fonts: font-family="Exo 2" italic bold for titles + big numbers; font-family="Manrope" for body/labels.
 - Signature device: an italic Exo 2 title with a short Ruby Red accent bar directly beneath it. Benefit areas
-  use a hexagon; stats use rounded-rect cards. Alternate dark/light backgrounds for rhythm.
-- Real assets by bare filename via <image xlink:href>: superba_white.png / aker_white.png (on dark),
-  superba_green.png / aker_green.png (on light); benefit hexagon icons heart/liver/joint/muscle/skin.png.
-  NEVER draw a fake wordmark. FIXED footer logos at these EXACT coords — Superba bottom-left
-  <image xlink:href="superba_white.png" x="32" y="666" width="189" height="31" preserveAspectRatio="xMinYMid meet"/>
-  and Aker bottom-right
-  <image xlink:href="aker_white.png" x="1096" y="674" width="139" height="17" preserveAspectRatio="xMaxYMid meet"/>
-  (use the _green variants on a light background). OMIT the Superba logo when a photo/image covers the bottom-LEFT
-  corner; OMIT the Aker logo when a photo covers the bottom-RIGHT corner. Never move or resize these two logos.
+  use a hexagon icon. Alternate dark/light backgrounds across the deck for rhythm.
+- Benefit hexagon icons by bare filename via <image xlink:href>: heart/liver/joint/muscle/skin.png — use ONLY
+  where a benefit area is named. NEVER draw a wordmark or logo yourself: the Superba + Aker footer logos are
+  stamped in automatically, so just LEAVE THE BOTTOM 58px OF THE CANVAS CLEAR (nothing important below y=662).
 - DESIGN DISCIPLINE (this is what separates a designed slide from a generic AI one — follow it strictly):
   * NO multi-card grids. Do NOT arrange content as multiple parallel rounded boxes (3-card row, 4-up KPI grid,
     2x2 matrix of cards, or a big card holding a stack of sub-cards). That uniform card-grid IS the "AI look".
@@ -106,6 +101,16 @@ OVERFLOW_RULES = """LAYOUT SAFETY (hard):
 - If the slide has a right-side panel/card column, the title and left-column text MUST fit in the space to
   the LEFT of that panel — shrink or hand-wrap the title so NO glyph runs under or into the panel."""
 
+VISUAL_SYSTEM = """VISUAL SYSTEM (hold these constant on every body slide so the freely-designed slides cohere):
+- Type scale: slide title = Exo 2 italic 700 ~40-46px with a 70x6px Ruby-Red accent bar directly beneath it;
+  eyebrow/kicker = Manrope 700 ~15px UPPERCASE letter-spaced, Ruby-Red; body = Manrope ~20-22px; small
+  labels/captions = Manrope ~14-15px in Turquoise-Light #A9DBD5; hero numbers = Exo 2 italic 700, very large
+  (90-180px), Polar-Blue #E9F7F8 or Peach #FFD1B0 on dark.
+- Content margin = 64px; align to a consistent baseline; whitespace is deliberate, not a gap to fill.
+- Dark deep-sea-gradient background is the DEFAULT; use a light (#E9F7F8 field, #163536 text) slide now and
+  then for rhythm. One Ruby-Red accent bar per title; benefit hexagon only where a benefit is named; at most
+  one subtle krill-swarm glow, in an empty corner."""
+
 PLAN_SCHEMA = {
     "type": "object",
     "properties": {
@@ -122,9 +127,10 @@ PLAN_SCHEMA = {
                     "fields": {"type": "object", "additionalProperties": {"type": "string"}},
                     "photo": {"type": "string", "enum": list(PHOTOS),
                               "description": "For a cover/section hero: the photo whose subject best fits this slide's theme."},
-                    "role": {"type": "string", "enum": ["stat", "evidence", "benefit", "content", "two_col", "chart"]},
+                    "role": {"type": "string",
+                             "description": "A short slug naming the LAYOUT CONCEPT you invent for this body slide (e.g. 'evidence_timeline', 'crp_comparison', 'null_result', 'mechanism', 'study_spotlight', 'quote', 'hero_stat'). Free text, used as a label. Use exactly 'chart' to request the deterministic clustered-column chart."},
                     "brief": {"type": "string",
-                              "description": "For body (non-chart): precisely what to render, INCLUDING exact claims/numbers (traceable to the summary)."},
+                              "description": "The full creative brief: the EXACT claims/numbers to show (traceable to the summary) AND the layout/visualization you intend to build for them (a timeline, a before/after comparison, an annotated figure, a quadrant, a hero number, etc.)."},
                     "chart": {
                         "type": "object",
                         "description": "REQUIRED when role='chart'. Clustered-column chart; values MUST be exact figures from the summary.",
@@ -156,12 +162,17 @@ PLANNER_SYS = f"""You plan a branded Superba Krill (Aker BioMarine) SALES deck f
 Emit ONLY via the emit_plan tool. The deck is built two ways and you drive both:
 - HERO slides use FROZEN on-brand templates — you only supply the copy (fields). Templates + fields:
   cover: TITLE, SUBTITLE | section: KICKER, SECTION_TITLE | ending: CTA_TITLE, CONTACT, DISCLAIMER.
-- BODY slides are generated as vector SVG — supply a role + a precise `brief` naming exact claims/numbers.
-  Roles: stat, evidence, benefit, content, two_col, chart.
+- BODY slides are free-form vector SVG, designed slide-by-slide. For each, DESIGN THE RIGHT LAYOUT for its
+  content — invent it (an evidence timeline, a before/after comparison, an annotated mechanism, a quadrant, a
+  study spotlight, a hero statistic, a pull-quote…). Do NOT pick from a fixed menu of templates. Engage with
+  THIS content: a chronological set of studies wants a timeline; a treatment-vs-control result wants a
+  comparison; an honest null finding wants a single-stat callout. Give each body slide a short `role` slug (your
+  layout's name) + a rich `brief` stating the exact claims/numbers AND the visualization you intend.
+- OPTIONAL deterministic chart: only if a clean clustered-column bar chart is genuinely the best fit, set
+  role='chart' and fill the `chart` object with exact values. Otherwise design the figure yourself in the brief.
 
 STRUCTURE: open with a `cover` hero, close with an `ending` hero; use `section` heroes as dividers; put proof
-in body slides. Benefit-first: the buyer sees the BENEFIT as the headline, studies are proof points. Keep hero
-copy short.
+in body slides. Benefit-first for sales tone; comprehensive + per-study for scientific tone. Keep hero copy short.
 
 PHOTOS: for each cover/section hero, set `photo` to the image whose subject best fits that slide's theme —
 match, don't default (a sustainability/origin section → iceberg or deep_sea; a skin-benefit deck → skin;
@@ -175,10 +186,6 @@ single hero stat, one chart, one short claim, or a photo with a one-line caption
 `dense` slide may carry 2-4 DISTINCT proof points. Do NOT put the same fact in two places on one slide, and do
 NOT repeat a proof point another slide already made — every slide earns its place with distinct content. Push
 heavy detail (effect sizes, CI, p-values, dose, design, citation) into `notes`.
-
-CHARTS: when the summary has a clear numeric comparison (treatment vs comparator, or before vs after), include
-ONE body slide with role='chart' and fill the `chart` object with EXACT values from the summary. Never invent
-data points; only chart figures the summary gives.
 
 {CLAIM_RULES}
 
@@ -219,19 +226,33 @@ RHYTHM_NOTE = {
 }
 
 
-def _exec_body(client, summary, role, brief, benefit, rhythm="dense", *, prior=None, fixes=None):
-    sys_p = ("You render ONE self-contained SVG (xmlns+xmlns:xlink, viewBox=\"0 0 1280 720\") for a single "
-             f"Superba body slide (role: {role}). Match the house style EXACTLY so it sits inside the same "
-             "deck as the frozen hero slides. Return ONLY the SVG (starts <svg, ends </svg>), no prose, no "
-             "code fences.\n\n" + HOUSE_STYLE + "\n\n" + CLAIM_RULES + "\n\n" + OVERFLOW_RULES)
+def _exec_body(client, summary, layout, brief, benefit, rhythm="dense", *, prior=None, fixes=None):
+    sys_p = ("You are a senior editorial / infographic designer. Design ONE slide as a single self-contained SVG "
+             "(xmlns+xmlns:xlink, viewBox=\"0 0 1280 720\"). INVENT the layout that best communicates this slide's "
+             "content — a timeline, a before/after comparison, an annotated figure, a quadrant, a hero statistic, "
+             "a pull-quote, whatever fits; never fall back on a generic template or a row of identical cards. It "
+             "must sit inside the same branded deck as the frozen hero slides. Return ONLY the SVG (starts <svg, "
+             "ends </svg>), no prose, no code fences.\n\n"
+             + VISUAL_SYSTEM + "\n\n" + HOUSE_STYLE + "\n\n" + CLAIM_RULES + "\n\n" + OVERFLOW_RULES)
     content = (f"SCIENCE SUMMARY (source of every claim):\n{summary}\n\n{RHYTHM_NOTE.get(rhythm, '')}\n\n"
-               f"Render this slide:\n{brief}\nBenefit area (for hexagon icon, or 'none'): {benefit}")
+               f"Design this slide (layout concept: {layout}):\n{brief}\n"
+               f"Benefit area (for hexagon icon, or 'none'): {benefit}")
     if prior is not None:
-        content += ("\n\nYour previous SVG had these mechanical defects (fix EVERY one, keep the house style, "
-                    "keep number+unit in one <text>):\n" + fixes + "\n\nPREVIOUS SVG:\n" + prior)
+        content += ("\n\nYour previous SVG had these mechanical defects (fix EVERY one, keep the visual system, "
+                    "keep number+unit in one <text>, keep the bottom 58px clear):\n" + fixes
+                    + "\n\nPREVIOUS SVG:\n" + prior)
     msg = client.messages.create(model=MODEL, max_tokens=8000, system=sys_p,
                                  messages=[{"role": "user", "content": content}])
     return _strip(next(b.text for b in msg.content if b.type == "text"))
+
+
+def _inject_footer(svg: str) -> str:
+    """Stamp the canonical Superba+Aker footer logos deterministically (brand is guaranteed,
+    not left to the model). Idempotent: strips any logo images first, then appends the fixed
+    footer, picking white/green by whether the slide background is light."""
+    svg = re.sub(r'<image\b[^>]*(?:superba|aker)_\w+\.png[^>]*/>', '', svg)
+    dark = "#E9F7F8" not in svg[:800] and "#e9f7f8" not in svg[:800]
+    return svg.replace("</svg>", tf.footer(dark=dark) + "</svg>", 1) if "</svg>" in svg else svg
 
 
 def _gated_write(client, path, out, make_first, make_retry):
@@ -312,15 +333,16 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
                 make = lambda s=s: cr.render_chart(s["chart"])
                 _gated_write(client, path, out, make, lambda prior, fixes, make=make: make())
             else:
-                role = s.get("role") or "content"
+                layout = s.get("role") or "content"
+                slug = re.sub(r"[^a-z0-9]+", "_", layout.lower()).strip("_") or "slide"
                 brief = s.get("brief") or ""
                 benefit = (s.get("benefit") or "none").lower()
                 rhythm = (s.get("rhythm") or "dense").lower()
-                path = out / f"{idx:02d}_{role}.svg"
+                path = out / f"{idx:02d}_{slug}.svg"
                 _gated_write(
                     client, path, out,
-                    lambda role=role, brief=brief, benefit=benefit, rhythm=rhythm: _exec_body(client, summary_text, role, brief, benefit, rhythm),
-                    lambda prior, fixes, role=role, brief=brief, benefit=benefit, rhythm=rhythm: _exec_body(client, summary_text, role, brief, benefit, rhythm, prior=prior, fixes=fixes),
+                    lambda layout=layout, brief=brief, benefit=benefit, rhythm=rhythm: _inject_footer(_exec_body(client, summary_text, layout, brief, benefit, rhythm)),
+                    lambda prior, fixes, layout=layout, brief=brief, benefit=benefit, rhythm=rhythm: _inject_footer(_exec_body(client, summary_text, layout, brief, benefit, rhythm, prior=prior, fixes=fixes)),
                 )
         _p(93, "Converting to PowerPoint")
         _load_converter().main([str(tmp)])

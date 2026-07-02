@@ -17,6 +17,26 @@ ADVANCE = {"exo2": 0.56, "manrope": 0.50}
 
 TEMPLATE_DIR = pathlib.Path(__file__).resolve().parent / "templates"
 
+# Brand "deep sea gradient" background + "krill swarm" red glow (brand guide §4.1 / §4.2).
+# Pure-SVG approximation of the official motif — converts to native PowerPoint gradient
+# fills (a:gradFill, verified). See STATUS.md: the real AKBM krill-swarm asset should
+# replace the _KRILL glow when it arrives.
+_SEA_DEFS = (
+    '  <defs>\n'
+    '    <radialGradient id="seabg" cx="32%" cy="24%" r="95%">\n'
+    '      <stop offset="0%" stop-color="#1f4b47"/>\n'
+    '      <stop offset="55%" stop-color="#173636"/>\n'
+    '      <stop offset="100%" stop-color="#0f2a2a"/>\n'
+    '    </radialGradient>\n'
+    '    <radialGradient id="krill" cx="50%" cy="50%" r="50%">\n'
+    '      <stop offset="0%" stop-color="#F2242F" stop-opacity="0.72"/>\n'
+    '      <stop offset="55%" stop-color="#E30917" stop-opacity="0.22"/>\n'
+    '      <stop offset="100%" stop-color="#E30917" stop-opacity="0"/>\n'
+    '    </radialGradient>\n'
+    '  </defs>\n'
+)
+_KRILL = '  <ellipse cx="150" cy="690" rx="340" ry="78" fill="url(#krill)" transform="rotate(-16 150 690)"/>\n'
+
 
 def fit_size(text: str, base: int, floor: int, font: str = "exo2") -> int:
     """Largest size <= base keeping `text` on one line within USABLE_W."""
@@ -93,10 +113,12 @@ def render_cover(title: str, subtitle: str, photo: str,
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         'width="1280" height="720" viewBox="0 0 1280 720">\n'
-        '  <rect x="0" y="0" width="1280" height="720" fill="#163536"/>\n'
+        + _SEA_DEFS +
+        '  <rect x="0" y="0" width="1280" height="720" fill="url(#seabg)"/>\n'
         f'  <image xlink:href="{photo}" x="600" y="-60" width="760" height="840" preserveAspectRatio="xMidYMid slice"/>\n'
-        '  <rect x="0" y="0" width="600" height="720" fill="#163536"/>\n'
-        '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.5"/>\n'
+        '  <rect x="0" y="0" width="600" height="720" fill="url(#seabg)"/>\n'
+        '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
+        + _KRILL +
         f'  <image xlink:href="{wordmark}" x="64" y="60" width="230" height="64" preserveAspectRatio="xMinYMid meet"/>\n'
         f'  {tsvg}\n'
         f'  <rect x="74" y="{bar_y}" width="70" height="6" fill="#E30917"/>\n'
@@ -113,10 +135,12 @@ def render_section(kicker: str, section_title: str, photo: str,
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         'width="1280" height="720" viewBox="0 0 1280 720">\n'
-        '  <rect x="0" y="0" width="1280" height="720" fill="#163536"/>\n'
+        + _SEA_DEFS +
+        '  <rect x="0" y="0" width="1280" height="720" fill="url(#seabg)"/>\n'
         f'  <image xlink:href="{photo}" x="600" y="-60" width="760" height="840" preserveAspectRatio="xMidYMid slice"/>\n'
-        '  <rect x="0" y="0" width="600" height="720" fill="#163536"/>\n'
-        '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.5"/>\n'
+        '  <rect x="0" y="0" width="600" height="720" fill="url(#seabg)"/>\n'
+        '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
+        + _KRILL +
         f'  <image xlink:href="{wordmark}" x="64" y="60" width="230" height="64" preserveAspectRatio="xMinYMid meet"/>\n'
         f'  {ksvg}\n'
         '  <rect x="74" y="300" width="70" height="7" fill="#E30917"/>\n'

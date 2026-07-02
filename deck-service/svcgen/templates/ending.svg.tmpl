@@ -1,11 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="720" viewBox="0 0 1280 720">
   <defs>
+    <radialGradient id="seabg" cx="32%" cy="24%" r="95%">
+      <stop offset="0%" stop-color="#1f4b47"/>
+      <stop offset="55%" stop-color="#173636"/>
+      <stop offset="100%" stop-color="#0f2a2a"/>
+    </radialGradient>
     <radialGradient id="glow2" cx="0.7" cy="0.4" r="0.6">
       <stop offset="0%" stop-color="#175969" stop-opacity="0.9"/>
       <stop offset="100%" stop-color="#163536" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="krill" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F2242F" stop-opacity="0.6"/>
+      <stop offset="55%" stop-color="#E30917" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#E30917" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect x="0" y="0" width="1280" height="720" fill="#163536"/>
+  <rect x="0" y="0" width="1280" height="720" fill="url(#seabg)"/>
+  <ellipse cx="120" cy="712" rx="320" ry="70" fill="url(#krill)" transform="rotate(-16 120 712)"/>
   <ellipse cx="900" cy="290" rx="560" ry="380" fill="url(#glow2)"/>
   <text x="64" y="200" font-family="Manrope" font-size="16" font-weight="700" fill="#E30917" letter-spacing="3">LET'S TALK</text>
   <rect x="66" y="222" width="70" height="7" fill="#E30917"/>

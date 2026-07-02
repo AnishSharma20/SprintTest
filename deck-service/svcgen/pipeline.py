@@ -50,6 +50,11 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
 - Palette ONLY: Deep Sea Green #163536 (primary dark bg), Polar Blue #E9F7F8 (light bg), Sea Blue #175969,
   Regal Blue #003462, Ruby Red #E30917 (thin accent bars / keywords), Alt Red #BD393F (only red as a solid
   fill), Turquoise #60A09B / #A9DBD5, Peach #FFD1B0.
+- Background (brand "deep sea gradient", §4.1) — on a DARK slide do NOT use a flat fill. Begin the SVG with
+  <defs><radialGradient id="seabg" cx="32%" cy="24%" r="95%"><stop offset="0%" stop-color="#1f4b47"/><stop offset="55%" stop-color="#173636"/><stop offset="100%" stop-color="#0f2a2a"/></radialGradient></defs>
+  and fill the full-canvas background rect with fill="url(#seabg)". LIGHT slides use flat #E9F7F8. Optionally add ONE
+  subtle red "krill swarm" glow in an EMPTY corner: an <ellipse> with a red radial gradient fading to stop-opacity 0
+  (soft, atmospheric, never over text or a number).
 - Fonts: font-family="Exo 2" italic bold for titles + big numbers; font-family="Manrope" for body/labels.
 - Signature device: an italic Exo 2 title with a short Ruby Red accent bar directly beneath it. Benefit areas
   use a hexagon; stats use rounded-rect cards. Alternate dark/light backgrounds for rhythm.

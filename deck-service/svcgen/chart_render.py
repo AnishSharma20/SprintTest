@@ -41,7 +41,10 @@ def render_chart(data: dict) -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
-        f'<rect x="0" y="0" width="{W}" height="{H}" fill="{GREEN}"/>',
+        '<defs><radialGradient id="seabg" cx="32%" cy="24%" r="95%">'
+        '<stop offset="0%" stop-color="#1f4b47"/><stop offset="55%" stop-color="#173636"/>'
+        '<stop offset="100%" stop-color="#0f2a2a"/></radialGradient></defs>',
+        f'<rect x="0" y="0" width="{W}" height="{H}" fill="url(#seabg)"/>',
     ]
     # ---- header ----
     if data.get("kicker"):

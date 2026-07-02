@@ -75,6 +75,19 @@ def _bullets(slide, l, t, w, h, items, *, size=20, color=C.GREEN, gap=10):
     return tb
 
 
+def _pic(slide, path, l, t, w):
+    """Insert a picture scaled to width `w` (inches); height auto-preserves aspect."""
+    if path.exists():
+        return slide.shapes.add_picture(str(path), Inches(l), Inches(t), width=Inches(w))
+    return None
+
+
+def _benefit_icon(slide, benefit: str):
+    """Place the benefit hexagon icon top-right, if we have that icon."""
+    if benefit in C.AVAILABLE_BENEFITS:
+        _pic(slide, C.ICONS / f"{benefit}.png", 11.75, 0.62, 0.95)
+
+
 def _rrect(slide, l, t, w, h, color: RGBColor):
     sp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(l), Inches(t), Inches(w), Inches(h))
     sp.fill.solid()
@@ -89,11 +102,20 @@ def _accent(slide, l, t, color=C.RED):
 
 
 def _footer(slide, dark=True):
-    c = C.WHITE if dark else C.GREEN
-    _text(slide, 0.8, 6.9, 4, 0.4, "SUPERBA Krill", font=C.HEAD_FONT, size=13, color=c,
-          bold=True, italic=True, fit=False)
-    _text(slide, 8.5, 6.9, 4, 0.4, "Aker BioMarine", font=C.BODY_FONT, size=11, color=C.TURQ_D,
-          align=PP_ALIGN.RIGHT, fit=False)
+    """Real Superba + Aker logos, bottom corners — white on dark, green on light."""
+    variant = "white" if dark else "green"
+    sup = C.LOGOS / f"superba_{variant}.png"
+    aker = C.LOGOS / f"aker_{variant}.png"
+    if sup.exists():
+        _pic(slide, sup, 0.8, 6.92, 1.7)
+    else:
+        _text(slide, 0.8, 6.9, 4, 0.4, "SUPERBA Krill", font=C.HEAD_FONT, size=13,
+              color=(C.WHITE if dark else C.GREEN), bold=True, italic=True, fit=False)
+    if aker.exists():
+        _pic(slide, aker, 11.0, 6.92, 1.55)
+    else:
+        _text(slide, 8.5, 6.9, 4, 0.4, "Aker BioMarine", font=C.BODY_FONT, size=11,
+              color=C.TURQ_D, align=PP_ALIGN.RIGHT, fit=False)
 
 
 def _badge(slide, l, t, w, text):
@@ -110,11 +132,17 @@ def _get(fields: dict, key: str) -> str:
 
 def _cover(slide, f):
     _bg(slide, C.GREEN)
-    _accent(slide, 0.8, 1.05)
-    _text(slide, 0.8, 1.35, 11.7, 1.9, _get(f, "TITLE"), font=C.HEAD_FONT, size=48,
+    # Superba wordmark as the masthead (falls back to a red accent bar if missing)
+    if (C.LOGOS / "superba_white.png").exists():
+        _pic(slide, C.LOGOS / "superba_white.png", 0.8, 0.8, 3.0)
+    else:
+        _accent(slide, 0.8, 1.05)
+    _text(slide, 0.8, 2.0, 11.7, 1.9, _get(f, "TITLE"), font=C.HEAD_FONT, size=46,
           color=C.WHITE, bold=True, italic=True)
-    _text(slide, 0.8, 3.35, 11, 1.2, _get(f, "SUBTITLE"), font=C.BODY_FONT, size=22, color=C.TURQ_L)
-    _footer(slide)
+    _text(slide, 0.8, 3.9, 11, 1.2, _get(f, "SUBTITLE"), font=C.BODY_FONT, size=22, color=C.TURQ_L)
+    # Aker logo bottom-right only (Superba is already the masthead)
+    if (C.LOGOS / "aker_white.png").exists():
+        _pic(slide, C.LOGOS / "aker_white.png", 11.0, 6.92, 1.55)
 
 
 def _section(slide, f):
@@ -231,6 +259,8 @@ def render_pptx(plan: dict) -> bytes:
             continue
         slide = prs.slides.add_slide(blank)
         draw(slide, slide_plan.get("fields", {}))
+        if layout in ("content", "evidence", "stat", "two_col", "section"):
+            _benefit_icon(slide, (slide_plan.get("benefit") or "").lower())
         notes = (slide_plan.get("notes") or "").strip()
         if notes:
             slide.notes_slide.notes_text_frame.text = notes

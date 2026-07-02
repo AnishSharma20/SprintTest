@@ -26,6 +26,15 @@ PLAN_SCHEMA = {
                         "description": "Map of the chosen layout's field names (without braces) to text. Omit or leave empty any field you don't use.",
                         "additionalProperties": {"type": "string"},
                     },
+                    "benefit": {
+                        "type": "string",
+                        "enum": ["heart", "joint", "liver", "muscle", "skin", "none"],
+                        "description": (
+                            "The health-benefit area this slide is about, if any — places the matching "
+                            "brand icon. Use only when the summary's topic clearly matches one of these; "
+                            "otherwise 'none'. (Only these 5 icons exist.)"
+                        ),
+                    },
                     "notes": {
                         "type": "string",
                         "description": (
@@ -70,5 +79,6 @@ HOW TO PLAN
 - Fill ONLY the fields listed for the chosen layout, by their exact names (without braces). Leave a field out (or empty) when unused — e.g. fewer than 5 bullets, fewer than 3 stats.
 - Keep each field within the capacity described in the catalog. Long detail goes in `notes`, not on the slide.
 - Structure a coherent sales story: open with `cover`; use `section` dividers between themes; use `content` / `stat` / `evidence` / `two_col` for the body; close with `ending` (call to action + any disclaimer). Alternate light/dark for rhythm. Aim for 7-11 slides.
+- Set `benefit` on a slide when its topic clearly matches a health-benefit area with an icon (heart / joint / liver / muscle / skin) — this places the brand icon. Use it on the section divider and key evidence slides for that benefit; otherwise 'none'. Do not force an icon that doesn't match the summary.
 
 You will receive the science summary and the layout catalog. Emit the deck plan now."""

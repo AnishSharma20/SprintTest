@@ -11,6 +11,10 @@ from pathlib import Path
 from pptx.dml.color import RGBColor
 
 BASE = Path(__file__).resolve().parent.parent          # deck-service/
+ASSETS = BASE / "assets"
+ICONS = ASSETS / "icons"                                # benefit hexagon icons (PNG, transparent)
+LOGOS = ASSETS / "logos"                                # Superba / Aker logos (white + green)
+AVAILABLE_BENEFITS = ["heart", "joint", "liver", "muscle", "skin"]  # icons we have
 
 # Superba brand palette (verified hex)
 GREEN = RGBColor(0x16, 0x35, 0x36)     # Deep Sea Green — primary dark bg

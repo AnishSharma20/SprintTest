@@ -40,7 +40,10 @@ def _sanitize(plan: dict) -> dict:
             continue
         allowed = set(LAYOUTS[layout]["fields"])
         fields = {k: v for k, v in (slide.get("fields") or {}).items() if k in allowed}
-        clean.append({"layout": layout, "fields": fields, "notes": slide.get("notes", "")})
+        clean.append({
+            "layout": layout, "fields": fields,
+            "benefit": slide.get("benefit", "none"), "notes": slide.get("notes", ""),
+        })
     plan["slides"] = clean
     return plan
 

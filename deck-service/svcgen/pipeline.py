@@ -60,7 +60,12 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
   use a hexagon; stats use rounded-rect cards. Alternate dark/light backgrounds for rhythm.
 - Real assets by bare filename via <image xlink:href>: superba_white.png / aker_white.png (on dark),
   superba_green.png / aker_green.png (on light); benefit hexagon icons heart/liver/joint/muscle/skin.png.
-  NEVER draw a fake wordmark. Put Superba + Aker logos in the footer.
+  NEVER draw a fake wordmark. FIXED footer logos at these EXACT coords — Superba bottom-left
+  <image xlink:href="superba_white.png" x="32" y="666" width="189" height="31" preserveAspectRatio="xMinYMid meet"/>
+  and Aker bottom-right
+  <image xlink:href="aker_white.png" x="1096" y="674" width="139" height="17" preserveAspectRatio="xMaxYMid meet"/>
+  (use the _green variants on a light background). OMIT the Superba logo when a photo/image covers the bottom-LEFT
+  corner; OMIT the Aker logo when a photo covers the bottom-RIGHT corner. Never move or resize these two logos.
 - DESIGN DISCIPLINE (this is what separates a designed slide from a generic AI one — follow it strictly):
   * NO multi-card grids. Do NOT arrange content as multiple parallel rounded boxes (3-card row, 4-up KPI grid,
     2x2 matrix of cards, or a big card holding a stack of sub-cards). That uniform card-grid IS the "AI look".

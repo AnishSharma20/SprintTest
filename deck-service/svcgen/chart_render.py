@@ -108,7 +108,7 @@ def render_chart(data: dict) -> str:
     # ---- source + footer logos ----
     if data.get("source"):
         parts.append(f'<text x="64" y="628" font-family="Manrope" font-size="13" fill="{TEAL}">{_esc(data["source"])}</text>')
-    parts.append(f'<image xlink:href="superba_white.png" x="64" y="656" width="170" height="30" preserveAspectRatio="xMinYMid meet"/>')
-    parts.append(f'<image xlink:href="aker_white.png" x="1080" y="658" width="136" height="28" preserveAspectRatio="xMaxYMid meet"/>')
+    parts.append('<image xlink:href="superba_white.png" x="32" y="666" width="189" height="31" preserveAspectRatio="xMinYMid meet"/>')
+    parts.append('<image xlink:href="aker_white.png" x="1096" y="674" width="139" height="17" preserveAspectRatio="xMaxYMid meet"/>')
     parts.append('</svg>')
     return "\n".join(parts)

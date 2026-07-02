@@ -101,6 +101,25 @@ def _wrapped(text, x, y0, size, lh, font, fill, max_chars, *, weight=None, style
     return "\n  ".join(parts), y0 + (len(lines) - 1) * lh
 
 
+def footer(*, dark: bool = True, superba: bool = True, aker: bool = True) -> str:
+    """Fixed brand footer logos at the EXACT positions/sizes from the AKBM deck
+    (measured off example slides 3 & 25): Superba bottom-left, Aker bottom-right.
+
+    Omit a logo whose corner is covered by a photo: pass superba=False when an image
+    occupies the bottom-left, aker=False when an image occupies the bottom-right.
+    White logos on dark backgrounds, green on light.
+    """
+    sfx = "white" if dark else "green"
+    out = []
+    if superba:
+        out.append(f'  <image xlink:href="superba_{sfx}.png" x="32" y="666" width="189" height="31" '
+                   f'preserveAspectRatio="xMinYMid meet"/>')
+    if aker:
+        out.append(f'  <image xlink:href="aker_{sfx}.png" x="1096" y="674" width="139" height="17" '
+                   f'preserveAspectRatio="xMaxYMid meet"/>')
+    return ("\n".join(out) + "\n") if out else ""
+
+
 # ---- AKBM signature hero layout: navy ellipse + left text panel + full-bleed right photo ----
 # Built as functions (not static .tmpl) because the title wraps and the red bar + subtitle
 # must flow beneath the actual last title line — dynamic vertical flow token-replace can't do.
@@ -119,12 +138,11 @@ def render_cover(title: str, subtitle: str, photo: str,
         '  <rect x="0" y="0" width="600" height="720" fill="url(#seabg)"/>\n'
         '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
         + _KRILL +
-        f'  <image xlink:href="{wordmark}" x="64" y="60" width="230" height="64" preserveAspectRatio="xMinYMid meet"/>\n'
         f'  {tsvg}\n'
         f'  <rect x="74" y="{bar_y}" width="70" height="6" fill="#E30917"/>\n'
         f'  {ssvg}\n'
-        f'  <image xlink:href="{aker}" x="64" y="644" width="156" height="34" preserveAspectRatio="xMinYMid meet"/>\n'
-        '</svg>\n'
+        + footer(dark=True, superba=True, aker=False)  # photo on the right → Aker (bottom-right) hidden
+        + '</svg>\n'
     )
 
 
@@ -141,12 +159,11 @@ def render_section(kicker: str, section_title: str, photo: str,
         '  <rect x="0" y="0" width="600" height="720" fill="url(#seabg)"/>\n'
         '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
         + _KRILL +
-        f'  <image xlink:href="{wordmark}" x="64" y="60" width="230" height="64" preserveAspectRatio="xMinYMid meet"/>\n'
         f'  {ksvg}\n'
         '  <rect x="74" y="300" width="70" height="7" fill="#E30917"/>\n'
         f'  {tsvg}\n'
-        f'  <image xlink:href="{aker}" x="64" y="644" width="156" height="34" preserveAspectRatio="xMinYMid meet"/>\n'
-        '</svg>\n'
+        + footer(dark=True, superba=True, aker=False)  # photo on the right → Aker (bottom-right) hidden
+        + '</svg>\n'
     )
 
 

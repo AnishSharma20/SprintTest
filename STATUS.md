@@ -1,6 +1,8 @@
 # Current state — Superba Deck Generator
 
-_Last updated: 2026-07-02. Deployed at commit `0fd4a06` (repo `AnishSharma20/SprintTest`). Shipped today: async jobs + progress bar, page rhythm + design discipline, deep-sea gradients + krill glow, fixed footer logos, theme-driven photo library._
+_Last updated: 2026-07-02. Deployed at commit `7c890be` (repo `AnishSharma20/SprintTest`). Shipped today: async jobs + progress bar, page rhythm + design discipline, deep-sea gradients + krill glow, fixed footer logos (Aker padding trimmed), theme-driven photo library, and the **free-layout architecture** (model invents the layout per slide; brand enforced as a contract + deterministic footer injection)._
+
+⚠️ **API credits ran out mid-session (2026-07-02).** The Anthropic key hit a 400 "credit balance too low" — the WEB tool uses the same key, so generation fails everywhere until Anish tops up. Not a code bug.
 
 ## ⚠️ DO THIS EACH SESSION — pending official AKBM brand assets
 **At the start of any deck-generator work, ASK Anish: "Har du fått brand-assetene fra Aker BioMarine ennå?"**
@@ -35,7 +37,7 @@ app/generator/page.tsx      UI: upload, options, polls status, draws progress ba
   └─ app/api/generate-deck/route.ts   Vercel proxy (job-based): POST→/jobs, GET ?id=→status, GET ?id=&download=1→result
        └─ deck-service/main.py        FastAPI on Render: /jobs (bg thread) + /jobs/{id} + /jobs/{id}/result + legacy /generate
             ├─ svcgen/                 DEFAULT pipeline (DECK_PIPELINE=svg): AKBM-native SVG hybrid
-            │   ├─ pipeline.py         orchestrator + planner (per-slide rhythm anchor/dense/breathing; PHOTOS catalog → planner picks hero photo by theme; HOUSE_STYLE=design discipline + deep-sea gradient + fixed-footer rule); generate(..., on_progress=cb)
+            │   ├─ pipeline.py         orchestrator + planner. FREE-LAYOUT: planner gives each body slide a free layout-slug (role) + rich brief; Executor (VISUAL_SYSTEM + HOUSE_STYLE + discipline) INVENTS the layout — no fixed role menu. Footer logos stamped by _inject_footer() (deterministic, idempotent). rhythm anchor/dense/breathing; PHOTOS catalog → hero photo by theme; role='chart' → deterministic chart. generate(..., on_progress=cb)
             │   ├─ template_fill.py    hero renderers render_cover()/render_section() (deep-sea gradient _SEA_DEFS + krill glow _KRILL + full-bleed photo) + footer() (fixed logos, hide-under-photo) + fill_template()/wrapped_lines()
             │   ├─ chart_render.py     deterministic clustered-column chart (role='chart'), deep-sea gradient bg
             │   ├─ quality_gate.py     vision gate (renders SVG→PNG via resvg, Claude flags collisions/overflow); no-op if resvg absent (GATE_AVAILABLE)

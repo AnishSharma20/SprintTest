@@ -139,7 +139,6 @@ def render_cover(title: str, subtitle: str, photo: str,
         '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
         + _KRILL +
         f'  {tsvg}\n'
-        f'  <rect x="74" y="{bar_y}" width="70" height="6" fill="#E30917"/>\n'
         f'  {ssvg}\n'
         + footer(dark=True, superba=True, aker=False)  # photo on the right → Aker (bottom-right) hidden
         + '</svg>\n'
@@ -160,7 +159,6 @@ def render_section(kicker: str, section_title: str, photo: str,
         '  <ellipse cx="140" cy="360" rx="520" ry="430" fill="#003462" opacity="0.22"/>\n'
         + _KRILL +
         f'  {ksvg}\n'
-        '  <rect x="74" y="300" width="70" height="7" fill="#E30917"/>\n'
         f'  {tsvg}\n'
         + footer(dark=True, superba=True, aker=False)  # photo on the right → Aker (bottom-right) hidden
         + '</svg>\n'

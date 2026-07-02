@@ -76,8 +76,8 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
   subtle red "krill swarm" glow in an EMPTY corner: an <ellipse> with a red radial gradient fading to stop-opacity 0
   (soft, atmospheric, never over text or a number).
 - Fonts: font-family="Exo 2" italic bold for titles + big numbers; font-family="Manrope" for body/labels.
-- Signature device: an italic Exo 2 title with a short Ruby Red accent bar directly beneath it. Benefit areas
-  use a hexagon icon. Alternate dark/light backgrounds across the deck for rhythm.
+- Titles are italic Exo 2. Do NOT underline a title (or a word) with a short accent bar — see BANNED in the
+  visual system. Benefit areas use a hexagon icon. Alternate dark/light backgrounds across the deck for rhythm.
 - Benefit hexagon icons by bare filename via <image xlink:href>: heart/liver/joint/muscle/skin.png — use ONLY
   where a benefit area is named. NEVER draw a wordmark or logo yourself: the Superba + Aker footer logos are
   stamped in automatically, so just LEAVE THE BOTTOM 58px OF THE CANVAS CLEAR (nothing important below y=662).
@@ -102,14 +102,26 @@ OVERFLOW_RULES = """LAYOUT SAFETY (hard):
   the LEFT of that panel — shrink or hand-wrap the title so NO glyph runs under or into the panel."""
 
 VISUAL_SYSTEM = """VISUAL SYSTEM (hold these constant on every body slide so the freely-designed slides cohere):
-- Type scale: slide title = Exo 2 italic 700 ~40-46px with a 70x6px Ruby-Red accent bar directly beneath it;
-  eyebrow/kicker = Manrope 700 ~15px UPPERCASE letter-spaced, Ruby-Red; body = Manrope ~20-22px; small
-  labels/captions = Manrope ~14-15px in Turquoise-Light #A9DBD5; hero numbers = Exo 2 italic 700, very large
-  (90-180px), Polar-Blue #E9F7F8 or Peach #FFD1B0 on dark.
+- Type scale: slide title = Exo 2 italic 700 ~40-46px; eyebrow/kicker = Manrope 700 ~15px UPPERCASE
+  letter-spaced, Ruby-Red; body = Manrope ~20-22px; small labels/captions = Manrope ~14-15px in Turquoise-Light
+  #A9DBD5; hero numbers = Exo 2 italic 700, very large (90-180px), Polar-Blue #E9F7F8 or Peach #FFD1B0 on dark.
 - Content margin = 64px; align to a consistent baseline; whitespace is deliberate, not a gap to fill.
 - Dark deep-sea-gradient background is the DEFAULT; use a light (#E9F7F8 field, #163536 text) slide now and
-  then for rhythm. One Ruby-Red accent bar per title; benefit hexagon only where a benefit is named; at most
-  one subtle krill-swarm glow, in an empty corner."""
+  then for rhythm. Benefit hexagon only where a benefit is named; at most one subtle krill-swarm glow in a corner.
+
+BANNED — these are the #1 'AI-generated' tells, NEVER use them:
+- A short accent bar / underline under a title or under a single word (e.g. a ~70px red line beneath the title).
+- A short red vertical tick to the left of a caption or paragraph.
+  For emphasis use WHITESPACE, or a thin hairline rule spanning the FULL width of the content column, or a
+  vertical divider between columns — never a stubby bar tied to one word or line.
+
+HUMAN / EDITORIAL DEVICES — use where they genuinely fit; these read as hand-made, not machine-made:
+- Annotation arrows: a trend/flow arrow over or along a chart with a small callout (e.g. an ellipse labelled
+  'CAGR +7%'); a curved or straight arrow that points at the thing it explains.
+- Connector arrows / chevrons between two panels to show flow, cause->effect, or a relationship.
+- Circular icon badges beside list items (a small filled circle holding one simple glyph).
+- A right-hand 'Comments' / 'Notes' column separated from the main content by a thin vertical divider rule.
+- Full-width or full-height hairline rules to structure the page, the way a consultancy/report deck does."""
 
 PLAN_SCHEMA = {
     "type": "object",

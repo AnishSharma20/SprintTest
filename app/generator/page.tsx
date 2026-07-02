@@ -9,6 +9,8 @@ export default function DeckGenerator() {
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
   const [ferdig, setFerdig] = useState(false);
+  const [fremdrift, setFremdrift] = useState(0);
+  const [steg, setSteg] = useState("");
 
   function leggTilFiler(nye: FileList | null) {
     if (!nye) return;
@@ -21,33 +23,53 @@ export default function DeckGenerator() {
     setFiler((f) => f.filter((_, idx) => idx !== i));
   }
 
+  const sov = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
   async function generer() {
     if (filer.length === 0) return;
     setLaster(true);
     setFeil(null);
     setFerdig(false);
+    setFremdrift(0);
+    setSteg("Starting…");
 
     try {
+      // 1) Start the job — returns immediately with a job id.
       const form = new FormData();
       filer.forEach((f) => form.append("filer", f));
       form.append("lengde", lengde);
       form.append("tone", tone);
 
-      const res = await fetch("/api/generate-deck", {
-        method: "POST",
-        body: form,
-      });
+      const start = await fetch("/api/generate-deck", { method: "POST", body: form });
+      const startData = await start.json().catch(() => ({}));
+      if (!start.ok || !startData.job_id) {
+        throw new Error(startData.feil || `Server svarte ${start.status}`);
+      }
+      const jobId = startData.job_id as string;
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.feil || `Server svarte ${res.status}`);
+      // 2) Poll status until the job is done (or fails).
+      for (;;) {
+        await sov(1500);
+        const res = await fetch(`/api/generate-deck?id=${jobId}`);
+        const s = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(s.feil || `Server svarte ${res.status}`);
+        setFremdrift(s.progress ?? 0);
+        if (s.step) setSteg(s.step);
+        if (s.status === "done") break;
+        if (s.status === "error") throw new Error(s.error || "Generation failed");
       }
 
-      const blob = await res.blob();
+      // 3) Download the finished deck.
+      setSteg("Downloading…");
+      const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
+      if (!dl.ok) {
+        const d = await dl.json().catch(() => ({}));
+        throw new Error(d.feil || `Server svarte ${dl.status}`);
+      }
+      const blob = await dl.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      // Én fil → .pptx, flere → .zip (backend bestemmer content-type)
       const zip = blob.type.includes("zip");
       a.download = zip ? "superba-decks.zip" : "superba-deck.pptx";
       a.click();
@@ -186,6 +208,25 @@ export default function DeckGenerator() {
         >
           {laster ? "Claude is building your deck…" : "Generate deck"}
         </button>
+
+        {/* Progress */}
+        {laster && (
+          <div className="mt-4 rounded-xl border border-[#D6E6EE] bg-white p-4">
+            <div className="mb-2 flex items-center justify-between text-sm">
+              <span className="font-medium text-[#052A4E]">{steg || "Working…"}</span>
+              <span className="tabular-nums text-[#6B8B95]">{fremdrift}%</span>
+            </div>
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#E1EEF3]">
+              <div
+                className="h-full rounded-full bg-[#E30917] transition-all duration-700 ease-out"
+                style={{ width: `${Math.max(3, fremdrift)}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-zinc-500">
+              A full deck takes a couple of minutes — you can keep this tab open.
+            </p>
+          </div>
+        )}
 
         {/* Status */}
         {feil && (

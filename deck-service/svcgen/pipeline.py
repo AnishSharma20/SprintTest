@@ -203,7 +203,16 @@ def _wording(plan):
 
 
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
-             *, length: str = "standard", tone: str = "balansert") -> dict:
+             *, length: str = "standard", tone: str = "balansert", on_progress=None) -> dict:
+    """on_progress(pct:int, step:str) is called as generation advances (optional)."""
+    def _p(pct, step):
+        if on_progress:
+            try:
+                on_progress(pct, step)
+            except Exception:  # noqa: BLE001 — progress reporting must never break generation
+                pass
+
+    _p(3, "Planning the deck")
     plan = build_plan(client, summary_text, length, tone)
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="svcgen_"))
     out = tmp / "svg_output"
@@ -212,9 +221,11 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
         if a.is_file():
             shutil.copy(a, out / a.name)
     try:
+        n = len(plan["slides"])
         idx = 0
         for s in plan["slides"]:
             idx += 1
+            _p(5 + int(86 * (idx - 1) / max(1, n)), f"Building slide {idx} of {n}")
             kind = s.get("kind")
             if kind == "hero" and s.get("template") in HERO_FIELDS:
                 t = s["template"]
@@ -245,11 +256,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
                     lambda role=role, brief=brief, benefit=benefit: _exec_body(client, summary_text, role, brief, benefit),
                     lambda prior, fixes, role=role, brief=brief, benefit=benefit: _exec_body(client, summary_text, role, brief, benefit, prior=prior, fixes=fixes),
                 )
+        _p(93, "Converting to PowerPoint")
         _load_converter().main([str(tmp)])
         pptx_files = sorted((tmp / "exports").glob("*.pptx"))
         if not pptx_files:
             raise RuntimeError("svg_to_pptx produced no .pptx")
         pptx = pptx_files[-1].read_bytes()
+        _p(99, "Finalizing")
         return {"pptx": pptx, "filename": f"{base_name}.pptx",
                 "wording_md": _wording(plan), "slide_count": len(plan["slides"])}
     finally:

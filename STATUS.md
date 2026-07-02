@@ -16,6 +16,14 @@ NOT the official motif and must be replaced with the real AKBM krill-swarm graph
 Also pending on assets: full 10-icon set (we ship only 5), exact brand hex (small 1–2 digit drift vs guide
 s.13–14), and the upright Exo 2 **H1** nuance (guide s.21 — we use italic everywhere).
 
+**Photo library (extensible — fill as AKBM sends more):** hero cover/section photos live in
+`svcgen/assets/` and are declared in the `PHOTOS` catalog in `svcgen/pipeline.py` (mirror in sandbox
+`gen_hybrid.py`). The planner picks one per hero by theme (its enum + prompt list are generated from the
+catalog). **To add an AKBM photo:** drop the file in `svcgen/assets/`, add ONE line to `PHOTOS`
+(`"key": {"file": "...", "desc": "..."}`) in BOTH files — nothing else. Current keys: capsules, capsules_duo,
+lifestyle, iceberg, deep_sea, skin, ingredients, krill_macro (curated from the example deck; more raw picks in
+`~/Downloads/akbm_extracted_photos/`).
+
 ## 1. Goal
 Tab 2 of the Superba/AKBM tool turns a science summary (`.docx`/`.txt`/`.md`) into an
 on-brand **AKBM-native sales PowerPoint** — benefit-led, science as proof, editable native

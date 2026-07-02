@@ -34,7 +34,27 @@ MAX_SLIDE_ATTEMPTS = int(os.environ.get("SVCGEN_MAX_ATTEMPTS", "3"))
 
 HERO_FIELDS = {"cover": ["TITLE", "SUBTITLE"], "section": ["KICKER", "SECTION_TITLE"],
                "ending": ["CTA_TITLE", "CONTACT", "DISCLAIMER"]}
-HERO_PHOTO = {"cover": "photo_capsules.jpg", "section": "photo_lifestyle.jpg"}
+# Photo library the planner picks from per hero slide. EXTENSIBLE: as AKBM sends real
+# photos, drop the file in assets/ and add one line here — the planner's photo enum AND
+# its prompt list are both generated from this dict, so nothing else needs editing.
+PHOTOS = {
+    "capsules":     {"file": "photo_capsules.jpg",      "desc": "red krill-oil softgel capsules scattered (product hero)"},
+    "capsules_duo": {"file": "capsules_two_clean.png",  "desc": "two clean red softgels on white (crisp product close-up)"},
+    "lifestyle":    {"file": "photo_lifestyle.jpg",     "desc": "active woman outdoors checking her watch (everyday wellness, heart)"},
+    "iceberg":      {"file": "iceberg_antarctic.jpeg",  "desc": "Antarctic iceberg over cold ocean (krill origin, sustainability, deep sea)"},
+    "deep_sea":     {"file": "deep_sea_light_rays.png", "desc": "underwater deep-sea light rays (origin, science, calm)"},
+    "skin":         {"file": "skin_woman_face.jpeg",    "desc": "woman with glowing skin touching her face (skin / beauty benefit)"},
+    "ingredients":  {"file": "ingredients_flatlay.png", "desc": "natural ingredients flat-lay: citrus, herbs, oil (natural, clean label)"},
+    "krill_macro":  {"file": "krill_macro_teal.png",    "desc": "a single krill macro on teal water (nature, science)"},
+}
+PHOTO_DEFAULT = {"cover": "capsules", "section": "lifestyle"}
+_PHOTO_LIST = "\n".join(f"    {k} — {v['desc']}" for k, v in PHOTOS.items())
+
+
+def _photo_file(key: str, template: str) -> str:
+    """Resolve a planner photo key to a bundled filename, with a per-template fallback."""
+    entry = PHOTOS.get(key) or PHOTOS[PHOTO_DEFAULT[template]]
+    return entry["file"]
 
 CLAIM_RULES = """CLAIM FIDELITY (non-negotiable):
 - Every number, effect and citation must be TRUE to the summary. Reframing a true figure into a clearer
@@ -100,6 +120,8 @@ PLAN_SCHEMA = {
                                "description": "Visual density. Heroes=anchor. Body: 'dense'=2-4 proof points allowed; 'breathing'=ONE focal idea, NO card grid. Vary it across the deck: <=2 dense in a row, include breathing slides."},
                     "template": {"type": "string", "enum": ["cover", "section", "ending"]},
                     "fields": {"type": "object", "additionalProperties": {"type": "string"}},
+                    "photo": {"type": "string", "enum": list(PHOTOS),
+                              "description": "For a cover/section hero: the photo whose subject best fits this slide's theme."},
                     "role": {"type": "string", "enum": ["stat", "evidence", "benefit", "content", "two_col", "chart"]},
                     "brief": {"type": "string",
                               "description": "For body (non-chart): precisely what to render, INCLUDING exact claims/numbers (traceable to the summary)."},
@@ -140,6 +162,11 @@ Emit ONLY via the emit_plan tool. The deck is built two ways and you drive both:
 STRUCTURE: open with a `cover` hero, close with an `ending` hero; use `section` heroes as dividers; put proof
 in body slides. Benefit-first: the buyer sees the BENEFIT as the headline, studies are proof points. Keep hero
 copy short.
+
+PHOTOS: for each cover/section hero, set `photo` to the image whose subject best fits that slide's theme —
+match, don't default (a sustainability/origin section → iceberg or deep_sea; a skin-benefit deck → skin;
+a product/CTA slide → capsules or capsules_duo; everyday-wellness → lifestyle). Options:
+{_PHOTO_LIST}
 
 RHYTHM (critical — this is what stops the deck looking AI-generated): tag EVERY slide with `rhythm`. Heroes
 are `anchor`. For body slides, ALTERNATE `dense` and `breathing` — never more than two `dense` in a row, and
@@ -270,10 +297,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
                 f = s.get("fields") or {}
                 path = out / f"{idx:02d}_{t}.svg"
                 if t == "cover":
-                    photo = f.get("PHOTO") or HERO_PHOTO["cover"]
+                    photo = _photo_file(s.get("photo"), "cover")
                     make = lambda f=f, photo=photo: tf.render_cover(f.get("TITLE", ""), f.get("SUBTITLE", ""), photo)
                 elif t == "section":
-                    photo = f.get("PHOTO") or HERO_PHOTO["section"]
+                    photo = _photo_file(s.get("photo"), "section")
                     make = lambda f=f, photo=photo: tf.render_section(f.get("KICKER", ""), f.get("SECTION_TITLE", ""), photo)
                 else:
                     fields = {k: f.get(k, "") for k in HERO_FIELDS[t] + list(tf.HERO_WRAPS.get(t, {}))}

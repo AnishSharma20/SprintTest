@@ -24,6 +24,7 @@ import anthropic
 from . import quality_gate as qg
 from . import template_fill as tf
 from . import chart_render as cr
+from . import anatomy_render as ar
 
 PKG = pathlib.Path(__file__).resolve().parent
 ASSETS = PKG / "assets"
@@ -174,6 +175,19 @@ PLAN_SCHEMA = {
                             "source": {"type": "string"},
                         },
                     },
+                    "anatomy": {
+                        "type": "object",
+                        "description": "REQUIRED when role='anatomy' — AKBM's standard ingredient-overview slide: a central krill capsule with up to 4 nutrient callouts. Use it once for a product/composition overview.",
+                        "properties": {
+                            "title": {"type": "string"},
+                            "top_note": {"type": "string"}, "bottom_note": {"type": "string"},
+                            "nutrients": {"type": "array", "description": "Up to 4, placed TL/TR/BL/BR.",
+                                "items": {"type": "object", "properties": {
+                                    "heading": {"type": "string"}, "body": {"type": "string"}},
+                                    "required": ["heading", "body"]}},
+                            "source": {"type": "string"},
+                        },
+                    },
                     "benefit": {"type": "string", "enum": ["heart", "joint", "liver", "muscle", "skin", "none"]},
                     "notes": {"type": "string"},
                 },
@@ -196,6 +210,9 @@ Emit ONLY via the emit_plan tool. The deck is built two ways and you drive both:
   layout's name) + a rich `brief` stating the exact claims/numbers AND the visualization you intend.
 - OPTIONAL deterministic chart: only if a clean clustered-column bar chart is genuinely the best fit, set
   role='chart' and fill the `chart` object with exact values. Otherwise design the figure yourself in the brief.
+- OPTIONAL ingredient-overview slide: for a product/composition overview, set role='anatomy' and fill the
+  `anatomy` object (central capsule + up to 4 nutrient callouts). This is AKBM's standard, rendered
+  deterministically — use it at most once, only when a composition overview genuinely fits the deck.
 
 STRUCTURE: open with a `cover` hero, close with an `ending` hero; use `section` heroes as dividers; put proof
 in body slides. Benefit-first for sales tone; comprehensive + per-study for scientific tone. Keep hero copy short.
@@ -391,6 +408,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str,
             elif s.get("role") == "chart" and s.get("chart"):
                 path = out / f"{idx:02d}_chart.svg"
                 make = lambda s=s: cr.render_chart(s["chart"])
+                _gated_write(client, path, out, make, lambda prior, fixes, make=make: make())
+            elif s.get("role") == "anatomy" and s.get("anatomy"):
+                path = out / f"{idx:02d}_anatomy.svg"
+                make = lambda s=s: ar.render_anatomy(s["anatomy"])
                 _gated_write(client, path, out, make, lambda prior, fixes, make=make: make())
             else:
                 layout = s.get("role") or "content"

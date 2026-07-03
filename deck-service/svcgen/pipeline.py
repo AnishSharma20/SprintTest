@@ -262,9 +262,43 @@ def _inject_footer(svg: str) -> str:
     """Stamp the canonical Superba+Aker footer logos deterministically (brand is guaranteed,
     not left to the model). Idempotent: strips any logo images first, then appends the fixed
     footer, picking white/green by whether the slide background is light."""
+    svg = _strip_stub_bars(svg)
     svg = re.sub(r'<image\b[^>]*(?:superba|aker)_\w+\.png[^>]*/>', '', svg)
     dark = "#E9F7F8" not in svg[:800] and "#e9f7f8" not in svg[:800]
     return svg.replace("</svg>", tf.footer(dark=dark) + "</svg>", 1) if "</svg>" in svg else svg
+
+
+def _strip_stub_bars(svg: str) -> str:
+    """Hard-guarantee the BANNED 'stubby accent bar / red left-tick' AI-tell cannot survive,
+    even if the model ignored the instruction. Drops small red <rect>s (a short bar/tick), while
+    keeping long full-width/height hairline rules and everything non-red."""
+    reds = ("e30917", "e50a1a", "bd393f", "f2242f")
+
+    def num(t, name):
+        m = re.search(rf'{name}="(-?[\d.]+)"', t)
+        return float(m.group(1)) if m else None
+
+    def drop_rect(m):
+        t = m.group(0)
+        f = re.search(r'fill="#?([0-9a-fA-F]{6})"', t)
+        w, h = num(t, "width"), num(t, "height")
+        if f and w is not None and h is not None and f.group(1).lower() in reds:
+            if min(w, h) <= 8 and max(w, h) <= 140:  # stubby bar/tick, not a full-width rule
+                return ""
+        return t
+
+    def drop_line(m):
+        t = m.group(0)
+        s = re.search(r'stroke="#?([0-9a-fA-F]{6})"', t)
+        x1, y1, x2, y2 = num(t, "x1"), num(t, "y1"), num(t, "x2"), num(t, "y2")
+        if s and s.group(1).lower() in reds and None not in (x1, y1, x2, y2):
+            if ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5 <= 140:  # short red tick/underline
+                return ""
+        return t
+
+    svg = re.sub(r'<rect\b[^>]*/>', drop_rect, svg)
+    svg = re.sub(r'<line\b[^>]*/>', drop_line, svg)
+    return svg
 
 
 def _gated_write(client, path, out, make_first, make_retry):

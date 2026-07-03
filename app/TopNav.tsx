@@ -6,7 +6,7 @@ import AkbmLogo from "./AkbmLogo";
 
 const TABS = [
   { href: "/", label: "Scientific Studies" },
-  { href: "/generator", label: "Deck Generator" },
+  { href: "/generator", label: "Content Generator" },
 ];
 
 export default function TopNav() {

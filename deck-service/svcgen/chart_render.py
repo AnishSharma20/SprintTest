@@ -37,6 +37,8 @@ def render_chart(data: dict) -> str:
     cats = data.get("categories", [])
     series = (data.get("series") or [])[:2]
     unit = data.get("unit", "")
+    if len(unit) > 5:  # 'unit' is for short units (%, kg, pts); a long axis description would
+        unit = ""      # collide with neighbouring bar labels — drop it from the bar tops
     callout = (data.get("callout") or [])[:3]
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '

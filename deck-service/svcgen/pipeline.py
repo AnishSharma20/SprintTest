@@ -85,7 +85,8 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
   * NO multi-card grids. Do NOT arrange content as multiple parallel rounded boxes (3-card row, 4-up KPI grid,
     2x2 matrix of cards, or a big card holding a stack of sub-cards). That uniform card-grid IS the "AI look".
   * ONE visual-weight tool per container: shadow OR border OR tint-fill OR gradient — never stack them on one
-    box. Most text needs NO box at all; naked text on the background reads cleaner and more premium.
+    box. Box-less text is fine ONLY when it is a structured, aligned block (a bullet or numbered list) — never
+    scattered loose paragraphs, and never bare text over a photo.
   * ONE focal point per slide: the single most important thing (a hero number, the chart, the claim) is clearly
     the largest / boldest; everything else is visibly secondary. Never 4-6 equal-weight boxes competing.
   * Restraint over density: whitespace is a design element, not a gap to fill. NEVER repeat the same fact twice
@@ -121,7 +122,20 @@ HUMAN / EDITORIAL DEVICES — use where they genuinely fit; these read as hand-m
 - Connector arrows / chevrons between two panels to show flow, cause->effect, or a relationship.
 - Circular icon badges beside list items (a small filled circle holding one simple glyph).
 - A right-hand 'Comments' / 'Notes' column separated from the main content by a thin vertical divider rule.
-- Full-width or full-height hairline rules to structure the page, the way a consultancy/report deck does."""
+- Full-width or full-height hairline rules to structure the page, the way a consultancy/report deck does.
+
+STRUCTURE & ALIGNMENT (AKBM house rules — STRICT, non-negotiable):
+- ALIGNMENT: every text block is LEFT-aligned or CENTRE-aligned to a shared grid — never ragged / free
+  placement. The ONLY text allowed to float on its own is the slide TITLE and one optional INGRESS/standfirst
+  line. Everything else must belong to an aligned structure.
+- STRUCTURE ALL OTHER TEXT as a bullet list, a numbered list, or a single callout box — NEVER loose paragraphs
+  scattered around the canvas, and NEVER bare text floated over a photo (there it must sit in a solid/tinted box).
+  * Bullet list (AKBM standard): each line led by a small turquoise (#A9DBD5) leaf/ellipse marker, left-aligned,
+    even line spacing.
+  * Numbered list: a small filled circle badge (Sea-Blue #175969) holding the number, a bold heading + one
+    subtext line, and an optional right-aligned value (e.g. 'p < 0.001') vertically centred on the row.
+  * Callout box: one rounded container for a single key figure (fine on its own — still never a grid of boxes).
+- COLOURS: use ONLY the exact brand-palette hexes listed in the house style — no other colours anywhere."""
 
 PLAN_SCHEMA = {
     "type": "object",

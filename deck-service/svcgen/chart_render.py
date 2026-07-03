@@ -33,6 +33,18 @@ def _esc(s: str) -> str:
     return html.escape(s or "")
 
 
+def _wrap(text: str, max_chars: int) -> list[str]:
+    words, lines, cur = (text or "").split(), [], ""
+    for w in words:
+        if cur and len(cur) + 1 + len(w) > max_chars:
+            lines.append(cur); cur = w
+        else:
+            cur = f"{cur} {w}".strip()
+    if cur:
+        lines.append(cur)
+    return lines
+
+
 def render_chart(data: dict) -> str:
     cats = data.get("categories", [])
     series = (data.get("series") or [])[:2]
@@ -43,10 +55,7 @@ def render_chart(data: dict) -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
-        '<defs><radialGradient id="seabg" cx="32%" cy="24%" r="95%">'
-        '<stop offset="0%" stop-color="#1f4b47"/><stop offset="55%" stop-color="#173636"/>'
-        '<stop offset="100%" stop-color="#0f2a2a"/></radialGradient></defs>',
-        f'<rect x="0" y="0" width="{W}" height="{H}" fill="url(#seabg)"/>',
+        f'<image xlink:href="bg_deep_sea.jpg" x="0" y="0" width="{W}" height="{H}" preserveAspectRatio="xMidYMid slice"/>',
     ]
     # ---- header ----
     if data.get("kicker"):
@@ -98,13 +107,21 @@ def render_chart(data: dict) -> str:
 
     # ---- numeric callout (right) ----
     cx = 780
+    cvx = cx + 30                    # callout text left edge
+    avail = 1216 - cvx              # width to the right margin — value must never overflow it
     parts.append(f'<line x1="{cx}" y1="240" x2="{cx}" y2="560" stroke="{SEA}" stroke-width="1"/>')
     cy = 300
     for item in callout:
-        parts.append(f'<text x="{cx + 30}" y="{cy}" font-family="Exo 2" font-size="52" font-style="italic" '
-                     f'font-weight="700" fill="{RED}">{_esc(item.get("value",""))}</text>')
-        parts.append(f'<text x="{cx + 32}" y="{cy + 34}" font-family="Manrope" font-size="17" '
-                     f'fill="{TEAL_L}">{_esc(item.get("label",""))}</text>')
+        val = _esc(item.get("value", ""))
+        # shrink the big value to fit (planner sometimes passes a phrase, not a short stat) so it never clips
+        vsize = min(52, int(avail / max(1, len(item.get("value", "")) * 0.56))) if item.get("value") else 52
+        vsize = max(22, vsize)
+        parts.append(f'<text x="{cvx}" y="{cy}" font-family="Exo 2" font-size="{vsize}" font-style="italic" '
+                     f'font-weight="700" fill="{RED}">{val}</text>')
+        # wrap the label under it (Manrope 17)
+        for j, ln in enumerate(_wrap(item.get("label", ""), 30)):
+            parts.append(f'<text x="{cvx + 2}" y="{cy + 34 + j * 22}" font-family="Manrope" font-size="17" '
+                         f'fill="{TEAL_L}">{_esc(ln)}</text>')
         cy += 110
 
     # ---- source + footer logos ----

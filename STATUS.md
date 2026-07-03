@@ -1,30 +1,43 @@
 # Current state — Superba Deck Generator
 
-_Last updated: 2026-07-02. Deployed at commit `7c890be` (repo `AnishSharma20/SprintTest`). Shipped today: async jobs + progress bar, page rhythm + design discipline, deep-sea gradients + krill glow, fixed footer logos (Aker padding trimmed), theme-driven photo library, and the **free-layout architecture** (model invents the layout per slide; brand enforced as a contract + deterministic footer injection)._
+_Last updated: 2026-07-03. Deployed at commit `7c890be`+ (repo `AnishSharma20/SprintTest`); the OFFICIAL-ASSET integration below is committed locally, push to redeploy. This session: wired in the **real AKBM brand pack** — official colour + white logos, real deep-sea gradient backgrounds, the real krill-swoosh graphic, a 12-photo official photo library, and a real softgel cutout on the anatomy slide. All the earlier pure-SVG approximations are now GONE._
 
-⚠️ **API credits ran out mid-session (2026-07-02).** The Anthropic key hit a 400 "credit balance too low" — the WEB tool uses the same key, so generation fails everywhere until Anish tops up. Not a code bug.
+## ✅ OFFICIAL AKBM ASSETS ARE IN (the long-standing "pending assets" item is DONE)
+The brand pack arrived and is organised in `~/Downloads/akbm_brand_assets/`. Everything below is now the
+**real** asset, not an approximation:
+- **Logos** (`svcgen/assets/`): `superba_white/green.png` + `aker_white/green.png` are the official
+  landscape logos (SUPERBA_KRILL WHITE/POS, Aker White/Black), trimmed to content bbox. white=dark slides,
+  "green"=colour variant for LIGHT slides (Superba full-colour POS + Aker black). Footer coords unchanged.
+- **Deep-sea gradient** (`bg_deep_sea.jpg`, from official `bg_green-1`): staged as a full-bleed `<image>`.
+  Replaces the old `_SEA_DEFS` SVG gradient in `template_fill.render_cover/render_section`, `chart_render`,
+  `anatomy_render`, `templates/ending.svg.tmpl`, and the body-slide HOUSE_STYLE instruction. Body slides get
+  it guaranteed by `_ensure_bg()` (strips any dark rect the model drew, injects the image) — dark is the
+  default; light (#E9F7F8) slides are detected by `_is_light_bg()` (first full-canvas rect fill, NOT any
+  #E9F7F8 occurrence — a dark slide's Polar-Blue title text must not flip it to light).
+- **Krill swoosh** (`krill_swoosh.png`, official `visual-element-krillArtboard-2`): a subtle red corner glow
+  bleeding off bottom-left, `opacity≈0.9`. Replaces the old `_KRILL` SVG ellipse in heroes + ending + the
+  body HOUSE_STYLE optional-accent instruction.
+- **Anatomy capsule** (`capsule_single.png`): the official "Single Capsule On White" softgel, background
+  removed via corner flood-fill (keeps the specular highlight, drops the grey reflection). Replaces the drawn
+  ellipse in `anatomy_render`.
 
-## ⚠️ DO THIS EACH SESSION — pending official AKBM brand assets
-**At the start of any deck-generator work, ASK Anish: "Har du fått brand-assetene fra Aker BioMarine ennå?"**
-He emailed Anca at AKBM (2026-07-02) requesting: health-benefit icons (SVG, white + coloured), logos (SVG),
-presentation photos (people/product/krill/sea), the **Krill Swarm** graphics + **deep-sea gradient** assets,
-and more example decks. When they arrive, wire them in and delete the approximations below.
+All converts native (0 skips verified) and assets dedupe in the pptx.
 
-**KNOWN WEAKNESS (must be fixed with the real assets):** the deep-sea gradient backgrounds (brand guide §4.1)
-and the red **"krill swarm"** glow (§4.2) are currently **pure-SVG approximations we authored** (`_SEA_DEFS`
-/`_KRILL` in `svcgen/template_fill.py`, mirrored into `chart_render.py`, `templates/ending.svg.tmpl`, and the
-`HOUSE_STYLE` body-slide instruction). They read on-brand and convert to native PowerPoint gradients, but are
-NOT the official motif and must be replaced with the real AKBM krill-swarm graphics/gradients when available.
-Also pending on assets: full 10-icon set (we ship only 5), exact brand hex (small 1–2 digit drift vs guide
-s.13–14), and the upright Exo 2 **H1** nuance (guide s.21 — we use italic everywhere).
+## Photo library — now 12 OFFICIAL photos
+Hero cover/section photos live in `svcgen/assets/`, declared in the `PHOTOS` catalog in `svcgen/pipeline.py`
+(mirrored in sandbox `gen_hybrid.py`). Planner picks one per hero by theme (enum + prompt list generated from
+the catalog). Current keys (all official, downscaled ≤1920): **capsules, capsules_jar, capsules_stone,
+ingredients, breakfast, oil_water, krill_macro, krill_swarm, deep_sea, iceberg, antarctic_ocean, science_team.**
+**To add one:** drop the file in `svcgen/assets/`, add ONE line to `PHOTOS` in BOTH files. Raw source library:
+`~/Downloads/akbm_brand_assets/02. Images/` (product/oil/krill-animal/Antarctica/Houston-lab). NOTE the pack
+has **no skin/beauty people shot** — the old `skin`/`lifestyle` keys (example-deck extractions) were dropped;
+if a skin-benefit deck needs one, AKBM must supply it.
 
-**Photo library (extensible — fill as AKBM sends more):** hero cover/section photos live in
-`svcgen/assets/` and are declared in the `PHOTOS` catalog in `svcgen/pipeline.py` (mirror in sandbox
-`gen_hybrid.py`). The planner picks one per hero by theme (its enum + prompt list are generated from the
-catalog). **To add an AKBM photo:** drop the file in `svcgen/assets/`, add ONE line to `PHOTOS`
-(`"key": {"file": "...", "desc": "..."}`) in BOTH files — nothing else. Current keys: capsules, capsules_duo,
-lifestyle, iceberg, deep_sea, skin, ingredients, krill_macro (curated from the example deck; more raw picks in
-`~/Downloads/akbm_extracted_photos/`).
+## Still pending on assets (minor)
+Full 10 benefit-icon set (we ship 5: heart/joint/liver/muscle/skin — the pack's icon set wasn't mined this
+session; `02.05. Health Benefits/Whole Body Benefits.png` is a composite diagram, not individual icons), exact
+brand hex (1–2 digit drift vs guide s.13–14, e.g. Deep Sea Green #173636 not #163536), and upright Exo 2 **H1**
+(guide s.21 — we use italic everywhere).
 
 ## 1. Goal
 Tab 2 of the Superba/AKBM tool turns a science summary (`.docx`/`.txt`/`.md`) into an

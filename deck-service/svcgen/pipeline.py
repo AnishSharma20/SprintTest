@@ -39,16 +39,20 @@ HERO_FIELDS = {"cover": ["TITLE", "SUBTITLE"], "section": ["KICKER", "SECTION_TI
 # photos, drop the file in assets/ and add one line here — the planner's photo enum AND
 # its prompt list are both generated from this dict, so nothing else needs editing.
 PHOTOS = {
-    "capsules":     {"file": "photo_capsules.jpg",      "desc": "red krill-oil softgel capsules scattered (product hero)"},
-    "capsules_duo": {"file": "capsules_two_clean.png",  "desc": "two clean red softgels on white (crisp product close-up)"},
-    "lifestyle":    {"file": "photo_lifestyle.jpg",     "desc": "active woman outdoors checking her watch (everyday wellness, heart)"},
-    "iceberg":      {"file": "iceberg_antarctic.jpeg",  "desc": "Antarctic iceberg over cold ocean (krill origin, sustainability, deep sea)"},
-    "deep_sea":     {"file": "deep_sea_light_rays.png", "desc": "underwater deep-sea light rays (origin, science, calm)"},
-    "skin":         {"file": "skin_woman_face.jpeg",    "desc": "woman with glowing skin touching her face (skin / beauty benefit)"},
-    "ingredients":  {"file": "ingredients_flatlay.png", "desc": "natural ingredients flat-lay: citrus, herbs, oil (natural, clean label)"},
-    "krill_macro":  {"file": "krill_macro_teal.png",    "desc": "a single krill macro on teal water (nature, science)"},
+    "capsules":        {"file": "capsules.jpg",        "desc": "red krill-oil softgel capsules scattered on white (clean product hero)"},
+    "capsules_jar":    {"file": "capsules_jar.jpg",    "desc": "krill-oil softgels in a glass jar, warm tones (premium product close-up)"},
+    "capsules_stone":  {"file": "capsules_stone.jpg",  "desc": "krill-oil capsules on dark slate stone (dramatic product on a dark surface)"},
+    "ingredients":     {"file": "ingredients.jpg",     "desc": "capsules with avocado, blueberries and walnuts on wood (natural, clean-label, omega-3 foods)"},
+    "breakfast":       {"file": "breakfast.jpg",       "desc": "a healthy breakfast bowl with berries and a daily capsule dose (everyday wellness, routine)"},
+    "oil_water":       {"file": "oil_water.jpg",       "desc": "red krill oil dispersing in water (bioavailability, absorption, science)"},
+    "krill_macro":     {"file": "krill_macro.jpg",     "desc": "a translucent Antarctic krill in close-up (the raw ingredient, nature, science)"},
+    "krill_swarm":     {"file": "krill_swarm.jpg",     "desc": "a red swarm of krill in the ocean (abundance, sustainable sourcing, origin)"},
+    "deep_sea":        {"file": "deep_sea.jpg",        "desc": "a single krill in deep blue water with light rays (deep sea, origin, calm)"},
+    "iceberg":         {"file": "iceberg.jpg",         "desc": "an Antarctic iceberg over a cold grey ocean (pristine origin, sustainability, moody)"},
+    "antarctic_ocean": {"file": "antarctic_ocean.jpg", "desc": "a bright Antarctic icy ocean with snow-capped mountains (pristine, pure, fresh)"},
+    "science_team":    {"file": "science_team.jpg",    "desc": "two scientists in hard hats at the krill-oil plant (research, quality, credibility)"},
 }
-PHOTO_DEFAULT = {"cover": "capsules", "section": "lifestyle"}
+PHOTO_DEFAULT = {"cover": "capsules", "section": "iceberg"}
 _PHOTO_LIST = "\n".join(f"    {k} — {v['desc']}" for k, v in PHOTOS.items())
 
 
@@ -71,11 +75,13 @@ HOUSE_STYLE = """SUPERBA HOUSE STYLE (match the deck's frozen hero slides exactl
 - Palette ONLY: Deep Sea Green #163536 (primary dark bg), Polar Blue #E9F7F8 (light bg), Sea Blue #175969,
   Regal Blue #003462, Ruby Red #E30917 (thin accent bars / keywords), Alt Red #BD393F (only red as a solid
   fill), Turquoise #60A09B / #A9DBD5, Peach #FFD1B0.
-- Background (brand "deep sea gradient", §4.1) — on a DARK slide do NOT use a flat fill. Begin the SVG with
-  <defs><radialGradient id="seabg" cx="32%" cy="24%" r="95%"><stop offset="0%" stop-color="#1f4b47"/><stop offset="55%" stop-color="#173636"/><stop offset="100%" stop-color="#0f2a2a"/></radialGradient></defs>
-  and fill the full-canvas background rect with fill="url(#seabg)". LIGHT slides use flat #E9F7F8. Optionally add ONE
-  subtle red "krill swarm" glow in an EMPTY corner: an <ellipse> with a red radial gradient fading to stop-opacity 0
-  (soft, atmospheric, never over text or a number).
+- Background (brand "deep sea gradient", §4.1) — on a DARK slide the FIRST element after <svg> MUST be the official
+  deep-sea gradient image, exactly:
+  <image xlink:href="bg_deep_sea.jpg" x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice"/>
+  Do NOT draw your own gradient <defs> or a flat dark <rect> behind it. LIGHT slides instead use a flat #E9F7F8
+  full-canvas rect (no image). Optionally add ONE subtle "krill swarm" accent in an EMPTY corner via the official
+  graphic: <image xlink:href="krill_swoosh.png" x="-60" y="540" width="420" height="392" preserveAspectRatio="xMidYMid meet" opacity="0.85"/>
+  (soft, atmospheric, never over text or a number; leave it out entirely if there is no empty corner).
 - Fonts: font-family="Exo 2" italic bold for titles + big numbers; font-family="Manrope" for body/labels.
 - Titles are italic Exo 2. Do NOT underline a title (or a word) with a short accent bar — see BANNED in the
   visual system. Benefit areas use a hexagon icon. Alternate dark/light backgrounds across the deck for rhythm.
@@ -208,8 +214,12 @@ Emit ONLY via the emit_plan tool. The deck is built two ways and you drive both:
   THIS content: a chronological set of studies wants a timeline; a treatment-vs-control result wants a
   comparison; an honest null finding wants a single-stat callout. Give each body slide a short `role` slug (your
   layout's name) + a rich `brief` stating the exact claims/numbers AND the visualization you intend.
-- OPTIONAL deterministic chart: only if a clean clustered-column bar chart is genuinely the best fit, set
-  role='chart' and fill the `chart` object with exact values. Otherwise design the figure yourself in the brief.
+- OPTIONAL deterministic chart: use role='chart' ONLY for a genuine multi-bar comparison with real positive
+  magnitudes — e.g. baseline vs after, or treatment vs placebo where each has a plottable value (like an
+  Omega-3 Index of 4.9 vs 8.1). Do NOT use a chart for a single change figure (e.g. "-10.2%"), a percentage
+  reduction, or a null result — those have no bars to draw and render empty; design a hero-stat / callout body
+  slide for them instead. Chart `callout` values must be SHORT stats (e.g. "+3.2 pts", "8.1%"), never a phrase
+  or sentence. Otherwise design the figure yourself in the brief.
 - OPTIONAL ingredient-overview slide: for a product/composition overview, set role='anatomy' and fill the
   `anatomy` object (central capsule + up to 4 nutrient callouts). This is AKBM's standard, rendered
   deterministically — use it at most once, only when a composition overview genuinely fits the deck.
@@ -290,13 +300,61 @@ def _exec_body(client, summary, layout, brief, benefit, rhythm="dense", *, prior
 
 
 def _inject_footer(svg: str) -> str:
-    """Stamp the canonical Superba+Aker footer logos deterministically (brand is guaranteed,
-    not left to the model). Idempotent: strips any logo images first, then appends the fixed
-    footer, picking white/green by whether the slide background is light."""
+    """Stamp brand guarantees on a model-generated body slide (brand is not left to the model):
+    strip the banned stubby bars, strip any hand-drawn logos, guarantee the official deep-sea
+    gradient background on dark slides, then append the fixed Superba+Aker footer (white on
+    dark, colour on light). Idempotent."""
     svg = _strip_stub_bars(svg)
     svg = re.sub(r'<image\b[^>]*(?:superba|aker)_\w+\.png[^>]*/>', '', svg)
-    dark = "#E9F7F8" not in svg[:800] and "#e9f7f8" not in svg[:800]
+    dark = not _is_light_bg(svg)
+    svg = _ensure_bg(svg, dark)
     return svg.replace("</svg>", tf.footer(dark=dark) + "</svg>", 1) if "</svg>" in svg else svg
+
+
+_LIGHT_BG = {"#e9f7f8", "#e8f7f7", "#ffffff", "#fff", "white", "#ffd1b0"}
+
+
+def _is_light_bg(svg: str) -> bool:
+    """True only when the slide's BACKGROUND is a light field. Dark is the default. We look at
+    the first full-canvas rect's fill (not any occurrence of a light hex — a dark slide uses
+    Polar-Blue #E9F7F8 for its title text, which must NOT flip the slide to 'light')."""
+    if "bg_deep_sea" in svg:
+        return False
+    for m in re.finditer(r'<rect\b[^>]*/>', svg):
+        t = m.group(0)
+        w = re.search(r'width="(\d+)"', t)
+        h = re.search(r'height="(\d+)"', t)
+        fl = re.search(r'fill="([^"]+)"', t)
+        if w and h and fl and int(w.group(1)) >= 1200 and int(h.group(1)) >= 680:
+            return fl.group(1).strip().lower() in _LIGHT_BG
+    return False
+
+
+def _ensure_bg(svg: str, dark: bool) -> str:
+    """Guarantee a dark body slide carries the official deep-sea gradient image and no
+    competing full-canvas background. Light (Polar-Blue) slides are left untouched.
+
+    Strips any full-canvas dark rect / url(#seabg) rect the model drew, then injects the
+    gradient image as the first child so it sits behind everything."""
+    if not dark:
+        return svg
+    dark_fills = {"url(#seabg)", "#163536", "#173636", "#0f2a2a", "#1f4b47", "#163636"}
+
+    def drop(m):
+        t = m.group(0)
+        w = re.search(r'width="(\d+)"', t)
+        h = re.search(r'height="(\d+)"', t)
+        fl = re.search(r'fill="([^"]+)"', t)
+        if w and h and fl and int(w.group(1)) >= 1200 and int(h.group(1)) >= 680 \
+                and fl.group(1).lower() in dark_fills:
+            return ""
+        return t
+
+    svg = re.sub(r'<rect\b[^>]*/>', drop, svg)
+    if "bg_deep_sea" not in svg:
+        svg = re.sub(r'(<svg\b[^>]*>)', lambda m: m.group(1) + "\n" + tf.bg_image().rstrip("\n"),
+                     svg, count=1)
+    return svg
 
 
 def _strip_stub_bars(svg: str) -> str:

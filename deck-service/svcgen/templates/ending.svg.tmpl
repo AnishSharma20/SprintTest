@@ -1,23 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="720" viewBox="0 0 1280 720">
-  <defs>
-    <radialGradient id="seabg" cx="32%" cy="24%" r="95%">
-      <stop offset="0%" stop-color="#1f4b47"/>
-      <stop offset="55%" stop-color="#173636"/>
-      <stop offset="100%" stop-color="#0f2a2a"/>
-    </radialGradient>
-    <radialGradient id="glow2" cx="0.7" cy="0.4" r="0.6">
-      <stop offset="0%" stop-color="#175969" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#163536" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="krill" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#F2242F" stop-opacity="0.6"/>
-      <stop offset="55%" stop-color="#E30917" stop-opacity="0.18"/>
-      <stop offset="100%" stop-color="#E30917" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect x="0" y="0" width="1280" height="720" fill="url(#seabg)"/>
-  <ellipse cx="120" cy="712" rx="320" ry="70" fill="url(#krill)" transform="rotate(-16 120 712)"/>
-  <ellipse cx="900" cy="290" rx="560" ry="380" fill="url(#glow2)"/>
+  <image xlink:href="bg_deep_sea.jpg" x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice"/>
+  <image xlink:href="krill_swoosh.png" x="-60" y="540" width="420" height="392" preserveAspectRatio="xMidYMid meet" opacity="0.9"/>
   <text x="64" y="200" font-family="Manrope" font-size="16" font-weight="700" fill="#E30917" letter-spacing="3">LET'S TALK</text>
   <text x="64" y="330" font-family="Exo 2" font-size="{{CTA_TITLE_SIZE}}" font-style="italic" font-weight="700" fill="#E9F7F8">{{CTA_TITLE}}</text>
   <text x="64" y="400" font-family="Manrope" font-size="{{CONTACT_SIZE}}" fill="#A9DBD5">{{CONTACT}}</text>

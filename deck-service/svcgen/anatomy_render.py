@@ -60,18 +60,7 @@ def render_anatomy(data: dict) -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
-        '<defs>'
-        '<radialGradient id="seabg" cx="50%" cy="30%" r="95%">'
-        '<stop offset="0%" stop-color="#1f4b47"/><stop offset="55%" stop-color="#173636"/>'
-        '<stop offset="100%" stop-color="#0f2a2a"/></radialGradient>'
-        '<radialGradient id="cap" cx="38%" cy="30%" r="75%">'
-        '<stop offset="0%" stop-color="#FF5A52"/><stop offset="55%" stop-color="#E30917"/>'
-        '<stop offset="100%" stop-color="#8f0f13"/></radialGradient>'
-        '<radialGradient id="caphi" cx="50%" cy="50%" r="50%">'
-        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>'
-        '<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></radialGradient>'
-        '</defs>',
-        f'<rect x="0" y="0" width="{W}" height="{H}" fill="url(#seabg)"/>',
+        f'<image xlink:href="bg_deep_sea.jpg" x="0" y="0" width="{W}" height="{H}" preserveAspectRatio="xMidYMid slice"/>',
     ]
     # title (centred, up to 2 lines) + notes
     parts.append(_lines(data.get("title", ""), cx, 92, 33, 42, anchor="middle", fill=POLAR,
@@ -87,9 +76,10 @@ def render_anatomy(data: dict) -> str:
         _, _, _, (sx, sy), (ex, ey) = slots[i]
         parts.append(f'<line x1="{sx}" y1="{sy}" x2="{ex}" y2="{ey}" stroke="{TEAL_L}" '
                      f'stroke-width="1" opacity="0.45"/>')
-    # capsule
-    parts.append(f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="url(#cap)"/>')
-    parts.append(f'<ellipse cx="{cx-34}" cy="{cy-26}" rx="46" ry="24" fill="url(#caphi)"/>')
+    # capsule — real AKBM softgel photo (background cut out to transparent)
+    cw, ch = 250, 174
+    parts.append(f'<image xlink:href="capsule_single.png" x="{cx - cw // 2}" y="{cy - ch // 2}" '
+                 f'width="{cw}" height="{ch}" preserveAspectRatio="xMidYMid meet"/>')
     # nutrient callouts
     for i, n in enumerate(nutrients):
         hx, hy, anchor, _, _ = slots[i]

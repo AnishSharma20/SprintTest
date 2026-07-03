@@ -52,7 +52,7 @@ def render_chart(data: dict) -> str:
                      f'fill="{RED}" letter-spacing="2">{_esc(data["kicker"])}</text>')
     parts.append(f'<text x="64" y="140" font-family="Exo 2" font-size="34" font-style="italic" '
                  f'font-weight="700" fill="{POLAR}">{_esc(data.get("title",""))}</text>')
-    parts.append(f'<rect x="66" y="158" width="70" height="6" fill="{RED}"/>')
+    parts.append(f'<line x1="64" y1="162" x2="1216" y2="162" stroke="{SEA}" stroke-width="1"/>')
 
     # ---- plot area (left) ----
     PX0, PX1 = 120, 700          # x range of bars

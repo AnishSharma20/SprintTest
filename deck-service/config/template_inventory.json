@@ -1,0 +1,6126 @@
+{
+  "template_path": "C:\\Users\\AnishDeepSharma\\Documents\\min-forste-app\\deck-service\\brand_assets\\05. Superba Brand Identity\\Superba refresh power point template.pptx",
+  "slide_size_emu": {
+    "width": 12192000,
+    "height": 6858000
+  },
+  "slide_size_in": {
+    "width": 13.333,
+    "height": 7.5
+  },
+  "themes": [
+    {
+      "part": "ppt/theme/theme1.xml",
+      "scheme": null,
+      "fonts": {
+        "major": "Exo 2 italic",
+        "minor": "Manrope"
+      },
+      "colors": {
+        "dk1": "#163536",
+        "lt1": "#E9F7F8",
+        "dk2": "#185968",
+        "lt2": "#A9DBD5",
+        "accent1": "#E50A1A",
+        "accent2": "#60A09B",
+        "accent3": "#BC393F",
+        "accent4": "#FFFFFF",
+        "accent5": "#003462",
+        "accent6": "#000000",
+        "hlink": "#60A09B",
+        "folHlink": "#A9DBD5"
+      }
+    },
+    {
+      "part": "ppt/theme/theme2.xml",
+      "scheme": null,
+      "fonts": {
+        "major": "Exo 2 italic",
+        "minor": "Manrope"
+      },
+      "colors": {
+        "dk1": "#163536",
+        "lt1": "#E9F7F8",
+        "dk2": "#185968",
+        "lt2": "#A9DBD5",
+        "accent1": "#E50A1A",
+        "accent2": "#60A09B",
+        "accent3": "#BC393F",
+        "accent4": "#FFFFFF",
+        "accent5": "#003462",
+        "accent6": "#000000",
+        "hlink": "#60A09B",
+        "folHlink": "#A9DBD5"
+      }
+    },
+    {
+      "part": "ppt/theme/theme3.xml",
+      "scheme": null,
+      "fonts": {
+        "major": "Calibri Light",
+        "minor": "Calibri"
+      },
+      "colors": {
+        "dk1": "#000000",
+        "lt1": "#FFFFFF",
+        "dk2": "#44546A",
+        "lt2": "#E7E6E6",
+        "accent1": "#4472C4",
+        "accent2": "#ED7D31",
+        "accent3": "#A5A5A5",
+        "accent4": "#FFC000",
+        "accent5": "#5B9BD5",
+        "accent6": "#70AD47",
+        "hlink": "#0563C1",
+        "folHlink": "#954F72"
+      }
+    },
+    {
+      "part": "ppt/theme/theme4.xml",
+      "scheme": null,
+      "fonts": {
+        "major": "Calibri Light",
+        "minor": "Calibri"
+      },
+      "colors": {
+        "dk1": "#000000",
+        "lt1": "#FFFFFF",
+        "dk2": "#44546A",
+        "lt2": "#E7E6E6",
+        "accent1": "#4472C4",
+        "accent2": "#ED7D31",
+        "accent3": "#A5A5A5",
+        "accent4": "#FFC000",
+        "accent5": "#5B9BD5",
+        "accent6": "#70AD47",
+        "hlink": "#0563C1",
+        "folHlink": "#954F72"
+      }
+    }
+  ],
+  "superba_master_index": 0,
+  "masters": [
+    {
+      "index": 0,
+      "name": "",
+      "major_font": "Exo 2 italic",
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title Placeholder 1",
+          "left_emu": 457200,
+          "top_emu": 680881,
+          "width_emu": 10515600,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.745,
+          "width_in": 11.5,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "BODY",
+          "name": "Text Placeholder 2",
+          "left_emu": 457200,
+          "top_emu": 1595450,
+          "width_emu": 10515600,
+          "height_emu": 3529000,
+          "left_in": 0.5,
+          "top_in": 1.745,
+          "width_in": 11.5,
+          "height_in": 3.859,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 2,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 3,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 853440,
+          "top_emu": 6318697,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.933,
+          "top_in": 6.91,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 4,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "",
+      "major_font": "Exo 2 italic",
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title Placeholder 1",
+          "left_emu": 457200,
+          "top_emu": 680881,
+          "width_emu": 10515600,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.745,
+          "width_in": 11.5,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "BODY",
+          "name": "Text Placeholder 2",
+          "left_emu": 457200,
+          "top_emu": 1595450,
+          "width_emu": 10515600,
+          "height_emu": 3529000,
+          "left_in": 0.5,
+          "top_in": 1.745,
+          "width_in": 11.5,
+          "height_in": 3.859,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 2,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 3,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 853440,
+          "top_emu": 6318697,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.933,
+          "top_in": 6.91,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 4,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "Logo Slide 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 446516,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.488,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 446516,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.488,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 3",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 443625,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.485,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 4",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447028,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.489,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 5",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 446516,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.488,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Slide 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "CENTER_TITLE",
+          "name": "Title 1",
+          "left_emu": 1271677,
+          "top_emu": 3313478,
+          "width_emu": 9929723,
+          "height_emu": 923330,
+          "left_in": 1.391,
+          "top_in": 3.624,
+          "width_in": 10.859,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "SUBTITLE",
+          "name": "Subtitle 2",
+          "left_emu": 5762624,
+          "top_emu": 4236808,
+          "width_emu": 5430327,
+          "height_emu": 313932,
+          "left_in": 6.302,
+          "top_in": 4.633,
+          "width_in": 5.939,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447675,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.49,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Slide 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "CENTER_TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 2025824,
+          "width_emu": 5400711,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 2.215,
+          "width_in": 5.906,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "SUBTITLE",
+          "name": "Subtitle 2",
+          "left_emu": 884508,
+          "top_emu": 5497399,
+          "width_emu": 5430327,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 6.012,
+          "width_in": 5.939,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447028,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.489,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 678180,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.742,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8458199,
+          "top_emu": 216029,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.25,
+          "top_in": 0.236,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 10",
+          "left_emu": 884508,
+          "top_emu": 2047133,
+          "width_emu": 3159173,
+          "height_emu": 2999356,
+          "left_in": 0.967,
+          "top_in": 2.239,
+          "width_in": 3.455,
+          "height_in": 3.28,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Agenda 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 684566,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.749,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 15,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4732203,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.175,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6656050,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.279,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4754645,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.2,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6678492,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.304,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 684566,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.749,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 15,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4732203,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.175,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6656050,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.279,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4754645,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.2,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6678492,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.304,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Section Header 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 3568872,
+          "width_emu": 6678341,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 3.903,
+          "width_in": 7.304,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 14",
+          "left_emu": 781050,
+          "top_emu": 1931278,
+          "width_emu": 2914650,
+          "height_emu": 1352550,
+          "left_in": 0.854,
+          "top_in": 2.112,
+          "width_in": 3.188,
+          "height_in": 1.479,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Section Header 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 3568872,
+          "width_emu": 6678341,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 3.903,
+          "width_in": 7.304,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 14",
+          "left_emu": 781050,
+          "top_emu": 1931278,
+          "width_emu": 2914650,
+          "height_emu": 1352550,
+          "left_in": 0.854,
+          "top_in": 2.112,
+          "width_in": 3.188,
+          "height_in": 1.479,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Two Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 2431144,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 2.659,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6374499,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 6.971,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3124854,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 3.417,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 2431144,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 2.659,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6374496,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 6.971,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 7068208,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 7.73,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Two Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 2431144,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 2.659,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6374499,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 6.971,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3124854,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 3.417,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 2431144,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 2.659,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6374496,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 6.971,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 7068208,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 7.73,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Three Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457201,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 4400556,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 4.813,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 1144097,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 1.251,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457201,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 4400553,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 4.813,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 5087451,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 5.564,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 8343904,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 9.125,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 8343901,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 9.125,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9030799,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 9.876,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Three Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457201,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 4400556,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 4.813,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 1144097,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 1.251,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457201,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 4400553,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 4.813,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 5087451,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 5.564,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 8343904,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 9.125,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 8343901,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 9.125,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9030799,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 9.876,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Four Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457202,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 967629,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 1.058,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3817021,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 3361341,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 3.676,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3871768,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 4.234,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 3361341,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 3.676,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6265480,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 6.852,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 6775907,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 7.41,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 28,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6265480,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 6.852,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 29,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 9169619,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 10.028,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 30,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9680046,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 10.586,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 32,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 9169619,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 10.028,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Four Columns",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457202,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 967629,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 1.058,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3817021,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 3361341,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 3.676,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3871768,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 4.234,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 3361341,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 3.676,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6265480,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 6.852,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 6775907,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 7.41,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 28,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6265480,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 6.852,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 29,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 9169619,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 10.028,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 30,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9680046,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 10.586,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 32,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 9169619,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 10.028,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Highlight Text",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 3208019,
+          "top_emu": 2860215,
+          "width_emu": 8063865,
+          "height_emu": 2773669,
+          "left_in": 3.508,
+          "top_in": 3.128,
+          "width_in": 8.819,
+          "height_in": 3.033,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 457201,
+          "top_emu": 3429000,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 0.5,
+          "top_in": 3.75,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3855639,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.217,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 18",
+          "left_emu": 4479923,
+          "top_emu": 762796,
+          "width_emu": 7712075,
+          "height_emu": 5418929,
+          "left_in": 4.899,
+          "top_in": 0.834,
+          "width_in": 8.434,
+          "height_in": 5.926,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 3802379,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 4.158,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 18",
+          "left_emu": 4479923,
+          "top_emu": 762796,
+          "width_emu": 7712075,
+          "height_emu": 5418929,
+          "left_in": 4.899,
+          "top_in": 0.834,
+          "width_in": 8.434,
+          "height_in": 5.926,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 3802379,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 4.158,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 457201,
+          "top_emu": 3429000,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 0.5,
+          "top_in": 3.75,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3855639,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.217,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 3",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 3075859,
+          "width_emu": 3632199,
+          "height_emu": 2143841,
+          "left_in": 0.5,
+          "top_in": 3.364,
+          "width_in": 3.972,
+          "height_in": 2.345,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 29",
+          "left_emu": 4343678,
+          "top_emu": 0,
+          "width_emu": 7846497,
+          "height_emu": 6858000,
+          "left_in": 4.75,
+          "top_in": 0.0,
+          "width_in": 8.581,
+          "height_in": 7.5,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 4",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 1488359,
+          "width_emu": 3632199,
+          "height_emu": 2143841,
+          "left_in": 0.5,
+          "top_in": 1.628,
+          "width_in": 3.972,
+          "height_in": 2.345,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 29",
+          "left_emu": 4343678,
+          "top_emu": 0,
+          "width_emu": 7846497,
+          "height_emu": 6858000,
+          "left_in": 4.75,
+          "top_in": 0.0,
+          "width_in": 8.581,
+          "height_in": 7.5,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Picture With Title 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 8",
+          "left_emu": 457200,
+          "top_emu": 1463040,
+          "width_emu": 11287125,
+          "height_emu": 4713051,
+          "left_in": 0.5,
+          "top_in": 1.6,
+          "width_in": 12.344,
+          "height_in": 5.154,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Only 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Title Only 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text Slide 1",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "OBJECT",
+          "name": "Content Placeholder 7",
+          "left_emu": 457200,
+          "top_emu": 1472823,
+          "width_emu": 11303000,
+          "height_emu": 4718050,
+          "left_in": 0.5,
+          "top_in": 1.611,
+          "width_in": 12.361,
+          "height_in": 5.16,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text slide 2",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "OBJECT",
+          "name": "Content Placeholder 7",
+          "left_emu": 457200,
+          "top_emu": 1472823,
+          "width_emu": 11303000,
+          "height_emu": 4718050,
+          "left_in": 0.5,
+          "top_in": 1.611,
+          "width_in": 12.361,
+          "height_in": 5.16,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Blank",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 1",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 3",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "1_Blank",
+      "master_index": 0,
+      "is_superba_master": true,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 1",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 3",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6310310,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 446516,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.488,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 443625,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.485,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 3",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447028,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.489,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Logo Slide 4",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 446516,
+          "top_emu": 215077,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.488,
+          "top_in": 0.235,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Slide 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "CENTER_TITLE",
+          "name": "Title 1",
+          "left_emu": 1271677,
+          "top_emu": 3313478,
+          "width_emu": 9929723,
+          "height_emu": 923330,
+          "left_in": 1.391,
+          "top_in": 3.624,
+          "width_in": 10.859,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "SUBTITLE",
+          "name": "Subtitle 2",
+          "left_emu": 5762624,
+          "top_emu": 4236808,
+          "width_emu": 5430327,
+          "height_emu": 313932,
+          "left_in": 6.302,
+          "top_in": 4.633,
+          "width_in": 5.939,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447675,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.49,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Slide 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "CENTER_TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 2025824,
+          "width_emu": 5400711,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 2.215,
+          "width_in": 5.906,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 1,
+          "type": "SUBTITLE",
+          "name": "Subtitle 2",
+          "left_emu": 884508,
+          "top_emu": 5497399,
+          "width_emu": 5430327,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 6.012,
+          "width_in": 5.939,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 447028,
+          "top_emu": 6310312,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 0.489,
+          "top_in": 6.901,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 678180,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.742,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8458199,
+          "top_emu": 216029,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.25,
+          "top_in": 0.236,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 10",
+          "left_emu": 884508,
+          "top_emu": 2047133,
+          "width_emu": 3159173,
+          "height_emu": 2999356,
+          "left_in": 0.967,
+          "top_in": 2.239,
+          "width_in": 3.455,
+          "height_in": 3.28,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 678180,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.742,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8458199,
+          "top_emu": 216029,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.25,
+          "top_in": 0.236,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 10",
+          "left_emu": 884508,
+          "top_emu": 2047133,
+          "width_emu": 3159173,
+          "height_emu": 2999356,
+          "left_in": 0.967,
+          "top_in": 2.239,
+          "width_in": 3.455,
+          "height_in": 3.28,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 3",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 684566,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.749,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 15,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4732203,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.175,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6656050,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.279,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4754645,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.2,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6678492,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.304,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Agenda 4",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884509,
+          "top_emu": 684566,
+          "width_emu": 3159172,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 0.749,
+          "width_in": 3.455,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 15,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4732203,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.175,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6656050,
+          "top_emu": 3447996,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.279,
+          "top_in": 3.771,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 884509,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 0.967,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 2808356,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 3.071,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 4754645,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 5.2,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 20,
+          "type": "BODY",
+          "name": "Text Placeholder 11",
+          "left_emu": 6678492,
+          "top_emu": 4936172,
+          "width_emu": 1923847,
+          "height_emu": 313932,
+          "left_in": 7.304,
+          "top_in": 5.398,
+          "width_in": 2.104,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Section Header 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 3568872,
+          "width_emu": 6678341,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 3.903,
+          "width_in": 7.304,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 14",
+          "left_emu": 781050,
+          "top_emu": 1931278,
+          "width_emu": 2914650,
+          "height_emu": 1352550,
+          "left_in": 0.854,
+          "top_in": 2.112,
+          "width_in": 3.188,
+          "height_in": 1.479,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Section Header 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 3568872,
+          "width_emu": 6678341,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 3.903,
+          "width_in": 7.304,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 14",
+          "left_emu": 781050,
+          "top_emu": 1931278,
+          "width_emu": 2914650,
+          "height_emu": 1352550,
+          "left_in": 0.854,
+          "top_in": 2.112,
+          "width_in": 3.188,
+          "height_in": 1.479,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Section Header 3",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 884508,
+          "top_emu": 3568872,
+          "width_emu": 6678341,
+          "height_emu": 923330,
+          "left_in": 0.967,
+          "top_in": 3.903,
+          "width_in": 7.304,
+          "height_in": 1.01,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "BODY",
+          "name": "Text Placeholder 14",
+          "left_emu": 781050,
+          "top_emu": 1931278,
+          "width_emu": 2914650,
+          "height_emu": 1352550,
+          "left_in": 0.854,
+          "top_in": 2.112,
+          "width_in": 3.188,
+          "height_in": 1.479,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Two Columns",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 2431144,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 2.659,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6374499,
+          "top_emu": 1940721,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 6.971,
+          "top_in": 2.122,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3124854,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 3.417,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 2431144,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 2.659,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6374496,
+          "top_emu": 3875079,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 6.971,
+          "top_in": 4.238,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 7068208,
+          "top_emu": 3448440,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 7.73,
+          "top_in": 3.771,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Three Columns",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457201,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 4400556,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 4.813,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 1144097,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 1.251,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457201,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 19,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 4400553,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 4.813,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 5087451,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 5.564,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 8343904,
+          "top_emu": 1882663,
+          "width_emu": 3328994,
+          "height_emu": 1184274,
+          "left_in": 9.125,
+          "top_in": 2.059,
+          "width_in": 3.641,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 8343901,
+          "top_emu": 3817021,
+          "width_emu": 3328987,
+          "height_emu": 1853457,
+          "left_in": 9.125,
+          "top_in": 4.174,
+          "width_in": 3.641,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9030799,
+          "top_emu": 3390382,
+          "width_emu": 2334433,
+          "height_emu": 313932,
+          "left_in": 9.876,
+          "top_in": 3.708,
+          "width_in": 2.553,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Four Columns",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 20,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 457202,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 0.5,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 953817,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 1.043,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 967629,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 1.058,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3817021,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 21,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 3361341,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 3.676,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 22,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 3871768,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 4.234,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 24,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 3361341,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 3.676,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 25,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 6265480,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 6.852,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 26,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 6775907,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 7.41,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 28,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 6265480,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 6.852,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 29,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 26",
+          "left_emu": 9169619,
+          "top_emu": 1882663,
+          "width_emu": 2636518,
+          "height_emu": 1184274,
+          "left_in": 10.028,
+          "top_in": 2.059,
+          "width_in": 2.883,
+          "height_in": 1.295,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 30,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 9680046,
+          "top_emu": 3390382,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 10.586,
+          "top_in": 3.708,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 32,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 9169619,
+          "top_emu": 3817021,
+          "width_emu": 2636518,
+          "height_emu": 1853457,
+          "left_in": 10.028,
+          "top_in": 4.174,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Highlight Text",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 3208019,
+          "top_emu": 2860215,
+          "width_emu": 8063865,
+          "height_emu": 2773669,
+          "left_in": 3.508,
+          "top_in": 3.128,
+          "width_in": 8.819,
+          "height_in": 3.033,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 457201,
+          "top_emu": 3429000,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 0.5,
+          "top_in": 3.75,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3855639,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.217,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 18",
+          "left_emu": 4479923,
+          "top_emu": 762796,
+          "width_emu": 7712075,
+          "height_emu": 5418929,
+          "left_in": 4.899,
+          "top_in": 0.834,
+          "width_in": 8.434,
+          "height_in": 5.926,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 3802379,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 4.158,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 18,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 18",
+          "left_emu": 4479923,
+          "top_emu": 762796,
+          "width_emu": 7712075,
+          "height_emu": 5418929,
+          "left_in": 4.899,
+          "top_in": 0.834,
+          "width_in": 8.434,
+          "height_in": 5.926,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 3802379,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 4.158,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "BODY",
+          "name": "Text Placeholder 16",
+          "left_emu": 457201,
+          "top_emu": 3429000,
+          "width_emu": 1959542,
+          "height_emu": 313932,
+          "left_in": 0.5,
+          "top_in": 3.75,
+          "width_in": 2.143,
+          "height_in": 0.343,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 16,
+          "type": "BODY",
+          "name": "Text Placeholder 19",
+          "left_emu": 457202,
+          "top_emu": 3855639,
+          "width_emu": 2636510,
+          "height_emu": 1853457,
+          "left_in": 0.5,
+          "top_in": 4.217,
+          "width_in": 2.883,
+          "height_in": 2.027,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 3",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 3075859,
+          "width_emu": 3632199,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 3.364,
+          "width_in": 3.972,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 29",
+          "left_emu": 4343678,
+          "top_emu": 0,
+          "width_emu": 7846497,
+          "height_emu": 6858000,
+          "left_in": 4.75,
+          "top_in": 0.0,
+          "width_in": 8.581,
+          "height_in": 7.5,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text With Picture 4",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 3",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 5",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 1488359,
+          "width_emu": 3632199,
+          "height_emu": 978729,
+          "left_in": 0.5,
+          "top_in": 1.628,
+          "width_in": 3.972,
+          "height_in": 1.07,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 17,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 29",
+          "left_emu": 4343678,
+          "top_emu": 0,
+          "width_emu": 7846497,
+          "height_emu": 6858000,
+          "left_in": 4.75,
+          "top_in": 0.0,
+          "width_in": 8.581,
+          "height_in": 7.5,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Picture With Title 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 13,
+          "type": "PICTURE",
+          "name": "Picture Placeholder 8",
+          "left_emu": 457200,
+          "top_emu": 1463040,
+          "width_emu": 11287125,
+          "height_emu": 4713051,
+          "left_in": 0.5,
+          "top_in": 1.6,
+          "width_in": 12.344,
+          "height_in": 5.154,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Title Only 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text Slide 1",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "OBJECT",
+          "name": "Content Placeholder 7",
+          "left_emu": 457200,
+          "top_emu": 1472823,
+          "width_emu": 11303000,
+          "height_emu": 4718050,
+          "left_in": 0.5,
+          "top_in": 1.611,
+          "width_in": 12.361,
+          "height_in": 5.16,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Text slide 2",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 2",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 4",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 0,
+          "type": "TITLE",
+          "name": "Title 1",
+          "left_emu": 457201,
+          "top_emu": 681909,
+          "width_emu": 11287124,
+          "height_emu": 535531,
+          "left_in": 0.5,
+          "top_in": 0.746,
+          "width_in": 12.344,
+          "height_in": 0.586,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 14,
+          "type": "OBJECT",
+          "name": "Content Placeholder 7",
+          "left_emu": 457200,
+          "top_emu": 1472823,
+          "width_emu": 11303000,
+          "height_emu": 4718050,
+          "left_in": 0.5,
+          "top_in": 1.611,
+          "width_in": 12.361,
+          "height_in": 5.16,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "Blank",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": [
+        {
+          "idx": 10,
+          "type": "DATE",
+          "name": "Date Placeholder 1",
+          "left_emu": 8656320,
+          "top_emu": 215076,
+          "width_emu": 2743200,
+          "height_emu": 365125,
+          "left_in": 9.467,
+          "top_in": 0.235,
+          "width_in": 3.0,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 12,
+          "type": "SLIDE_NUMBER",
+          "name": "Slide Number Placeholder 3",
+          "left_emu": 11399520,
+          "top_emu": 215078,
+          "width_emu": 542925,
+          "height_emu": 365125,
+          "left_in": 12.467,
+          "top_in": 0.235,
+          "width_in": 0.594,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        },
+        {
+          "idx": 11,
+          "type": "FOOTER",
+          "name": "Footer Placeholder 4",
+          "left_emu": 2104708,
+          "top_emu": 6320824,
+          "width_emu": 4114800,
+          "height_emu": 365125,
+          "left_in": 2.302,
+          "top_in": 6.913,
+          "width_in": 4.5,
+          "height_in": 0.399,
+          "dims_inherited_from_master": false
+        }
+      ]
+    },
+    {
+      "name": "White",
+      "master_index": 1,
+      "is_superba_master": false,
+      "placeholders": []
+    }
+  ],
+  "example_slides": {
+    "count": 64,
+    "layout_usage": {
+      "Title Only 1": 7,
+      "Highlight Text": 4,
+      "Logo Slide 3": 3,
+      "Four Columns": 3,
+      "Logo Slide 1": 2,
+      "Title Slide 1": 2,
+      "Title Slide 2": 2,
+      "Agenda 1": 2,
+      "Text With Picture 3": 2,
+      "Section Header 1": 2,
+      "Two Columns": 2,
+      "Three Columns": 2,
+      "Text With Picture 1": 2,
+      "Picture With Title 1": 2,
+      "Text Slide 1": 2,
+      "Blank": 2,
+      "Logo Slide 4": 2,
+      "Agenda 2": 2,
+      "Text With Picture 2": 2,
+      "Text With Picture 4": 2,
+      "Text slide 2": 2,
+      "Logo Slide 2": 2,
+      "Logo Slide 5": 1,
+      "1_Agenda 2": 1,
+      "Agenda 3": 1,
+      "Section Header 3": 1,
+      "Section Header 2": 1,
+      "1_Two Columns": 1,
+      "1_Three Columns": 1,
+      "1_Four Columns": 1,
+      "1_Blank": 1,
+      "Agenda 4": 1,
+      "White": 1
+    },
+    "master_usage": {
+      "0": 30,
+      "1": 34
+    },
+    "text_char_lengths": {
+      "Logo Slide 1": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "Logo Slide 3": {
+        "12": [
+          1,
+          2,
+          2
+        ]
+      },
+      "Logo Slide 5": {
+        "12": [
+          1
+        ]
+      },
+      "Title Slide 1": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "Title Slide 2": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "Agenda 1": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "1_Agenda 2": {
+        "12": [
+          1
+        ]
+      },
+      "Text With Picture 3": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "Section Header 1": {
+        "12": [
+          1,
+          2
+        ]
+      },
+      "Two Columns": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Three Columns": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Four Columns": {
+        "12": [
+          2,
+          2,
+          2
+        ]
+      },
+      "Highlight Text": {
+        "12": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "Text With Picture 1": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Title Only 1": {
+        "0": [
+          45,
+          42,
+          45,
+          42,
+          53
+        ],
+        "12": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "Picture With Title 1": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Text Slide 1": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Blank": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Logo Slide 4": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Agenda 2": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Agenda 3": {
+        "12": [
+          2
+        ]
+      },
+      "Section Header 3": {
+        "12": [
+          2
+        ]
+      },
+      "Section Header 2": {
+        "12": [
+          2
+        ]
+      },
+      "Text With Picture 2": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Text With Picture 4": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Text slide 2": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "Logo Slide 2": {
+        "12": [
+          2,
+          2
+        ]
+      },
+      "1_Two Columns": {
+        "12": [
+          2
+        ]
+      },
+      "1_Three Columns": {
+        "12": [
+          2
+        ]
+      },
+      "1_Four Columns": {
+        "12": [
+          2
+        ]
+      },
+      "1_Blank": {
+        "12": [
+          2
+        ]
+      },
+      "Agenda 4": {
+        "12": [
+          2
+        ]
+      }
+    },
+    "paragraph_counts": {
+      "Logo Slide 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Logo Slide 3": {
+        "12": [
+          1,
+          1,
+          1
+        ]
+      },
+      "Logo Slide 5": {
+        "12": [
+          1
+        ]
+      },
+      "Title Slide 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Title Slide 2": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Agenda 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "1_Agenda 2": {
+        "12": [
+          1
+        ]
+      },
+      "Text With Picture 3": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Section Header 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Two Columns": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Three Columns": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Four Columns": {
+        "12": [
+          1,
+          1,
+          1
+        ]
+      },
+      "Highlight Text": {
+        "12": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Text With Picture 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Title Only 1": {
+        "0": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "12": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Picture With Title 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Text Slide 1": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Blank": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Logo Slide 4": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Agenda 2": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Agenda 3": {
+        "12": [
+          1
+        ]
+      },
+      "Section Header 3": {
+        "12": [
+          1
+        ]
+      },
+      "Section Header 2": {
+        "12": [
+          1
+        ]
+      },
+      "Text With Picture 2": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Text With Picture 4": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Text slide 2": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "Logo Slide 2": {
+        "12": [
+          1,
+          1
+        ]
+      },
+      "1_Two Columns": {
+        "12": [
+          1
+        ]
+      },
+      "1_Three Columns": {
+        "12": [
+          1
+        ]
+      },
+      "1_Four Columns": {
+        "12": [
+          1
+        ]
+      },
+      "1_Blank": {
+        "12": [
+          1
+        ]
+      },
+      "Agenda 4": {
+        "12": [
+          1
+        ]
+      }
+    }
+  }
+}

@@ -1,5 +1,42 @@
 # Current state — Superba Deck Generator
 
+> **⚠️ 2026-07-03 ARCHITECTURE PIVOT — everything below is SUPERSEDED.** The SVG-generation
+> hybrid (`svcgen/`) still "looked AI-generated", so it (+ `vendor/`, legacy `deckgen/`) was
+> **deleted** and rebuilt as a **two-stage template-fill** pipeline in `deck-service/src/`:
+> Claude emits a schema-validated JSON slide plan (layout enum + char limits + photo id, never
+> styling) → `python-pptx` fills the REAL Superba `template.pptx`, inheriting all design.
+> See **`deck-service/README.md`** (architecture + how to swap templates), **`deck-service/EVAL.md`**
+> (reference comparison), and the `deck-service-architecture` memory. Verified end-to-end
+> (CLI + `/jobs` HTTP + QA). Frontend Tab 2 / `/jobs` contract unchanged. Not yet pushed to deploy.
+>
+> **2026-07-04 — ICON SYSTEM + VERBATIM INGREDIENT SLIDE.** Two follow-ups landed (also local, not
+> yet pushed):
+> - **Icons** are now clean brand-red line-art from two libraries, and every rule is ENFORCED in the
+>   renderer (not just prompts): (1) topic-matched (liver→liver, heart→heart…); (2) all-or-nothing per
+>   slide (never 2 of 3 columns); (3) one source per slide — all AKBM benefit icons **or** all generic,
+>   never mixed; (4) each distinct. Benefit icons = the 11 AKBM "Icon Only / Red" icons
+>   (`assets/icon_<benefit>.png`). Generic fallback = ~30 Lucide (ISC) icons recoloured to brand red
+>   (`assets/generic_<kw>.png`, built by `scripts/fetch_generic_icons.py`) for topics AKBM has no benefit
+>   icon for. Column field `icon` (benefit) vs `icon_generic` (generic) keeps the two sources unambiguous.
+> - **Ingredient slide** is now AKBM's REAL "Key Cellular Nutrients" slide spliced in VERBATIM
+>   (`assets/ingredient_slide.pptx`, built by `scripts/build_ingredient_slide.py`) — no longer re-composed.
+>   `renderer._add_ingredient_slide` copies its self-contained shape tree (own full-bleed bg + capsule +
+>   connectors + footer + citation links), re-embedding images. Pixel-identical to the source.
+> - Delivered sample decks: `~/Downloads/Superba_Skin_Health_Deck.pptx` + `Superba_Liver_Health_Deck.pptx`.
+>
+> **2026-07-04 — VISUAL QA GATE ("polished" mode).** New `src/qa_gate.py` + a `quality` toggle
+> (`fast` default | `polished`) on `pipeline.generate` / CLI `--quality` / `/jobs` `kvalitet` form field.
+> Polished mode renders the finished deck to images (LibreOffice→PDF→PyMuPDF on the server, PowerPoint
+> COM on a Windows dev box), sends them to ONE vision call that flags only objective defects (overflow /
+> collision / truncation / icon-not-matching-its-text), then `planner.revise_plan_visual` fixes just the
+> flagged slides and re-renders (bounded by `DECK_QA_ROUNDS`, default 1; a schema-repair pass catches any
+> slip; degrades to a no-op if no rasteriser). Verified: on the liver deck it autonomously caught the 3
+> loose icon matches a human review had missed/tolerated and fixed them. **Dockerfile now installs
+> `libreoffice-impress`** so the gate works on Render (fast mode needs nothing). `DECK_GATE_MODEL` env
+> overrides the vision model (defaults to `DECK_MODEL`; Haiku is a cheaper option).
+
+<details><summary>Historical status (SVG hybrid — superseded)</summary>
+
 _Last updated: 2026-07-03. Deployed at commit `7c890be`+ (repo `AnishSharma20/SprintTest`); the OFFICIAL-ASSET integration below is committed locally, push to redeploy. This session: wired in the **real AKBM brand pack** — official colour + white logos, real deep-sea gradient backgrounds, the real krill-swoosh graphic, a 12-photo official photo library, and a real softgel cutout on the anatomy slide. All the earlier pure-SVG approximations are now GONE._
 
 ## ✅ OFFICIAL AKBM ASSETS ARE IN (the long-standing "pending assets" item is DONE)
@@ -134,3 +171,7 @@ cd vendor-ppt-master && python skills/ppt-master/scripts/svg_to_pptx.py projects
 # --- deploy ---
 git add -A && git commit -m "..." && git push origin main      # redeploys BOTH Render (deck-service) and Vercel (frontend)
 ```
+
+</details>
+
+_Historical section ends. Current architecture + commands: `deck-service/README.md`._

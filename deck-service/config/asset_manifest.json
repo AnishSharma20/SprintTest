@@ -1,0 +1,1222 @@
+{
+  "note": "Paths are relative to the deck-service root. Only selectable=true assets are inserted by the renderer; logos/gradients/swosh come from the template layouts.",
+  "photo_tag_vocabulary": [
+    "absorption",
+    "abstract",
+    "abundance",
+    "animal",
+    "antarctic",
+    "antarctica",
+    "arrangement",
+    "bioavailability",
+    "biomass",
+    "blue",
+    "blue-water",
+    "breakfast",
+    "bright",
+    "calm",
+    "capsule",
+    "capsules",
+    "cardiovascular",
+    "clean",
+    "clean-label",
+    "closeup",
+    "coast",
+    "credibility",
+    "daily-dose",
+    "dawn",
+    "deep-sea",
+    "dispersion",
+    "dosage",
+    "dramatic",
+    "expertise",
+    "extraction",
+    "food",
+    "frozen",
+    "glass",
+    "glassware",
+    "hands",
+    "heart",
+    "heart-health",
+    "hero",
+    "horizon",
+    "ice",
+    "iceberg",
+    "icebergs",
+    "icy-ocean",
+    "ingredients",
+    "jar",
+    "krill",
+    "lab",
+    "landscape",
+    "lifestyle",
+    "logistics",
+    "macro",
+    "manufacturing",
+    "many",
+    "minimal",
+    "moody",
+    "mountain",
+    "natural",
+    "nature",
+    "ocean",
+    "oil",
+    "omega3",
+    "operations",
+    "origin",
+    "pattern",
+    "people",
+    "premium",
+    "pristine",
+    "product",
+    "purity",
+    "quality",
+    "raw-ingredient",
+    "red",
+    "research",
+    "routine",
+    "scale",
+    "scatter",
+    "science",
+    "single",
+    "sourcing",
+    "sunset",
+    "supply-chain",
+    "sustainability",
+    "swarm",
+    "team",
+    "testing",
+    "texture",
+    "two",
+    "warehouse",
+    "warm",
+    "water",
+    "wellness",
+    "white-bg",
+    "wood"
+  ],
+  "benefits": [
+    "heart",
+    "liver",
+    "joint",
+    "muscle",
+    "skin",
+    "eye",
+    "cognitive",
+    "pms",
+    "sports",
+    "absorption",
+    "whole_body"
+  ],
+  "generic_icons": [
+    "absorption",
+    "award",
+    "brain",
+    "cell",
+    "dosage",
+    "energy",
+    "eye",
+    "global",
+    "growth",
+    "heart",
+    "immunity",
+    "joint",
+    "krill",
+    "molecule",
+    "muscle",
+    "ocean",
+    "omega3",
+    "people",
+    "process",
+    "proven",
+    "purity",
+    "quality",
+    "research",
+    "routine",
+    "safety",
+    "science",
+    "sleep",
+    "sourcing",
+    "sustainability",
+    "traceability"
+  ],
+  "assets": [
+    {
+      "id": "photo_capsule_single",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsule_single.jpg",
+      "tags": [
+        "product",
+        "capsule",
+        "single",
+        "minimal",
+        "daily-dose",
+        "white-bg"
+      ],
+      "description": "one red krill-oil softgel on white — minimal, clean product hero",
+      "bg_fit": "light",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_capsules_white",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_white.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "scatter",
+        "hero",
+        "white-bg"
+      ],
+      "description": "red softgels scattered on white marble — clean product hero",
+      "bg_fit": "light",
+      "width": 1067,
+      "height": 1600,
+      "orientation": "portrait"
+    },
+    {
+      "id": "photo_capsules_glass",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_glass.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "glass",
+        "jar",
+        "premium"
+      ],
+      "description": "softgels in a glass bowl on marble — premium product close-up",
+      "bg_fit": "light",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_capsules_daily",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_daily.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "daily-dose",
+        "dosage",
+        "two"
+      ],
+      "description": "two softgels on a wood block, soft background — the daily dose",
+      "bg_fit": "light",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_capsules_wood",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_wood.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "wood",
+        "natural",
+        "warm"
+      ],
+      "description": "red softgels on warm wood — natural, everyday product",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_capsules_heart",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_heart.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "heart",
+        "heart-health",
+        "cardiovascular"
+      ],
+      "description": "softgels arranged as a heart on marble — heart-health hero",
+      "bg_fit": "light",
+      "width": 1067,
+      "height": 1600,
+      "orientation": "portrait"
+    },
+    {
+      "id": "photo_breakfast",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_breakfast.jpg",
+      "tags": [
+        "lifestyle",
+        "breakfast",
+        "wellness",
+        "routine",
+        "food"
+      ],
+      "description": "breakfast bowl with berries + a daily capsule on a dark table — everyday wellness",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_ingredients",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_ingredients.jpg",
+      "tags": [
+        "lifestyle",
+        "ingredients",
+        "omega3",
+        "food",
+        "clean-label",
+        "natural"
+      ],
+      "description": "capsules with avocado, blueberries and walnuts on wood — clean-label omega-3 foods",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 1037,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_jar_antarctic",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_jar_antarctic.jpg",
+      "tags": [
+        "product",
+        "jar",
+        "antarctic",
+        "origin",
+        "sourcing"
+      ],
+      "description": "a jar of softgels on a snowy Antarctic rock — product meets pristine origin",
+      "bg_fit": "neutral",
+      "width": 520,
+      "height": 340,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_capsules_pattern",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_capsules_pattern.jpg",
+      "tags": [
+        "product",
+        "capsules",
+        "pattern",
+        "arrangement",
+        "white-bg"
+      ],
+      "description": "many softgels in a neat ring on white — product pattern",
+      "bg_fit": "light",
+      "width": 1365,
+      "height": 1600,
+      "orientation": "portrait"
+    },
+    {
+      "id": "photo_oil_in_water",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_oil_in_water.jpg",
+      "tags": [
+        "oil",
+        "water",
+        "absorption",
+        "bioavailability",
+        "science",
+        "dispersion"
+      ],
+      "description": "red krill oil dispersing in water on white — bioavailability / absorption",
+      "bg_fit": "light",
+      "width": 799,
+      "height": 533,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_oil_texture",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_oil_texture.jpg",
+      "tags": [
+        "oil",
+        "texture",
+        "abstract",
+        "red",
+        "science"
+      ],
+      "description": "abstract red krill-oil texture — bold science/product backdrop",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 615,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_oil_lab",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_oil_lab.jpg",
+      "tags": [
+        "oil",
+        "lab",
+        "science",
+        "purity",
+        "extraction",
+        "glassware"
+      ],
+      "description": "red oil poured into lab glassware — extraction, purity, science",
+      "bg_fit": "light",
+      "width": 1600,
+      "height": 900,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_krill_closeup",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_krill_closeup.jpg",
+      "tags": [
+        "krill",
+        "animal",
+        "closeup",
+        "nature",
+        "raw-ingredient"
+      ],
+      "description": "a translucent Antarctic krill in close-up on blue — the raw ingredient",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 962,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_krill_blue_water",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_krill_blue_water.jpg",
+      "tags": [
+        "krill",
+        "deep-sea",
+        "blue-water",
+        "origin",
+        "calm"
+      ],
+      "description": "a single krill in deep blue water with light rays — deep-sea origin",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 853,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_krill_swarm",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_krill_swarm.jpg",
+      "tags": [
+        "krill",
+        "swarm",
+        "biomass",
+        "abundance",
+        "macro"
+      ],
+      "description": "a dense red krill swarm (macro) — biomass, abundance, sustainable sourcing",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_krill_single",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_krill_single.jpg",
+      "tags": [
+        "krill",
+        "single",
+        "animal",
+        "closeup",
+        "clean"
+      ],
+      "description": "one translucent krill with bubbles on a clean ground — the species",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_krill_ice",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_krill_ice.jpg",
+      "tags": [
+        "krill",
+        "ice",
+        "frozen",
+        "blue",
+        "many"
+      ],
+      "description": "krill embedded in blue Antarctic ice — cold, pristine origin",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_iceberg",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_iceberg.jpg",
+      "tags": [
+        "antarctica",
+        "iceberg",
+        "ocean",
+        "moody",
+        "sustainability",
+        "origin"
+      ],
+      "description": "a moody grey iceberg on the horizon — pristine origin, sustainability",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 894,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_antarctic_ocean",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_antarctic_ocean.jpg",
+      "tags": [
+        "antarctica",
+        "ocean",
+        "blue",
+        "coast",
+        "origin"
+      ],
+      "description": "blue Antarctic ocean with a distant coast — pristine sourcing",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_antarctic_land",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_antarctic_land.jpg",
+      "tags": [
+        "antarctica",
+        "landscape",
+        "ice",
+        "calm",
+        "horizon"
+      ],
+      "description": "a wide, calm icy Antarctic horizon — pristine, understated",
+      "bg_fit": "neutral",
+      "width": 1600,
+      "height": 1067,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_antarctic_bright",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_antarctic_bright.jpg",
+      "tags": [
+        "antarctica",
+        "icy-ocean",
+        "bright",
+        "pristine",
+        "icebergs",
+        "sustainability"
+      ],
+      "description": "bright icebergs, blue ocean and snow peaks — pristine and optimistic",
+      "bg_fit": "light",
+      "width": 1600,
+      "height": 1064,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_antarctic_sunset",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_antarctic_sunset.jpg",
+      "tags": [
+        "antarctica",
+        "mountain",
+        "sunset",
+        "dramatic",
+        "dawn"
+      ],
+      "description": "orange sunset on an Antarctic peak — dramatic, aspirational",
+      "bg_fit": "dark",
+      "width": 1600,
+      "height": 900,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_lab",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_lab.jpg",
+      "tags": [
+        "lab",
+        "science",
+        "research",
+        "quality",
+        "testing",
+        "hands"
+      ],
+      "description": "gloved hands testing oil in the Houston lab — research and quality control",
+      "bg_fit": "neutral",
+      "width": 800,
+      "height": 500,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_team",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_team.jpg",
+      "tags": [
+        "people",
+        "team",
+        "manufacturing",
+        "credibility",
+        "expertise"
+      ],
+      "description": "two experts in hard hats at the krill-oil plant — credibility and expertise",
+      "bg_fit": "neutral",
+      "width": 800,
+      "height": 533,
+      "orientation": "landscape"
+    },
+    {
+      "id": "photo_warehouse",
+      "kind": "photo",
+      "selectable": true,
+      "path": "assets/photo_warehouse.jpg",
+      "tags": [
+        "warehouse",
+        "logistics",
+        "scale",
+        "supply-chain",
+        "operations"
+      ],
+      "description": "a long warehouse aisle — scale, logistics, supply",
+      "bg_fit": "dark",
+      "width": 800,
+      "height": 533,
+      "orientation": "landscape"
+    },
+    {
+      "id": "icon_heart",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "heart",
+      "tags": [
+        "benefit",
+        "heart"
+      ],
+      "path": "assets/icon_heart.png",
+      "description": "Heart benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_liver",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "liver",
+      "tags": [
+        "benefit",
+        "liver"
+      ],
+      "path": "assets/icon_liver.png",
+      "description": "Liver benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_joint",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "joint",
+      "tags": [
+        "benefit",
+        "joint"
+      ],
+      "path": "assets/icon_joint.png",
+      "description": "Joint benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_muscle",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "muscle",
+      "tags": [
+        "benefit",
+        "muscle"
+      ],
+      "path": "assets/icon_muscle.png",
+      "description": "Muscle benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_skin",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "skin",
+      "tags": [
+        "benefit",
+        "skin"
+      ],
+      "path": "assets/icon_skin.png",
+      "description": "Skin benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_eye",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "eye",
+      "tags": [
+        "benefit",
+        "eye"
+      ],
+      "path": "assets/icon_eye.png",
+      "description": "Eye benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_cognitive",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "cognitive",
+      "tags": [
+        "benefit",
+        "cognitive"
+      ],
+      "path": "assets/icon_cognitive.png",
+      "description": "Cognitive benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_pms",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "pms",
+      "tags": [
+        "benefit",
+        "pms"
+      ],
+      "path": "assets/icon_pms.png",
+      "description": "PMS benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_sports",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "sports",
+      "tags": [
+        "benefit",
+        "sports"
+      ],
+      "path": "assets/icon_sports.png",
+      "description": "Sports benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_absorption",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "absorption",
+      "tags": [
+        "benefit",
+        "absorption"
+      ],
+      "path": "assets/icon_absorption.png",
+      "description": "Absorption benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "icon_whole_body",
+      "kind": "icon",
+      "selectable": false,
+      "benefit": "whole_body",
+      "tags": [
+        "benefit",
+        "whole_body"
+      ],
+      "path": "assets/icon_whole_body.png",
+      "description": "Whole Body benefit icon (line-art, brand red)"
+    },
+    {
+      "id": "generic_absorption",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "absorption",
+      "tags": [
+        "generic",
+        "absorption"
+      ],
+      "path": "assets/generic_absorption.png",
+      "description": "generic 'absorption' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_award",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "award",
+      "tags": [
+        "generic",
+        "award"
+      ],
+      "path": "assets/generic_award.png",
+      "description": "generic 'award' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_brain",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "brain",
+      "tags": [
+        "generic",
+        "brain"
+      ],
+      "path": "assets/generic_brain.png",
+      "description": "generic 'brain' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_cell",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "cell",
+      "tags": [
+        "generic",
+        "cell"
+      ],
+      "path": "assets/generic_cell.png",
+      "description": "generic 'cell' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_dosage",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "dosage",
+      "tags": [
+        "generic",
+        "dosage"
+      ],
+      "path": "assets/generic_dosage.png",
+      "description": "generic 'dosage' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_energy",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "energy",
+      "tags": [
+        "generic",
+        "energy"
+      ],
+      "path": "assets/generic_energy.png",
+      "description": "generic 'energy' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_eye",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "eye",
+      "tags": [
+        "generic",
+        "eye"
+      ],
+      "path": "assets/generic_eye.png",
+      "description": "generic 'eye' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_global",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "global",
+      "tags": [
+        "generic",
+        "global"
+      ],
+      "path": "assets/generic_global.png",
+      "description": "generic 'global' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_growth",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "growth",
+      "tags": [
+        "generic",
+        "growth"
+      ],
+      "path": "assets/generic_growth.png",
+      "description": "generic 'growth' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_heart",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "heart",
+      "tags": [
+        "generic",
+        "heart"
+      ],
+      "path": "assets/generic_heart.png",
+      "description": "generic 'heart' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_immunity",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "immunity",
+      "tags": [
+        "generic",
+        "immunity"
+      ],
+      "path": "assets/generic_immunity.png",
+      "description": "generic 'immunity' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_joint",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "joint",
+      "tags": [
+        "generic",
+        "joint"
+      ],
+      "path": "assets/generic_joint.png",
+      "description": "generic 'joint' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_krill",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "krill",
+      "tags": [
+        "generic",
+        "krill"
+      ],
+      "path": "assets/generic_krill.png",
+      "description": "generic 'krill' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_molecule",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "molecule",
+      "tags": [
+        "generic",
+        "molecule"
+      ],
+      "path": "assets/generic_molecule.png",
+      "description": "generic 'molecule' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_muscle",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "muscle",
+      "tags": [
+        "generic",
+        "muscle"
+      ],
+      "path": "assets/generic_muscle.png",
+      "description": "generic 'muscle' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_ocean",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "ocean",
+      "tags": [
+        "generic",
+        "ocean"
+      ],
+      "path": "assets/generic_ocean.png",
+      "description": "generic 'ocean' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_omega3",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "omega3",
+      "tags": [
+        "generic",
+        "omega3"
+      ],
+      "path": "assets/generic_omega3.png",
+      "description": "generic 'omega3' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_people",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "people",
+      "tags": [
+        "generic",
+        "people"
+      ],
+      "path": "assets/generic_people.png",
+      "description": "generic 'people' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_process",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "process",
+      "tags": [
+        "generic",
+        "process"
+      ],
+      "path": "assets/generic_process.png",
+      "description": "generic 'process' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_proven",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "proven",
+      "tags": [
+        "generic",
+        "proven"
+      ],
+      "path": "assets/generic_proven.png",
+      "description": "generic 'proven' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_purity",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "purity",
+      "tags": [
+        "generic",
+        "purity"
+      ],
+      "path": "assets/generic_purity.png",
+      "description": "generic 'purity' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_quality",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "quality",
+      "tags": [
+        "generic",
+        "quality"
+      ],
+      "path": "assets/generic_quality.png",
+      "description": "generic 'quality' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_research",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "research",
+      "tags": [
+        "generic",
+        "research"
+      ],
+      "path": "assets/generic_research.png",
+      "description": "generic 'research' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_routine",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "routine",
+      "tags": [
+        "generic",
+        "routine"
+      ],
+      "path": "assets/generic_routine.png",
+      "description": "generic 'routine' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_safety",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "safety",
+      "tags": [
+        "generic",
+        "safety"
+      ],
+      "path": "assets/generic_safety.png",
+      "description": "generic 'safety' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_science",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "science",
+      "tags": [
+        "generic",
+        "science"
+      ],
+      "path": "assets/generic_science.png",
+      "description": "generic 'science' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_sleep",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "sleep",
+      "tags": [
+        "generic",
+        "sleep"
+      ],
+      "path": "assets/generic_sleep.png",
+      "description": "generic 'sleep' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_sourcing",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "sourcing",
+      "tags": [
+        "generic",
+        "sourcing"
+      ],
+      "path": "assets/generic_sourcing.png",
+      "description": "generic 'sourcing' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_sustainability",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "sustainability",
+      "tags": [
+        "generic",
+        "sustainability"
+      ],
+      "path": "assets/generic_sustainability.png",
+      "description": "generic 'sustainability' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "generic_traceability",
+      "kind": "generic_icon",
+      "selectable": false,
+      "keyword": "traceability",
+      "tags": [
+        "generic",
+        "traceability"
+      ],
+      "path": "assets/generic_traceability.png",
+      "description": "generic 'traceability' icon (line-art, brand red) — fallback source"
+    },
+    {
+      "id": "logo_superba_white",
+      "kind": "logo",
+      "selectable": false,
+      "path": "brand_assets/05.01. SUPERBA_KRILL®/PNG/LANDSCAPE/SUPERBA_KRILL_WHITE_LANDSCAPE_®.png",
+      "tags": [
+        "logo",
+        "superba",
+        "white",
+        "dark-bg"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "logo_superba_pos",
+      "kind": "logo",
+      "selectable": false,
+      "path": "brand_assets/05.01. SUPERBA_KRILL®/PNG/LANDSCAPE/SUPERBA_KRILL_POS_LANDSCAPE_®.png",
+      "tags": [
+        "logo",
+        "superba",
+        "colour",
+        "light-bg"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "logo_aker_white",
+      "kind": "logo",
+      "selectable": false,
+      "path": "brand_assets/05. Logos/PNG/White/1_AkerBioMarine_Main_Logo_Horizontal_White.png",
+      "tags": [
+        "logo",
+        "aker-biomarine",
+        "white",
+        "dark-bg"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "logo_aker_black",
+      "kind": "logo",
+      "selectable": false,
+      "path": "brand_assets/05. Logos/PNG/Black/1_AkerBioMarine_Main_Logo_Horizontal_Black.png",
+      "tags": [
+        "logo",
+        "aker-biomarine",
+        "black",
+        "light-bg"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "gradient_green",
+      "kind": "gradient",
+      "selectable": false,
+      "path": "brand_assets/05. Superba Brand Identity/Brand visuals/Color Gradients/bg_green-1.png",
+      "tags": [
+        "gradient",
+        "background",
+        "green",
+        "deep-sea"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "gradient_teal",
+      "kind": "gradient",
+      "selectable": false,
+      "path": "brand_assets/05. Superba Brand Identity/Brand visuals/Color Gradients/bg_teal-1.png",
+      "tags": [
+        "gradient",
+        "background",
+        "teal"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "gradient_blue",
+      "kind": "gradient",
+      "selectable": false,
+      "path": "brand_assets/05. Superba Brand Identity/Brand visuals/Color Gradients/bg_blue-1.png",
+      "tags": [
+        "gradient",
+        "background",
+        "blue"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    },
+    {
+      "id": "krill_swosh",
+      "kind": "swosh",
+      "selectable": false,
+      "path": "brand_assets/05. Superba Brand Identity/Brand visuals/Krill Swosh/visual-element-krillArtboard-2.png",
+      "tags": [
+        "swosh",
+        "krill",
+        "accent",
+        "decor"
+      ],
+      "present": true,
+      "description": "provided by the template's own layouts; reference only"
+    }
+  ]
+}

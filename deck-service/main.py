@@ -1,14 +1,16 @@
-"""Superba Deck Generator — HTTP service.
+"""Superba Deck Generator — HTTP service (FastAPI).
 
-Thin FastAPI layer: authenticate, read uploaded summaries, and hand each to the
-``deckgen`` pipeline (Claude plans a sales deck; python-pptx draws it on-brand). One
-summary returns a .pptx; several return a .zip that also bundles the per-deck
-Science-review wording document. All generation logic lives in the ``deckgen`` package.
+Thin layer over the two-stage pipeline in `src`: Claude plans a schema-validated slide
+plan, python-pptx fills the real Superba template (all design inherited). One summary
+returns a .pptx; several return a .zip that also bundles each deck's wording-review doc.
 
-  POST /generate   multipart, field "filer", one or more summary files
-  GET  /health     readiness probe
+  POST /jobs             multipart "filer" (1+ summaries) -> {job_id}; runs in background
+  GET  /jobs/{id}        -> {status, progress, step, filename, error}
+  GET  /jobs/{id}/result -> the .pptx (or .zip) once done
+  POST /generate         synchronous single request (legacy convenience)
+  GET  /health           readiness probe
 
-The Anthropic API key is read from ANTHROPIC_API_KEY (server-side only).
+ANTHROPIC_API_KEY is read from the environment, server-side only.
 """
 from __future__ import annotations
 
@@ -23,32 +25,25 @@ import anthropic
 from fastapi import FastAPI, Form, Header, UploadFile
 from fastapi.responses import JSONResponse, Response
 
-from deckgen import DeckResult, generate_deck
-from deckgen.layouts import LAYOUTS
-import svcgen
+import src
+from src import config
 
 app = FastAPI(title="Superba Deck Generator")
 
-# Which renderer to use. "svg" = the AKBM-native hybrid SVG pipeline (frozen hero
-# templates + generated body slides + charts + quality gate). "pptx" = the legacy
-# python-pptx direct renderer. Default to the hybrid.
-PIPELINE = os.environ.get("DECK_PIPELINE", "svg")
+PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
 
-def _build_deck(client, text: str, base: str, *, length: str, tone: str, on_progress=None) -> DeckResult:
-    if PIPELINE == "svg":
-        r = svcgen.generate(client, text, base, length=length, tone=tone, on_progress=on_progress)
-        return DeckResult(pptx=r["pptx"], filename=r["filename"],
-                          wording_md=r["wording_md"], slide_count=r["slide_count"])
-    return generate_deck(client, text, base, length=length, tone=tone)
+def _read_summary(name: str, data: bytes) -> str:
+    if name.lower().endswith(".docx"):
+        import docx  # python-docx
+        return "\n".join(p.text for p in docx.Document(io.BytesIO(data)).paragraphs)
+    return data.decode("utf-8", errors="replace")
 
 
 # ---------------------------------------------------------------------------
-# Async jobs. A full deck takes 1-3 minutes — longer than an HTTP proxy / gateway
-# will hold a connection (the frontend was hitting 504). So generation runs in a
-# background thread that reports progress into an in-memory store; the client
-# POSTs to start a job, polls status, then downloads the result. Single-worker
-# 1-user MVP, so an in-process dict is enough (no Redis/queue).
+# Async jobs. Generation takes longer than a proxy/gateway will hold a connection,
+# so it runs in a background thread reporting progress into an in-memory store; the
+# client POSTs to start, polls status, then downloads. Single-worker 1-user MVP.
 # ---------------------------------------------------------------------------
 JOBS: dict[str, dict] = {}
 JOB_TTL_SECONDS = 3600
@@ -60,10 +55,11 @@ def _prune_jobs() -> None:
         JOBS.pop(jid, None)
 
 
-def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str) -> None:
+def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
+             kvalitet: str = "fast") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
-        decks: list[DeckResult] = []
+        decks: list[dict] = []
         total = len(files)
         for k, (fname, data) in enumerate(files):
             text = _read_summary(fname, data).strip()
@@ -76,17 +72,18 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 JOBS[job_id].update(progress=overall,
                                     step=(f"Deck {k + 1}/{total}: {step}" if total > 1 else step))
 
-            decks.append(_build_deck(client, text, base, length=lengde, tone=tone, on_progress=on_prog))
+            decks.append(src.generate(client, text, base, length=lengde, tone=tone,
+                                       quality=kvalitet, on_progress=on_prog))
 
         if len(decks) == 1:
             d = decks[0]
-            result, media, filename = d.pptx, PPTX_MEDIA, d.filename
+            result, media, filename = d["pptx"], PPTX_MEDIA, d["filename"]
         else:
             zbuf = io.BytesIO()
             with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
                 for d in decks:
-                    z.writestr(d.filename, d.pptx)
-                    z.writestr(d.filename.rsplit(".", 1)[0] + ".wording.md", d.wording_md)
+                    z.writestr(d["filename"], d["pptx"])
+                    z.writestr(d["filename"].rsplit(".", 1)[0] + ".wording.md", d["wording_md"])
             result, media, filename = zbuf.getvalue(), "application/zip", "superba-decks.zip"
 
         JOBS[job_id].update(status="done", progress=100, step="Done",
@@ -94,20 +91,24 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
     except Exception as e:  # noqa: BLE001 — record the failure for the client to read
         JOBS[job_id].update(status="error", step="Failed", error=str(e))
 
-PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
-
-def _read_summary(name: str, data: bytes) -> str:
-    if name.lower().endswith(".docx"):
-        import docx  # python-docx
-        document = docx.Document(io.BytesIO(data))
-        return "\n".join(p.text for p in document.paragraphs)
-    return data.decode("utf-8", errors="replace")
+def _auth_or_error(x_deck_token):
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return JSONResponse({"feil": "Missing ANTHROPIC_API_KEY on the server."}, status_code=500)
+    return None
 
 
 @app.get("/health")
 def health():
-    return {"ok": True, "layouts": len(LAYOUTS)}
+    try:
+        layouts = len(config.catalog())
+        template = config.template_path().exists()
+    except Exception:  # noqa: BLE001
+        layouts, template = 0, False
+    return {"ok": True, "layouts": layouts, "template": template, "model": config.MODEL}
 
 
 @app.post("/generate")
@@ -117,48 +118,35 @@ async def generate(
     tone: str = Form(default="balansert"),
     x_deck_token: str | None = Header(default=None),
 ):
-    # Optional shared secret: if the service has DECK_SERVICE_TOKEN set, callers must
-    # send the same value in X-Deck-Token. Blocks public abuse.
-    expected = os.environ.get("DECK_SERVICE_TOKEN")
-    if expected and x_deck_token != expected:
-        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
-
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        return JSONResponse({"feil": "Missing ANTHROPIC_API_KEY on the server."}, status_code=500)
+    err = _auth_or_error(x_deck_token)
+    if err:
+        return err
     if not filer:
         return JSONResponse({"feil": "No files uploaded."}, status_code=400)
 
-    client = anthropic.Anthropic(api_key=key)
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     try:
-        decks: list[DeckResult] = []
+        decks = []
         for i, uf in enumerate(filer):
             data = await uf.read()
             text = _read_summary(uf.filename or f"summary-{i}", data).strip()
             if not text:
                 return JSONResponse({"feil": f"No text found in {uf.filename}."}, status_code=400)
             base = (uf.filename or f"deck-{i + 1}").rsplit(".", 1)[0]
-            decks.append(_build_deck(client, text, base, length=lengde, tone=tone))
+            decks.append(src.generate(client, text, base, length=lengde, tone=tone))
 
         if len(decks) == 1:
             d = decks[0]
-            return Response(
-                content=d.pptx,
-                media_type=PPTX_MEDIA,
-                headers={"Content-Disposition": f'attachment; filename="{d.filename}"'},
-            )
+            return Response(content=d["pptx"], media_type=PPTX_MEDIA,
+                            headers={"Content-Disposition": f'attachment; filename="{d["filename"]}"'})
 
-        # Several summaries -> a zip of decks plus their wording documents.
         zbuf = io.BytesIO()
         with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
             for d in decks:
-                z.writestr(d.filename, d.pptx)
-                z.writestr(d.filename.rsplit(".", 1)[0] + ".wording.md", d.wording_md)
-        return Response(
-            content=zbuf.getvalue(),
-            media_type="application/zip",
-            headers={"Content-Disposition": 'attachment; filename="superba-decks.zip"'},
-        )
+                z.writestr(d["filename"], d["pptx"])
+                z.writestr(d["filename"].rsplit(".", 1)[0] + ".wording.md", d["wording_md"])
+        return Response(content=zbuf.getvalue(), media_type="application/zip",
+                        headers={"Content-Disposition": 'attachment; filename="superba-decks.zip"'})
     except Exception as e:  # noqa: BLE001 — surface a clean error to the client
         return JSONResponse({"feil": f"Generation failed: {e}"}, status_code=500)
 
@@ -168,24 +156,26 @@ async def create_job(
     filer: list[UploadFile],
     lengde: str = Form(default="standard"),
     tone: str = Form(default="balansert"),
+    kvalitet: str = Form(default="fast"),
     x_deck_token: str | None = Header(default=None),
 ):
-    """Start a deck-generation job in the background and return its id immediately."""
-    expected = os.environ.get("DECK_SERVICE_TOKEN")
-    if expected and x_deck_token != expected:
-        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        return JSONResponse({"feil": "Missing ANTHROPIC_API_KEY on the server."}, status_code=500)
+    """Start a deck-generation job in the background and return its id immediately.
+
+    kvalitet: "fast" (default) or "polished" (adds a visual QA pass — needs a rasteriser on the
+    server, i.e. LibreOffice installed; degrades to fast if absent)."""
+    err = _auth_or_error(x_deck_token)
+    if err:
+        return err
     if not filer:
         return JSONResponse({"feil": "No files uploaded."}, status_code=400)
 
     _prune_jobs()
-    # Read the uploads here (can't await inside the worker thread), then hand off.
     files = [((uf.filename or f"summary-{i}"), await uf.read()) for i, uf in enumerate(filer)]
     job_id = uuid.uuid4().hex
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
-    threading.Thread(target=_run_job, args=(job_id, key, files, lengde, tone), daemon=True).start()
+    key = os.environ["ANTHROPIC_API_KEY"]
+    threading.Thread(target=_run_job, args=(job_id, key, files, lengde, tone, kvalitet),
+                     daemon=True).start()
     return {"job_id": job_id}
 
 

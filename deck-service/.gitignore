@@ -1,3 +1,12 @@
 __pycache__/
 *.pyc
 exports/
+
+# Large source material — kept local, not committed (deploy uses the curated runtime
+# subset copied into assets/ and the committed template). See README.
+brand_assets/
+reference/
+
+# QA render artifacts
+qa_output/
+*.qa.png

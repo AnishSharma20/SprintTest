@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
 
@@ -27,6 +27,154 @@ const CONTENT_TYPES: {
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
   { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Detailed report", available: false },
 ];
+
+// Languages with the flag of the main country that speaks them. Not exhaustive — the picker
+// also lets you type any language in the world (a custom entry appears when nothing matches).
+const LANGUAGES: { name: string; flag: string }[] = [
+  { name: "English", flag: "🇬🇧" },
+  { name: "Norwegian", flag: "🇳🇴" },
+  { name: "Swedish", flag: "🇸🇪" },
+  { name: "Danish", flag: "🇩🇰" },
+  { name: "Finnish", flag: "🇫🇮" },
+  { name: "Icelandic", flag: "🇮🇸" },
+  { name: "German", flag: "🇩🇪" },
+  { name: "French", flag: "🇫🇷" },
+  { name: "Spanish", flag: "🇪🇸" },
+  { name: "Portuguese", flag: "🇵🇹" },
+  { name: "Portuguese (Brazil)", flag: "🇧🇷" },
+  { name: "Italian", flag: "🇮🇹" },
+  { name: "Dutch", flag: "🇳🇱" },
+  { name: "Polish", flag: "🇵🇱" },
+  { name: "Czech", flag: "🇨🇿" },
+  { name: "Slovak", flag: "🇸🇰" },
+  { name: "Hungarian", flag: "🇭🇺" },
+  { name: "Romanian", flag: "🇷🇴" },
+  { name: "Bulgarian", flag: "🇧🇬" },
+  { name: "Greek", flag: "🇬🇷" },
+  { name: "Croatian", flag: "🇭🇷" },
+  { name: "Serbian", flag: "🇷🇸" },
+  { name: "Slovenian", flag: "🇸🇮" },
+  { name: "Lithuanian", flag: "🇱🇹" },
+  { name: "Latvian", flag: "🇱🇻" },
+  { name: "Estonian", flag: "🇪🇪" },
+  { name: "Russian", flag: "🇷🇺" },
+  { name: "Ukrainian", flag: "🇺🇦" },
+  { name: "Turkish", flag: "🇹🇷" },
+  { name: "Arabic", flag: "🇸🇦" },
+  { name: "Hebrew", flag: "🇮🇱" },
+  { name: "Persian", flag: "🇮🇷" },
+  { name: "Hindi", flag: "🇮🇳" },
+  { name: "Bengali", flag: "🇧🇩" },
+  { name: "Urdu", flag: "🇵🇰" },
+  { name: "Chinese (Simplified)", flag: "🇨🇳" },
+  { name: "Chinese (Traditional)", flag: "🇹🇼" },
+  { name: "Japanese", flag: "🇯🇵" },
+  { name: "Korean", flag: "🇰🇷" },
+  { name: "Vietnamese", flag: "🇻🇳" },
+  { name: "Thai", flag: "🇹🇭" },
+  { name: "Indonesian", flag: "🇮🇩" },
+  { name: "Malay", flag: "🇲🇾" },
+  { name: "Filipino", flag: "🇵🇭" },
+  { name: "Swahili", flag: "🇰🇪" },
+  { name: "Afrikaans", flag: "🇿🇦" },
+  { name: "Irish", flag: "🇮🇪" },
+];
+
+function flaggFor(name: string): string {
+  return LANGUAGES.find((l) => l.name === name)?.flag ?? "🌐";
+}
+
+function LanguagePicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  const q = query.trim().toLowerCase();
+  const treff = LANGUAGES.filter((l) => l.name.toLowerCase().includes(q));
+  const exact = LANGUAGES.some((l) => l.name.toLowerCase() === q);
+
+  function pick(name: string) {
+    onChange(name);
+    setQuery("");
+    setOpen(false);
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between rounded-xl border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none hover:border-[#9FC9D9] focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+      >
+        <span className="flex items-center gap-2">
+          <span className="text-base leading-none">{flaggFor(value)}</span>
+          <span>{value || "Select language"}</span>
+        </span>
+        <span className="text-zinc-400">▾</span>
+      </button>
+      {open && (
+        <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-xl border border-[#D6E6EE] bg-white shadow-lg">
+          <input
+            autoFocus
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search language…"
+            className="w-full border-b border-[#EEF4F7] px-3 py-2 text-sm outline-none placeholder:text-zinc-400"
+          />
+          <ul className="max-h-60 overflow-y-auto py-1">
+            {q && !exact && (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => pick(query.trim())}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-[#E1F4F3]"
+                >
+                  <span className="text-base leading-none">🌐</span>
+                  <span>
+                    Use “{query.trim()}”
+                  </span>
+                </button>
+              </li>
+            )}
+            {treff.map((l) => (
+              <li key={l.name}>
+                <button
+                  type="button"
+                  onClick={() => pick(l.name)}
+                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-[#E1F4F3] ${
+                    l.name === value ? "bg-[#F4FBFC] font-semibold text-[#0A7A8A]" : "text-[#052A4E]"
+                  }`}
+                >
+                  <span className="text-base leading-none">{l.flag}</span>
+                  <span>{l.name}</span>
+                </button>
+              </li>
+            ))}
+            {treff.length === 0 && !q && (
+              <li className="px-3 py-2 text-sm text-zinc-400">No languages</li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function PickChip({
   aktiv,
@@ -571,25 +719,10 @@ export default function ContentGenerator() {
                     (any language, applies to everything you create)
                   </span>
                 </div>
-                <input
-                  type="text"
-                  list="sprak-forslag"
-                  value={sprak}
-                  onChange={(e) => setSprak(e.target.value)}
-                  placeholder="e.g. English, Norwegian, German, French, Japanese…"
-                  className="w-full rounded-xl border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
-                />
-                <datalist id="sprak-forslag">
-                  {[
-                    "English", "Norwegian", "Swedish", "Danish", "German", "French", "Spanish",
-                    "Italian", "Dutch", "Portuguese", "Polish", "Finnish", "Japanese", "Chinese",
-                    "Korean", "Arabic",
-                  ].map((l) => (
-                    <option key={l} value={l} />
-                  ))}
-                </datalist>
+                <LanguagePicker value={sprak} onChange={setSprak} />
                 <p className="mt-1 text-xs text-zinc-500">
-                  Type any language in the world. The AI writes all output text in it, whatever the source language.
+                  Search and pick a language, or type your own. Any language in the world works. The AI
+                  writes all output text in it, whatever the source language.
                 </p>
               </div>
 

@@ -4,9 +4,22 @@
 // Server-komponent: data hentes på serveren og caches/oppdateres daglig.
 
 import Wiki, { type Studie } from "./wiki";
+import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Summary } from "./studies-data";
+import aiSummariesRaw from "./ai-summaries.json";
 
+const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
 const EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const FELLES = "tool=llm-wiki&email=anish.sharma@sprint.no";
+
+function curatedToStudie(c: CuratedStudy): Studie {
+  return {
+    pmid: c.pmid, tittel: c.title, tidsskrift: c.journal, dato: c.year, ar: c.year,
+    forfattere: c.authors, flereForfattere: false, kategori: kategori(c.title),
+    url: `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`,
+    doiUrl: c.doi ? `https://doi.org/${c.doi}` : null,
+    summary: c.summary, verified: true, quality: c.quality, akerNote: c.akerNote,
+  };
+}
 
 type Esummary = {
   uid: string;
@@ -34,10 +47,10 @@ function kategori(tittel: string): string {
 }
 
 async function hentStudier(): Promise<Studie[]> {
-  // 1) Søk: finn ID-ene til de nyeste krilloljestudiene.
+  // 1) Søk: studier der Aker BioMarine står som affiliation (Aker sitt eget felt).
   const sok = await fetch(
-    `${EUTILS}/esearch.fcgi?db=pubmed&${FELLES}&retmode=json&retmax=40&sort=date&term=${encodeURIComponent(
-      '"krill oil"[tiab]'
+    `${EUTILS}/esearch.fcgi?db=pubmed&${FELLES}&retmode=json&retmax=60&sort=date&term=${encodeURIComponent(
+      '"Aker BioMarine"[Affiliation]'
     )}`,
     { next: { revalidate: 86400 } }
   );
@@ -53,21 +66,45 @@ async function hentStudier(): Promise<Studie[]> {
   if (!sum.ok) return [];
   const res = (await sum.json()).result;
 
-  return (res.uids as string[]).map((id) => {
-    const x: Esummary = res[id];
-    const doi = x.articleids?.find((i) => i.idtype === "doi")?.value;
-    return {
-      pmid: id,
-      tittel: x.title.replace(/\.$/, ""),
-      tidsskrift: x.fulljournalname ?? "",
-      dato: x.pubdate ?? "",
-      ar: (x.pubdate ?? "").slice(0, 4),
-      forfattere: (x.authors ?? []).slice(0, 3).map((a) => a.name).join(", "),
-      flereForfattere: (x.authors ?? []).length > 3,
-      kategori: kategori(x.title),
-      url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
-      doiUrl: doi ? `https://doi.org/${doi}` : null,
-    };
+  const curatedByPmid = new Map(CURATED_STUDIES.map((c) => [c.pmid, c]));
+  const curatedByDoi = new Map(
+    CURATED_STUDIES.filter((c) => c.doi).map((c) => [c.doi.toLowerCase(), c])
+  );
+
+  const hentet: Studie[] = (res.uids as string[])
+    .map((id): Studie => {
+      const x: Esummary = res[id];
+      const doi = x.articleids?.find((i) => i.idtype === "doi")?.value;
+      const kurert = curatedByPmid.get(id) ?? (doi ? curatedByDoi.get(doi.toLowerCase()) : undefined);
+      const ai = AI_SUMMARIES[id];
+      return {
+        pmid: id,
+        tittel: x.title.replace(/\.$/, ""),
+        tidsskrift: x.fulljournalname ?? "",
+        dato: x.pubdate ?? "",
+        ar: (x.pubdate ?? "").slice(0, 4),
+        forfattere: (x.authors ?? []).slice(0, 3).map((a) => a.name).join(", "),
+        flereForfattere: (x.authors ?? []).length > 3,
+        kategori: kategori(x.title),
+        url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
+        doiUrl: doi ? `https://doi.org/${doi}` : null,
+        summary: kurert ? kurert.summary : ai ?? null,
+        verified: kurert ? true : ai ? false : undefined,
+        quality: kurert ? kurert.quality : null,
+        akerNote: kurert ? kurert.akerNote : null,
+      };
+    })
+    // Never show the fictional / not-real study (SUPERBA-OA / Andersen).
+    .filter((s) => !EXCLUDED_TITLE_HINTS.some((h) => s.tittel.toLowerCase().includes(h)));
+
+  // Always include the 4 verified curated studies, even if they aren't Aker-affiliated on PubMed.
+  const tilstede = new Set(hentet.map((s) => s.pmid));
+  const mangler = CURATED_STUDIES.filter((c) => !tilstede.has(c.pmid)).map(curatedToStudie);
+
+  // Verified studies first, then by year (newest first).
+  return [...mangler, ...hentet].sort((a, b) => {
+    if (!!b.verified !== !!a.verified) return b.verified ? 1 : -1;
+    return (b.ar || "").localeCompare(a.ar || "");
   });
 }
 

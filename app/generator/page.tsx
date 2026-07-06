@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type ContentType = "deck" | "blog" | "video" | "podcast";
+type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper";
 
 const CONTENT_TYPES: {
   id: ContentType;
@@ -15,6 +15,7 @@ const CONTENT_TYPES: {
   { id: "blog", label: "Blog post", icon: "✍️", hint: "Article draft", available: false },
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
+  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "In-depth report", available: false },
 ];
 
 export default function ContentGenerator() {
@@ -22,6 +23,7 @@ export default function ContentGenerator() {
   const [filer, setFiler] = useState<File[]>([]);
   const [lengde, setLengde] = useState("standard");
   const [tone, setTone] = useState("balansert");
+  const [kontekst, setKontekst] = useState("");
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
   const [ferdig, setFerdig] = useState(false);
@@ -70,6 +72,7 @@ export default function ContentGenerator() {
       filer.forEach((f) => form.append("filer", f));
       form.append("lengde", lengde);
       form.append("tone", tone);
+      form.append("instruksjoner", kontekst.trim());
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
@@ -136,7 +139,7 @@ export default function ContentGenerator() {
         <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
           What do you want to create?
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
           {CONTENT_TYPES.map((t) => (
             <button
               key={t.id}
@@ -259,6 +262,23 @@ export default function ContentGenerator() {
                   ))}
                 </div>
               </div>
+
+              <div>
+                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                  Context & instructions <span className="text-zinc-400">(optional)</span>
+                </div>
+                <textarea
+                  value={kontekst}
+                  onChange={(e) => setKontekst(e.target.value)}
+                  rows={4}
+                  placeholder="Tell the AI anything specific — audience, angle, must-include points, claims to avoid, terminology, structure. E.g. 'Audience is pharmacy buyers in Germany; lead with the Omega-3 Index data; don't mention competitors; keep it to the joint-health story.'"
+                  className="w-full resize-y rounded-xl border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                />
+                <p className="mt-1 text-xs text-zinc-500">
+                  Free text — the model follows this on top of the source files (it never overrides
+                  brand styling or claim-accuracy rules).
+                </p>
+              </div>
             </div>
           </>
         ) : (
@@ -270,7 +290,7 @@ export default function ContentGenerator() {
             </div>
             <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
               Right now the tool can produce <strong>PowerPoint decks</strong>.
-              Blog, video and podcast generation are on the way — pick
+              Blog, video, podcast and whitepaper generation are on the way — pick
               PowerPoint deck above to get started today.
             </p>
           </div>

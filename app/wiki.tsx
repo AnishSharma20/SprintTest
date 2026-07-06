@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { Summary, Quality } from "./studies-data";
 
 export type Studie = {
   pmid: string;
@@ -13,6 +14,11 @@ export type Studie = {
   kategori: string;
   url: string;
   doiUrl: string | null;
+  // summary layer
+  summary?: Summary | null;
+  verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
+  quality?: Quality | null;
+  akerNote?: string | null;
 };
 
 export default function Wiki({ studier }: { studier: Studie[] }) {
@@ -50,8 +56,8 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
             Krill Oil Research
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            A living library of scientific studies on krill oil and omega-3.
-            Pulled directly from PubMed and updated automatically.
+            Scientific studies affiliated with Aker BioMarine, pulled from PubMed and updated
+            automatically — with plain-language summaries, marked verified by science or AI-generated.
           </p>
         </div>
       </header>
@@ -123,63 +129,115 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         ) : (
           <ul className="space-y-3">
             {filtrert.map((s) => (
-              <li
-                key={s.pmid}
-                className="group rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md"
-              >
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
-                    {s.kategori}
-                  </span>
-                  <span className="text-xs text-zinc-400">{s.dato}</span>
-                </div>
-                <a
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold leading-snug text-[#052A4E] group-hover:text-[#0A7A8A] hover:underline"
-                >
-                  {s.tittel}
-                </a>
-                <p className="mt-1 text-sm text-zinc-500">
-                  {s.forfattere}
-                  {s.flereForfattere && " et al."}
-                  {s.tidsskrift && (
-                    <>
-                      {" · "}
-                      <span className="italic">{s.tidsskrift}</span>
-                    </>
-                  )}
-                </p>
-                <div className="mt-3 flex gap-3 text-xs">
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-[#0A7A8A] hover:underline"
-                  >
-                    PubMed →
-                  </a>
-                  {s.doiUrl && (
-                    <a
-                      href={s.doiUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-[#0A7A8A] hover:underline"
-                    >
-                      DOI →
-                    </a>
-                  )}
-                </div>
-              </li>
+              <StudyCard key={s.pmid} s={s} />
             ))}
           </ul>
         )}
 
         <footer className="mt-12 border-t border-[#D6E6EE] pt-6 text-center text-xs text-zinc-400">
-          Source: PubMed / NCBI · search term “krill oil” · updated daily
+          Source: PubMed / NCBI · “Aker BioMarine”[Affiliation] + curated key trials · updated daily
         </footer>
       </main>
+    </div>
+  );
+}
+
+function StudyCard({ s }: { s: Studie }) {
+  const [open, setOpen] = useState(false);
+  const q = s.quality;
+  const qColor =
+    q?.label === "High" ? "bg-[#DFF3E4] text-[#1B7A3D]"
+    : q?.label === "Moderate" ? "bg-[#FBEED6] text-[#8A5A0B]"
+    : "bg-[#F3E0E0] text-[#9A2A2A]";
+  return (
+    <li className="group rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
+          {s.kategori}
+        </span>
+        {q && (
+          <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${qColor}`}>
+            Quality {q.score}% · {q.label}
+          </span>
+        )}
+        <span className="text-xs text-zinc-400">{s.dato}</span>
+      </div>
+      <a
+        href={s.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold leading-snug text-[#052A4E] group-hover:text-[#0A7A8A] hover:underline"
+      >
+        {s.tittel}
+      </a>
+      <p className="mt-1 text-sm text-zinc-500">
+        {s.forfattere}
+        {s.flereForfattere && " et al."}
+        {s.tidsskrift && (
+          <>
+            {" · "}
+            <span className="italic">{s.tidsskrift}</span>
+          </>
+        )}
+      </p>
+      {s.akerNote && <p className="mt-1 text-xs text-zinc-400">{s.akerNote}</p>}
+
+      {s.summary && (
+        <>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[#D6E6EE] bg-[#F7FBFC] px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          >
+            {open ? "Hide summary ▲" : "Read summary ▼"}
+            <VerifiedBadge verified={!!s.verified} />
+          </button>
+          {open && (
+            <div className="mt-3 space-y-3 rounded-xl border border-[#E3EEF2] bg-[#F9FCFD] p-4 text-sm">
+              {!s.verified && (
+                <p className="rounded-md bg-[#FBEED6] px-3 py-1.5 text-[11px] font-medium text-[#8A5A0B]">
+                  ⚠︎ AI-generated summary from the abstract — not yet verified by a scientist.
+                </p>
+              )}
+              <SummarySection label="Background & rationale" text={s.summary.background} />
+              <SummarySection label="Design & participants" text={s.summary.design} />
+              <SummarySection label="Key findings" text={s.summary.findings} />
+              <SummarySection label="Limitations & quality" text={s.summary.limitations} />
+            </div>
+          )}
+        </>
+      )}
+
+      <div className="mt-3 flex gap-3 text-xs">
+        <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-[#0A7A8A] hover:underline">
+          PubMed →
+        </a>
+        {s.doiUrl && (
+          <a href={s.doiUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-[#0A7A8A] hover:underline">
+            DOI →
+          </a>
+        )}
+      </div>
+    </li>
+  );
+}
+
+function VerifiedBadge({ verified }: { verified: boolean }) {
+  return verified ? (
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#DFF3E4] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1B7A3D]">
+      ✓ Verified by science
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#EEE7D6] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8A6A2B]">
+      AI · unverified
+    </span>
+  );
+}
+
+function SummarySection({ label, text }: { label: string; text: string }) {
+  return (
+    <div>
+      <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">{label}</div>
+      <p className="mt-0.5 leading-relaxed text-zinc-700">{text}</p>
     </div>
   );
 }

@@ -56,7 +56,7 @@ def _prune_jobs() -> None:
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
-             kvalitet: str = "fast") -> None:
+             kvalitet: str = "fast", instruksjoner: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
         decks: list[dict] = []
@@ -73,7 +73,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                     step=(f"Deck {k + 1}/{total}: {step}" if total > 1 else step))
 
             decks.append(src.generate(client, text, base, length=lengde, tone=tone,
-                                       quality=kvalitet, on_progress=on_prog))
+                                       quality=kvalitet, instructions=instruksjoner, on_progress=on_prog))
 
         if len(decks) == 1:
             d = decks[0]
@@ -157,6 +157,7 @@ async def create_job(
     lengde: str = Form(default="standard"),
     tone: str = Form(default="balansert"),
     kvalitet: str = Form(default="fast"),
+    instruksjoner: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -174,7 +175,7 @@ async def create_job(
     job_id = uuid.uuid4().hex
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
-    threading.Thread(target=_run_job, args=(job_id, key, files, lengde, tone, kvalitet),
+    threading.Thread(target=_run_job, args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner),
                      daemon=True).start()
     return {"job_id": job_id}
 

@@ -36,7 +36,7 @@ def _wording(plan: dict) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
-def _visual_gate(client, summary_text, plan, pptx, length, tone, _p):
+def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions=""):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
@@ -53,13 +53,13 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p):
             break
         _p(90, f"Polishing {len(flags)} flagged slide(s)")
         candidate = planner.revise_plan_visual(client, summary_text, plan, flags,
-                                               length=length, tone=tone)
+                                               length=length, tone=tone, instructions=instructions)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
-                                            length=length, tone=tone)
+                                            length=length, tone=tone, instructions=instructions)
             errs = validate.validate_plan(candidate)
         hard = [e for e in errs if "shorten it by at least" not in e]
         if hard:
@@ -72,7 +72,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p):
 
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              length: str = "standard", tone: str = "balansert", quality: str = "fast",
-             on_progress=None) -> dict:
+             instructions: str = "", on_progress=None) -> dict:
     def _p(pct, step):
         if on_progress:
             try:
@@ -81,12 +81,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                 pass
 
     _p(5, "Planning the deck")
-    plan = planner.plan_deck(client, summary_text, length=length, tone=tone)
+    plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions)
 
     errors = validate.validate_plan(plan)
     if errors:
         _p(40, "Refining copy to fit")
-        plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone)
+        plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
+                                   instructions=instructions)
         errors = validate.validate_plan(plan)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
@@ -104,7 +105,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
     if quality == "polished" or os.environ.get("DECK_QA_GATE"):
-        pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p)
+        pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

@@ -91,14 +91,22 @@ def _asset_guide() -> str:
     return "\n".join(lines)
 
 
-def build_system(length: str, tone: str) -> str:
+def build_system(length: str, tone: str, instructions: str = "") -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     benefits = ", ".join(config.manifest()["benefits"])
     generic = ", ".join(config.manifest().get("generic_icons", []))
+    instr_block = ""
+    if (instructions or "").strip():
+        instr_block = (
+            "\n\nUSER CONTEXT & INSTRUCTIONS (the person generating this deck wrote the following — treat it "
+            "as high-priority guidance on audience, angle, emphasis, terminology and what to include or avoid. "
+            "Follow it wherever possible; it may NOT override the CLAIM FIDELITY rules or the layout/character "
+            "limits, which always win):\n\"\"\"\n" + instructions.strip() + "\n\"\"\"\n")
     return f"""You plan an on-brand PowerPoint deck for Aker BioMarine's Superba Krill from source material
 (a science summary or free text). You emit ONLY a structured plan via the `emit_plan` tool — you never
 write styling, colours, fonts, or positions. All design is inherited from the fixed Superba template;
 your job is the STORYLINE, the LAYOUT choice per slide, and the COPY.
+{instr_block}
 
 STORYLINE (pyramid principle): open with the conclusion, then support it. One message per slide — each
 slide makes a single clear point and earns its place (never repeat a point across slides). Aim for about
@@ -190,16 +198,17 @@ def _call(client, system, user, model, max_tokens):
 
 
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
-              tone: str = "balansert", model: str | None = None) -> dict:
+              tone: str = "balansert", instructions: str = "", model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = 12000 if target > 10 else 8000
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
-    return _extract_plan(_call(client, build_system(length, tone), user, model, max_tokens))
+    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
-                length: str = "standard", tone: str = "balansert", model: str | None = None) -> dict:
+                length: str = "standard", tone: str = "balansert", instructions: str = "",
+                model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = 12000 if target > 10 else 8000
     fix = ("Your previous plan FAILED validation. Change ONLY the fields named in the errors below "
@@ -208,11 +217,12 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
            "emit_plan.\n\nVALIDATION ERRORS:\n- " + "\n- ".join(errors)
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    return _extract_plan(_call(client, build_system(length, tone), user, model, max_tokens))
+    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
-                       length: str = "standard", tone: str = "balansert", model: str | None = None) -> dict:
+                       length: str = "standard", tone: str = "balansert", instructions: str = "",
+                       model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
@@ -238,4 +248,4 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            "plan via emit_plan.\n\nVISUAL QA FINDINGS:\n- " + "\n- ".join(lines)
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    return _extract_plan(_call(client, build_system(length, tone), user, model, max_tokens))
+    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))

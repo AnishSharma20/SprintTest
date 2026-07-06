@@ -19,9 +19,10 @@ import io
 import re
 
 from pptx import Presentation
+from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_AUTO_SIZE
 from pptx.oxml.ns import qn
-from pptx.util import Inches
+from pptx.util import Inches, Pt
 
 from . import config
 
@@ -126,6 +127,23 @@ def _apply_picture_bullet(p, rid: str) -> None:
     buBlip.append(blip)
     pPr.append(buSz)
     pPr.append(buBlip)
+
+
+DISCLAIMER = ("AI generated draft from the source material. Review all content, claims and figures, "
+              "and edit as needed before use.")
+
+
+def _add_disclaimer(slide, dark: bool) -> None:
+    """Add a small 'AI generated, review before use' note along the bottom of the cover slide.
+    A free-standing textbox (no template placeholder exists for it), so we set a subtle size/colour."""
+    box = slide.shapes.add_textbox(Inches(0.5), Inches(6.98), Inches(10.5), Inches(0.4))
+    tf = box.text_frame
+    tf.word_wrap = True
+    tf.text = DISCLAIMER
+    run = tf.paragraphs[0].runs[0]
+    run.font.size = Pt(9)
+    run.font.italic = True
+    run.font.color.rgb = RGBColor(0xBF, 0xE3, 0xEF) if dark else RGBColor(0x6B, 0x8B, 0x95)
 
 
 def _icon_path(benefit: str):
@@ -310,6 +328,10 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     # Benefit icon on text-only benefit slides (highlight / section have open top-left space).
     if benefit and cat["kind"] in ("highlight", "section"):
         _place_icon(slide, (Inches(0.5), Inches(0.42), Inches(0.95), Inches(0.95)), _icon_path(benefit))
+
+    # AI-generated disclaimer along the bottom of the cover slide.
+    if cat["kind"] == "title":
+        _add_disclaimer(slide, dark)
 
     # Remove every content placeholder we did not fill (prevents empty picture boxes /
     # leftover prompt text). Chrome placeholders (date/footer/number) stay and inherit.

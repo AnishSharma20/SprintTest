@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Summary, Quality } from "./studies-data";
 import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
 
@@ -301,6 +301,28 @@ function StudyCard({
   );
 }
 
+// Textarea that grows to fit its content (no scrolling inside the box), with a generous minimum.
+function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const grow = () => {
+    const el = ref.current;
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight + 2}px`;
+    }
+  };
+  useEffect(grow, [value]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onInput={grow}
+      className="mt-1 min-h-[7rem] w-full resize-y overflow-hidden rounded-lg border border-[#B7D9DE] bg-white p-3 text-sm leading-relaxed text-zinc-700 outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+    />
+  );
+}
+
 function SummaryEditor({
   initial,
   onSave,
@@ -322,11 +344,9 @@ function SummaryEditor({
       {fields.map((f) => (
         <div key={f.key}>
           <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">{f.label}</div>
-          <textarea
+          <AutoTextarea
             value={draft[f.key]}
-            onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))}
-            rows={3}
-            className="mt-1 w-full resize-y rounded-lg border border-[#B7D9DE] bg-white p-2 text-sm text-zinc-700 outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+            onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))}
           />
         </div>
       ))}

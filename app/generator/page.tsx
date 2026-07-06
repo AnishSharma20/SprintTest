@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
 
@@ -20,6 +20,28 @@ const CONTENT_TYPES: {
   { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "In-depth report", available: false },
 ];
 
+function PickChip({
+  aktiv,
+  onClick,
+  children,
+}: {
+  aktiv: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+        aktiv ? "bg-[#0A7A8A] text-white" : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function ContentGenerator() {
   const [contentType, setContentType] = useState<ContentType>("deck");
   const [filer, setFiler] = useState<File[]>([]);
@@ -29,6 +51,26 @@ export default function ContentGenerator() {
   const [studier, setStudier] = useState<Studie[]>([]);
   const [valgteStudier, setValgteStudier] = useState<Set<string>>(new Set());
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
+  const [studieSok, setStudieSok] = useState("");
+  const [studieKat, setStudieKat] = useState<string | null>(null);
+
+  const studieKategorier = useMemo(() => {
+    const m = new Map<string, number>();
+    studier.forEach((s) => m.set(s.kategori, (m.get(s.kategori) ?? 0) + 1));
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [studier]);
+
+  const filtrerteStudier = useMemo(() => {
+    const q = studieSok.toLowerCase().trim();
+    return studier.filter(
+      (s) =>
+        (!studieKat || s.kategori === studieKat) &&
+        (!q ||
+          s.tittel.toLowerCase().includes(q) ||
+          s.forfattere.toLowerCase().includes(q) ||
+          s.tidsskrift.toLowerCase().includes(q))
+    );
+  }, [studier, studieSok, studieKat]);
 
   useEffect(() => {
     setOverrides(loadOverrides());
@@ -271,43 +313,66 @@ export default function ContentGenerator() {
               {studier.length === 0 ? (
                 <p className="mt-2 text-xs text-zinc-400">Loading studies…</p>
               ) : (
-                <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
-                  {studier.map((s) => {
-                    const valgt = valgteStudier.has(s.pmid);
-                    const verified = !!overrides[s.pmid] || s.verified;
-                    return (
-                      <label
-                        key={s.pmid}
-                        className={`flex cursor-pointer items-start gap-2 rounded-lg border p-2 text-sm transition-colors ${
-                          valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E3EEF2] hover:bg-[#F7FBFC]"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={valgt}
-                          onChange={() => toggleStudie(s.pmid)}
-                          className="mt-1 accent-[#0A7A8A]"
-                        />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
-                          <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
-                            {verified ? (
-                              <span className="rounded-full bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
-                                Verified
+                <>
+                  <input
+                    type="text"
+                    value={studieSok}
+                    onChange={(e) => setStudieSok(e.target.value)}
+                    placeholder="Search studies…"
+                    className="mt-3 w-full rounded-lg border border-[#D6E6EE] bg-white px-3 py-2 text-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                  />
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <PickChip aktiv={studieKat === null} onClick={() => setStudieKat(null)}>
+                      All ({studier.length})
+                    </PickChip>
+                    {studieKategorier.map(([navn, antall]) => (
+                      <PickChip key={navn} aktiv={studieKat === navn} onClick={() => setStudieKat(navn)}>
+                        {navn} ({antall})
+                      </PickChip>
+                    ))}
+                  </div>
+                  <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
+                    {filtrerteStudier.length === 0 ? (
+                      <p className="py-4 text-center text-xs text-zinc-400">No studies match.</p>
+                    ) : (
+                      filtrerteStudier.map((s) => {
+                        const valgt = valgteStudier.has(s.pmid);
+                        const verified = !!overrides[s.pmid] || s.verified;
+                        return (
+                          <label
+                            key={s.pmid}
+                            className={`flex cursor-pointer items-start gap-2 rounded-lg border p-2 text-sm transition-colors ${
+                              valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E3EEF2] hover:bg-[#F7FBFC]"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={valgt}
+                              onChange={() => toggleStudie(s.pmid)}
+                              className="mt-1 accent-[#0A7A8A]"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
+                              <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
+                                {verified ? (
+                                  <span className="rounded-full bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
+                                    Verified
+                                  </span>
+                                ) : (
+                                  <span className="rounded-full bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
+                                    AI
+                                  </span>
+                                )}
+                                {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
+                                <span className="text-zinc-400">{s.ar}</span>
                               </span>
-                            ) : (
-                              <span className="rounded-full bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
-                                AI
-                              </span>
-                            )}
-                            {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
-                            <span className="text-zinc-400">{s.ar}</span>
-                          </span>
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
+                            </span>
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
+                </>
               )}
               <p className="mt-2 text-xs text-zinc-500">
                 Selected summaries are sent to the AI as source material, alongside any files.

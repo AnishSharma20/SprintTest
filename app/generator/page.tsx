@@ -4,6 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
 
+type ProductId = "superba" | "lysoveta" | "revervia";
+
+const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean }[] = [
+  { id: "superba", label: "Superba", hint: "Krill oil", available: true },
+  { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
+  { id: "revervia", label: "Revervia", hint: "", available: false },
+];
+
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper";
 
 const CONTENT_TYPES: {
@@ -51,6 +59,7 @@ type Kjoring = {
 };
 
 export default function ContentGenerator() {
+  const [produkt, setProdukt] = useState<ProductId>("superba");
   const [valgteTyper, setValgteTyper] = useState<Set<ContentType>>(new Set<ContentType>(["deck"]));
   const [filer, setFiler] = useState<File[]>([]);
   const [lengde, setLengde] = useState("standard");
@@ -253,6 +262,38 @@ export default function ContentGenerator() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
+        {/* Product selector — which brand the content is for (single choice) */}
+        <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+          Which product is this for?
+        </div>
+        <div className="mb-6 grid grid-cols-3 gap-2">
+          {PRODUCTS.map((p) => {
+            const valgt = produkt === p.id && p.available;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => p.available && setProdukt(p.id)}
+                disabled={!p.available}
+                aria-pressed={valgt}
+                className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                  valgt
+                    ? "border-[#E30917] bg-[#FDECEC]"
+                    : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                } ${!p.available ? "cursor-not-allowed opacity-60" : ""}`}
+              >
+                {!p.available && (
+                  <span className="absolute right-2 top-2 rounded-full bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
+                    Soon
+                  </span>
+                )}
+                <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
+                {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Content type selector — multi-select: pick one or several */}
         <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
           What do you want to create? <span className="text-zinc-400 normal-case tracking-normal">— pick one or several</span>
@@ -420,69 +461,82 @@ export default function ContentGenerator() {
 
             {/* Options */}
             <div className="mt-6 space-y-4">
-              {/* Length + Tone are deck-specific (slide counts, deck emphasis) —
-                  only shown when a deck is being generated. */}
+              {/* Deck-specific settings live in their own labelled card, so when a
+                  deck AND a blog are selected it's obvious these apply to the deck
+                  only — not to the blog. */}
               {visDeckOpsjoner && (
-                <>
-                  <div>
-                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                      Deck length
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        ["kort", "Short", "~6 slides"],
-                        ["standard", "Standard", "~9 slides"],
-                        ["detaljert", "Detailed", "~13 slides"],
-                      ].map(([val, label, hint]) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => setLengde(val)}
-                          className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-                            lengde === val
-                              ? "border-[#E30917] bg-[#FDECEC]"
-                              : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                          }`}
-                        >
-                          <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                          <div className="text-xs text-zinc-500">{hint}</div>
-                        </button>
-                      ))}
-                    </div>
+                <div className="rounded-2xl border border-[#D6E6EE] bg-[#F7FBFC] p-4">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
+                    📊 PowerPoint deck settings
                   </div>
+                  <p className="mt-0.5 text-xs text-zinc-500">
+                    These apply to the deck only.
+                  </p>
 
-                  <div>
-                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                      Deck tone
+                  <div className="mt-3 space-y-4">
+                    <div>
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B8B95]">
+                        Length
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          ["kort", "Short", "~6 slides"],
+                          ["standard", "Standard", "~9 slides"],
+                          ["detaljert", "Detailed", "~13 slides"],
+                        ].map(([val, label, hint]) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setLengde(val)}
+                            className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                              lengde === val
+                                ? "border-[#E30917] bg-[#FDECEC]"
+                                : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                            }`}
+                          >
+                            <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                            <div className="text-xs text-zinc-500">{hint}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        ["salg", "Sales", "Benefit-led"],
-                        ["balansert", "Balanced", "Benefit + proof"],
-                        ["vitenskap", "Scientific", "More evidence"],
-                      ].map(([val, label, hint]) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => setTone(val)}
-                          className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-                            tone === val
-                              ? "border-[#E30917] bg-[#FDECEC]"
-                              : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                          }`}
-                        >
-                          <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                          <div className="text-xs text-zinc-500">{hint}</div>
-                        </button>
-                      ))}
+
+                    <div>
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B8B95]">
+                        Tone
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          ["salg", "Sales", "Benefit-led"],
+                          ["balansert", "Balanced", "Benefit + proof"],
+                          ["vitenskap", "Scientific", "More evidence"],
+                        ].map(([val, label, hint]) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setTone(val)}
+                            className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                              tone === val
+                                ? "border-[#E30917] bg-[#FDECEC]"
+                                : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                            }`}
+                          >
+                            <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                            <div className="text-xs text-zinc-500">{hint}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
 
               <div>
                 <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Context & instructions <span className="text-zinc-400">(optional)</span>
+                  Context & instructions{" "}
+                  <span className="normal-case tracking-normal text-zinc-400">
+                    — optional, applies to everything you create
+                  </span>
                 </div>
                 <textarea
                   value={kontekst}
@@ -492,8 +546,8 @@ export default function ContentGenerator() {
                   className="w-full resize-y rounded-xl border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
                 />
                 <p className="mt-1 text-xs text-zinc-500">
-                  Free text — the model follows this on top of the source files (it never overrides
-                  brand styling or claim-accuracy rules).
+                  Free text — every selected asset follows this on top of the source files (it never
+                  overrides brand styling or claim-accuracy rules).
                 </p>
               </div>
             </div>

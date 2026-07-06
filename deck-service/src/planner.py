@@ -131,6 +131,11 @@ four_columns for parallel content (comparisons, benefit sets, steps). Use highli
 claim. Respect the character limits shown in [brackets] and enforced by the schema — write to fit.
 {_layout_guide()}
 
+COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
+its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
+content: a flowing description stays prose; a set of 2 to 3 sub-points reads better as bullets. Keep bullet
+lines very short so they fit the narrow column.
+
 COLUMN HEADINGS are tiny one-line labels — keep each to 1–2 words, comfortably within the limit, and make the
 columns' headings clearly DISTINCT. Never give two columns headings that share their opening words (NOT "What
 the barrier does" + "What the barrier needs" — they collapse to the same label; use "Structure" + "Upkeep").

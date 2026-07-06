@@ -288,7 +288,9 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     heads = _distinct_col_headings([c.get("heading") for c in cols], col_head_max)
     for col_map, col, icon, head in zip(col_maps, cols, icons, heads):
         put(col_map.get("heading"), head)
-        put(col_map.get("body"), col.get("body"), multiline=True)
+        # Content-driven: a column body written as several lines becomes bullets; a single
+        # sentence stays prose. Same rule as the main body.
+        put(col_map.get("body"), col.get("body"), multiline=True, bullets=True)
         pic = col_map.get("picture")
         if icon and pic is not None:
             _place_icon(slide, _layout_box(layout_name, master_index, pic), icon)

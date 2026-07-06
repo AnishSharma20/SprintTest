@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aker BioMarine — Research Wiki",
+  title: "Aker BioMarine Research Wiki",
   description:
     "Scientific studies on krill oil and omega-3. A research library from Aker BioMarine.",
 };

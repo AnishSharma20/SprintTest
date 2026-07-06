@@ -21,11 +21,11 @@ const CONTENT_TYPES: {
   hint: string;
   available: boolean;
 }[] = [
-  { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "On-brand slides", available: true },
-  { id: "blog", label: "Blog post", icon: "✍️", hint: "Science-based draft", available: true },
+  { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "Branded slides", available: true },
+  { id: "blog", label: "Blog post", icon: "✍️", hint: "Grounded in science", available: true },
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
-  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "In-depth report", available: false },
+  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Detailed report", available: false },
 ];
 
 function PickChip({
@@ -254,9 +254,9 @@ export default function ContentGenerator() {
             Create content from your material
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Upload your source files and choose what to produce — pick one or
-            several at once. Our AI turns them into ready-to-use, on-brand
-            content: polished PowerPoint decks and science-based blog drafts.
+            Upload your source files and choose what to produce. Pick one or
+            several at once, and our AI turns them into ready to use, on brand
+            content: polished PowerPoint decks and science backed blog drafts.
           </p>
         </div>
       </header>
@@ -296,7 +296,7 @@ export default function ContentGenerator() {
 
         {/* Content type selector — multi-select: pick one or several */}
         <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-          What do you want to create? <span className="text-zinc-400 normal-case tracking-normal">— pick one or several</span>
+          What do you want to create? <span className="text-zinc-400 normal-case tracking-normal">(pick one or several)</span>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
           {CONTENT_TYPES.map((t) => {
@@ -507,7 +507,7 @@ export default function ContentGenerator() {
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          ["salg", "Sales", "Benefit-led"],
+                          ["salg", "Sales", "Benefit first"],
                           ["balansert", "Balanced", "Benefit + proof"],
                           ["vitenskap", "Scientific", "More evidence"],
                         ].map(([val, label, hint]) => (
@@ -535,19 +535,19 @@ export default function ContentGenerator() {
                 <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
                   Context & instructions{" "}
                   <span className="normal-case tracking-normal text-zinc-400">
-                    — optional, applies to everything you create
+                    (optional, applies to everything you create)
                   </span>
                 </div>
                 <textarea
                   value={kontekst}
                   onChange={(e) => setKontekst(e.target.value)}
                   rows={4}
-                  placeholder="Tell the AI anything specific — audience, angle, must-include points, claims to avoid, terminology, structure. E.g. 'Audience is pharmacy buyers in Germany; lead with the Omega-3 Index data; don't mention competitors; keep it to the joint-health story.'"
+                  placeholder="Tell the AI anything specific: audience, angle, points to include, claims to avoid, terminology, structure. E.g. 'Audience is pharmacy buyers in Germany; lead with the Omega 3 Index data; don't mention competitors; keep it to the joint health story.'"
                   className="w-full resize-y rounded-xl border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
                 />
                 <p className="mt-1 text-xs text-zinc-500">
-                  Free text — every selected asset follows this on top of the source files (it never
-                  overrides brand styling or claim-accuracy rules).
+                  Free text. Every selected asset follows this on top of the source files (it never
+                  overrides brand styling or the accuracy rules for claims).
                 </p>
               </div>
             </div>
@@ -608,8 +608,8 @@ export default function ContentGenerator() {
                   {k.status === "done" && (
                     <p className="mt-1 text-xs text-emerald-700">
                       {k.type === "blog"
-                        ? "✅ Draft ready — review & edit it below."
-                        : "✅ Downloaded — check your downloads folder."}
+                        ? "✅ Draft ready. Review & edit it below."
+                        : "✅ Downloaded. Check your downloads folder."}
                     </p>
                   )}
                   {k.status === "error" && (
@@ -632,7 +632,7 @@ export default function ContentGenerator() {
           <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                Blog draft (Markdown) — review & edit
+                Blog draft (Markdown) · review & edit
               </div>
               <div className="flex gap-2">
                 <button
@@ -664,7 +664,7 @@ export default function ContentGenerator() {
               className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
             />
             <p className="mt-1 text-xs text-zinc-500">
-              AI-generated draft based on your sources — review the science and claims before publishing.
+              AI generated draft based on your sources. Review the science and claims before publishing.
             </p>
           </div>
         )}

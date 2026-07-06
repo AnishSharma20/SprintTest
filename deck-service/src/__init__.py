@@ -9,7 +9,7 @@ inherited from the template's slide layouts.
 """
 from __future__ import annotations
 
-__all__ = ["generate"]
+__all__ = ["generate", "generate_blog"]
 
 
 def generate(*args, **kwargs):
@@ -17,3 +17,9 @@ def generate(*args, **kwargs):
     (e.g. src.planner) doesn't require the whole renderer stack to be present."""
     from .pipeline import generate as _generate
     return _generate(*args, **kwargs)
+
+
+def generate_blog(*args, **kwargs):
+    """Lazy entrypoint for the blog-draft generator."""
+    from .blog import generate_blog as _generate_blog
+    return _generate_blog(*args, **kwargs)

@@ -56,9 +56,25 @@ def _prune_jobs() -> None:
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
-             kvalitet: str = "fast", instruksjoner: str = "") -> None:
+             kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
+
+        if innholdstype == "blog":
+            # One blog draft from ALL sources combined (files + picked study summaries).
+            parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
+            source = "\n\n".join(parts)
+            if not source:
+                raise ValueError("No text found in the provided files/studies.")
+            base = (files[0][0] if files else "blog").rsplit(".", 1)[0] or "blog"
+            b = src.generate_blog(client, source, base, length=lengde, tone=tone,
+                                  instructions=instruksjoner,
+                                  on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+            JOBS[job_id].update(status="done", progress=100, step="Done",
+                                result=b["markdown"].encode("utf-8"),
+                                media_type="text/markdown; charset=utf-8", filename=b["filename"])
+            return
+
         decks: list[dict] = []
         total = len(files)
         for k, (fname, data) in enumerate(files):
@@ -158,6 +174,7 @@ async def create_job(
     tone: str = Form(default="balansert"),
     kvalitet: str = Form(default="fast"),
     instruksjoner: str = Form(default=""),
+    innholdstype: str = Form(default="deck"),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -175,7 +192,8 @@ async def create_job(
     job_id = uuid.uuid4().hex
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
-    threading.Thread(target=_run_job, args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner),
+    threading.Thread(target=_run_job,
+                     args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype),
                      daemon=True).start()
     return {"job_id": job_id}
 

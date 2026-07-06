@@ -17,7 +17,7 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 > AI-generated." **Ignore any mention of `svcgen`, `deckgen`, `vendor/`, `DECK_PIPELINE`, or `gen_hybrid`** —
 > that's dead history (in git ≤ `9b5601d` and memory updates a–q).
 
-**Deployed & LIVE** — commit `92e60d1` on `origin/main` (repo `AnishSharma20/SprintTest`; one
+**Deployed & LIVE** — latest on `origin/main` (repo `AnishSharma20/SprintTest`; one
 `git push origin main` redeploys BOTH Render [root `deck-service`] + Vercel [frontend]):
 - the full two-stage pipeline;
 - the **icon system** — brand-red line-art benefit icons (`assets/icon_*.png`) + a generic Lucide fallback
@@ -33,15 +33,14 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Tab 2 free-text "Context & instructions"** threaded to the planner; **Whitepaper "Soon"** menu item.
 - `template2.pptx` (centered layouts) + `template2_mbb_gallery.pptx` committed but **INERT** — the tool still
   uses `template.pptx` until template2 is adopted (re-run `inspect_template` + `build_schema` on it).
-
-**Local-only (NOT pushed) — Tab 1/2 UX upgrades (2026-07-05):**
-- **Sort by scientific quality** in Tab 1 + a hover tooltip defining it (alongside "Newest") — `app/wiki.tsx`.
-- **Prominent "Read summary"** button (filled teal) + bordered summary panel — `app/wiki.tsx`.
-- **Edit & save a summary** inline (4 sections), persisted in **localStorage only** (`app/summary-overrides.ts`);
-  edited summaries badge "Verified · edited by you" and flow into the generator picker.
-- **Generator study picker** — Tab 2 lists studies from the new **`/api/studies`** route (study logic extracted to
-  `app/studies.ts`); selected summaries are sent to the model as a synthesized source file alongside uploaded files.
-- Verified: `tsc` + `next build` both clean (studies page prerenders; `/api/studies` builds).
+- **Tab 1 UX** — sort by scientific quality (+ hover definition), prominent "Read summary" button, and inline
+  **edit & save** of a summary (localStorage — see weakness below); `app/wiki.tsx`, `app/summary-overrides.ts`.
+- **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
+  category filters + search; selected summaries feed the generator as a synthesized source file.
+- **Blog generation** — a "Blog post" content type produces a science-based **blog draft (Markdown)** in the
+  superbakrill.com/blog style (~1,100–1,900 words; problem-hook → mechanism → clinical evidence → whitepaper CTA;
+  cites the source studies). `deck-service/src/blog.py`; `/jobs` routes on `innholdstype`; the draft shows editable
+  in Tab 2 with copy + download .md. Uses uploaded files + picked studies + the context field.
 
 **⚠ KNOWN WEAKNESS (USER-FLAGGED — fix later):** edited-summary persistence is **localStorage-only** — edits live
 in one browser, NOT shared across users/devices or with the backend. The user explicitly wants this upgraded to a

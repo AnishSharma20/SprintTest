@@ -14,7 +14,7 @@ const CONTENT_TYPES: {
   available: boolean;
 }[] = [
   { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "On-brand slides", available: true },
-  { id: "blog", label: "Blog post", icon: "✍️", hint: "Article draft", available: false },
+  { id: "blog", label: "Blog post", icon: "✍️", hint: "Science-based draft", available: true },
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
   { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "In-depth report", available: false },
@@ -93,6 +93,7 @@ export default function ContentGenerator() {
   const [ferdig, setFerdig] = useState(false);
   const [fremdrift, setFremdrift] = useState(0);
   const [steg, setSteg] = useState("");
+  const [blogUtkast, setBlogUtkast] = useState<string | null>(null);
 
   const aktiv = CONTENT_TYPES.find((t) => t.id === contentType)!;
 
@@ -130,6 +131,7 @@ export default function ContentGenerator() {
     setLaster(true);
     setFeil(null);
     setFerdig(false);
+    setBlogUtkast(null);
     setFremdrift(0);
     setSteg("Starting…");
 
@@ -164,6 +166,7 @@ export default function ContentGenerator() {
       form.append("lengde", lengde);
       form.append("tone", tone);
       form.append("instruksjoner", kontekst.trim());
+      form.append("innholdstype", contentType);
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
@@ -184,21 +187,24 @@ export default function ContentGenerator() {
         if (s.status === "error") throw new Error(s.error || "Generation failed");
       }
 
-      // 3) Download the finished deck.
-      setSteg("Downloading…");
+      // 3) Get the result — display the blog draft, or download the deck.
+      setSteg(contentType === "blog" ? "Writing the draft…" : "Downloading…");
       const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
       if (!dl.ok) {
         const d = await dl.json().catch(() => ({}));
         throw new Error(d.feil || `Server responded ${dl.status}`);
       }
-      const blob = await dl.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const zip = blob.type.includes("zip");
-      a.download = zip ? "content-decks.zip" : "content-deck.pptx";
-      a.click();
-      URL.revokeObjectURL(url);
+      if (contentType === "blog") {
+        setBlogUtkast(await dl.text());
+      } else {
+        const blob = await dl.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = blob.type.includes("zip") ? "content-decks.zip" : "content-deck.pptx";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
       setFerdig(true);
     } catch (e) {
       setFeil((e as Error).message);
@@ -461,9 +467,9 @@ export default function ContentGenerator() {
               {aktiv.label} generation is coming soon
             </div>
             <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-              Right now the tool can produce <strong>PowerPoint decks</strong>.
-              Blog, video, podcast and whitepaper generation are on the way — pick
-              PowerPoint deck above to get started today.
+              Right now the tool can produce <strong>PowerPoint decks and blog drafts</strong>.
+              Video, podcast and whitepaper generation are on the way — pick PowerPoint deck
+              or Blog post above to get started today.
             </p>
           </div>
         )}
@@ -474,7 +480,11 @@ export default function ContentGenerator() {
           disabled={laster || (aktiv.available && filer.length === 0 && valgteStudier.size === 0)}
           className="mt-6 w-full rounded-xl bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
-          {laster ? "AI is building your deck…" : `Generate ${aktiv.label.toLowerCase()}`}
+          {laster
+            ? contentType === "blog"
+              ? "AI is writing your blog…"
+              : "AI is building your deck…"
+            : `Generate ${aktiv.label.toLowerCase()}`}
         </button>
 
         {/* Progress */}
@@ -491,7 +501,9 @@ export default function ContentGenerator() {
               />
             </div>
             <p className="mt-2 text-xs text-zinc-500">
-              A full deck takes a couple of minutes — you can keep this tab open.
+              {contentType === "blog"
+                ? "Writing a science-based draft — usually under a minute."
+                : "A full deck takes a couple of minutes — you can keep this tab open."}
             </p>
           </div>
         )}
@@ -502,9 +514,50 @@ export default function ContentGenerator() {
             {feil}
           </div>
         )}
-        {ferdig && (
+        {ferdig && contentType !== "blog" && (
           <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
             ✅ Done! Your deck was downloaded — check your downloads folder.
+          </div>
+        )}
+
+        {blogUtkast !== null && (
+          <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                Blog draft (Markdown) — review & edit
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard?.writeText(blogUtkast)}
+                  className="rounded-lg border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+                >
+                  Copy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = URL.createObjectURL(new Blob([blogUtkast], { type: "text/markdown" }));
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "superba-blog-draft.md";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
+                >
+                  Download .md
+                </button>
+              </div>
+            </div>
+            <textarea
+              value={blogUtkast}
+              onChange={(e) => setBlogUtkast(e.target.value)}
+              className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+            />
+            <p className="mt-1 text-xs text-zinc-500">
+              AI-generated draft based on your sources — review the science and claims before publishing.
+            </p>
           </div>
         )}
 

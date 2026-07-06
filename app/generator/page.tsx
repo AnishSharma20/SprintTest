@@ -42,8 +42,16 @@ function PickChip({
   );
 }
 
+type Kjoring = {
+  type: ContentType;
+  progress: number;
+  step: string;
+  status: "running" | "done" | "error";
+  error?: string;
+};
+
 export default function ContentGenerator() {
-  const [contentType, setContentType] = useState<ContentType>("deck");
+  const [valgteTyper, setValgteTyper] = useState<Set<ContentType>>(new Set<ContentType>(["deck"]));
   const [filer, setFiler] = useState<File[]>([]);
   const [lengde, setLengde] = useState("standard");
   const [tone, setTone] = useState("balansert");
@@ -86,27 +94,33 @@ export default function ContentGenerator() {
       n.has(pmid) ? n.delete(pmid) : n.add(pmid);
       return n;
     });
-    setFerdig(false);
+    setKjoringer([]);
   }
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
-  const [ferdig, setFerdig] = useState(false);
-  const [fremdrift, setFremdrift] = useState(0);
-  const [steg, setSteg] = useState("");
+  const [kjoringer, setKjoringer] = useState<Kjoring[]>([]);
   const [blogUtkast, setBlogUtkast] = useState<string | null>(null);
 
-  const aktiv = CONTENT_TYPES.find((t) => t.id === contentType)!;
+  const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
+  const harValgt = valgteTilgjengelige.length > 0;
+  const visDeckOpsjoner = valgteTyper.has("deck");
 
-  function velgType(t: ContentType) {
-    setContentType(t);
+  function toggleType(t: ContentType) {
+    const meta = CONTENT_TYPES.find((x) => x.id === t)!;
+    if (!meta.available) return; // "Soon" types can't be selected yet
+    setValgteTyper((prev) => {
+      const n = new Set(prev);
+      n.has(t) ? n.delete(t) : n.add(t);
+      return n;
+    });
     setFeil(null);
-    setFerdig(false);
+    setKjoringer([]);
   }
 
   function leggTilFiler(nye: FileList | null) {
     if (!nye) return;
     setFiler((f) => [...f, ...Array.from(nye)]);
-    setFerdig(false);
+    setKjoringer([]);
     setFeil(null);
   }
 
@@ -116,57 +130,48 @@ export default function ContentGenerator() {
 
   const sov = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  async function produser() {
-    // Only the PowerPoint deck is wired to a backend today. The other content
-    // types are selectable but not yet available.
-    if (!aktiv.available) {
-      setFerdig(false);
-      setFeil(`${aktiv.label} generation isn't available yet — only PowerPoint deck works for now.`);
-      return;
-    }
-    if (filer.length === 0 && valgteStudier.size === 0) {
-      setFeil("Add at least one source file or pick a study to base the deck on.");
-      return;
-    }
-    setLaster(true);
-    setFeil(null);
-    setFerdig(false);
-    setBlogUtkast(null);
-    setFremdrift(0);
-    setSteg("Starting…");
+  function oppdaterKjoring(type: ContentType, patch: Partial<Kjoring>) {
+    setKjoringer((prev) => prev.map((k) => (k.type === type ? { ...k, ...patch } : k)));
+  }
 
+  // Build the source material shared by every asset: uploaded files +
+  // the picked scientific studies synthesized into one text file.
+  function byggKilder(): File[] {
+    const kilder = [...filer];
+    const valgte = studier.filter((s) => valgteStudier.has(s.pmid));
+    if (valgte.length) {
+      const tekst = valgte
+        .map((s) => {
+          const sum = overrides[s.pmid]?.summary ?? s.summary;
+          const cite = `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`;
+          return (
+            `# ${s.tittel}\n${cite}\n${s.akerNote ? `(${s.akerNote})\n` : ""}` +
+            (sum
+              ? `\nBackground & rationale: ${sum.background}\nDesign & participants: ${sum.design}\n` +
+                `Key findings: ${sum.findings}\nLimitations & quality: ${sum.limitations}\n`
+              : "")
+          );
+        })
+        .join("\n\n---\n\n");
+      kilder.push(
+        new File([`Selected Aker BioMarine scientific studies\n\n${tekst}`],
+          "Selected-scientific-studies.txt", { type: "text/plain" })
+      );
+    }
+    return kilder;
+  }
+
+  // Run one content type end-to-end: start a job, poll it, then handle its
+  // result (deck → download, blog → editable panel). Errors are recorded on
+  // that asset's row so the other assets keep running.
+  async function kjorEn(type: ContentType, kilder: File[]) {
     try {
-      // 1) Start the job — returns immediately with a job id.
       const form = new FormData();
-      filer.forEach((f) => form.append("filer", f));
-
-      // Selected scientific-study summaries → one synthesized source file (uses any edited versions).
-      const valgte = studier.filter((s) => valgteStudier.has(s.pmid));
-      if (valgte.length) {
-        const tekst = valgte
-          .map((s) => {
-            const sum = overrides[s.pmid]?.summary ?? s.summary;
-            const cite = `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`;
-            return (
-              `# ${s.tittel}\n${cite}\n${s.akerNote ? `(${s.akerNote})\n` : ""}` +
-              (sum
-                ? `\nBackground & rationale: ${sum.background}\nDesign & participants: ${sum.design}\n` +
-                  `Key findings: ${sum.findings}\nLimitations & quality: ${sum.limitations}\n`
-                : "")
-            );
-          })
-          .join("\n\n---\n\n");
-        form.append(
-          "filer",
-          new File([`Selected Aker BioMarine scientific studies\n\n${tekst}`],
-            "Selected-scientific-studies.txt", { type: "text/plain" })
-        );
-      }
-
+      kilder.forEach((f) => form.append("filer", f));
       form.append("lengde", lengde);
       form.append("tone", tone);
       form.append("instruksjoner", kontekst.trim());
-      form.append("innholdstype", contentType);
+      form.append("innholdstype", type);
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
@@ -175,26 +180,23 @@ export default function ContentGenerator() {
       }
       const jobId = startData.job_id as string;
 
-      // 2) Poll status until the job is done (or fails).
       for (;;) {
         await sov(1500);
         const res = await fetch(`/api/generate-deck?id=${jobId}`);
         const s = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(s.feil || `Server responded ${res.status}`);
-        setFremdrift(s.progress ?? 0);
-        if (s.step) setSteg(s.step);
+        oppdaterKjoring(type, { progress: s.progress ?? 0, step: s.step || "Working…" });
         if (s.status === "done") break;
         if (s.status === "error") throw new Error(s.error || "Generation failed");
       }
 
-      // 3) Get the result — display the blog draft, or download the deck.
-      setSteg(contentType === "blog" ? "Writing the draft…" : "Downloading…");
+      oppdaterKjoring(type, { step: type === "blog" ? "Writing the draft…" : "Downloading…" });
       const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
       if (!dl.ok) {
         const d = await dl.json().catch(() => ({}));
         throw new Error(d.feil || `Server responded ${dl.status}`);
       }
-      if (contentType === "blog") {
+      if (type === "blog") {
         setBlogUtkast(await dl.text());
       } else {
         const blob = await dl.blob();
@@ -205,12 +207,31 @@ export default function ContentGenerator() {
         a.click();
         URL.revokeObjectURL(url);
       }
-      setFerdig(true);
+      oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
     } catch (e) {
-      setFeil((e as Error).message);
-    } finally {
-      setLaster(false);
+      oppdaterKjoring(type, { status: "error", step: "Failed", error: (e as Error).message });
     }
+  }
+
+  async function produser() {
+    const typer = valgteTilgjengelige.map((t) => t.id);
+    if (typer.length === 0) {
+      setFeil("Pick at least one thing to create.");
+      return;
+    }
+    if (filer.length === 0 && valgteStudier.size === 0) {
+      setFeil("Add at least one source file or pick a study to base the content on.");
+      return;
+    }
+    setLaster(true);
+    setFeil(null);
+    setBlogUtkast(null);
+    setKjoringer(typer.map((type) => ({ type, progress: 0, step: "Starting…", status: "running" })));
+
+    // Each asset reads the same sources independently, so run them in parallel.
+    const kilder = byggKilder();
+    await Promise.all(typer.map((type) => kjorEn(type, kilder)));
+    setLaster(false);
   }
 
   return (
@@ -224,43 +245,54 @@ export default function ContentGenerator() {
             Create content from your material
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Upload your source files and choose what to produce. Our AI turns
-            them into ready-to-use, on-brand content — starting with polished
-            PowerPoint decks.
+            Upload your source files and choose what to produce — pick one or
+            several at once. Our AI turns them into ready-to-use, on-brand
+            content: polished PowerPoint decks and science-based blog drafts.
           </p>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        {/* Content type selector */}
+        {/* Content type selector — multi-select: pick one or several */}
         <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-          What do you want to create?
+          What do you want to create? <span className="text-zinc-400 normal-case tracking-normal">— pick one or several</span>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-          {CONTENT_TYPES.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => velgType(t.id)}
-              className={`relative rounded-2xl border px-3 py-4 text-left transition-colors ${
-                contentType === t.id
-                  ? "border-[#E30917] bg-[#FDECEC]"
-                  : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-              }`}
-            >
-              {!t.available && (
-                <span className="absolute right-2 top-2 rounded-full bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
-                  Soon
-                </span>
-              )}
-              <div className="text-2xl">{t.icon}</div>
-              <div className="mt-2 text-sm font-semibold text-[#052A4E]">{t.label}</div>
-              <div className="text-xs text-zinc-500">{t.hint}</div>
-            </button>
-          ))}
+          {CONTENT_TYPES.map((t) => {
+            const valgt = valgteTyper.has(t.id) && t.available;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => toggleType(t.id)}
+                disabled={!t.available}
+                aria-pressed={valgt}
+                className={`relative rounded-2xl border px-3 py-4 text-left transition-colors ${
+                  valgt
+                    ? "border-[#E30917] bg-[#FDECEC]"
+                    : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                } ${!t.available ? "cursor-not-allowed opacity-60" : ""}`}
+              >
+                {!t.available ? (
+                  <span className="absolute right-2 top-2 rounded-full bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
+                    Soon
+                  </span>
+                ) : (
+                  valgt && (
+                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#E30917] text-[11px] font-bold text-white">
+                      ✓
+                    </span>
+                  )
+                )}
+                <div className="text-2xl">{t.icon}</div>
+                <div className="mt-2 text-sm font-semibold text-[#052A4E]">{t.label}</div>
+                <div className="text-xs text-zinc-500">{t.hint}</div>
+              </button>
+            );
+          })}
         </div>
 
-        {aktiv.available ? (
+        {harValgt ? (
           <>
             {/* Upload */}
             <label className="mt-6 block cursor-pointer rounded-2xl border-2 border-dashed border-[#9FC9D9] bg-white p-8 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#E1F4F3]">
@@ -301,7 +333,8 @@ export default function ContentGenerator() {
             )}
 
             <p className="mt-3 text-xs text-zinc-500">
-              One deck is generated per file. Multiple files download as a zip.
+              Every selected asset is built from the same sources. For a deck, one deck is generated
+              per file (multiple files download as a zip).
             </p>
 
             {/* Pick from Scientific Studies */}
@@ -387,59 +420,65 @@ export default function ContentGenerator() {
 
             {/* Options */}
             <div className="mt-6 space-y-4">
-              <div>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Length
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    ["kort", "Short", "~6 slides"],
-                    ["standard", "Standard", "~9 slides"],
-                    ["detaljert", "Detailed", "~13 slides"],
-                  ].map(([val, label, hint]) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => setLengde(val)}
-                      className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-                        lengde === val
-                          ? "border-[#E30917] bg-[#FDECEC]"
-                          : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                      }`}
-                    >
-                      <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                      <div className="text-xs text-zinc-500">{hint}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Length + Tone are deck-specific (slide counts, deck emphasis) —
+                  only shown when a deck is being generated. */}
+              {visDeckOpsjoner && (
+                <>
+                  <div>
+                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                      Deck length
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        ["kort", "Short", "~6 slides"],
+                        ["standard", "Standard", "~9 slides"],
+                        ["detaljert", "Detailed", "~13 slides"],
+                      ].map(([val, label, hint]) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setLengde(val)}
+                          className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                            lengde === val
+                              ? "border-[#E30917] bg-[#FDECEC]"
+                              : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                          }`}
+                        >
+                          <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                          <div className="text-xs text-zinc-500">{hint}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              <div>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Tone
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    ["salg", "Sales", "Benefit-led"],
-                    ["balansert", "Balanced", "Benefit + proof"],
-                    ["vitenskap", "Scientific", "More evidence"],
-                  ].map(([val, label, hint]) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => setTone(val)}
-                      className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-                        tone === val
-                          ? "border-[#E30917] bg-[#FDECEC]"
-                          : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                      }`}
-                    >
-                      <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                      <div className="text-xs text-zinc-500">{hint}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  <div>
+                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                      Deck tone
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        ["salg", "Sales", "Benefit-led"],
+                        ["balansert", "Balanced", "Benefit + proof"],
+                        ["vitenskap", "Scientific", "More evidence"],
+                      ].map(([val, label, hint]) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setTone(val)}
+                          className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                            tone === val
+                              ? "border-[#E30917] bg-[#FDECEC]"
+                              : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
+                          }`}
+                        >
+                          <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
+                          <div className="text-xs text-zinc-500">{hint}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div>
                 <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
@@ -460,16 +499,15 @@ export default function ContentGenerator() {
             </div>
           </>
         ) : (
-          /* Coming-soon panel for content types that aren't wired yet */
-          <div className="mt-6 rounded-2xl border border-[#D6E6EE] bg-white p-8 text-center">
-            <div className="text-4xl">🚧</div>
+          /* Nothing selectable is chosen yet */
+          <div className="mt-6 rounded-2xl border border-dashed border-[#D6E6EE] bg-white p-8 text-center">
+            <div className="text-4xl">👆</div>
             <div className="mt-3 text-lg font-semibold text-[#052A4E]">
-              {aktiv.label} generation is coming soon
+              Pick what you want to create
             </div>
             <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-              Right now the tool can produce <strong>PowerPoint decks and blog drafts</strong>.
-              Video, podcast and whitepaper generation are on the way — pick PowerPoint deck
-              or Blog post above to get started today.
+              Choose <strong>PowerPoint deck</strong>, <strong>Blog post</strong>, or both above.
+              Video, podcast and whitepaper generation are on the way.
             </p>
           </div>
         )}
@@ -477,46 +515,62 @@ export default function ContentGenerator() {
         {/* Produce */}
         <button
           onClick={produser}
-          disabled={laster || (aktiv.available && filer.length === 0 && valgteStudier.size === 0)}
+          disabled={laster || !harValgt || (filer.length === 0 && valgteStudier.size === 0)}
           className="mt-6 w-full rounded-xl bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {laster
-            ? contentType === "blog"
-              ? "AI is writing your blog…"
-              : "AI is building your deck…"
-            : `Generate ${aktiv.label.toLowerCase()}`}
+            ? "AI is working…"
+            : harValgt
+              ? `Generate ${valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ")}`
+              : "Generate"}
         </button>
 
-        {/* Progress */}
-        {laster && (
-          <div className="mt-4 rounded-xl border border-[#D6E6EE] bg-white p-4">
-            <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="font-medium text-[#052A4E]">{steg || "Working…"}</span>
-              <span className="tabular-nums text-[#6B8B95]">{fremdrift}%</span>
-            </div>
-            <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#E1EEF3]">
-              <div
-                className="h-full rounded-full bg-[#E30917] transition-all duration-700 ease-out"
-                style={{ width: `${Math.max(3, fremdrift)}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-zinc-500">
-              {contentType === "blog"
-                ? "Writing a science-based draft — usually under a minute."
-                : "A full deck takes a couple of minutes — you can keep this tab open."}
-            </p>
+        {/* Per-asset progress & result status */}
+        {kjoringer.length > 0 && (
+          <div className="mt-4 space-y-3">
+            {kjoringer.map((k) => {
+              const meta = CONTENT_TYPES.find((t) => t.id === k.type)!;
+              return (
+                <div key={k.type} className="rounded-xl border border-[#D6E6EE] bg-white p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-[#052A4E]">
+                      {meta.icon} {meta.label}
+                    </span>
+                    <span className="tabular-nums text-[#6B8B95]">
+                      {k.status === "running" ? `${k.progress}%` : k.status === "done" ? "✅" : "⚠️"}
+                    </span>
+                  </div>
+                  {k.status === "running" && (
+                    <>
+                      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[#E1EEF3]">
+                        <div
+                          className="h-full rounded-full bg-[#E30917] transition-all duration-700 ease-out"
+                          style={{ width: `${Math.max(3, k.progress)}%` }}
+                        />
+                      </div>
+                      <p className="mt-2 text-xs text-zinc-500">{k.step || "Working…"}</p>
+                    </>
+                  )}
+                  {k.status === "done" && (
+                    <p className="mt-1 text-xs text-emerald-700">
+                      {k.type === "blog"
+                        ? "✅ Draft ready — review & edit it below."
+                        : "✅ Downloaded — check your downloads folder."}
+                    </p>
+                  )}
+                  {k.status === "error" && (
+                    <p className="mt-1 text-xs text-red-600">{k.error}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {/* Status */}
+        {/* Top-level validation error (e.g. nothing picked) */}
         {feil && (
           <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {feil}
-          </div>
-        )}
-        {ferdig && contentType !== "blog" && (
-          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-            ✅ Done! Your deck was downloaded — check your downloads folder.
           </div>
         )}
 

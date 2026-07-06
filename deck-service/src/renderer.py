@@ -269,7 +269,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
     if spec.get("items"):
-        put(fields.get("items"), spec["items"], multiline=True)
+        put(fields.get("items"), spec["items"], multiline=True, bullets=True)
 
     col_head_max = (lim.get("columns") or {}).get("heading_max")
     col_maps = fields.get("columns", [])

@@ -26,6 +26,35 @@ def _strip_text(s: str) -> str:
     return re.sub(r"(?<=\w)-(?=\w)", " ", s)  # inter-word/number hyphen -> space (Omega-3 -> Omega 3)
 
 
+def _ensure_agenda(plan: dict) -> dict:
+    """Every deck must have an agenda slide (contents), on the picture-bearing 'agenda' layout with
+    branded bullets. The planner is instructed to write one; this is the safety net for when it
+    doesn't — it derives a contents list from the deck's section dividers (or slide titles)."""
+    slides = plan.get("slides", [])
+    if any(s.get("layout") == "agenda" for s in slides):
+        return plan
+    titles = [s.get("title", "").strip() for s in slides
+              if s.get("layout") == "section" and s.get("title", "").strip()]
+    if len(titles) < 2:
+        titles = [s.get("title", "").strip() for s in slides
+                  if s.get("layout") not in ("title", "agenda", "ingredient")
+                  and s.get("title", "").strip()]
+    items, seen = [], set()
+    for t in titles:
+        t = t[:26].rstrip()
+        if t.lower() in seen:
+            continue
+        seen.add(t.lower())
+        items.append(t)
+        if len(items) >= 7:
+            break
+    if len(items) < 2:
+        return plan  # nothing sensible to list — leave the deck as-is
+    agenda = {"layout": "agenda", "title": "Agenda", "items": items}
+    at = 1 if slides and slides[0].get("layout") == "title" else 0
+    return {**plan, "slides": slides[:at] + [agenda] + slides[at:]}
+
+
 def _strip_dashes_plan(plan: dict) -> dict:
     """Deterministic no-dash safety net over a validated plan, mutating only human-readable text."""
     def walk(obj, key=None):
@@ -128,6 +157,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                   + "\n- ".join(errors), file=sys.stderr)
 
     _p(70, "Rendering slides on the Superba template")
+    plan = _ensure_agenda(plan)      # guarantee a contents/agenda slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan)
 

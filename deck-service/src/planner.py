@@ -110,7 +110,12 @@ your job is the STORYLINE, the LAYOUT choice per slide, and the COPY.
 
 STORYLINE (pyramid principle): open with the conclusion, then support it. One message per slide — each
 slide makes a single clear point and earns its place (never repeat a point across slides). Aim for about
-{target} slides. Open with a `title` cover and use `section` dividers to chunk the narrative.
+{target} slides. Open with a `title` cover, then an `agenda` slide, and use `section` dividers to chunk
+the narrative.
+
+AGENDA (REQUIRED — every deck): the SECOND slide MUST be an `agenda` slide listing the deck's main
+sections. Title is exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section
+label, well within 26 characters). They render as branded bullets on the standard Agenda layout.
 
 ACTION TITLES: every title is a full-sentence claim the slide proves (e.g. "Superba raised the Omega-3
 Index by 65% in 12 weeks"), not a topic label ("Omega-3 Index"). Mirror this across the deck.

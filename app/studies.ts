@@ -43,9 +43,11 @@ function curatedToStudie(c: CuratedStudy): Studie {
 
 export async function hentStudier(): Promise<Studie[]> {
   // 1) Søk: studier der Aker BioMarine står som affiliation (Aker sitt eget felt).
+  //    Vi ekskluderer publikasjonstyper som ikke er studier (rettelser/errata, ledere,
+  //    innlegg og kommentarer) — de dukker opp i affiliation-søket, men er ikke forskning.
   const sok = await fetch(
     `${EUTILS}/esearch.fcgi?db=pubmed&${FELLES}&retmode=json&retmax=60&sort=date&term=${encodeURIComponent(
-      '"Aker BioMarine"[Affiliation]'
+      '"Aker BioMarine"[Affiliation] NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])'
     )}`,
     { next: { revalidate: 86400 } }
   );

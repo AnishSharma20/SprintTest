@@ -77,14 +77,55 @@ def _set_text(ph, text: str) -> None:
     _autofit(ph.text_frame)
 
 
-def _set_lines(ph, lines: list[str]) -> None:
-    """Multiple paragraphs (bullets / agenda items); each inherits the layout's list format."""
+def _set_lines(ph, lines: list[str], bullet_rid: str | None = None) -> None:
+    """Multiple paragraphs (bullets / agenda items). If bullet_rid is given, each paragraph gets
+    the brand's PICTURE bullet (the teal figure embedded in the template master) — this overrides
+    the content placeholders' `buNone`. Otherwise each paragraph inherits the layout's list format."""
     lines = [ln for ln in (l.strip() for l in lines) if ln]
     tf = ph.text_frame
     tf.text = lines[0] if lines else ""
     for ln in lines[1:]:
         tf.add_paragraph().text = ln
+    if bullet_rid:
+        for para in tf.paragraphs:
+            _apply_picture_bullet(para._p, bullet_rid)
     _autofit(tf)
+
+
+# The brand bullet is a small teal PNG embedded in the template master (as a picture bullet at
+# body level 1). Content placeholders switch it off with buNone, so for real bullet lists we set
+# the picture bullet explicitly on each paragraph, matching the master's indent metrics.
+_BULLET_MARL, _BULLET_INDENT, _BULLET_SZ = "342900", "-342900", "100000"
+
+
+def _bullet_rid(slide) -> str | None:
+    """Embed the brand bullet image in the slide part (idempotent) and return its relationship id."""
+    path = config.ASSETS_DIR / "bullet.png"
+    if not path.exists():
+        return None
+    _, rid = slide.part.get_or_add_image_part(str(path))
+    return rid
+
+
+def _apply_picture_bullet(p, rid: str) -> None:
+    """Set the brand picture bullet on one <a:p>, replacing any inherited buNone/buChar."""
+    pPr = p.find(qn("a:pPr"))
+    if pPr is None:
+        pPr = p.makeelement(qn("a:pPr"), {})
+        p.insert(0, pPr)
+    pPr.set("marL", _BULLET_MARL)
+    pPr.set("indent", _BULLET_INDENT)
+    for tag in ("a:buClr", "a:buSzPct", "a:buSzPts", "a:buFont", "a:buFontTx",
+                "a:buNone", "a:buChar", "a:buAutoNum", "a:buBlip"):
+        for el in pPr.findall(qn(tag)):
+            pPr.remove(el)
+    # Order matters in the schema: bullet size (buSz*) before the bullet itself (bu*).
+    buSz = pPr.makeelement(qn("a:buSzPct"), {"val": _BULLET_SZ})
+    buBlip = pPr.makeelement(qn("a:buBlip"), {})
+    blip = buBlip.makeelement(qn("a:blip"), {qn("r:embed"): rid})
+    buBlip.append(blip)
+    pPr.append(buSz)
+    pPr.append(buBlip)
 
 
 def _icon_path(benefit: str):
@@ -207,11 +248,15 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     benefit = spec.get("benefit")
     benefit = None if benefit in (None, "none") else benefit
 
-    def put(idx, value, multiline=False):
+    def put(idx, value, multiline=False, bullets=False):
         if idx is None or idx not in phmap or value is None:
             return
         if multiline:
-            _set_lines(phmap[idx], value if isinstance(value, list) else str(value).split("\n"))
+            raw = value if isinstance(value, list) else str(value).split("\n")
+            lines = [ln for ln in (str(x).strip() for x in raw) if ln]
+            # A list of points (2+ lines) gets the brand picture bullet; a single line stays plain prose.
+            rid = _bullet_rid(slide) if (bullets and len(lines) > 1) else None
+            _set_lines(phmap[idx], lines, bullet_rid=rid)
         else:
             _set_text(phmap[idx], str(value))
         filled.add(idx)
@@ -222,7 +267,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     put(fields.get("title"), title)
     put(fields.get("subtitle"), spec.get("subtitle"))
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
-    put(fields.get("body"), spec.get("body"), multiline=True)
+    put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
     if spec.get("items"):
         put(fields.get("items"), spec["items"], multiline=True)
 

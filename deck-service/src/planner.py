@@ -34,7 +34,7 @@ LAYOUT_USAGE = {
     "agenda":             "Agenda / contents. `title` should be the single word 'Agenda' (the box is very narrow); put the real content in `items` (one short line each).",
     "highlight":          "ONE big statement on an open slide (a 'breathing' beat). ONLY a `title`. Use for a pivotal claim or takeaway — never a list.",
     "title_only":         "Just a title over the branded background. Use rarely (a transitional beat).",
-    "text":               "Workhorse explanation slide: `title` + a `body` block. Body can be a short paragraph or a few lines (use line breaks for bullets).",
+    "text":               "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points.",
     "text_with_picture":  "`title` + a short `heading` + `body` on one side, a supporting photo on the other. Set `asset_id`.",
     "picture_with_title": "A large photo with a title strip — high visual impact. `asset_id` required.",
     "picture_full":       "A full-bleed photo with a compact title — a strong visual break. `asset_id` required.",

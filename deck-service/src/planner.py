@@ -167,8 +167,15 @@ RULES (column layouts):
 TONE: {TONE_GUIDANCE.get(tone, TONE_GUIDANCE['balansert'])}
 
 CITATIONS: where the source cites studies, carry them into `source_citations` and the detail into
-`speaker_notes`. LANGUAGE: write the deck in the SAME language as the source (Norwegian in -> Norwegian
-out; set `language` accordingly). Never invent facts not in the source.
+`speaker_notes`. LANGUAGE: if the user context specifies an output language, write ALL slide text in that
+language and set `language` accordingly; otherwise write in the SAME language as the source. Never invent
+facts not in the source.
+
+TEXT STYLE (strict brand rule): do NOT use dash characters in any reader-facing text you write (titles,
+subtitles, bodies, items/bullets, column headings, captions, speaker_notes). Never an em-dash, an en-dash,
+or a hyphen between words; rephrase to avoid them (write "evidence based", "double blind", "Omega 3",
+"12 week") using commas, colons, parentheses or separate words. This applies ONLY to human-readable text,
+NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `asset_id` (leave those exact).
 
 {CLAIM_RULES}
 

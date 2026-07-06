@@ -7,11 +7,38 @@ is now just 1-2 planner calls plus deterministic rendering.
 from __future__ import annotations
 
 import os
+import re
 import sys
 
 import anthropic
 
 from . import planner, qa_gate, renderer, validate
+
+# Reader-facing text fields in a plan (the no-dash brand rule applies to these). Enum/id fields
+# (layout, benefit, icon, icon_generic, asset_id, background, language) and `source_citations`
+# (may contain DOIs/identifiers) are deliberately left untouched.
+_DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "caption",
+                   "speaker_notes", "heading"}
+
+
+def _strip_text(s: str) -> str:
+    s = re.sub(r"\s*[—–]\s*", ", ", s)        # em/en dash -> comma
+    return re.sub(r"(?<=\w)-(?=\w)", " ", s)  # inter-word/number hyphen -> space (Omega-3 -> Omega 3)
+
+
+def _strip_dashes_plan(plan: dict) -> dict:
+    """Deterministic no-dash safety net over a validated plan, mutating only human-readable text."""
+    def walk(obj, key=None):
+        if isinstance(obj, str):
+            return _strip_text(obj) if key in _DASH_TEXT_KEYS else obj
+        if isinstance(obj, list):
+            if key == "items":  # list of body strings
+                return [_strip_text(x) if isinstance(x, str) else walk(x) for x in obj]
+            return [walk(x) for x in obj]
+        if isinstance(obj, dict):
+            return {k: walk(v, k) for k, v in obj.items()}
+        return obj
+    return walk(plan)
 
 
 def _wording(plan: dict) -> str:
@@ -66,6 +93,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
                   + "\n- ".join(hard), file=sys.stderr)
             break
+        candidate = _strip_dashes_plan(candidate)
         plan, pptx = candidate, renderer.render_deck(candidate)
     return pptx, plan
 
@@ -100,6 +128,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                   + "\n- ".join(errors), file=sys.stderr)
 
     _p(70, "Rendering slides on the Superba template")
+    plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode

@@ -10,10 +10,30 @@ named studies, real stats and numbered references. Claim fidelity is enforced (s
 """
 from __future__ import annotations
 
+import re
+
 import anthropic
 
 from . import config
 from .planner import CLAIM_RULES
+
+
+def strip_dashes(md: str) -> str:
+    """Deterministic safety net for the no-dash brand rule: remove every dash from the article
+    TEXT, while preserving Markdown structure (leading '- '/'* ' bullets and '---' rules).
+    Em/en dashes become a comma; a hyphen between word characters becomes a space
+    (so "Omega-3" -> "Omega 3", "double-blind" -> "double blind")."""
+    out = []
+    for line in md.splitlines():
+        if line.strip() in ("---", "***", "___"):
+            out.append(line)
+            continue
+        m = re.match(r"^(\s*[-*]\s+)", line)  # keep a leading list marker intact
+        prefix, rest = (m.group(1), line[m.end():]) if m else ("", line)
+        rest = re.sub(r"\s*[—–]\s*", ", ", rest)      # em/en dash -> comma
+        rest = re.sub(r"(?<=\w)-(?=\w)", " ", rest)   # inter-word/number hyphen -> space
+        out.append(prefix + rest)
+    return "\n".join(out)
 
 WORDS = {"kort": "700–950", "standard": "1100–1500", "detaljert": "1600–1950"}
 
@@ -61,9 +81,16 @@ USING THE SCIENCE (critical):
 - {CLAIM_RULES}
 - Do NOT invent studies, numbers, quotes or references. If the source is thin on a point, keep it general
   rather than fabricating specifics. Distinguish clearly between what a study showed and general mechanism.
-- Match the source language (write in the same language as the source material).
+
+LANGUAGE: if the user context below specifies an output language, write the ENTIRE blog in that language;
+otherwise write in the same language as the source material. Keep brand names (Superba, Aker BioMarine) as-is.
+
+TEXT STYLE (strict brand rule): do NOT use dash characters anywhere in the article TEXT. Never an em-dash,
+an en-dash, or a hyphen between words. Rephrase to avoid them (write "evidence based", "double blind",
+"Omega 3", "phospholipid bound", "12 week"); use commas, colons, parentheses or separate words instead.
+Markdown list markers ("- ") and a "---" divider are structure, not text, and are fine.
 {instr}
-Output ONLY the Markdown blog draft — no preamble, no explanation, no code fences."""
+Output ONLY the Markdown blog draft, with no preamble, no explanation and no code fences."""
 
 
 def _title(markdown: str, fallback: str) -> str:
@@ -95,5 +122,59 @@ def generate_blog(client: anthropic.Anthropic, source_text: str, base_name: str,
     # strip an accidental ```markdown fence if the model added one
     if markdown.startswith("```"):
         markdown = markdown.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+    markdown = strip_dashes(markdown)  # enforce the no-dash brand rule deterministically
     return {"markdown": markdown, "filename": f"{base_name}.md",
             "title": _title(markdown, base_name)}
+
+
+# ---------------------------------------------------------------------------
+# Markdown -> Word (.docx). The draft is generated and reviewed as Markdown, but the
+# deliverable teams want is a Word document. Small, dependency-light converter built on
+# python-docx (already a dependency): headings, paragraphs, bullet/numbered lists, and
+# inline **bold** / *italic*. Good enough for a clean, editable Word draft.
+# ---------------------------------------------------------------------------
+def markdown_to_docx(markdown: str, title: str | None = None) -> bytes:
+    import io
+    import re
+
+    import docx
+
+    doc = docx.Document()
+
+    def add_inline(paragraph, text: str) -> None:
+        # [label](url) -> "label (url)"; then split out **bold** and *italic* runs.
+        text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: f"{m.group(1)} ({m.group(2)})", text)
+        for part in re.split(r"(\*\*[^*]+\*\*|\*[^*]+\*)", text):
+            if not part:
+                continue
+            if part.startswith("**") and part.endswith("**"):
+                paragraph.add_run(part[2:-2]).bold = True
+            elif part.startswith("*") and part.endswith("*"):
+                paragraph.add_run(part[1:-1]).italic = True
+            else:
+                paragraph.add_run(part)
+
+    for raw in markdown.splitlines():
+        s = raw.strip()
+        if not s:
+            continue
+        if s in ("---", "***", "___"):
+            continue
+        if s.startswith("#### "):
+            doc.add_heading(s[5:].strip(), level=3)
+        elif s.startswith("### "):
+            doc.add_heading(s[4:].strip(), level=2)
+        elif s.startswith("## "):
+            doc.add_heading(s[3:].strip(), level=1)
+        elif s.startswith("# "):
+            doc.add_heading(s[2:].strip(), level=0)  # Title style
+        elif re.match(r"^[-*]\s+", s):
+            add_inline(doc.add_paragraph(style="List Bullet"), re.sub(r"^[-*]\s+", "", s))
+        elif re.match(r"^\d+\.\s+", s):
+            add_inline(doc.add_paragraph(style="List Number"), re.sub(r"^\d+\.\s+", "", s))
+        else:
+            add_inline(doc.add_paragraph(), s)
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()

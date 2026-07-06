@@ -64,6 +64,7 @@ export default function ContentGenerator() {
   const [filer, setFiler] = useState<File[]>([]);
   const [lengde, setLengde] = useState("standard");
   const [tone, setTone] = useState("balansert");
+  const [sprak, setSprak] = useState("English");
   const [kontekst, setKontekst] = useState("");
   const [studier, setStudier] = useState<Studie[]>([]);
   const [valgteStudier, setValgteStudier] = useState<Set<string>>(new Set());
@@ -109,6 +110,7 @@ export default function ContentGenerator() {
   const [feil, setFeil] = useState<string | null>(null);
   const [kjoringer, setKjoringer] = useState<Kjoring[]>([]);
   const [blogUtkast, setBlogUtkast] = useState<string | null>(null);
+  const [lagerWord, setLagerWord] = useState(false);
 
   const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
   const harValgt = valgteTilgjengelige.length > 0;
@@ -179,6 +181,7 @@ export default function ContentGenerator() {
       kilder.forEach((f) => form.append("filer", f));
       form.append("lengde", lengde);
       form.append("tone", tone);
+      form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
 
@@ -241,6 +244,35 @@ export default function ContentGenerator() {
     const kilder = byggKilder();
     await Promise.all(typer.map((type) => kjorEn(type, kilder)));
     setLaster(false);
+  }
+
+  // Convert the current (edited) blog draft to a Word .docx on the backend and download it.
+  async function lastNedWord() {
+    if (!blogUtkast) return;
+    setLagerWord(true);
+    setFeil(null);
+    try {
+      const res = await fetch("/api/blog-docx", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markdown: blogUtkast, filename: "superba-blog-draft" }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.feil || `Server responded ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "superba-blog-draft.docx";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setFeil("Could not create the Word file: " + (e as Error).message);
+    } finally {
+      setLagerWord(false);
+    }
   }
 
   return (
@@ -531,6 +563,36 @@ export default function ContentGenerator() {
                 </div>
               )}
 
+              {/* Output language — applies to every selected asset. Free text, so any language works. */}
+              <div>
+                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                  Output language{" "}
+                  <span className="normal-case tracking-normal text-zinc-400">
+                    (any language, applies to everything you create)
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  list="sprak-forslag"
+                  value={sprak}
+                  onChange={(e) => setSprak(e.target.value)}
+                  placeholder="e.g. English, Norwegian, German, French, Japanese…"
+                  className="w-full rounded-xl border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                />
+                <datalist id="sprak-forslag">
+                  {[
+                    "English", "Norwegian", "Swedish", "Danish", "German", "French", "Spanish",
+                    "Italian", "Dutch", "Portuguese", "Polish", "Finnish", "Japanese", "Chinese",
+                    "Korean", "Arabic",
+                  ].map((l) => (
+                    <option key={l} value={l} />
+                  ))}
+                </datalist>
+                <p className="mt-1 text-xs text-zinc-500">
+                  Type any language in the world. The AI writes all output text in it, whatever the source language.
+                </p>
+              </div>
+
               <div>
                 <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
                   Context & instructions{" "}
@@ -632,7 +694,7 @@ export default function ContentGenerator() {
           <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                Blog draft (Markdown) · review & edit
+                Blog draft · review & edit
               </div>
               <div className="flex gap-2">
                 <button
@@ -644,17 +706,11 @@ export default function ContentGenerator() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    const url = URL.createObjectURL(new Blob([blogUtkast], { type: "text/markdown" }));
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "superba-blog-draft.md";
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
+                  onClick={lastNedWord}
+                  disabled={lagerWord}
+                  className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
                 >
-                  Download .md
+                  {lagerWord ? "Creating…" : "Download Word (.docx)"}
                 </button>
               </div>
             </div>
@@ -664,7 +720,8 @@ export default function ContentGenerator() {
               className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
             />
             <p className="mt-1 text-xs text-zinc-500">
-              AI generated draft based on your sources. Review the science and claims before publishing.
+              AI generated draft based on your sources. Edit it here, then download as Word. Review the
+              science and claims before publishing.
             </p>
           </div>
         )}

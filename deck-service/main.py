@@ -31,6 +31,7 @@ from src import config
 app = FastAPI(title="Superba Deck Generator")
 
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 
 def _read_summary(name: str, data: bytes) -> str:
@@ -56,9 +57,19 @@ def _prune_jobs() -> None:
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
-             kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck") -> None:
+             kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
+             sprak: str = "English") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
+
+        # Output language is threaded to the planner/blog as a high-priority instruction so the
+        # user can pick ANY language; it overrides the "match the source language" default.
+        lang = (sprak or "").strip()
+        if lang:
+            instruksjoner = (f"OUTPUT LANGUAGE (high priority): write ALL reader-facing text in {lang}, "
+                             f"regardless of the language of the source material. Keep brand names "
+                             f"(Superba, Aker BioMarine) and study citations intact.\n\n"
+                             + (instruksjoner or ""))
 
         if innholdstype == "blog":
             # One blog draft from ALL sources combined (files + picked study summaries).
@@ -175,12 +186,14 @@ async def create_job(
     kvalitet: str = Form(default="fast"),
     instruksjoner: str = Form(default=""),
     innholdstype: str = Form(default="deck"),
+    sprak: str = Form(default="English"),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
 
     kvalitet: "fast" (default) or "polished" (adds a visual QA pass — needs a rasteriser on the
-    server, i.e. LibreOffice installed; degrades to fast if absent)."""
+    server, i.e. LibreOffice installed; degrades to fast if absent).
+    sprak: output language for the generated text (any language; defaults to English)."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -193,7 +206,7 @@ async def create_job(
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
     threading.Thread(target=_run_job,
-                     args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype),
+                     args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype, sprak),
                      daemon=True).start()
     return {"job_id": job_id}
 
@@ -218,3 +231,22 @@ def job_result(job_id: str):
     JOBS.pop(job_id, None)  # one-shot download frees the in-memory bytes
     return Response(content=data, media_type=media,
                     headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
+@app.post("/blog/docx")
+def blog_docx(
+    markdown: str = Form(...),
+    filename: str = Form(default="superba-blog-draft"),
+    x_deck_token: str | None = Header(default=None),
+):
+    """Convert a (possibly edited) Markdown blog draft to a Word .docx. Pure conversion, no LLM —
+    lets the frontend hand back the reviewed draft and get the Word deliverable back."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    if not (markdown or "").strip():
+        return JSONResponse({"feil": "No markdown provided."}, status_code=400)
+    name = (filename or "superba-blog-draft").rsplit(".", 1)[0] + ".docx"
+    data = src.markdown_to_docx(markdown)
+    return Response(content=data, media_type=DOCX_MEDIA,
+                    headers={"Content-Disposition": f'attachment; filename="{name}"'})

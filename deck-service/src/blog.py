@@ -37,6 +37,11 @@ def strip_dashes(md: str) -> str:
 
 WORDS = {"kort": "700–950", "standard": "1100–1500", "detaljert": "1600–1950"}
 
+# Prepended to every blog draft (an italic note above the title). The reviewer removes it
+# before publishing. No dashes, per the brand rule.
+BLOG_DISCLAIMER = ("*AI generated draft from the source material. Review all content, claims and "
+                   "figures, and edit as needed before publishing.*")
+
 TONE_GUIDANCE = {
     "salg":       "Lean benefit-first (~55% marketing / 45% science): lead each section with the reader/market benefit, use the studies as proof beneath it. Persuasive but never overclaiming.",
     "balansert":  "Balance benefit and evidence (~30% marketing / 70% science) — the default Superba blog voice: credible and authoritative, benefits always tied to the science.",
@@ -123,8 +128,9 @@ def generate_blog(client: anthropic.Anthropic, source_text: str, base_name: str,
     if markdown.startswith("```"):
         markdown = markdown.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
     markdown = strip_dashes(markdown)  # enforce the no-dash brand rule deterministically
-    return {"markdown": markdown, "filename": f"{base_name}.md",
-            "title": _title(markdown, base_name)}
+    title = _title(markdown, base_name)                 # extract title BEFORE prepending the note
+    markdown = f"{BLOG_DISCLAIMER}\n\n{markdown}"        # italic disclaimer above the title
+    return {"markdown": markdown, "filename": f"{base_name}.md", "title": title}
 
 
 # ---------------------------------------------------------------------------

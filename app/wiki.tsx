@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Summary, Quality } from "./studies-data";
+import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
 
 export type Studie = {
   pmid: string;
@@ -14,16 +15,27 @@ export type Studie = {
   kategori: string;
   url: string;
   doiUrl: string | null;
-  // summary layer
   summary?: Summary | null;
   verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
   quality?: Quality | null;
   akerNote?: string | null;
 };
 
+const QUALITY_DEF =
+  "Scientific quality = how rigorously the study was designed and run — an 8-criterion methodological " +
+  "score (randomization, blinding, allocation concealment, intention-to-treat analysis, dropout reporting, " +
+  "etc.), rated High / Moderate / Low. It reflects how much to trust the study's methods, NOT whether the " +
+  "result was positive. Shown for the verified key trials only.";
+
+type SortBy = "date" | "quality";
+
 export default function Wiki({ studier }: { studier: Studie[] }) {
   const [sok, setSok] = useState("");
   const [valgtKategori, setValgtKategori] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>("date");
+  const [overrides, setOverrides] = useState<Record<string, Override>>({});
+
+  useEffect(() => setOverrides(loadOverrides()), []);
 
   const kategorier = useMemo(() => {
     const m = new Map<string, number>();
@@ -33,7 +45,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
 
   const filtrert = useMemo(() => {
     const q = sok.toLowerCase().trim();
-    return studier.filter((s) => {
+    const list = studier.filter((s) => {
       const treffSok =
         !q ||
         s.tittel.toLowerCase().includes(q) ||
@@ -42,18 +54,26 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
       const treffKat = !valgtKategori || s.kategori === valgtKategori;
       return treffSok && treffKat;
     });
-  }, [studier, sok, valgtKategori]);
+    return list.sort((a, b) => {
+      if (sortBy === "quality") {
+        const qa = a.quality?.score ?? -1;
+        const qb = b.quality?.score ?? -1;
+        if (qb !== qa) return qb - qa; // High → Low; scored studies first
+        return (b.ar || "").localeCompare(a.ar || "");
+      }
+      return (b.ar || "").localeCompare(a.ar || ""); // newest first
+    });
+  }, [studier, sok, valgtKategori, sortBy]);
 
   return (
     <div className="min-h-screen bg-[#F2F7F9]">
-      {/* Header */}
       <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-12 pt-8">
         <div className="mx-auto max-w-4xl">
           <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7FD4E6]">
             Research Wiki
           </div>
           <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-            Krill Oil Research
+            Aker BioMarine Research
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
             Scientific studies affiliated with Aker BioMarine, pulled from PubMed and updated
@@ -63,30 +83,21 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        {/* Stats */}
         <div className="mb-6 grid grid-cols-3 gap-3">
           {[
             { tall: studier.length, tekst: "studies in the wiki" },
             { tall: kategorier.length, tekst: "topics" },
             { tall: "PubMed", tekst: "data source" },
           ].map((s) => (
-            <div
-              key={s.tekst}
-              className="rounded-2xl border border-[#D6E6EE] bg-white p-4 shadow-sm"
-            >
-              <div className="text-2xl font-extrabold text-[#0A7A8A]">
-                {s.tall}
-              </div>
+            <div key={s.tekst} className="rounded-2xl border border-[#D6E6EE] bg-white p-4 shadow-sm">
+              <div className="text-2xl font-extrabold text-[#0A7A8A]">{s.tall}</div>
               <div className="text-xs text-zinc-500">{s.tekst}</div>
             </div>
           ))}
         </div>
 
-        {/* Search */}
         <div className="relative mb-4">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-            🔍
-          </span>
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
           <input
             type="text"
             value={sok}
@@ -96,30 +107,43 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
           />
         </div>
 
-        {/* Category filters */}
-        <div className="mb-6 flex flex-wrap gap-2">
-          <FilterKnapp
-            aktiv={valgtKategori === null}
-            onClick={() => setValgtKategori(null)}
-          >
+        <div className="mb-4 flex flex-wrap gap-2">
+          <FilterKnapp aktiv={valgtKategori === null} onClick={() => setValgtKategori(null)}>
             All ({studier.length})
           </FilterKnapp>
           {kategorier.map(([navn, antall]) => (
-            <FilterKnapp
-              key={navn}
-              aktiv={valgtKategori === navn}
-              onClick={() => setValgtKategori(navn)}
-            >
+            <FilterKnapp key={navn} aktiv={valgtKategori === navn} onClick={() => setValgtKategori(navn)}>
               {navn} ({antall})
             </FilterKnapp>
           ))}
+        </div>
+
+        {/* Sort control */}
+        <div className="mb-4 flex items-center gap-2 text-sm">
+          <span className="text-zinc-500">Sort by</span>
+          <FilterKnapp aktiv={sortBy === "date"} onClick={() => setSortBy("date")}>
+            Newest
+          </FilterKnapp>
+          <button
+            onClick={() => setSortBy("quality")}
+            className={`group relative rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              sortBy === "quality"
+                ? "bg-[#0A7A8A] text-white shadow-sm"
+                : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+            }`}
+          >
+            <span className="border-b border-dotted border-current">Scientific quality</span>
+            <span aria-hidden> ⓘ</span>
+            <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 w-72 -translate-x-1/2 rounded-lg bg-[#052A4E] px-3 py-2 text-left text-[11px] font-normal leading-relaxed normal-case tracking-normal text-white opacity-0 shadow-xl transition-opacity duration-150 group-hover:opacity-100">
+              {QUALITY_DEF}
+            </span>
+          </button>
         </div>
 
         <p className="mb-3 text-sm text-zinc-500">
           Showing {filtrert.length} of {studier.length} studies
         </p>
 
-        {/* List */}
         {filtrert.length === 0 ? (
           <p className="rounded-xl border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-400">
             {studier.length === 0
@@ -129,7 +153,15 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         ) : (
           <ul className="space-y-3">
             {filtrert.map((s) => (
-              <StudyCard key={s.pmid} s={s} />
+              <StudyCard
+                key={s.pmid}
+                s={s}
+                override={overrides[s.pmid]}
+                onSave={(summary) => {
+                  const o = saveOverride(s.pmid, summary);
+                  setOverrides((prev) => ({ ...prev, [s.pmid]: o }));
+                }}
+              />
             ))}
           </ul>
         )}
@@ -142,13 +174,29 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
   );
 }
 
-function StudyCard({ s }: { s: Studie }) {
+function StudyCard({
+  s,
+  override,
+  onSave,
+}: {
+  s: Studie;
+  override?: Override;
+  onSave: (summary: Summary) => void;
+}) {
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const edited = !!override;
+  const summary: Summary | null | undefined = override?.summary ?? s.summary;
+  // An edited summary is human-reviewed → treat as verified.
+  const verified = edited ? true : s.verified;
+
   const q = s.quality;
   const qColor =
     q?.label === "High" ? "bg-[#DFF3E4] text-[#1B7A3D]"
     : q?.label === "Moderate" ? "bg-[#FBEED6] text-[#8A5A0B]"
     : "bg-[#F3E0E0] text-[#9A2A2A]";
+
   return (
     <li className="group rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -182,29 +230,61 @@ function StudyCard({ s }: { s: Studie }) {
       </p>
       {s.akerNote && <p className="mt-1 text-xs text-zinc-400">{s.akerNote}</p>}
 
-      {s.summary && (
-        <>
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[#D6E6EE] bg-[#F7FBFC] px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
-          >
-            {open ? "Hide summary ▲" : "Read summary ▼"}
-            <VerifiedBadge verified={!!s.verified} />
-          </button>
+      {summary && (
+        <div className="mt-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setOpen((o) => !o)}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#086472]"
+            >
+              📖 {open ? "Hide summary" : "Read summary"}
+              <span className="text-white/80">{open ? "▲" : "▼"}</span>
+            </button>
+            <VerifiedBadge verified={!!verified} edited={edited} />
+          </div>
+
           {open && (
-            <div className="mt-3 space-y-3 rounded-xl border border-[#E3EEF2] bg-[#F9FCFD] p-4 text-sm">
-              {!s.verified && (
+            <div className="mt-3 space-y-3 rounded-xl border-2 border-[#3FD0C9] bg-[#F4FBFC] p-4 text-sm shadow-inner">
+              <div className="flex items-center justify-between">
+                <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+                  Plain-language summary
+                </div>
+                {!editing && (
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="rounded-md border border-[#B7D9DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+                  >
+                    ✎ Edit
+                  </button>
+                )}
+              </div>
+
+              {!verified && !editing && (
                 <p className="rounded-md bg-[#FBEED6] px-3 py-1.5 text-[11px] font-medium text-[#8A5A0B]">
                   ⚠︎ AI-generated summary from the abstract — not yet verified by a scientist.
                 </p>
               )}
-              <SummarySection label="Background & rationale" text={s.summary.background} />
-              <SummarySection label="Design & participants" text={s.summary.design} />
-              <SummarySection label="Key findings" text={s.summary.findings} />
-              <SummarySection label="Limitations & quality" text={s.summary.limitations} />
+
+              {editing ? (
+                <SummaryEditor
+                  initial={summary}
+                  onCancel={() => setEditing(false)}
+                  onSave={(next) => {
+                    onSave(next);
+                    setEditing(false);
+                  }}
+                />
+              ) : (
+                <>
+                  <SummarySection label="Background & rationale" text={summary.background} />
+                  <SummarySection label="Design & participants" text={summary.design} />
+                  <SummarySection label="Key findings" text={summary.findings} />
+                  <SummarySection label="Limitations & quality" text={summary.limitations} />
+                </>
+              )}
             </div>
           )}
-        </>
+        </div>
       )}
 
       <div className="mt-3 flex gap-3 text-xs">
@@ -221,13 +301,67 @@ function StudyCard({ s }: { s: Studie }) {
   );
 }
 
-function VerifiedBadge({ verified }: { verified: boolean }) {
+function SummaryEditor({
+  initial,
+  onSave,
+  onCancel,
+}: {
+  initial: Summary;
+  onSave: (s: Summary) => void;
+  onCancel: () => void;
+}) {
+  const [draft, setDraft] = useState<Summary>(initial);
+  const fields: { key: keyof Summary; label: string }[] = [
+    { key: "background", label: "Background & rationale" },
+    { key: "design", label: "Design & participants" },
+    { key: "findings", label: "Key findings" },
+    { key: "limitations", label: "Limitations & quality" },
+  ];
+  return (
+    <div className="space-y-3">
+      {fields.map((f) => (
+        <div key={f.key}>
+          <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">{f.label}</div>
+          <textarea
+            value={draft[f.key]}
+            onChange={(e) => setDraft((d) => ({ ...d, [f.key]: e.target.value }))}
+            rows={3}
+            className="mt-1 w-full resize-y rounded-lg border border-[#B7D9DE] bg-white p-2 text-sm text-zinc-700 outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+          />
+        </div>
+      ))}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onSave(draft)}
+          className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433]"
+        >
+          Save summary
+        </button>
+        <button
+          onClick={onCancel}
+          className="rounded-lg border border-[#D6E6EE] bg-white px-4 py-2 text-sm font-semibold text-zinc-600 hover:bg-zinc-50"
+        >
+          Cancel
+        </button>
+        <span className="text-[11px] text-zinc-400">Saved in this browser only.</span>
+      </div>
+    </div>
+  );
+}
+
+function VerifiedBadge({ verified, edited }: { verified: boolean; edited?: boolean }) {
+  if (edited)
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-[#DFF3E4] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#1B7A3D]">
+        ✓ Verified · edited by you
+      </span>
+    );
   return verified ? (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#DFF3E4] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1B7A3D]">
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#DFF3E4] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#1B7A3D]">
       ✓ Verified by science
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#EEE7D6] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8A6A2B]">
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#EEE7D6] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#8A6A2B]">
       AI · unverified
     </span>
   );

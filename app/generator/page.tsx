@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { Studie } from "../wiki";
+import { loadOverrides, type Override } from "../summary-overrides";
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper";
 
@@ -24,6 +26,26 @@ export default function ContentGenerator() {
   const [lengde, setLengde] = useState("standard");
   const [tone, setTone] = useState("balansert");
   const [kontekst, setKontekst] = useState("");
+  const [studier, setStudier] = useState<Studie[]>([]);
+  const [valgteStudier, setValgteStudier] = useState<Set<string>>(new Set());
+  const [overrides, setOverrides] = useState<Record<string, Override>>({});
+
+  useEffect(() => {
+    setOverrides(loadOverrides());
+    fetch("/api/studies")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => setStudier(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : []))
+      .catch(() => setStudier([]));
+  }, []);
+
+  function toggleStudie(pmid: string) {
+    setValgteStudier((prev) => {
+      const n = new Set(prev);
+      n.has(pmid) ? n.delete(pmid) : n.add(pmid);
+      return n;
+    });
+    setFerdig(false);
+  }
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
   const [ferdig, setFerdig] = useState(false);
@@ -59,7 +81,10 @@ export default function ContentGenerator() {
       setFeil(`${aktiv.label} generation isn't available yet — only PowerPoint deck works for now.`);
       return;
     }
-    if (filer.length === 0) return;
+    if (filer.length === 0 && valgteStudier.size === 0) {
+      setFeil("Add at least one source file or pick a study to base the deck on.");
+      return;
+    }
     setLaster(true);
     setFeil(null);
     setFerdig(false);
@@ -70,6 +95,30 @@ export default function ContentGenerator() {
       // 1) Start the job — returns immediately with a job id.
       const form = new FormData();
       filer.forEach((f) => form.append("filer", f));
+
+      // Selected scientific-study summaries → one synthesized source file (uses any edited versions).
+      const valgte = studier.filter((s) => valgteStudier.has(s.pmid));
+      if (valgte.length) {
+        const tekst = valgte
+          .map((s) => {
+            const sum = overrides[s.pmid]?.summary ?? s.summary;
+            const cite = `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`;
+            return (
+              `# ${s.tittel}\n${cite}\n${s.akerNote ? `(${s.akerNote})\n` : ""}` +
+              (sum
+                ? `\nBackground & rationale: ${sum.background}\nDesign & participants: ${sum.design}\n` +
+                  `Key findings: ${sum.findings}\nLimitations & quality: ${sum.limitations}\n`
+                : "")
+            );
+          })
+          .join("\n\n---\n\n");
+        form.append(
+          "filer",
+          new File([`Selected Aker BioMarine scientific studies\n\n${tekst}`],
+            "Selected-scientific-studies.txt", { type: "text/plain" })
+        );
+      }
+
       form.append("lengde", lengde);
       form.append("tone", tone);
       form.append("instruksjoner", kontekst.trim());
@@ -207,6 +256,64 @@ export default function ContentGenerator() {
               One deck is generated per file. Multiple files download as a zip.
             </p>
 
+            {/* Pick from Scientific Studies */}
+            <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                  Or pick from Scientific Studies
+                </div>
+                {valgteStudier.size > 0 && (
+                  <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
+                    {valgteStudier.size} selected
+                  </span>
+                )}
+              </div>
+              {studier.length === 0 ? (
+                <p className="mt-2 text-xs text-zinc-400">Loading studies…</p>
+              ) : (
+                <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
+                  {studier.map((s) => {
+                    const valgt = valgteStudier.has(s.pmid);
+                    const verified = !!overrides[s.pmid] || s.verified;
+                    return (
+                      <label
+                        key={s.pmid}
+                        className={`flex cursor-pointer items-start gap-2 rounded-lg border p-2 text-sm transition-colors ${
+                          valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E3EEF2] hover:bg-[#F7FBFC]"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={valgt}
+                          onChange={() => toggleStudie(s.pmid)}
+                          className="mt-1 accent-[#0A7A8A]"
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
+                          <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
+                            {verified ? (
+                              <span className="rounded-full bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
+                                AI
+                              </span>
+                            )}
+                            {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
+                            <span className="text-zinc-400">{s.ar}</span>
+                          </span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="mt-2 text-xs text-zinc-500">
+                Selected summaries are sent to the AI as source material, alongside any files.
+              </p>
+            </div>
+
             {/* Options */}
             <div className="mt-6 space-y-4">
               <div>
@@ -299,7 +406,7 @@ export default function ContentGenerator() {
         {/* Produce */}
         <button
           onClick={produser}
-          disabled={laster || (aktiv.available && filer.length === 0)}
+          disabled={laster || (aktiv.available && filer.length === 0 && valgteStudier.size === 0)}
           className="mt-6 w-full rounded-xl bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {laster ? "AI is building your deck…" : `Generate ${aktiv.label.toLowerCase()}`}

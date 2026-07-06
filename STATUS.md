@@ -37,6 +37,10 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   **edit & save** of a summary (localStorage — see weakness below); `app/wiki.tsx`, `app/summary-overrides.ts`.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
+- **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck *and*
+  blog; each runs as its own parallel `/jobs` job with a per-asset progress row). Deck-only Length/Tone sit in
+  a labelled "deck settings" card; Context applies to all. A **product selector** (Superba live; Lysoveta +
+  Revervia greyed "Soon") is **UI-only** — not yet sent to the backend, everything still renders as Superba.
 - **Blog generation** — a "Blog post" content type produces a science-based **blog draft (Markdown)** in the
   superbakrill.com/blog style (~1,100–1,900 words; problem-hook → mechanism → clinical evidence → whitepaper CTA;
   cites the source studies). `deck-service/src/blog.py`; `/jobs` routes on `innholdstype`; the draft shows editable

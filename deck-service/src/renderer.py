@@ -21,7 +21,8 @@ import re
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_AUTO_SIZE
-from pptx.oxml.ns import qn
+from pptx.oxml import parse_xml
+from pptx.oxml.ns import nsdecls, qn
 from pptx.util import Inches, Pt
 
 from . import config
@@ -388,6 +389,63 @@ def _add_ingredient_slide(prs, master_index: int) -> None:
         spTree.append(el)
 
 
+_BENEFITS_SRC = None
+
+
+def _benefits_source():
+    """Cache-load the standalone benefits slide (`assets/benefits_slide.pptx`) — AKBM's verbatim
+    'Multiple, Proven Health Benefits' overview (benefit hexagon cards + trial counts + capsule photo)."""
+    global _BENEFITS_SRC
+    if _BENEFITS_SRC is None:
+        _BENEFITS_SRC = Presentation(str(config.resolve_asset("assets/benefits_slide.pptx")))
+    return _BENEFITS_SRC
+
+
+def _blank_layout(prs, master_index: int):
+    master = prs.slide_masters[master_index]
+    for lay in master.slide_layouts:
+        if "blank" in lay.name.lower():
+            return lay
+    return master.slide_layouts[-1]
+
+
+def _set_white_bg(slide) -> None:
+    """Force a solid-white slide background (the benefits slide is a white infographic; the host
+    master is the dark deep-sea one)."""
+    cSld = slide._element.find(qn("p:cSld"))
+    for old in cSld.findall(qn("p:bg")):
+        cSld.remove(old)
+    cSld.insert(0, parse_xml(
+        f'<p:bg {nsdecls("p", "a")}><p:bgPr><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'<a:effectLst/></p:bgPr></p:bg>'))
+
+
+def _add_benefits_slide(prs, master_index: int) -> None:
+    """Splice AKBM's verbatim benefits-overview slide onto a white background, using the LIGHT master's
+    blank layout so the footer logos are the light-background (red/dark) colourway. Content is FIXED."""
+    src_slide = _benefits_source().slides[0]
+    slide = prs.slides.add_slide(_blank_layout(prs, master_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _set_white_bg(slide)
+    spTree = slide.shapes._spTree
+    rmap = dict(src_slide.part.rels.items())
+    for shp in src_slide.shapes:
+        el = copy.deepcopy(shp._element)
+        for node in el.iter():
+            for a in _R_ATTRS:
+                if a in node.attrib:
+                    rel = rmap.get(node.get(a))
+                    if rel is None:
+                        continue
+                    if rel.is_external:
+                        new = slide.part.rels.get_or_add_ext_rel(rel.reltype, rel.target_ref)
+                    else:
+                        _, new = slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
+                    node.set(a, new)
+        spTree.append(el)
+
+
 def render_deck(plan: dict) -> bytes:
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
@@ -407,6 +465,15 @@ def render_deck(plan: dict) -> bytes:
         layout = _find_layout(prs, cat["template_layout"], master_index)
         slide = prs.slides.add_slide(layout)
         _fill_slide(slide, spec, cat, master_index, dark=not want_light)
+
+    # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last
+    # slide of every deck (appended, then moved into place).
+    _add_benefits_slide(prs, light)
+    sldIdLst = prs.slides._sldIdLst
+    ids = list(sldIdLst)
+    benefits = ids[-1]
+    sldIdLst.remove(benefits)
+    sldIdLst.insert(max(1, len(sldIdLst) - 1), benefits)
 
     buf = io.BytesIO()
     prs.save(buf)

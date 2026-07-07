@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Vendored PPT Master clone (reproducible via git clone hugohe3/ppt-master)
 /vendor-ppt-master
+
+# Office lock/owner files
+~$*

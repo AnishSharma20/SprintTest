@@ -71,16 +71,16 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                              f"(Superba, Aker BioMarine) and study citations intact.\n\n"
                              + (instruksjoner or ""))
 
-        if innholdstype == "blog":
-            # One blog draft from ALL sources combined (files + picked study summaries).
+        if innholdstype in ("blog", "whitepaper"):
+            # One long-form draft from ALL sources combined (files + picked study summaries).
             parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
             source = "\n\n".join(parts)
             if not source:
                 raise ValueError("No text found in the provided files/studies.")
-            base = (files[0][0] if files else "blog").rsplit(".", 1)[0] or "blog"
-            b = src.generate_blog(client, source, base, length=lengde, tone=tone,
-                                  instructions=instruksjoner,
-                                  on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+            base = (files[0][0] if files else innholdstype).rsplit(".", 1)[0] or innholdstype
+            fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog
+            b = fn(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
+                   on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
             JOBS[job_id].update(status="done", progress=100, step="Done",
                                 result=b["markdown"].encode("utf-8"),
                                 media_type="text/markdown; charset=utf-8", filename=b["filename"])

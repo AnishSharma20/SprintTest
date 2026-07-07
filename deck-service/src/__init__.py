@@ -9,7 +9,7 @@ inherited from the template's slide layouts.
 """
 from __future__ import annotations
 
-__all__ = ["generate", "generate_blog", "markdown_to_docx"]
+__all__ = ["generate", "generate_blog", "generate_whitepaper", "markdown_to_docx"]
 
 
 def generate(*args, **kwargs):
@@ -23,6 +23,12 @@ def generate_blog(*args, **kwargs):
     """Lazy entrypoint for the blog-draft generator."""
     from .blog import generate_blog as _generate_blog
     return _generate_blog(*args, **kwargs)
+
+
+def generate_whitepaper(*args, **kwargs):
+    """Lazy entrypoint for the whitepaper generator."""
+    from .whitepaper import generate_whitepaper as _generate_whitepaper
+    return _generate_whitepaper(*args, **kwargs)
 
 
 def markdown_to_docx(*args, **kwargs):

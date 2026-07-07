@@ -25,8 +25,12 @@ const CONTENT_TYPES: {
   { id: "blog", label: "Blog post", icon: "✍️", hint: "Grounded in science", available: true },
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
-  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Detailed report", available: false },
+  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Clinical long-form", available: true },
 ];
+
+// Content types whose result is a Markdown draft (shown in an editable panel + Word download),
+// as opposed to a binary file (the deck) that downloads directly.
+const TEXT_TYPES = new Set<ContentType>(["blog", "whitepaper"]);
 
 // Languages with the flag of the main country that speaks them. Not exhaustive — the picker
 // also lets you type any language in the world (a custom entry appears when nothing matches).
@@ -257,7 +261,7 @@ export default function ContentGenerator() {
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
   const [kjoringer, setKjoringer] = useState<Kjoring[]>([]);
-  const [blogUtkast, setBlogUtkast] = useState<string | null>(null);
+  const [utkast, setUtkast] = useState<{ type: ContentType; markdown: string }[]>([]);
   const [lagerWord, setLagerWord] = useState(false);
 
   const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
@@ -350,14 +354,15 @@ export default function ContentGenerator() {
         if (s.status === "error") throw new Error(s.error || "Generation failed");
       }
 
-      oppdaterKjoring(type, { step: type === "blog" ? "Writing the draft…" : "Downloading…" });
+      oppdaterKjoring(type, { step: TEXT_TYPES.has(type) ? "Writing the draft…" : "Downloading…" });
       const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
       if (!dl.ok) {
         const d = await dl.json().catch(() => ({}));
         throw new Error(d.feil || `Server responded ${dl.status}`);
       }
-      if (type === "blog") {
-        setBlogUtkast(await dl.text());
+      if (TEXT_TYPES.has(type)) {
+        const md = await dl.text();
+        setUtkast((prev) => [...prev.filter((u) => u.type !== type), { type, markdown: md }]);
       } else {
         const blob = await dl.blob();
         const url = URL.createObjectURL(blob);
@@ -385,7 +390,7 @@ export default function ContentGenerator() {
     }
     setLaster(true);
     setFeil(null);
-    setBlogUtkast(null);
+    setUtkast([]);
     setKjoringer(typer.map((type) => ({ type, progress: 0, step: "Starting…", status: "running" })));
 
     // Each asset reads the same sources independently, so run them in parallel.
@@ -394,16 +399,16 @@ export default function ContentGenerator() {
     setLaster(false);
   }
 
-  // Convert the current (edited) blog draft to a Word .docx on the backend and download it.
-  async function lastNedWord() {
-    if (!blogUtkast) return;
+  // Convert the current (edited) draft to a Word .docx on the backend and download it.
+  async function lastNedWord(markdown: string, base: string) {
+    if (!markdown) return;
     setLagerWord(true);
     setFeil(null);
     try {
       const res = await fetch("/api/blog-docx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ markdown: blogUtkast, filename: "superba-blog-draft" }),
+        body: JSON.stringify({ markdown, filename: base }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -413,7 +418,7 @@ export default function ContentGenerator() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "superba-blog-draft.docx";
+      a.download = `${base}.docx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
@@ -755,8 +760,8 @@ export default function ContentGenerator() {
               Pick what you want to create
             </div>
             <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-              Choose <strong>PowerPoint deck</strong>, <strong>Blog post</strong>, or both above.
-              Video, podcast and whitepaper generation are on the way.
+              Choose <strong>PowerPoint deck</strong>, <strong>Blog post</strong> or{" "}
+              <strong>Whitepaper</strong> above (pick one or several). Video and podcast are on the way.
             </p>
           </div>
         )}
@@ -802,7 +807,7 @@ export default function ContentGenerator() {
                   )}
                   {k.status === "done" && (
                     <p className="mt-1 text-xs text-emerald-700">
-                      {k.type === "blog"
+                      {TEXT_TYPES.has(k.type)
                         ? "✅ Draft ready. Review & edit it below."
                         : "✅ Downloaded. Check your downloads folder."}
                     </p>
@@ -823,41 +828,47 @@ export default function ContentGenerator() {
           </div>
         )}
 
-        {blogUtkast !== null && (
-          <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                Blog draft · review & edit
+        {utkast.map((u) => {
+          const label = CONTENT_TYPES.find((t) => t.id === u.type)?.label ?? "Draft";
+          const base = u.type === "whitepaper" ? "superba-whitepaper-draft" : "superba-blog-draft";
+          return (
+            <div key={u.type} className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
+                  {label} draft · review & edit
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard?.writeText(u.markdown)}
+                    className="rounded-lg border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+                  >
+                    Copy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => lastNedWord(u.markdown, base)}
+                    disabled={lagerWord}
+                    className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
+                  >
+                    {lagerWord ? "Creating…" : "Download Word (.docx)"}
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => navigator.clipboard?.writeText(blogUtkast)}
-                  className="rounded-lg border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
-                >
-                  Copy
-                </button>
-                <button
-                  type="button"
-                  onClick={lastNedWord}
-                  disabled={lagerWord}
-                  className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
-                >
-                  {lagerWord ? "Creating…" : "Download Word (.docx)"}
-                </button>
-              </div>
+              <textarea
+                value={u.markdown}
+                onChange={(e) =>
+                  setUtkast((prev) => prev.map((x) => (x.type === u.type ? { ...x, markdown: e.target.value } : x)))
+                }
+                className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                AI generated draft based on your sources. Edit it here, then download as Word. Review the
+                science and claims before publishing.
+              </p>
             </div>
-            <textarea
-              value={blogUtkast}
-              onChange={(e) => setBlogUtkast(e.target.value)}
-              className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
-            />
-            <p className="mt-1 text-xs text-zinc-500">
-              AI generated draft based on your sources. Edit it here, then download as Word. Review the
-              science and claims before publishing.
-            </p>
-          </div>
-        )}
+          );
+        })}
 
         <p className="mt-8 text-center text-xs text-zinc-400">
           Powered by AI · rendered on the Superba brand template

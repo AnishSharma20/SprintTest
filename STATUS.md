@@ -82,7 +82,7 @@ multi-user needs, or persistence) so it isn't forgotten. See memory `summary-edi
   add-layout API). Speed/parallelism.
 
 **Env vars.** `ANTHROPIC_API_KEY` in `min-forste-app/.env.local` (server-side only); `DECK_SERVICE_URL` +
-`DECK_SERVICE_TOKEN` (Vercel→Render); `DECK_MODEL` (default `claude-sonnet-4-6`), `DECK_GATE_MODEL`,
+`DECK_SERVICE_TOKEN` (Vercel→Render); `DECK_MODEL` (default `claude-sonnet-5`), `DECK_GATE_MODEL`,
 `DECK_QA_ROUNDS`, `DECK_TEMPLATE`.
 
 **Windows dev notes.** Use `python` (NOT `python3`). Render `.pptx`→PNG via **PowerPoint COM through

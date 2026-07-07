@@ -24,9 +24,9 @@ _DEFAULT_TEMPLATES = [
     ROOT / "brand_assets" / "05. Superba Brand Identity" / "Superba refresh power point template.pptx",
 ]
 
-# Content model. The pasted spec pins claude-sonnet-4-6; overridable to claude-sonnet-5 /
-# claude-opus-4-8 without a code change. API key comes from ANTHROPIC_API_KEY only.
-MODEL = os.environ.get("DECK_MODEL", "claude-sonnet-4-6")
+# Content model. Defaults to claude-sonnet-5; overridable via DECK_MODEL (e.g. claude-opus-4-8
+# or a pinned dated version) without a code change. API key comes from ANTHROPIC_API_KEY only.
+MODEL = os.environ.get("DECK_MODEL", "claude-sonnet-5")
 
 SLIDE_TARGETS = {"kort": 6, "standard": 9, "detaljert": 13}
 

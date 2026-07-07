@@ -23,7 +23,7 @@ EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 # Keep in sync with app/studies.ts — exclude non-study publication types.
 TERM = '"Aker BioMarine"[Affiliation] NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])'
 CURATED = {"35880828", "38776073", "27701428", "17353582"}  # have verified summaries already
-MODEL = os.environ.get("DECK_MODEL", "").strip() or "claude-sonnet-4-6"
+MODEL = os.environ.get("DECK_MODEL", "").strip() or "claude-sonnet-5"
 
 SCHEMA = {"type": "object", "additionalProperties": False,
           "required": ["background", "design", "findings", "limitations"],

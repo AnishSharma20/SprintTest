@@ -64,8 +64,8 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8125
 python scripts/qa.py out.pptx
 ```
 
-Model: `claude-sonnet-4-6` by default; override with `DECK_MODEL` (e.g. `claude-sonnet-5`,
-`claude-opus-4-8`). Optional `DECK_SERVICE_TOKEN` gates the HTTP endpoints.
+Model: `claude-sonnet-5` by default; override with `DECK_MODEL` (e.g. `claude-opus-4-8`, or a
+pinned dated version). Optional `DECK_SERVICE_TOKEN` gates the HTTP endpoints.
 
 ## Polished mode — the visual QA gate
 

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Summary, Quality } from "./studies-data";
 import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
-import ClaimsPanel from "./claims-panel";
+import ClaimsModal from "./claims-panel";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -337,14 +337,16 @@ function StudyCard({
           </a>
         )}
         <button
-          onClick={() => setClaimsOpen((o) => !o)}
-          className="ml-auto font-semibold text-[#0A7A8A] hover:underline"
+          onClick={() => setClaimsOpen(true)}
+          className="ml-auto rounded-md bg-[#E1F4F3] px-3 py-1 font-semibold text-[#0A7A8A] transition-colors hover:bg-[#0A7A8A] hover:text-white"
         >
-          {claimsOpen ? "Hide claims ▲" : "Review claims ▼"}
+          View claims
         </button>
       </div>
 
-      {claimsOpen && <ClaimsPanel s={s} reviewer={reviewer} />}
+      {claimsOpen && (
+        <ClaimsModal s={s} reviewer={reviewer} onClose={() => setClaimsOpen(false)} />
+      )}
     </li>
   );
 }

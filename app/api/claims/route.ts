@@ -53,6 +53,7 @@ export async function POST(req: Request) {
       text,
       created_by,
       study, // StudyMeta — required for paper claims
+      quote, // optional supporting quote for a manually-added claim
     } = body as {
       scope?: string;
       claim_type?: string;
@@ -60,6 +61,7 @@ export async function POST(req: Request) {
       text?: string;
       created_by?: string;
       study?: StudyMeta;
+      quote?: string;
     };
 
     if (!text?.trim()) return Response.json({ error: "Claim text is required." }, { status: 400 });
@@ -85,8 +87,26 @@ export async function POST(req: Request) {
       .single();
     if (inserted.error) return Response.json({ error: inserted.error.message }, { status: 500 });
 
+    // An optional supporting quote from a manual claim. Verify it against the study's stored
+    // source text when we have it (so human-added quotes get the same green/red check).
+    if (quote?.trim() && studyId) {
+      const study_row = await sb.from("studies").select("full_text").eq("id", studyId).maybeSingle();
+      const src = study_row.data?.full_text as string | undefined;
+      const nrm = (s: string) => s.replace(/\s+/g, " ").toLowerCase().trim();
+      const verified = !!src && nrm(src).includes(nrm(quote));
+      await sb.from("claim_quotes").insert({
+        claim_id: inserted.data.id,
+        quote: quote.trim(),
+        location: "Added by reviewer",
+        verified,
+        verified_at: verified ? new Date().toISOString() : null,
+      });
+    }
+
     await logEvent(sb, inserted.data.id, created_by ?? "unknown", null, "pending_review", "Created manually");
-    return Response.json({ claim: inserted.data });
+    // Re-select so the response includes any quote we just inserted.
+    const full = await sb.from("claims").select(CLAIM_SELECT).eq("id", inserted.data.id).single();
+    return Response.json({ claim: full.data ?? inserted.data });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });
   }

@@ -1,9 +1,10 @@
 "use client";
 
-// Claims review panel for one study (rendered inside each study card in Tab 1).
-// Science reviewers see AI-extracted and human claims, filter by status (including a
-// Rejected view), and approve / reject (reason required) / edit (new version) / comment.
-// Extraction is triggered from here; results land as pending_review, never auto-approved.
+// Claims review MODAL for one study (opened from "View claims" in a study card, Tab 1).
+// Science reviewers see the pre-filled AI claims and any human ones, filter by status (incl. a
+// Rejected view), and approve / reject (reason required) / edit (new version) / comment. They can
+// also ADD a claim by hand. AI extraction is NOT triggered here — the library is pre-filled ahead
+// of time (see /api/admin/extract-all); this screen is review + manual authoring only.
 
 import { useCallback, useEffect, useState } from "react";
 import type { Studie } from "./wiki";
@@ -39,14 +40,72 @@ function studyMeta(s: Studie): StudyMeta {
   };
 }
 
-export default function ClaimsPanel({ s, reviewer }: { s: Studie; reviewer: string }) {
+// ── Modal shell ──────────────────────────────────────────────────────────────
+
+export default function ClaimsModal({
+  s,
+  reviewer,
+  onClose,
+}: {
+  s: Studie;
+  reviewer: string;
+  onClose: () => void;
+}) {
+  // Close on Escape, and lock background scroll while the dialog is open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#031B34]/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="my-8 w-full max-w-3xl rounded-2xl bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4 rounded-t-2xl border-b border-[#D6E6EE] bg-[#F4FBFC] px-5 py-4">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">
+              Claims for this study
+            </div>
+            <p className="mt-1 line-clamp-2 max-w-xl text-sm font-semibold text-[#052A4E]">{s.tittel}</p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="shrink-0 rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+          >
+            <span className="text-xl leading-none">✕</span>
+          </button>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto px-5 py-4">
+          <ClaimsBody s={s} reviewer={reviewer} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Body: filters, list, add-claim ─────────────────────────────────────────────
+
+function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
   const [configured, setConfigured] = useState(true);
   const [loading, setLoading] = useState(true);
   const [claims, setClaims] = useState<Claim[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filter, setFilter] = useState<Filter>("pending_review");
-  const [extracting, setExtracting] = useState(false);
-  const [note, setNote] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -67,35 +126,6 @@ export default function ClaimsPanel({ s, reviewer }: { s: Studie; reviewer: stri
     void load();
   }, [load]);
 
-  async function extract() {
-    setExtracting(true);
-    setNote(null);
-    try {
-      const res = await fetch("/api/extract-claims", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ study: studyMeta(s), actor: reviewer }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setNote(data.error || "Extraction failed.");
-      } else {
-        const src = data.source === "abstract_only" ? "the abstract" : "the full text";
-        setNote(
-          `Extracted ${data.created} new claim${data.created === 1 ? "" : "s"} from ${src}` +
-            (data.unverified ? `, ${data.unverified} with a quote not found in the source (flagged)` : "") +
-            (data.skipped ? `, ${data.skipped} already present` : "") +
-            "."
-        );
-        await load();
-      }
-    } catch (e) {
-      setNote((e as Error).message);
-    } finally {
-      setExtracting(false);
-    }
-  }
-
   const visible = claims
     .filter((c) => c.status !== "superseded" || filter === "all")
     .filter((c) => (filter === "all" ? true : c.status === filter));
@@ -109,47 +139,51 @@ export default function ClaimsPanel({ s, reviewer }: { s: Studie; reviewer: stri
 
   if (!configured) {
     return (
-      <div className="mt-3 rounded-xl border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
+      <div className="rounded-xl border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
         The claims library is not set up yet. Add the Supabase environment variables to enable
-        claim extraction and review.
+        claim review.
       </div>
     );
   }
 
   return (
-    <div className="mt-3 rounded-xl border border-[#D6E6EE] bg-white p-4">
+    <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
-          Claims for this study
+        <div className="flex flex-wrap gap-2">
+          {(["pending_review", "approved", "rejected", "all"] as Filter[]).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                filter === f
+                  ? "bg-[#052A4E] text-white"
+                  : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+              }`}
+            >
+              {f === "pending_review" ? "Pending" : f === "all" ? "All" : STATUS_LABEL[f as ClaimStatus]} (
+              {counts[f]})
+            </button>
+          ))}
         </div>
         <button
-          onClick={extract}
-          disabled={extracting}
-          className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:opacity-50"
+          onClick={() => setAdding((a) => !a)}
+          className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
         >
-          {extracting ? "Extracting…" : "✦ Extract claims with AI"}
+          {adding ? "Cancel" : "➕ Add a claim"}
         </button>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-2">
-        {(["pending_review", "approved", "rejected", "all"] as Filter[]).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-              filter === f
-                ? "bg-[#052A4E] text-white"
-                : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
-            }`}
-          >
-            {f === "pending_review" ? "Pending" : f === "all" ? "All" : STATUS_LABEL[f as ClaimStatus]} (
-            {counts[f]})
-          </button>
-        ))}
-      </div>
-
-      {note && (
-        <p className="mb-3 rounded-md bg-[#EAF6F8] px-3 py-2 text-[11px] text-[#0A7A8A]">{note}</p>
+      {adding && (
+        <AddClaimForm
+          s={s}
+          reviewer={reviewer}
+          categories={categories}
+          onAdded={async () => {
+            setAdding(false);
+            setFilter("pending_review");
+            await load();
+          }}
+        />
       )}
 
       {loading ? (
@@ -157,25 +191,132 @@ export default function ClaimsPanel({ s, reviewer }: { s: Studie; reviewer: stri
       ) : visible.length === 0 ? (
         <p className="rounded-lg border border-dashed border-[#C2D9E3] p-4 text-center text-sm text-zinc-400">
           {counts.all === 0
-            ? "No claims yet. Extract claims with AI, then review them here."
+            ? "No claims for this study yet. Use “Add a claim” to author one."
             : "No claims in this view."}
         </p>
       ) : (
         <ul className="space-y-2">
           {visible.map((c) => (
-            <ClaimRow
-              key={c.id}
-              claim={c}
-              categories={categories}
-              reviewer={reviewer}
-              onChanged={load}
-            />
+            <ClaimRow key={c.id} claim={c} categories={categories} reviewer={reviewer} onChanged={load} />
           ))}
         </ul>
       )}
     </div>
   );
 }
+
+// ── Add-claim form ─────────────────────────────────────────────────────────────
+
+function AddClaimForm({
+  s,
+  reviewer,
+  categories,
+  onAdded,
+}: {
+  s: Studie;
+  reviewer: string;
+  categories: Category[];
+  onAdded: () => void;
+}) {
+  const [categoryId, setCategoryId] = useState("");
+  const [text, setText] = useState("");
+  const [quote, setQuote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const science = categories.filter((c) => c.parent === "science");
+  const marketing = categories.filter((c) => c.parent === "marketing");
+
+  async function submit() {
+    if (!text.trim() || !categoryId) {
+      setError("Pick a category and write the claim.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const cat = categories.find((c) => c.id === categoryId);
+      const res = await fetch("/api/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scope: "paper",
+          claim_type: cat?.parent ?? "science",
+          category_id: categoryId,
+          text,
+          quote: quote.trim() || undefined,
+          study: studyMeta(s),
+          created_by: reviewer,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not add the claim.");
+        return;
+      }
+      onAdded();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mb-3 rounded-xl border-2 border-[#3FD0C9] bg-[#F4FBFC] p-3">
+      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">Add a claim</div>
+      <label className="mb-1 block text-xs font-semibold text-zinc-600">Category</label>
+      <select
+        value={categoryId}
+        onChange={(e) => setCategoryId(e.target.value)}
+        className="mb-2 w-full rounded-md border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
+      >
+        <option value="">Select a category…</option>
+        <optgroup label="Science">
+          {science.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </optgroup>
+        <optgroup label="Marketing">
+          {marketing.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </optgroup>
+      </select>
+      <label className="mb-1 block text-xs font-semibold text-zinc-600">Claim (one clear sentence)</label>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={2}
+        className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+      />
+      <label className="mb-1 block text-xs font-semibold text-zinc-600">
+        Supporting quote from the paper (optional, checked against the source)
+      </label>
+      <textarea
+        value={quote}
+        onChange={(e) => setQuote(e.target.value)}
+        rows={2}
+        placeholder="Paste the exact sentence from the study, if you have one."
+        className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+      />
+      {error && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{error}</p>}
+      <button
+        onClick={submit}
+        disabled={busy || !text.trim() || !categoryId}
+        className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+      >
+        {busy ? "Adding…" : "Add claim (pending review)"}
+      </button>
+    </div>
+  );
+}
+
+// ── One claim row (approve / reject / edit / comment) ──────────────────────────
 
 function ClaimRow({
   claim,
@@ -248,14 +389,11 @@ function ClaimRow({
         <p className="text-sm text-zinc-800">{claim.text}</p>
       )}
 
-      {/* Grounding quote(s) with verification state */}
       {quotes.map((q) => (
         <div key={q.id} className="mt-2 border-l-2 border-[#C2D9E3] pl-2.5">
           <p className="text-[12px] italic text-zinc-500">“{q.quote}”</p>
           <span
-            className={`text-[10px] font-semibold ${
-              q.verified ? "text-[#1B7A3D]" : "text-[#9A2A2A]"
-            }`}
+            className={`text-[10px] font-semibold ${q.verified ? "text-[#1B7A3D]" : "text-[#9A2A2A]"}`}
           >
             {q.verified
               ? `✓ Quote found in source${q.location ? ` · ${q.location}` : ""}`
@@ -264,7 +402,6 @@ function ClaimRow({
         </div>
       ))}
 
-      {/* Comments + rejection reasons */}
       {comments.length > 0 && (
         <div className="mt-2 space-y-1">
           {comments.map((cm) => (
@@ -280,7 +417,6 @@ function ClaimRow({
 
       {error && <p className="mt-2 text-[11px] font-semibold text-[#9A2A2A]">{error}</p>}
 
-      {/* Reject reason / comment input */}
       {(mode === "reject" || mode === "comment") && (
         <textarea
           value={reason}
@@ -291,7 +427,6 @@ function ClaimRow({
         />
       )}
 
-      {/* Actions */}
       <div className="mt-2 flex flex-wrap gap-2">
         {mode === null && (
           <>

@@ -334,6 +334,20 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     if benefit and cat["kind"] in ("highlight", "section"):
         _place_icon(slide, (Inches(0.5), Inches(0.42), Inches(0.95), Inches(0.95)), _icon_path(benefit))
 
+    # Text-with-picture: the template stacks a small sub-heading + body low in the left column, which
+    # reads as bottom-heavy. Drop the sub-heading (not wanted) and lift the body to just under the
+    # title, widening it to the full left column.
+    if cat["kind"] == "text_picture":
+        hidx = fields.get("heading")
+        if hidx in filled and hidx in phmap:
+            phmap[hidx]._element.getparent().remove(phmap[hidx]._element)
+            filled.discard(hidx)
+        bidx = fields.get("body")
+        bph = phmap.get(bidx)
+        if bph is not None and bidx in filled:
+            bph.left, bph.top = Emu(int(Inches(0.5))), Emu(int(Inches(2.05)))
+            bph.width, bph.height = Emu(int(Inches(4.1))), Emu(int(Inches(4.3)))
+
     # A takeaway title can run to two lines, but some layouts (Text Slide, Picture With Title, Title
     # Only) have a ONE-line title box, so the second line collides with the content below. When such a
     # layout gets a long title, push any filled content that sits too high down to clear a two-line
@@ -478,6 +492,7 @@ _TEAL2 = RGBColor(0x2C, 0x74, 0x82)   # secondary panel teal
 _PANEL = RGBColor(0xE4, 0xF1, 0xF1)
 _INKC = RGBColor(0x16, 0x35, 0x36)
 _LTEAL = RGBColor(0xA9, 0xDB, 0xD5)
+_ONTEAL = RGBColor(0xEC, 0xF5, 0xF5)  # body text ON a solid teal panel — high contrast (LTEAL was too dim)
 _WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 _HEAD, _BODY = "Exo 2", "Manrope"
 _CHART_COLORS = [_RED, _TEAL2, _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
@@ -695,6 +710,7 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
     ctype = _CHART_TYPES.get(spec.get("chart_type", "column"), XL_CHART_TYPE.COLUMN_CLUSTERED)
     gf = slide.shapes.add_chart(ctype, Inches(0.9), Inches(_BODY_TOP), Inches(11.5), Inches(_BODY_H - 0.35), cd)
     chart = gf.chart
+    chart.has_title = False                # no auto series-name title (we use the slide title)
     chart.font.color.rgb = _WHITE
     chart.font.size = Pt(_SZ_SMALL)
     chart.font.name = _BODY
@@ -740,6 +756,41 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
         except (ValueError, KeyError, IndexError):  # axis absent for this chart type
             pass
 
+    # Think-cell-style delta callout: for a 2-bar single-series column chart, reserve headroom on the
+    # value axis, then draw a bracket spanning the two columns with a red delta chip (the % change) —
+    # the classic "highlight the difference" annotation.
+    if spec.get("chart_type", "column") == "column" and len(cats) == 2 and len(series) == 1:
+        vals = [v for v in (series[0].get("values") or []) if isinstance(v, (int, float))]
+        if len(vals) == 2 and (vals[0] or vals[1]):
+            v0, v1 = vals[0], vals[1]
+            label = (f"{'+' if v1 >= v0 else ''}{(v1 - v0) / abs(v0) * 100:.0f}%") if v0 else f"+{v1 - v0:g}"
+            arrow = "▲" if v1 >= v0 else "▼"
+            try:
+                chart.value_axis.minimum_scale = 0
+                chart.value_axis.maximum_scale = max(vals) * 1.35     # guaranteed headroom for the callout
+            except Exception:  # noqa: BLE001
+                pass
+            fx, fy, fw, fh = 0.9, _BODY_TOP, 11.5, _BODY_H - 0.35
+            plot_l, plot_w = fx + 0.75, fw - 0.95
+            plot_top, plot_bot = fy + 0.15, fy + fh - 0.55
+            cx0 = plot_l + plot_w * 0.25
+            cx1 = plot_l + plot_w * 0.75
+            by = max(plot_top + 0.2, plot_bot - (plot_bot - plot_top) / 1.35 - 0.3)   # just above the tall bar
+            ln = slide.shapes.add_shape(_BOX, Inches(cx0), Inches(by), Inches(cx1 - cx0), Inches(0.035))
+            ln.fill.solid(); ln.fill.fore_color.rgb = _RED; ln.line.fill.background(); ln.shadow.inherit = False
+            for cxe in (cx0, cx1):
+                tick = slide.shapes.add_shape(_BOX, Inches(cxe - 0.017), Inches(by), Inches(0.035), Inches(0.16))
+                tick.fill.solid(); tick.fill.fore_color.rgb = _RED; tick.line.fill.background(); tick.shadow.inherit = False
+            cw, ch = 1.5, 0.44
+            chip = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches((cx0 + cx1) / 2 - cw / 2),
+                                          Inches(by - ch - 0.08), Inches(cw), Inches(ch))
+            chip.fill.solid(); chip.fill.fore_color.rgb = _RED; chip.line.fill.background(); chip.shadow.inherit = False
+            ctf = chip.text_frame; ctf.word_wrap = False; ctf.vertical_anchor = MSO_ANCHOR.MIDDLE
+            ctf.margin_top = ctf.margin_bottom = Emu(0)
+            cp = ctf.paragraphs[0]; cp.alignment = PP_ALIGN.CENTER
+            cr = cp.add_run(); cr.text = f"{arrow} {label}"; cr.font.size = Pt(_SZ_BODY); cr.font.bold = True
+            cr.font.name = _HEAD; cr.font.color.rgb = _WHITE
+
 
 def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
     """2x2 matrix: four equal teal quadrants separated by the standard gutter, with axis labels."""
@@ -756,7 +807,7 @@ def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
         pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(qw), Inches(qh))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
         _place_text(slide, x + _PAD, y + 0.16, qw - 2 * _PAD, 0.45, q.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, x + _PAD, y + 0.66, qw - 2 * _PAD, qh - 0.82, q.get("body", ""), _SZ_BODY, _LTEAL)
+        _place_text(slide, x + _PAD, y + 0.66, qw - 2 * _PAD, qh - 0.82, q.get("body", ""), _SZ_BODY, _ONTEAL)
     if spec.get("y_axis"):
         _place_text(slide, _MARGIN, my, mx - _MARGIN - 0.15, mh, spec["y_axis"], _SZ_SMALL, _LTEAL,
                     bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
@@ -984,22 +1035,29 @@ def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
 
 
 def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
-    """Case study / proof point: study eyebrow + three equal panels (Design, Result, Takeaway)."""
+    """Case study / proof point: study eyebrow + three compact panels (Design, Result, Takeaway), each
+    with an icon chip and a red accent on Result. Body text is bright for contrast on the teal panel."""
     eyebrow = "CASE STUDY" + (f"   ·   {spec['study']}" if spec.get("study") else "")
     slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=eyebrow)
-    blocks = [("DESIGN", spec.get("design", "")), ("RESULT", spec.get("result", "")),
-              ("TAKEAWAY", spec.get("takeaway", ""))]
+    blocks = [("DESIGN", spec.get("design", ""), "research"),
+              ("RESULT", spec.get("result", ""), "proven"),
+              ("TAKEAWAY", spec.get("takeaway", ""), "molecule")]
     pw = (_CONTENT_W - 2 * _GUTTER) / 3            # three equal panels, one standard gutter
-    top, panh = _BODY_TOP, _BODY_H
-    for i, (lab, body) in enumerate(blocks):
+    panh = 3.4
+    top = _BODY_TOP + (_BODY_H - panh) / 2 + 0.1   # compact panels, vertically centred in the body zone
+    dd = 0.62
+    for i, (lab, body, ic) in enumerate(blocks):
         x = _MARGIN + i * (pw + _GUTTER)
         pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(panh))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
         if lab == "RESULT":  # highlight the insight with a red top accent
             acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.09))
             acc.fill.solid(); acc.fill.fore_color.rgb = _RED; acc.line.fill.background(); acc.shadow.inherit = False
-        _place_text(slide, x + _PAD, top + _PAD, pw - 2 * _PAD, 0.4, lab, _SZ_SMALL, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, x + _PAD, top + 0.72, pw - 2 * _PAD, panh - 0.9, body, _SZ_BODY, _LTEAL)
+        _icon_disc(slide, x + _PAD + dd / 2, top + 0.34 + dd / 2, dd, icon_path=_generic_icon_path(ic))
+        _place_text(slide, x + _PAD + dd + 0.18, top + 0.34, pw - 2 * _PAD - dd - 0.18, dd, lab,
+                    _SZ_SMALL, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        _place_text(slide, x + _PAD, top + dd + 0.6, pw - 2 * _PAD, panh - (dd + 0.6) - _PAD,
+                    body, _SZ_BODY, _ONTEAL)
 
 
 def _fill_closing(prs, spec: dict, dark_index: int) -> None:

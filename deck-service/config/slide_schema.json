@@ -52,7 +52,11 @@
               "journey",
               "exec_summary",
               "quote",
-              "comparison"
+              "comparison",
+              "stat",
+              "harvey_ball",
+              "timeline",
+              "funnel"
             ]
           },
           "background": {
@@ -90,7 +94,10 @@
             "enum": [
               "column",
               "bar",
-              "line"
+              "line",
+              "stacked_column",
+              "stacked_100",
+              "doughnut"
             ]
           },
           "categories": {
@@ -242,6 +249,81 @@
                   "items": {
                     "type": "string"
                   }
+                }
+              }
+            }
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "scores": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "milestones": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "heading": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
                 }
               }
             }
@@ -1177,7 +1259,10 @@
                   "enum": [
                     "column",
                     "bar",
-                    "line"
+                    "line",
+                    "stacked_column",
+                    "stacked_100",
+                    "doughnut"
                   ]
                 },
                 "categories": {
@@ -1534,6 +1619,225 @@
                           "type": "string",
                           "maxLength": 70
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "stat"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "stats"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "caption": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "stats": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "label"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "maxLength": 12
+                      },
+                      "label": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "note": {
+                        "type": "string",
+                        "maxLength": 90
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "harvey_ball"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "options",
+                "criteria"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "options": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 24
+                  }
+                },
+                "criteria": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "scores"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "scores": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 4,
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 4
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "timeline"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "milestones"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "milestones": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "date",
+                      "heading"
+                    ],
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "maxLength": 16
+                      },
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 26
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 80
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "funnel"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "stages"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "stages": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 5,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 30
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 90
                       }
                     }
                   }

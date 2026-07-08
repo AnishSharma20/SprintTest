@@ -292,7 +292,7 @@ def main():
                  "properties": {
                      "title": {"type": "string", "maxLength": 46},
                      "caption": {"type": "string", "maxLength": 100},
-                     "chart_type": {"enum": ["column", "bar", "line"]},
+                     "chart_type": {"enum": ["column", "bar", "line", "stacked_column", "stacked_100", "doughnut"]},
                      "categories": {"type": "array", "minItems": 2, "maxItems": 8,
                                     "items": {"type": "string", "maxLength": 24}},
                      "series": {"type": "array", "minItems": 1, "maxItems": 4,
@@ -347,6 +347,40 @@ def main():
             "properties": {"cells": {"type": "array", "minItems": 2, "maxItems": 4,
                                      "items": {"type": "string", "maxLength": 70}}}}}}, "comparison table")
 
+    # Batch 2 synthetic layouts (stat / harvey_ball / timeline / funnel).
+    _synth("stat", "stat", "dark", ["layout", "title", "stats"], {
+        "title": {"type": "string", "maxLength": 46},
+        "caption": {"type": "string", "maxLength": 90},
+        "stats": {"type": "array", "minItems": 1, "maxItems": 3, "items": {
+            "type": "object", "additionalProperties": False, "required": ["value", "label"],
+            "properties": {"value": {"type": "string", "maxLength": 12},
+                           "label": {"type": "string", "maxLength": 40},
+                           "note": {"type": "string", "maxLength": 90}}}}}, "hero stats")
+
+    _synth("harvey_ball", "harvey_ball", "light", ["layout", "title", "options", "criteria"], {
+        "title": {"type": "string", "maxLength": 46},
+        "options": {"type": "array", "minItems": 2, "maxItems": 4, "items": {"type": "string", "maxLength": 24}},
+        "criteria": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "scores"],
+            "properties": {"label": {"type": "string", "maxLength": 40},
+                           "scores": {"type": "array", "minItems": 2, "maxItems": 4,
+                                      "items": {"type": "integer", "minimum": 0, "maximum": 4}}}}}}, "harvey-ball grid")
+
+    _synth("timeline", "timeline", "dark", ["layout", "title", "milestones"], {
+        "title": {"type": "string", "maxLength": 46},
+        "milestones": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["date", "heading"],
+            "properties": {"date": {"type": "string", "maxLength": 16},
+                           "heading": {"type": "string", "maxLength": 26},
+                           "body": {"type": "string", "maxLength": 80}}}}}, "timeline")
+
+    _synth("funnel", "funnel", "dark", ["layout", "title", "stages"], {
+        "title": {"type": "string", "maxLength": 46},
+        "stages": {"type": "array", "minItems": 3, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 30},
+                           "body": {"type": "string", "maxLength": 90}}}}}, "funnel")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -364,7 +398,8 @@ def main():
                     "required": ["layout"],
                     "properties": {
                         "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
-                                                            "matrix", "journey", "exec_summary", "quote", "comparison"]},
+                                                            "matrix", "journey", "exec_summary", "quote", "comparison",
+                                                            "stat", "harvey_ball", "timeline", "funnel"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -375,7 +410,7 @@ def main():
                         "bottom_note": {"type": "string"},
                         "banner": {"type": "string"},
                         "caption": {"type": "string"},
-                        "chart_type": {"enum": ["column", "bar", "line"]},
+                        "chart_type": {"enum": ["column", "bar", "line", "stacked_column", "stacked_100", "doughnut"]},
                         "categories": {"type": "array", "items": {"type": "string"}},
                         "series": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
@@ -397,6 +432,22 @@ def main():
                         "rows": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"cells": {"type": "array", "items": {"type": "string"}}}}},
+                        "stats": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"value": {"type": "string"}, "label": {"type": "string"},
+                                           "note": {"type": "string"}}}},
+                        "options": {"type": "array", "items": {"type": "string"}},
+                        "criteria": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"label": {"type": "string"},
+                                           "scores": {"type": "array", "items": {"type": "integer"}}}}},
+                        "milestones": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"date": {"type": "string"}, "heading": {"type": "string"},
+                                           "body": {"type": "string"}}}},
+                        "stages": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
                         "items": {"type": "array"},
                         "columns": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,

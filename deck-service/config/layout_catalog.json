@@ -438,5 +438,49 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "stat": {
+    "template_layout": "Blank",
+    "kind": "stat",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "harvey_ball": {
+    "template_layout": "Blank",
+    "kind": "harvey_ball",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "timeline": {
+    "template_layout": "Blank",
+    "kind": "timeline",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "funnel": {
+    "template_layout": "Blank",
+    "kind": "funnel",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

@@ -49,6 +49,10 @@ LAYOUT_USAGE = {
     "exec_summary":       "An executive-summary opener: 2 to 4 key `points` (each `heading` + short `body`) beside an image. Emit `title`, `points`, and optionally an `asset_id` photo for the right side. Good as an early overview slide.",
     "quote":              "A pull quote for a testimonial or a striking statement from the source. Emit `quote` (the sentence), an optional `author` (name / role), and an optional short `title` eyebrow. Use sparingly, once at most.",
     "comparison":         "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil).",
+    "stat":               "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point.",
+    "harvey_ball":        "A Harvey-ball rating grid comparing options across criteria. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty circle, 4 = full). Use for a qualitative options comparison.",
+    "timeline":           "A horizontal TIMELINE / roadmap of 3 to 6 dated milestones. Emit `title` and `milestones`: each with a `date`, a short `heading`, and an optional one-line `body`. Use for a study timeline, a roadmap, or a sequence of events.",
+    "funnel":             "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process.",
 }
 
 TONE_GUIDANCE = {

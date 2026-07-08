@@ -524,7 +524,8 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
 
 
 _CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
-                "line": XL_CHART_TYPE.LINE}
+                "line": XL_CHART_TYPE.LINE, "stacked_column": XL_CHART_TYPE.COLUMN_STACKED,
+                "stacked_100": XL_CHART_TYPE.COLUMN_STACKED_100, "doughnut": XL_CHART_TYPE.DOUGHNUT}
 
 
 def _fill_chart(prs, spec: dict, dark_index: int) -> None:
@@ -553,18 +554,26 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
     chart.font.color.rgb = _WHITE
     chart.font.size = Pt(12)
     chart.font.name = _BODY
-    multi = len(series) > 1
+    is_round = spec.get("chart_type") == "doughnut"
+    multi = len(series) > 1 or is_round
     chart.has_legend = multi
     if multi:
         from pptx.enum.chart import XL_LEGEND_POSITION
         chart.legend.position = XL_LEGEND_POSITION.BOTTOM
         chart.legend.include_in_layout = False
-    for i, plot_series in enumerate(chart.plots[0].series):
-        try:
-            plot_series.format.fill.solid()
-            plot_series.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
-        except Exception:  # noqa: BLE001 — line charts style the line, handled below
-            plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+    if is_round:  # one series, many wedges — colour the POINTS
+        for i, pt in enumerate(chart.plots[0].series[0].points):
+            try:
+                pt.format.fill.solid(); pt.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+            except Exception:  # noqa: BLE001
+                pass
+    else:
+        for i, plot_series in enumerate(chart.plots[0].series):
+            try:
+                plot_series.format.fill.solid()
+                plot_series.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+            except Exception:  # noqa: BLE001 — line charts style the line
+                plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
 
 
 def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
@@ -700,6 +709,121 @@ def _fill_comparison(prs, spec: dict, light_index: int) -> None:
             _cell(tbl.cell(i, j), cells[j] if j < len(cells) else "", bold=(j == 0), color=_INKC, fill=band)
 
 
+def _fill_stat(prs, spec: dict, dark_index: int) -> None:
+    """Hero stats: 1-3 big red figures with labels (the '50+ / 135+' treatment)."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    if spec.get("caption"):
+        _place_text(slide, 0.6, 1.45, 12.1, 0.5, spec["caption"], 13, _LTEAL, italic=True)
+    stats = (spec.get("stats") or [])[:3]
+    n = max(1, len(stats))
+    cw = 12.0 / n
+    x0 = (13.333 - 12.0) / 2
+    for i, st in enumerate(stats):
+        x = x0 + i * cw
+        _place_text(slide, x, 2.5, cw, 1.3, st.get("value", ""), 72, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + 0.2, 3.95, cw - 0.4, 0.6, st.get("label", ""), 16, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        if st.get("note"):
+            _place_text(slide, x + 0.3, 4.65, cw - 0.6, 1.4, st["note"], 12.5, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+_HB_GLYPH = {0: "○", 1: "◔", 2: "◑", 3: "◕", 4: "●"}  # ○ ◔ ◑ ◕ ●
+
+
+def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
+    """Harvey-ball rating grid: criteria (rows) x options (columns), each cell a 0-4 filled circle."""
+    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _set_white_bg(slide)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+    options = spec.get("options") or []
+    criteria = spec.get("criteria") or []
+    ncols = len(options) + 1
+    nrows = len(criteria) + 1
+    if ncols < 2 or nrows < 2:
+        return
+    h = min(4.9, 0.55 + 0.62 * (nrows - 1))
+    tbl = slide.shapes.add_table(nrows, ncols, Inches(0.6), Inches(1.7), Inches(12.13), Inches(h)).table
+    tbl.first_row = False; tbl.horz_banding = False
+    def _cell(cell, text, *, bold, color, fill, size=13, center=False, font=_BODY):
+        cell.fill.solid(); cell.fill.fore_color.rgb = fill
+        cell.margin_left = cell.margin_right = Inches(0.12)
+        tf = cell.text_frame; tf.word_wrap = True
+        p = tf.paragraphs[0]
+        if center:
+            p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = text or ""
+        r.font.size = Pt(size); r.font.bold = bold; r.font.name = font; r.font.color.rgb = color
+    _cell(tbl.cell(0, 0), "", bold=True, color=_WHITE, fill=_TEAL)
+    for j, opt in enumerate(options, start=1):
+        _cell(tbl.cell(0, j), opt, bold=True, color=_WHITE, fill=_TEAL, center=True, font=_HEAD)
+    for i, crit in enumerate(criteria, start=1):
+        band = RGBColor(0xF1, 0xF8, 0xF8) if i % 2 else _WHITE
+        _cell(tbl.cell(i, 0), crit.get("label", ""), bold=True, color=_INKC, fill=band)
+        scores = crit.get("scores") or []
+        for j in range(1, ncols):
+            sc = scores[j - 1] if j - 1 < len(scores) else 0
+            _cell(tbl.cell(i, j), _HB_GLYPH.get(int(sc), "○"), bold=False, color=_RED, fill=band, size=20, center=True)
+
+
+def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
+    """Horizontal timeline: dated milestones on a red line with numbered nodes."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    ms = (spec.get("milestones") or [])[:6]
+    n = len(ms)
+    if not n:
+        return
+    gap = 0.3
+    sw = min(2.3, (12.0 - (n - 1) * gap) / n)
+    total = n * sw + (n - 1) * gap
+    x0 = (13.333 - total) / 2
+    cy = 3.6
+    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + gap) + sw / 2
+    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cxf), Inches(cy + 0.24), Inches(cxl - cxf), Inches(0.05))
+    line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
+    for i, mstone in enumerate(ms):
+        x = x0 + i * (sw + gap); cx = x + sw / 2
+        _place_text(slide, x, 2.5, sw, 0.4, mstone.get("date", ""), 13, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, 2.9, sw, 0.5, mstone.get("heading", ""), 14, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - 0.11), Inches(cy + 0.11), Inches(0.3), Inches(0.3))
+        c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
+        _place_text(slide, x, cy + 0.65, sw, 1.6, mstone.get("body", ""), 12, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
+    """Funnel: centred bars that narrow top-to-bottom, one per stage, heading + body."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    stages = (spec.get("stages") or [])[:5]
+    n = len(stages)
+    if not n:
+        return
+    top, wide, narrow, bh, gap = 1.9, 9.0, 4.2, 0.82, 0.18
+    for i, st in enumerate(stages):
+        w = wide - (wide - narrow) * (i / max(1, n - 1))
+        x = (13.333 - w) / 2
+        y = top + i * (bh + gap)
+        bar = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(bh))
+        bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL if i % 2 == 0 else RGBColor(0x2C, 0x74, 0x82)
+        bar.line.fill.background(); bar.shadow.inherit = False
+        tf = bar.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = st.get("heading", ""); r.font.size = Pt(15); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        if st.get("body"):
+            p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER
+            r2 = p2.add_run(); r2.text = st["body"]; r2.font.size = Pt(10.5); r2.font.name = _BODY
+            r2.font.color.rgb = RGBColor(0xE9, 0xF7, 0xF8)
+
+
 def render_deck(plan: dict) -> bytes:
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
@@ -727,6 +851,14 @@ def render_deck(plan: dict) -> bytes:
             _fill_quote(prs, spec, dark); continue
         if layout_name == "comparison":
             _fill_comparison(prs, spec, light); continue
+        if layout_name == "stat":
+            _fill_stat(prs, spec, dark); continue
+        if layout_name == "harvey_ball":
+            _fill_harvey_ball(prs, spec, light); continue
+        if layout_name == "timeline":
+            _fill_timeline(prs, spec, dark); continue
+        if layout_name == "funnel":
+            _fill_funnel(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

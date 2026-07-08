@@ -18,7 +18,8 @@ from . import planner, qa_gate, renderer, validate
 # (layout, benefit, icon, icon_generic, asset_id, background, language) and `source_citations`
 # (may contain DOIs/identifiers) are deliberately left untouched.
 _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "caption",
-                   "speaker_notes", "heading", "banner", "quote", "author", "x_axis", "y_axis"}
+                   "speaker_notes", "heading", "banner", "quote", "author", "x_axis", "y_axis",
+                   "label", "note", "date", "value"}
 
 
 def _strip_text(s: str) -> str:

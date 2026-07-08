@@ -175,7 +175,7 @@ def build(sem, spec, layout, light_names):
         cols = []
         body_font = FONT_PT["body"]
         head_lim = char_limit(c["headings"][0]["width_in"], c["headings"][0]["height_in"], FONT_PT["heading"], 1, lo=12) if c["headings"] else 34
-        body_lim = char_limit(c["bodies"][0]["width_in"], c["bodies"][0]["height_in"], body_font, 6) if c["bodies"] else 200
+        body_lim = char_limit(c["bodies"][0]["width_in"], c["bodies"][0]["height_in"], body_font, 8) if c["bodies"] else 200
         for i in range(n):
             col = {}
             if i < len(c["headings"]): col["heading"] = c["headings"][i]["idx"]
@@ -279,7 +279,7 @@ def main():
                                "items": {"type": "object", "additionalProperties": False,
                                          "required": ["heading", "body"],
                                          "properties": {"heading": {"type": "string", "maxLength": 26},
-                                                        "body": {"type": "string", "maxLength": 95},
+                                                        "body": {"type": "string", "maxLength": 320},
                                                         "icon": {"enum": benefits},
                                                         "icon_generic": {"enum": generic}}}}}}})
     summary.append(("key_points", "Blank (code-built: 4 icon cards)", ["light"], {"items": "3-4 x {head,body,icon}"}))
@@ -288,10 +288,12 @@ def main():
                         "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
     conditionals.append({
         "if": {"properties": {"layout": {"const": "chart"}}, "required": ["layout"]},
-        "then": {"required": ["layout", "title", "categories", "series"],
+        "then": {"required": ["layout", "title", "categories", "series", "x_axis", "y_axis"],
                  "properties": {
                      "title": {"type": "string", "maxLength": 46},
                      "caption": {"type": "string", "maxLength": 100},
+                     "x_axis": {"type": "string", "maxLength": 40},
+                     "y_axis": {"type": "string", "maxLength": 40},
                      "chart_type": {"enum": ["column", "bar", "line", "stacked_column", "stacked_100", "doughnut"]},
                      "categories": {"type": "array", "minItems": 2, "maxItems": 8,
                                     "items": {"type": "string", "maxLength": 24}},

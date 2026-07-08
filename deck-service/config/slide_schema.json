@@ -871,7 +871,7 @@
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 205
+                        "maxLength": 274
                       },
                       "icon": {
                         "enum": [
@@ -970,7 +970,7 @@
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 205
+                        "maxLength": 274
                       },
                       "icon": {
                         "enum": [
@@ -1069,7 +1069,7 @@
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 162
+                        "maxLength": 217
                       },
                       "icon": {
                         "enum": [
@@ -1189,7 +1189,7 @@
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 95
+                        "maxLength": 320
                       },
                       "icon": {
                         "enum": [
@@ -1264,7 +1264,9 @@
                 "layout",
                 "title",
                 "categories",
-                "series"
+                "series",
+                "x_axis",
+                "y_axis"
               ],
               "properties": {
                 "title": {
@@ -1274,6 +1276,14 @@
                 "caption": {
                   "type": "string",
                   "maxLength": 100
+                },
+                "x_axis": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "y_axis": {
+                  "type": "string",
+                  "maxLength": 40
                 },
                 "chart_type": {
                   "enum": [

@@ -219,7 +219,7 @@
       "columns": {
         "n": 2,
         "heading_max": 19,
-        "body_max": 205
+        "body_max": 274
       }
     },
     "picture_slots": [
@@ -268,7 +268,7 @@
       "columns": {
         "n": 3,
         "heading_max": 19,
-        "body_max": 205
+        "body_max": 274
       }
     },
     "picture_slots": [
@@ -326,7 +326,7 @@
       "columns": {
         "n": 4,
         "heading_max": 16,
-        "body_max": 162
+        "body_max": 217
       }
     },
     "picture_slots": [

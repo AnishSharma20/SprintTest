@@ -604,6 +604,27 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
             except Exception:  # noqa: BLE001 — line charts style the line
                 plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
 
+    # Axis titles — mandatory for charts with axes (doughnut has none). The category axis takes the
+    # dimension (x_axis), the value axis takes what is measured + units (y_axis); on a bar chart these
+    # are visually swapped but stay semantically correct.
+    if not is_round:
+        def _axis_title(axis, text):
+            axis.has_title = True
+            tf = axis.axis_title.text_frame
+            tf.text = text
+            run = tf.paragraphs[0].runs[0]
+            run.font.color.rgb = _WHITE
+            run.font.size = Pt(13)
+            run.font.name = _BODY
+            run.font.bold = True
+        try:
+            if spec.get("x_axis"):
+                _axis_title(chart.category_axis, spec["x_axis"])
+            if spec.get("y_axis"):
+                _axis_title(chart.value_axis, spec["y_axis"])
+        except (ValueError, KeyError, IndexError):  # axis absent for this chart type
+            pass
+
 
 def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
     """2x2 matrix: four teal quadrant panels + axis labels, filled from the plan."""

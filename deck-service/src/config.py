@@ -28,7 +28,7 @@ _DEFAULT_TEMPLATES = [
 # or a pinned dated version) without a code change. API key comes from ANTHROPIC_API_KEY only.
 MODEL = os.environ.get("DECK_MODEL", "claude-sonnet-5")
 
-SLIDE_TARGETS = {"kort": 6, "standard": 9, "detaljert": 13}
+SLIDE_TARGETS = {"kort": 6, "standard": 9, "detaljert": 13, "omfattende": 26}
 
 
 def template_path() -> Path:

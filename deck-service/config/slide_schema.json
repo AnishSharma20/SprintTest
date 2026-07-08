@@ -23,7 +23,7 @@
     "slides": {
       "type": "array",
       "minItems": 3,
-      "maxItems": 20,
+      "maxItems": 34,
       "items": {
         "type": "object",
         "additionalProperties": false,

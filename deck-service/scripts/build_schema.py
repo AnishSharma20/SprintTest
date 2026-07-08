@@ -404,7 +404,7 @@ def main():
             "deck_title": {"type": "string", "maxLength": 90},
             "language": {"enum": ["no", "en"], "description": "Output language; follows the input."},
             "slides": {
-                "type": "array", "minItems": 3, "maxItems": 20,
+                "type": "array", "minItems": 3, "maxItems": 34,
                 "items": {
                     "type": "object",
                     "additionalProperties": False,

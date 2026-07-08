@@ -239,7 +239,7 @@ def _call(client, system, user, model, max_tokens):
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
               tone: str = "balansert", instructions: str = "", model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 12000 if target > 10 else 8000
+    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
     return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
@@ -249,7 +249,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 12000 if target > 10 else 8000
+    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
     fix = ("Your previous plan FAILED validation. Change ONLY the fields named in the errors below "
            "(shorten the text, or move detail into speaker_notes); keep every other field byte-for-byte "
            "identical. Do not touch slides or fields that aren't listed. Re-emit the COMPLETE plan via "
@@ -265,7 +265,7 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 12000 if target > 10 else 8000
+    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
     lines = []
     for f in findings:
         i = f.get("slide", 0)

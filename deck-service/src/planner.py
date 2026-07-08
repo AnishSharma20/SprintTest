@@ -137,9 +137,16 @@ so just emit {{"layout":"ingredient"}} — do NOT write a title/eyebrow/callouts
 Default to including it whenever the deck is about the product; use it INSTEAD of a column layout for
 composition (never put benefit icons on nutrients). Omit only if the source is genuinely not about the product.
 
-LAYOUTS — choose the one that fits each slide's content. PREFER two_columns / three_columns /
-four_columns for parallel content (comparisons, benefit sets, steps). Use highlight for a single pivotal
-claim. Respect the character limits shown in [brackets] and enforced by the schema — write to fit.
+LAYOUTS — pick the layout whose SHAPE matches the point, not just text/columns. Reach for a structural
+layout whenever the content has that shape:
+- numbers worth comparing -> `chart`;  one decisive figure -> `stat`;
+- a set of parallel points/benefits -> `key_points` (icon cards) or two/three/four_columns;
+- a sequence or process -> `journey`;  dated milestones / a study over time -> `timeline`;
+- a positioning trade-off (two axes) -> `matrix`;  options vs criteria -> `comparison` (table) or `harvey_ball` (ratings);
+- a narrowing process -> `funnel`;  a striking quote from the source -> `quote`;  a one-slide overview -> `exec_summary`;
+- a single pivotal claim -> `highlight`.
+Aim for VARIETY across the deck — don't fall back to plain `text`/`section` when a structural layout fits.
+But NEVER force a layout: use one only when the content genuinely has that shape. Respect the [bracketed] limits.
 {_layout_guide()}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on

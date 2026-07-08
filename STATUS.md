@@ -63,11 +63,12 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Studies = real studies only** — the PubMed query excludes non-study publication types
   (`NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])`).
 - **Synthetic (code-built) layouts** — beyond the template's own layouts, the planner can pick
-  **`key_points`** (4 icon cards, banner; AI picks a brand icon per card) and **`chart`** (native
-  editable pptx chart from `categories`+`series`; data from the plan only). Registered like
-  `ingredient` in `scripts/build_schema.py` (so they survive config regen); built by
-  `renderer._fill_key_points` / `_fill_chart`. This is the pattern for adding more consulting
-  structures from the template library (re-skin faithfully to Superba, AI-fill, icons from our library).
+  seven AI-filled consulting structures (re-skinned faithfully to Superba, icons from our library):
+  **`key_points`** (4 icon cards), **`chart`** (native editable pptx chart, data from the plan only),
+  **`matrix`** (2x2), **`journey`** (process timeline), **`exec_summary`** (points + image),
+  **`quote`** (pull quote), **`comparison`** (native table). Registered like `ingredient` in
+  `scripts/build_schema.py` (survive config regen) → `renderer._fill_*` + a `render_deck` branch +
+  a `LAYOUT_USAGE` line. This is the repeatable recipe for adding more from the template library.
 
 **⚠ KNOWN WEAKNESS (USER-FLAGGED — fix later):** edited-summary persistence is **localStorage-only** — edits live
 in one browser, NOT shared across users/devices or with the backend. The user explicitly wants this upgraded to a

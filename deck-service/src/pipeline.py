@@ -18,7 +18,7 @@ from . import planner, qa_gate, renderer, validate
 # (layout, benefit, icon, icon_generic, asset_id, background, language) and `source_citations`
 # (may contain DOIs/identifiers) are deliberately left untouched.
 _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "caption",
-                   "speaker_notes", "heading", "banner"}
+                   "speaker_notes", "heading", "banner", "quote", "author", "x_axis", "y_axis"}
 
 
 def _strip_text(s: str) -> str:
@@ -61,7 +61,7 @@ def _strip_dashes_plan(plan: dict) -> dict:
         if isinstance(obj, str):
             return _strip_text(obj) if key in _DASH_TEXT_KEYS else obj
         if isinstance(obj, list):
-            if key == "items":  # list of body strings
+            if key in ("items", "headers", "cells"):  # lists of plain strings
                 return [_strip_text(x) if isinstance(x, str) else walk(x) for x in obj]
             return [walk(x) for x in obj]
         if isinstance(obj, dict):

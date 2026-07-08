@@ -569,6 +569,139 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
             plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
 
 
+def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
+    """2x2 matrix: four teal quadrant panels + axis labels, filled from the plan."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    quads = (spec.get("quadrants") or [])[:4]
+    mx, my, mw, mh = 3.1, 2.15, 9.3, 4.3
+    gap = 0.14
+    qw, qh = (mw - gap) / 2, (mh - gap) / 2
+    pos = [(mx, my), (mx + qw + gap, my), (mx, my + qh + gap), (mx + qw + gap, my + qh + gap)]
+    for i, q in enumerate(quads):
+        x, y = pos[i]
+        pan = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(qw), Inches(qh))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL
+        pan.line.color.rgb = _WHITE; pan.line.width = Pt(1); pan.shadow.inherit = False
+        _place_text(slide, x + 0.2, y + 0.18, qw - 0.4, 0.5, q.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, x + 0.2, y + 0.72, qw - 0.4, qh - 0.9, q.get("body", ""), 12, _LTEAL)
+    if spec.get("y_axis"):
+        _place_text(slide, 0.7, my, 2.2, mh, spec["y_axis"], 12, _LTEAL, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
+    if spec.get("x_axis"):
+        _place_text(slide, mx, my + mh + 0.12, mw, 0.4, spec["x_axis"], 12, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_journey(prs, spec: dict, dark_index: int) -> None:
+    """Horizontal process journey: a red timeline with numbered nodes; heading + body per step."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    steps = (spec.get("steps") or [])[:5]
+    n = len(steps)
+    if not n:
+        return
+    gap = 0.35
+    sw = min(2.6, (12.0 - (n - 1) * gap) / n)
+    total = n * sw + (n - 1) * gap
+    x0 = (13.333 - total) / 2
+    cy = 3.5
+    cx_first = x0 + sw / 2
+    cx_last = x0 + (n - 1) * (sw + gap) + sw / 2
+    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cx_first), Inches(cy + 0.27), Inches(cx_last - cx_first), Inches(0.06))
+    line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
+    for i, st in enumerate(steps):
+        x = x0 + i * (sw + gap); cx = x + sw / 2
+        _place_text(slide, x, 2.35, sw, 0.5, st.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - 0.28), Inches(cy + 0.02), Inches(0.56), Inches(0.56))
+        c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
+        c.text_frame.text = str(i + 1)
+        rr = c.text_frame.paragraphs[0].runs[0]
+        rr.font.size = Pt(16); rr.font.bold = True; rr.font.color.rgb = _WHITE; rr.font.name = _HEAD
+        c.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+        _place_text(slide, x, cy + 0.8, sw, 1.6, st.get("body", ""), 12, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
+    """Executive summary: red-accented key points on the left, a picture (or panel) on the right."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 7.3, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    pts = (spec.get("points") or [])[:4]
+    n = max(1, len(pts))
+    top, bottom = 1.95, 6.4
+    step = (bottom - top) / n
+    for i, pt in enumerate(pts):
+        y = top + i * step
+        bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(y + 0.05), Inches(0.16), Inches(step - 0.5))
+        bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
+        _place_text(slide, 1.0, y, 6.4, 0.5, pt.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, 1.0, y + 0.5, 6.4, step - 0.55, pt.get("body", ""), 12.5, _LTEAL)
+    # right: photo if picked, else a teal panel
+    aid = spec.get("asset_id")
+    ix, iy, iw, ih = 8.2, 1.95, 4.5, 4.45
+    placed = False
+    if aid:
+        try:
+            path = config.resolve_asset(config.asset_index()[aid]["path"])
+            if path.exists():
+                slide.shapes.add_picture(str(path), Inches(ix), Inches(iy), Inches(iw), Inches(ih)); placed = True
+        except Exception:  # noqa: BLE001
+            placed = False
+    if not placed:
+        pan = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
+        pan.fill.solid(); pan.fill.fore_color.rgb = RGBColor(0x2C, 0x74, 0x82); pan.line.fill.background(); pan.shadow.inherit = False
+
+
+def _fill_quote(prs, spec: dict, dark_index: int) -> None:
+    """Pull quote: a large red quotation mark, the quote, and the attribution."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    if spec.get("title"):
+        _place_text(slide, 1.2, 0.7, 11.0, 0.5, spec["title"], 14, _LTEAL, bold=True, font=_HEAD)
+    _place_text(slide, 1.1, 1.3, 3.0, 1.6, "“", 120, _RED, bold=True, font=_HEAD)
+    _place_text(slide, 1.5, 2.4, 10.3, 3.0, spec.get("quote", ""), 26, _WHITE, font=_HEAD, anchor=MSO_ANCHOR.TOP)
+    if spec.get("author"):
+        _place_text(slide, 1.5, 5.7, 10.3, 0.6, spec["author"], 15, _LTEAL, bold=True)
+
+
+def _fill_comparison(prs, spec: dict, light_index: int) -> None:
+    """Comparison table: a native, brand-styled table (teal header, light body) on white."""
+    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _set_white_bg(slide)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+    headers = spec.get("headers") or []
+    rows = spec.get("rows") or []
+    ncols = len(headers)
+    nrows = len(rows) + 1
+    if ncols < 1 or nrows < 2:
+        return
+    h = min(4.9, 0.5 + 0.62 * (nrows - 1))
+    gf = slide.shapes.add_table(nrows, ncols, Inches(0.6), Inches(1.7), Inches(12.13), Inches(h))
+    tbl = gf.table
+    tbl.first_row = False; tbl.horz_banding = False
+    def _cell(cell, text, *, bold, color, fill):
+        cell.fill.solid(); cell.fill.fore_color.rgb = fill
+        cell.margin_left = cell.margin_right = Inches(0.12)
+        tf = cell.text_frame; tf.word_wrap = True
+        p = tf.paragraphs[0]
+        r = p.add_run(); r.text = text or ""
+        r.font.size = Pt(12.5); r.font.bold = bold; r.font.name = (_HEAD if bold else _BODY); r.font.color.rgb = color
+    for j, head in enumerate(headers):
+        _cell(tbl.cell(0, j), head, bold=True, color=_WHITE, fill=_TEAL)
+    for i, row in enumerate(rows, start=1):
+        cells = (row.get("cells") or [])
+        band = RGBColor(0xF1, 0xF8, 0xF8) if i % 2 else _WHITE
+        for j in range(ncols):
+            _cell(tbl.cell(i, j), cells[j] if j < len(cells) else "", bold=(j == 0), color=_INKC, fill=band)
+
+
 def render_deck(plan: dict) -> bytes:
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
@@ -586,6 +719,16 @@ def render_deck(plan: dict) -> bytes:
         if layout_name == "chart":        # native pptx chart (mechanism B)
             _fill_chart(prs, spec, dark)
             continue
+        if layout_name == "matrix":
+            _fill_matrix(prs, spec, dark); continue
+        if layout_name == "journey":
+            _fill_journey(prs, spec, dark); continue
+        if layout_name == "exec_summary":
+            _fill_exec_summary(prs, spec, dark); continue
+        if layout_name == "quote":
+            _fill_quote(prs, spec, dark); continue
+        if layout_name == "comparison":
+            _fill_comparison(prs, spec, light); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

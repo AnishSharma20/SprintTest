@@ -47,7 +47,12 @@
               "four_columns",
               "ingredient",
               "key_points",
-              "chart"
+              "chart",
+              "matrix",
+              "journey",
+              "exec_summary",
+              "quote",
+              "comparison"
             ]
           },
           "background": {
@@ -107,6 +112,135 @@
                   "type": "array",
                   "items": {
                     "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "x_axis": {
+            "type": "string"
+          },
+          "y_axis": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "quadrants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "icon": {
+                  "enum": [
+                    "heart",
+                    "liver",
+                    "joint",
+                    "muscle",
+                    "skin",
+                    "eye",
+                    "cognitive",
+                    "pms",
+                    "sports",
+                    "absorption",
+                    "whole_body",
+                    "none"
+                  ]
+                },
+                "icon_generic": {
+                  "enum": [
+                    "absorption",
+                    "award",
+                    "brain",
+                    "cell",
+                    "dosage",
+                    "energy",
+                    "eye",
+                    "global",
+                    "growth",
+                    "heart",
+                    "immunity",
+                    "joint",
+                    "krill",
+                    "molecule",
+                    "muscle",
+                    "ocean",
+                    "omega3",
+                    "people",
+                    "process",
+                    "proven",
+                    "purity",
+                    "quality",
+                    "research",
+                    "routine",
+                    "safety",
+                    "science",
+                    "sleep",
+                    "sourcing",
+                    "sustainability",
+                    "traceability",
+                    "none"
+                  ]
+                }
+              }
+            }
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
@@ -1075,6 +1209,330 @@
                         "type": "array",
                         "items": {
                           "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "matrix"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "quadrants"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "x_axis": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "y_axis": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "quadrants": {
+                  "type": "array",
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading",
+                      "body"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 30
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 120
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "journey"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "steps"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "steps": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 5,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading",
+                      "body"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 24
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 90
+                      },
+                      "icon": {
+                        "enum": [
+                          "heart",
+                          "liver",
+                          "joint",
+                          "muscle",
+                          "skin",
+                          "eye",
+                          "cognitive",
+                          "pms",
+                          "sports",
+                          "absorption",
+                          "whole_body",
+                          "none"
+                        ]
+                      },
+                      "icon_generic": {
+                        "enum": [
+                          "absorption",
+                          "award",
+                          "brain",
+                          "cell",
+                          "dosage",
+                          "energy",
+                          "eye",
+                          "global",
+                          "growth",
+                          "heart",
+                          "immunity",
+                          "joint",
+                          "krill",
+                          "molecule",
+                          "muscle",
+                          "ocean",
+                          "omega3",
+                          "people",
+                          "process",
+                          "proven",
+                          "purity",
+                          "quality",
+                          "research",
+                          "routine",
+                          "safety",
+                          "science",
+                          "sleep",
+                          "sourcing",
+                          "sustainability",
+                          "traceability",
+                          "none"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "exec_summary"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "points"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "asset_id": {
+                  "enum": [
+                    "photo_capsule_single",
+                    "photo_capsules_white",
+                    "photo_capsules_glass",
+                    "photo_capsules_daily",
+                    "photo_capsules_wood",
+                    "photo_capsules_heart",
+                    "photo_breakfast",
+                    "photo_ingredients",
+                    "photo_jar_antarctic",
+                    "photo_capsules_pattern",
+                    "photo_oil_in_water",
+                    "photo_oil_texture",
+                    "photo_oil_lab",
+                    "photo_krill_closeup",
+                    "photo_krill_blue_water",
+                    "photo_krill_swarm",
+                    "photo_krill_single",
+                    "photo_krill_ice",
+                    "photo_iceberg",
+                    "photo_antarctic_ocean",
+                    "photo_antarctic_land",
+                    "photo_antarctic_bright",
+                    "photo_antarctic_sunset",
+                    "photo_lab",
+                    "photo_team",
+                    "photo_warehouse",
+                    null
+                  ]
+                },
+                "points": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading",
+                      "body"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 42
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 120
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "quote"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "quote"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 60
+                },
+                "quote": {
+                  "type": "string",
+                  "maxLength": 400
+                },
+                "author": {
+                  "type": "string",
+                  "maxLength": 70
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "comparison"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "headers",
+                "rows"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 46
+                },
+                "headers": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 30
+                  }
+                },
+                "rows": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "cells"
+                    ],
+                    "properties": {
+                      "cells": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 4,
+                        "items": {
+                          "type": "string",
+                          "maxLength": 70
                         }
                       }
                     }

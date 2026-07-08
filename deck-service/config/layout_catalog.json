@@ -383,5 +383,60 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "matrix": {
+    "template_layout": "Blank",
+    "kind": "matrix",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "journey": {
+    "template_layout": "Blank",
+    "kind": "journey",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "exec_summary": {
+    "template_layout": "Blank",
+    "kind": "exec_summary",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "quote": {
+    "template_layout": "Blank",
+    "kind": "quote",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "comparison": {
+    "template_layout": "Blank",
+    "kind": "comparison",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

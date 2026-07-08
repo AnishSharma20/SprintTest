@@ -302,6 +302,51 @@ def main():
                                                          "values": {"type": "array", "items": {"type": "number"}}}}}}}})
     summary.append(("chart", "Blank (native pptx chart)", ["dark"], {"data": "categories+series"}))
 
+    # Batch 1 synthetic layouts (matrix / journey / exec_summary / quote / comparison).
+    def _synth(name, kind, bg, required, props, note):
+        catalog[name] = {"template_layout": "Blank", "kind": kind, "backgrounds": [bg],
+                         "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
+        conditionals.append({"if": {"properties": {"layout": {"const": name}}, "required": ["layout"]},
+                             "then": {"required": required, "properties": props}})
+        summary.append((name, f"Blank ({note})", [bg], {"fields": ",".join(required[1:])}))
+
+    _synth("matrix", "matrix", "dark", ["layout", "title", "quadrants"], {
+        "title": {"type": "string", "maxLength": 46},
+        "x_axis": {"type": "string", "maxLength": 40}, "y_axis": {"type": "string", "maxLength": 40},
+        "quadrants": {"type": "array", "minItems": 4, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
+            "properties": {"heading": {"type": "string", "maxLength": 30},
+                           "body": {"type": "string", "maxLength": 120}}}}}, "2x2 matrix")
+
+    _synth("journey", "journey", "dark", ["layout", "title", "steps"], {
+        "title": {"type": "string", "maxLength": 46},
+        "steps": {"type": "array", "minItems": 3, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
+            "properties": {"heading": {"type": "string", "maxLength": 24},
+                           "body": {"type": "string", "maxLength": 90},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "process journey")
+
+    _synth("exec_summary", "exec_summary", "dark", ["layout", "title", "points"], {
+        "title": {"type": "string", "maxLength": 46},
+        "asset_id": {"enum": asset_ids + [None]},
+        "points": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
+            "properties": {"heading": {"type": "string", "maxLength": 42},
+                           "body": {"type": "string", "maxLength": 120}}}}}, "text points + image")
+
+    _synth("quote", "quote", "dark", ["layout", "quote"], {
+        "title": {"type": "string", "maxLength": 60},
+        "quote": {"type": "string", "maxLength": 400},
+        "author": {"type": "string", "maxLength": 70}}, "pull quote")
+
+    _synth("comparison", "comparison", "light", ["layout", "title", "headers", "rows"], {
+        "title": {"type": "string", "maxLength": 46},
+        "headers": {"type": "array", "minItems": 2, "maxItems": 4, "items": {"type": "string", "maxLength": 30}},
+        "rows": {"type": "array", "minItems": 1, "maxItems": 8, "items": {
+            "type": "object", "additionalProperties": False, "required": ["cells"],
+            "properties": {"cells": {"type": "array", "minItems": 2, "maxItems": 4,
+                                     "items": {"type": "string", "maxLength": 70}}}}}}, "comparison table")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -318,7 +363,8 @@ def main():
                     "additionalProperties": False,
                     "required": ["layout"],
                     "properties": {
-                        "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart"]},
+                        "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
+                                                            "matrix", "journey", "exec_summary", "quote", "comparison"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -335,6 +381,22 @@ def main():
                             "type": "object", "additionalProperties": False,
                             "properties": {"name": {"type": "string"},
                                            "values": {"type": "array", "items": {"type": "number"}}}}},
+                        "x_axis": {"type": "string"}, "y_axis": {"type": "string"},
+                        "quote": {"type": "string"}, "author": {"type": "string"},
+                        "quadrants": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                        "steps": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"},
+                                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}},
+                        "points": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                        "headers": {"type": "array", "items": {"type": "string"}},
+                        "rows": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"cells": {"type": "array", "items": {"type": "string"}}}}},
                         "items": {"type": "array"},
                         "columns": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,

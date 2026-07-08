@@ -96,8 +96,25 @@ scopes: **paper-level** (grounded in a verbatim quote) and **category-level** (a
   offline cache + fallback and a one-time migration of existing local edits.
 - **NEW env vars:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (both server-only, set in `.env.local` + Vercel);
   optional `CLAIMS_MODEL` (default `claude-sonnet-5`), `SEED_TOKEN` (gate the seed route on deployed envs).
-- **Open next (Phase 2/3):** wire the generators to compose from approved claims + emit claim-ID citations
-  (`asset_claims`); category-level claim authoring UI; RAG over full texts for narrative depth.
+**Claims library — Phase 2 (NEW 2026-07-08).** Generators now compose from approved claims, and the library
+is pre-filled + reviewed in a dedicated surface.
+- **Generators wired to claims:** Tab 2 has an **"Approved science claims"** card (toggle + category filter);
+  selected approved claims are fed to deck/blog/whitepaper as an authoritative `=== APPROVED SCIENCE CLAIMS ===`
+  block (numbered `[C1]`, `[C2]` — no dashes, so the no-dash strip keeps the tags). `planner.py`
+  `APPROVED_CLAIMS_RULE` (shared by blog/whitepaper) makes the model prefer them and cite `[Cn]`
+  (deck → `source_citations`; blog/whitepaper → inline / references). `app/claims-source.ts`.
+- **asset_claims recorded:** after each generation the frontend POSTs to **`/api/assets`** (writes
+  `generated_assets` + `asset_claims`) — the retraction-safe set of claims fed in (works for the binary deck too).
+- **Pre-filled, not user-extracted:** the library is populated ahead of time by **`/api/admin/extract-all`**
+  (idempotent; shared core in `app/lib/claims-extract.ts`, `max_tokens` 8000). The end-user UI has **no AI-extract
+  button** — reviewers only review + **add claims by hand** (`/api/claims` POST takes an optional quote).
+  Pre-filled 2026-07-08: ~560 claims across all 55 studies (pending review).
+- **Review is a modal** (`app/claims-panel.tsx`, portal to `document.body`) opened from **"View claims"** in a
+  study card; wider/roomier, HTML entities decoded in quotes (`app/lib/text.ts`).
+- **Claims Library page** (`app/claims/page.tsx`, nav tab **"Claims Library"** → `/claims`): every claim grouped
+  by category, with category + status filters, search, source (study + PubMed link) and verified quote.
+- **Open next (Phase 3):** category-level claim authoring UI; "which assets used this claim" view (from
+  `asset_claims`); RAG over full texts for narrative depth.
 
 **Open next steps (if wanted):**
 - **InDesign whitepapers (IDML)** — the whitepaper `plan` dict is already the single source of truth; the only

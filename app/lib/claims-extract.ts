@@ -9,22 +9,26 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getOrCreateStudy, logEvent, type StudyMeta } from "./claims-db";
+import { decodeEntities } from "./text";
 
 const EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const FELLES = "tool=llm-wiki&email=anish.sharma@sprint.no";
 
+export type SourceKind = "upload" | "pmc_oa" | "abstract_only";
 type Extracted = { text: string; quote: string; location?: string; category: string };
 export type ExtractResult = {
   created: number;
   unverified: number;
   skipped: number;
-  source: "upload" | "abstract_only";
+  source: SourceKind;
   total: number;
 };
 
-/** Normalize for quote matching: unify unicode dashes/quotes, collapse whitespace, lowercase. */
+/** Normalize for quote matching: decode HTML entities (so &#xb1; == ±), unify unicode
+ * dashes/quotes, collapse whitespace, lowercase. Decoding both sides removes false
+ * "quote not found" flags caused purely by entity vs character differences. */
 function norm(s: string): string {
-  return s
+  return decodeEntities(s)
     .replace(/[‐-―−]/g, "-")
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
@@ -41,14 +45,51 @@ async function fetchAbstract(pmid: string): Promise<string | null> {
   if (!res.ok) return null;
   const xml = await res.text();
   const parts = [...xml.matchAll(/<AbstractText[^>]*>([\s\S]*?)<\/AbstractText>/g)].map((m) =>
-    m[1]
-      .replace(/<[^>]+>/g, "")
-      .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"').replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d))
-      .trim()
+    decodeEntities(m[1].replace(/<[^>]+>/g, "")).trim()
   );
   const text = parts.join("\n\n").trim();
   return text || null;
+}
+
+/** PMID → PMCID via the NCBI ID converter (returns e.g. "PMC1234567", or null if not in PMC). */
+async function fetchPmcId(pmid: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?${FELLES}&format=json&ids=${pmid}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const rec = data?.records?.[0];
+    return rec?.pmcid ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Open-access full text from PubMed Central, or null when the article is not in the PMC OA
+ * subset (paywalled articles return front matter only, no <body>). Strips the JATS body to
+ * narrative text (drops figures, tables and citation markers).
+ */
+export async function fetchPmcFullText(pmid: string): Promise<string | null> {
+  const pmcid = await fetchPmcId(pmid);
+  if (!pmcid) return null;
+  const id = pmcid.replace(/^PMC/i, "");
+  const res = await fetch(`${EUTILS}/efetch.fcgi?db=pmc&${FELLES}&retmode=xml&id=${id}`, { cache: "no-store" });
+  if (!res.ok) return null;
+  const xml = await res.text();
+  const body = xml.match(/<body[\s\S]*?<\/body>/i);
+  if (!body) return null; // no OA full text available
+  const text = decodeEntities(
+    body[0]
+      .replace(/<xref[\s\S]*?<\/xref>/gi, "")
+      .replace(/<(table-wrap|fig|disp-formula)[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > 500 ? text : null; // sanity: real full text is long
 }
 
 /**
@@ -58,13 +99,18 @@ async function fetchAbstract(pmid: string): Promise<string | null> {
 export async function extractForStudy(
   sb: SupabaseClient,
   study: StudyMeta,
-  opts: { fullText?: string; actor?: string } = {}
+  opts: { fullText?: string; fullTextSource?: SourceKind; actor?: string } = {}
 ): Promise<ExtractResult> {
   const actor = (opts.actor || "prefill").trim() || "prefill";
 
-  // 1) Source text: provided full text wins; otherwise the PubMed abstract.
+  // 1) Source text, best available first: uploaded full text → PMC open-access full text →
+  //    the PubMed abstract.
   let fullText: string | null = (opts.fullText || "").trim() || null;
-  let source: "upload" | "abstract_only" = "upload";
+  let source: SourceKind = opts.fullTextSource ?? "upload";
+  if (!fullText) {
+    fullText = await fetchPmcFullText(study.pmid);
+    if (fullText) source = "pmc_oa";
+  }
   if (!fullText) {
     fullText = await fetchAbstract(study.pmid);
     source = "abstract_only";
@@ -88,7 +134,7 @@ export async function extractForStudy(
 
 Study: "${study.title}" (PMID ${study.pmid})
 
-Source text (${source === "abstract_only" ? "abstract only" : "full text"}):
+Source text (${source === "abstract_only" ? "abstract only" : source === "pmc_oa" ? "full text, PubMed Central open access" : "full text"}):
 <source>
 ${fullText.slice(0, 60000)}
 </source>
@@ -107,7 +153,7 @@ Return ONLY a JSON object: {"claims": [{"text": "...", "quote": "...", "location
 
   const msg = await anthropic.messages.create({
     model: process.env.CLAIMS_MODEL || "claude-sonnet-5",
-    max_tokens: 8000,
+    max_tokens: 12000, // headroom for long full-text papers (many claims + long quotes)
     messages: [{ role: "user", content: prompt }],
   });
 

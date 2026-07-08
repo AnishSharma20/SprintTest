@@ -1165,7 +1165,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "banner": {
                   "type": "string",
@@ -1271,7 +1271,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "caption": {
                   "type": "string",
@@ -1352,7 +1352,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "x_axis": {
                   "type": "string",
@@ -1408,7 +1408,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "steps": {
                   "type": "array",
@@ -1507,7 +1507,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "asset_id": {
                   "enum": [
@@ -1619,7 +1619,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "headers": {
                   "type": "array",
@@ -1676,7 +1676,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "caption": {
                   "type": "string",
@@ -1733,7 +1733,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "options": {
                   "type": "array",
@@ -1796,7 +1796,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "milestones": {
                   "type": "array",
@@ -1848,7 +1848,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 46
+                  "maxLength": 90
                 },
                 "stages": {
                   "type": "array",
@@ -1897,7 +1897,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 60
+                  "maxLength": 90
                 },
                 "study": {
                   "type": "string",

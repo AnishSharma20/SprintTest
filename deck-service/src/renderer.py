@@ -65,13 +65,14 @@ def _find_layout(prs, name, master_index):
     raise ValueError(f"Layout '{name}' not found in template")
 
 
-def _autofit(tf) -> None:
-    """Shrink text to fit its box instead of spilling into the placeholder below. This is the
-    'zero overflow' guarantee: a title/heading that would wrap past its box shrinks rather
-    than colliding with the subtitle/body. Font family & colour still inherit from the layout."""
+def _autofit(tf, *, shrink: bool = True) -> None:
+    """Text-frame fit policy. Short single-value labels (title/heading) keep shrink-to-fit as a
+    graceful last-resort guard against a 1-char overflow. Multi-line bodies/lists use `shrink=False`
+    (MSO_AUTO_SIZE.NONE) so text stays at its fixed size — content is CAPPED by the schema char
+    limits rather than shrunk to cram more in (client typography rule). Font/colour inherit."""
     tf.word_wrap = True
     try:
-        tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
+        tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE if shrink else MSO_AUTO_SIZE.NONE
     except Exception:  # noqa: BLE001
         pass
 
@@ -94,7 +95,7 @@ def _set_lines(ph, lines: list[str], bullet_rid: str | None = None) -> None:
     if bullet_rid:
         for para in tf.paragraphs:
             _apply_picture_bullet(para._p, bullet_rid)
-    _autofit(tf)
+    _autofit(tf, shrink=False)   # bodies/lists: cap content, do not shrink
 
 
 # The brand bullet is a small teal PNG embedded in the template master (as a picture bullet at
@@ -454,20 +455,39 @@ def _add_benefits_slide(prs, master_index: int) -> None:
 # ---------------------------------------------------------------------------
 _RED = RGBColor(0xE5, 0x0A, 0x1A)
 _TEAL = RGBColor(0x18, 0x59, 0x68)
+_TEAL2 = RGBColor(0x2C, 0x74, 0x82)   # secondary panel teal
 _PANEL = RGBColor(0xE4, 0xF1, 0xF1)
 _INKC = RGBColor(0x16, 0x35, 0x36)
 _LTEAL = RGBColor(0xA9, 0xDB, 0xD5)
 _WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 _HEAD, _BODY = "Exo 2", "Manrope"
-_TEAL2 = RGBColor(0x2C, 0x74, 0x82)   # secondary panel teal
 _CHART_COLORS = [_RED, _TEAL2, _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
 _TBL_LINE = "C9D9D9"                  # table row-line colour (hex, for XML)
-# --- one consistent design system for the synthetic layouts (client spec) ---
-_GUTTER = 0.3                         # standard gutter between side-by-side boxes
-_STEP_BADGE = 0.56                    # standard numbered/step badge diameter
-_ICON_DISC = 0.9                      # standard icon-circle diameter
+
+# ── Consultancy design system — ONE fixed skeleton for every synthetic slide ──────────────
+# Canvas is 13.333 x 7.5 in (16:9). The title, eyebrow, body zone and footer occupy identical
+# positions on every slide, so nothing shifts when moving between slides. All side-by-side
+# boxes use the same gutter; parallel boxes get equal heights. See _synth_slide().
+_MARGIN = 0.5                          # page margin — matches the template content-title LEFT (0.5)
+_CONTENT_W = 13.333 - 2 * _MARGIN      # 12.333 in usable width
+_TITLE_Y, _TITLE_H = 0.746, 0.95       # title TOP matches the template's content layouts exactly, so the
+_EYEBROW_Y = 1.72                      # title never shifts between a synthetic and a template slide
+_BODY_TOP, _BODY_BOTTOM = 2.1, 6.7     # fixed body zone (the footer band lives below 6.7)
+_BODY_H = _BODY_BOTTOM - _BODY_TOP     # 4.6 in
+_GUTTER = 0.3                          # the ONE gutter between all side-by-side boxes
+_PAD = 0.22                            # inner padding inside panels
+_LINE_SPACING = 1.06                   # fixed line spacing, applied everywhere
+
+# Type scale — exactly 3 text sizes (title / body / small) + one hero-figure size. Footer excluded.
+# Hierarchy is expressed through WEIGHT, COLOUR and CAPS, never through extra sizes.
+_SZ_TITLE = 24                         # slide headlines
+_SZ_BODY = 14                          # headings (bold), body, labels, table cells, bullets
+_SZ_SMALL = 11                         # eyebrows, captions, notes, footnotes, axis / step labels
+_SZ_HERO = 40                          # hero data figures ONLY (stat values)
+
+_STEP_BADGE = 0.5                      # numbered step / timeline node badge diameter
+_ICON_DISC = 0.9                       # icon-circle diameter
 _BOX = MSO_SHAPE.RECTANGLE            # one shape style for content boxes (square, consulting look)
-_S_TITLE, _S_HEAD, _S_BODY, _S_NOTE = 26, 15, 12.5, 12   # type scale
 
 
 def _is_num(s: str) -> bool:
@@ -492,14 +512,20 @@ def _hbar_table(tbl) -> None:
 
 
 def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=_BODY,
-                align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, italic=False):
+                align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, italic=False,
+                line_spacing=_LINE_SPACING):
     tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
     tf = tb.text_frame
     tf.word_wrap = True
+    try:
+        tf.auto_size = MSO_AUTO_SIZE.NONE      # fixed size — cap content, never shrink text to fit
+    except Exception:  # noqa: BLE001
+        pass
     tf.vertical_anchor = anchor
     tf.margin_left = tf.margin_right = Emu(0)
     p = tf.paragraphs[0]
     p.alignment = align
+    p.line_spacing = line_spacing
     r = p.add_run()
     r.text = text or ""
     r.font.size = Pt(size)
@@ -510,46 +536,71 @@ def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=_BODY,
     return tb
 
 
-def _fill_key_points(prs, spec: dict, light_index: int) -> None:
-    """4-icon-card 'key points' layout: banner + panels + circles, filled from the plan; the
-    AI-picked brand icon goes in each circle. On a white background with the light-master logos."""
-    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _set_white_bg(slide)
+def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
+    """Create a blank-layout slide with the ONE fixed skeleton every synthetic layout shares:
+    chrome (footer logos / date / page number) is preserved so it sits in an identical position on
+    every slide; the takeaway title and optional eyebrow are placed in their fixed boxes. Returns the
+    slide with the body zone (_BODY_TOP.._BODY_BOTTOM) free for the builder to fill."""
+    slide = prs.slides.add_slide(_blank_layout(prs, master_index))
+    for sh in list(slide.shapes):
+        if sh.is_placeholder and sh.placeholder_format.idx in CHROME_IDX:
+            continue                            # keep date/footer/slide-number → cross-slide consistency
+        sh._element.getparent().remove(sh._element)
+    if white:
+        _set_white_bg(slide)
+    if title is not None:
+        _place_text(slide, _MARGIN, _TITLE_Y, _CONTENT_W, _TITLE_H, title, _SZ_TITLE,
+                    _INKC if white else _WHITE, bold=True, font=_HEAD)
+    if eyebrow is not None:
+        _place_text(slide, _MARGIN, _EYEBROW_Y, _CONTENT_W, 0.4, eyebrow, _SZ_SMALL,
+                    _TEAL if white else _LTEAL, bold=True, font=_HEAD)
+    return slide
 
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+
+def _fill_key_points(prs, spec: dict, light_index: int) -> None:
+    """'Key points' cards: a teal banner, then equal-height panels with a brand icon in a circle,
+    a heading and a body. Icons are all-or-nothing from ONE source (never a partial/empty set)."""
+    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
     banner = spec.get("banner")
     if banner:
-        ban = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.53), Inches(1.55), Inches(12.27), Inches(0.55))
+        ban = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(_EYEBROW_Y), Inches(_CONTENT_W), Inches(0.55))
         ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL; ban.line.fill.background(); ban.shadow.inherit = False
         tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-        r = p.add_run(); r.text = banner; r.font.size = Pt(15); r.font.bold = True
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = banner; r.font.size = Pt(_SZ_BODY); r.font.bold = True
         r.font.name = _HEAD; r.font.color.rgb = _WHITE
 
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
         return
-    pw, gap = 2.85, _GUTTER
-    x0 = (13.333 - (n * pw + (n - 1) * gap)) / 2
-    ptop, pbot = (2.65, 6.75) if banner else (2.2, 6.75)
-    d = 0.95
+    # Icon consistency across the whole slide: every card gets a distinct icon from one source, or
+    # none do (an empty/partial ring of circles is the classic AI-generated look — avoid it).
+    def _consistent(paths):
+        s = [str(p) for p in paths]
+        return paths if paths and all(paths) and len(set(s)) == len(s) else None
+    icons = (_consistent([_icon_path(it.get("icon")) for it in items])
+             or _consistent([_generic_icon_path(it.get("icon_generic")) for it in items]))
+    d = _ICON_DISC
+    ptop = (_EYEBROW_Y + 0.55 + d / 2 + 0.05) if banner else (_BODY_TOP + d / 2)
+    if not icons:
+        ptop = (_EYEBROW_Y + 0.75) if banner else _BODY_TOP
+    pbot = _BODY_BOTTOM
+    pw = (_CONTENT_W - (n - 1) * _GUTTER) / n     # equal panel widths, one standard gutter
     for i, it in enumerate(items):
-        x = x0 + i * (pw + gap); cx = x + pw / 2
-        pan = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(ptop), Inches(pw), Inches(pbot - ptop))
+        x = _MARGIN + i * (pw + _GUTTER); cx = x + pw / 2
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(ptop), Inches(pw), Inches(pbot - ptop))
         pan.fill.solid(); pan.fill.fore_color.rgb = _PANEL; pan.line.fill.background(); pan.shadow.inherit = False
-        circ = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(ptop - d / 2), Inches(d), Inches(d))
-        circ.fill.solid(); circ.fill.fore_color.rgb = _WHITE
-        circ.line.color.rgb = _RED; circ.line.width = Pt(2.25); circ.shadow.inherit = False
-        ip = _icon_path(it.get("icon")) or _generic_icon_path(it.get("icon_generic"))
-        if ip:
-            slide.shapes.add_picture(str(ip), Inches(cx - 0.25), Inches(ptop - 0.25), Inches(0.5), Inches(0.5))
-        _place_text(slide, x + 0.15, ptop + 0.55, pw - 0.3, 0.5, it.get("heading", ""), 14.5, _INKC,
+        hy = ptop + (0.6 if icons else 0.22)
+        if icons:
+            circ = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(ptop - d / 2), Inches(d), Inches(d))
+            circ.fill.solid(); circ.fill.fore_color.rgb = _WHITE
+            circ.line.color.rgb = _RED; circ.line.width = Pt(2.25); circ.shadow.inherit = False
+            _place_icon(slide, (Inches(cx - 0.26), Inches(ptop - 0.26), Inches(0.52), Inches(0.52)), icons[i])
+        _place_text(slide, x + _PAD, hy, pw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _INKC,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x + 0.2, ptop + 1.15, pw - 0.4, pbot - ptop - 1.4, it.get("body", ""), 12, _INKC,
-                    align=PP_ALIGN.CENTER)
+        _place_text(slide, x + _PAD, hy + 0.55, pw - 2 * _PAD, pbot - (hy + 0.55) - _PAD,
+                    it.get("body", ""), _SZ_SMALL, _INKC, align=PP_ALIGN.CENTER)
 
 
 _CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
@@ -560,13 +611,8 @@ _CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.B
 def _fill_chart(prs, spec: dict, dark_index: int) -> None:
     """Native, editable PowerPoint chart from the plan's categories + series, brand-coloured, on the
     deep-sea master (inherits background + logos). Data comes only from the plan (claim fidelity)."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-
-    _place_text(slide, 0.6, 0.5, 12.1, 0.9, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
-    if spec.get("caption"):
-        _place_text(slide, 0.6, 1.45, 12.1, 0.5, spec["caption"], 13, _LTEAL, italic=True)
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""),
+                         eyebrow=spec.get("caption"))
 
     cats = spec.get("categories") or []
     series = spec.get("series") or []
@@ -578,10 +624,10 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
         vals = [(v if isinstance(v, (int, float)) else None) for v in (s.get("values") or [])]
         cd.add_series(s.get("name", ""), vals)
     ctype = _CHART_TYPES.get(spec.get("chart_type", "column"), XL_CHART_TYPE.COLUMN_CLUSTERED)
-    gf = slide.shapes.add_chart(ctype, Inches(0.9), Inches(2.15), Inches(11.5), Inches(4.0), cd)
+    gf = slide.shapes.add_chart(ctype, Inches(0.9), Inches(_BODY_TOP), Inches(11.5), Inches(_BODY_H - 0.35), cd)
     chart = gf.chart
     chart.font.color.rgb = _WHITE
-    chart.font.size = Pt(12)
+    chart.font.size = Pt(_SZ_SMALL)
     chart.font.name = _BODY
     is_round = spec.get("chart_type") == "doughnut"
     multi = len(series) > 1 or is_round
@@ -614,7 +660,7 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
             tf.text = text
             run = tf.paragraphs[0].runs[0]
             run.font.color.rgb = _WHITE
-            run.font.size = Pt(13)
+            run.font.size = Pt(_SZ_SMALL)
             run.font.name = _BODY
             run.font.bold = True
         try:
@@ -627,79 +673,78 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
 
 
 def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
-    """2x2 matrix: four teal quadrant panels + axis labels, filled from the plan."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    """2x2 matrix: four equal teal quadrants separated by the standard gutter, with axis labels."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     quads = (spec.get("quadrants") or [])[:4]
-    mx, my, mw, mh = 3.1, 2.15, 9.3, 4.3
-    gap = 0.14
+    mx, my = 3.0, _BODY_TOP
+    mw = 13.333 - _MARGIN - mx
+    mh = _BODY_BOTTOM - my - 0.45          # leave room for the x-axis label below
+    gap = _GUTTER
     qw, qh = (mw - gap) / 2, (mh - gap) / 2
     pos = [(mx, my), (mx + qw + gap, my), (mx, my + qh + gap), (mx + qw + gap, my + qh + gap)]
     for i, q in enumerate(quads):
         x, y = pos[i]
-        pan = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(qw), Inches(qh))
-        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL
-        pan.line.color.rgb = _WHITE; pan.line.width = Pt(1); pan.shadow.inherit = False
-        _place_text(slide, x + 0.2, y + 0.18, qw - 0.4, 0.5, q.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, x + 0.2, y + 0.72, qw - 0.4, qh - 0.9, q.get("body", ""), 12, _LTEAL)
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(qw), Inches(qh))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
+        _place_text(slide, x + _PAD, y + 0.16, qw - 2 * _PAD, 0.45, q.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, x + _PAD, y + 0.66, qw - 2 * _PAD, qh - 0.82, q.get("body", ""), _SZ_BODY, _LTEAL)
     if spec.get("y_axis"):
-        _place_text(slide, 0.7, my, 2.2, mh, spec["y_axis"], 12, _LTEAL, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
+        _place_text(slide, _MARGIN, my, mx - _MARGIN - 0.15, mh, spec["y_axis"], _SZ_SMALL, _LTEAL,
+                    bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.CENTER)
     if spec.get("x_axis"):
-        _place_text(slide, mx, my + mh + 0.12, mw, 0.4, spec["x_axis"], 12, _LTEAL, align=PP_ALIGN.CENTER)
+        _place_text(slide, mx, my + mh + 0.08, mw, 0.35, spec["x_axis"], _SZ_SMALL, _LTEAL,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
 
 
 def _fill_journey(prs, spec: dict, dark_index: int) -> None:
-    """Horizontal process journey: a red timeline with numbered nodes; heading + body per step."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    """Horizontal process journey: a red connector with numbered nodes; heading + body per step."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     steps = (spec.get("steps") or [])[:5]
     n = len(steps)
     if not n:
         return
-    gap = _GUTTER
-    sw = min(2.6, (12.0 - (n - 1) * gap) / n)
-    total = n * sw + (n - 1) * gap
+    sw = min(2.6, (_CONTENT_W - (n - 1) * _GUTTER) / n)
+    total = n * sw + (n - 1) * _GUTTER
     x0 = (13.333 - total) / 2
-    cy = 3.5
-    cx_first = x0 + sw / 2
-    cx_last = x0 + (n - 1) * (sw + gap) + sw / 2
-    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cx_first), Inches(cy + 0.27), Inches(cx_last - cx_first), Inches(0.06))
+    line_y = _BODY_TOP + 1.5                # vertical centre of the connector + nodes
+    d = _STEP_BADGE
+    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + _GUTTER) + sw / 2
+    line = slide.shapes.add_shape(_BOX, Inches(cxf), Inches(line_y - 0.03), Inches(cxl - cxf), Inches(0.06))
     line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
     for i, st in enumerate(steps):
-        x = x0 + i * (sw + gap); cx = x + sw / 2
-        _place_text(slide, x, 2.35, sw, 0.5, st.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - 0.28), Inches(cy + 0.02), Inches(0.56), Inches(0.56))
+        x = x0 + i * (sw + _GUTTER); cx = x + sw / 2
+        _place_text(slide, x, _BODY_TOP + 0.4, sw, line_y - d / 2 - (_BODY_TOP + 0.4) - 0.1,
+                    st.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
+                    align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
+        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(line_y - d / 2), Inches(d), Inches(d))
         c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
+        c.text_frame.word_wrap = False; c.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
         c.text_frame.text = str(i + 1)
         rr = c.text_frame.paragraphs[0].runs[0]
-        rr.font.size = Pt(16); rr.font.bold = True; rr.font.color.rgb = _WHITE; rr.font.name = _HEAD
+        rr.font.size = Pt(_SZ_BODY); rr.font.bold = True; rr.font.color.rgb = _WHITE; rr.font.name = _HEAD
         c.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
-        _place_text(slide, x, cy + 0.8, sw, 1.6, st.get("body", ""), 12, _LTEAL, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, line_y + d / 2 + 0.15, sw, _BODY_BOTTOM - (line_y + d / 2 + 0.15),
+                    st.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
 
 
 def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
-    """Executive summary: red-accented key points on the left, a picture (or panel) on the right."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 7.3, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    """Executive summary: red-accented key points on the left, a picture (or teal panel) on the right."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     pts = (spec.get("points") or [])[:4]
     n = max(1, len(pts))
-    top, bottom = 1.95, 6.4
-    step = (bottom - top) / n
+    left_w = 6.9
+    step = _BODY_H / n                     # equal vertical slot per point
     for i, pt in enumerate(pts):
-        y = top + i * step
-        bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(y + 0.05), Inches(0.16), Inches(step - 0.5))
+        y = _BODY_TOP + i * step
+        bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y + 0.06), Inches(0.14), Inches(step - 0.5))
         bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
-        _place_text(slide, 1.0, y, 6.4, 0.5, pt.get("heading", ""), 15, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, 1.0, y + 0.5, 6.4, step - 0.55, pt.get("body", ""), 12.5, _LTEAL)
-    # right: photo if picked, else a teal panel
+        _place_text(slide, _MARGIN + 0.35, y, left_w, 0.5, pt.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, _MARGIN + 0.35, y + 0.48, left_w, step - 0.55, pt.get("body", ""), _SZ_BODY, _LTEAL)
+    # right: photo if picked, else a teal panel — spans the full body zone
+    ix = _MARGIN + left_w + 0.6
+    iw = 13.333 - _MARGIN - ix
+    iy, ih = _BODY_TOP, _BODY_H
     aid = spec.get("asset_id")
-    ix, iy, iw, ih = 8.2, 1.95, 4.5, 4.45
     placed = False
     if aid:
         try:
@@ -710,37 +755,34 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
             placed = False
     if not placed:
         pan = slide.shapes.add_shape(_BOX, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
-        pan.fill.solid(); pan.fill.fore_color.rgb = RGBColor(0x2C, 0x74, 0x82); pan.line.fill.background(); pan.shadow.inherit = False
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL2; pan.line.fill.background(); pan.shadow.inherit = False
 
 
 def _fill_quote(prs, spec: dict, dark_index: int) -> None:
-    """Pull quote: a large red quotation mark, the quote, and the attribution."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    if spec.get("title"):
-        _place_text(slide, 1.2, 0.7, 11.0, 0.5, spec["title"], 14, _LTEAL, bold=True, font=_HEAD)
-    _place_text(slide, 1.1, 1.3, 3.0, 1.6, "“", 120, _RED, bold=True, font=_HEAD)
-    _place_text(slide, 1.5, 2.4, 10.3, 3.0, spec.get("quote", ""), 26, _WHITE, font=_HEAD, anchor=MSO_ANCHOR.TOP)
+    """Pull quote: a red accent rule, the quotation set in the title size, and the attribution."""
+    slide = _synth_slide(prs, dark_index, eyebrow=spec.get("title"))
+    qy, qh = _BODY_TOP + 0.5, 2.8
+    bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(qy), Inches(0.16), Inches(qh))
+    bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
+    quote = spec.get("quote", "")
+    _place_text(slide, _MARGIN + 0.5, qy, _CONTENT_W - 0.6, qh, f"“{quote}”" if quote else "",
+                _SZ_TITLE, _WHITE, font=_HEAD, anchor=MSO_ANCHOR.TOP)
     if spec.get("author"):
-        _place_text(slide, 1.5, 5.7, 10.3, 0.6, spec["author"], 15, _LTEAL, bold=True)
+        _place_text(slide, _MARGIN + 0.5, qy + qh + 0.15, _CONTENT_W - 0.6, 0.5, spec["author"],
+                    _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
 
 
 def _fill_comparison(prs, spec: dict, light_index: int) -> None:
     """Comparison table: a native, brand-styled table (teal header, light body) on white."""
-    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _set_white_bg(slide)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
     headers = spec.get("headers") or []
     rows = spec.get("rows") or []
     ncols = len(headers)
     nrows = len(rows) + 1
     if ncols < 1 or nrows < 2:
         return
-    h = min(4.9, 0.5 + 0.62 * (nrows - 1))
-    gf = slide.shapes.add_table(nrows, ncols, Inches(0.6), Inches(1.7), Inches(12.13), Inches(h))
+    h = min(_BODY_H, 0.5 + 0.62 * (nrows - 1))
+    gf = slide.shapes.add_table(nrows, ncols, Inches(_MARGIN), Inches(_BODY_TOP), Inches(_CONTENT_W), Inches(h))
     tbl = gf.table
     tbl.first_row = False; tbl.horz_banding = False
     def _cell(cell, text, *, bold, color, fill, align=PP_ALIGN.LEFT):
@@ -749,7 +791,7 @@ def _fill_comparison(prs, spec: dict, light_index: int) -> None:
         tf = cell.text_frame; tf.word_wrap = True
         p = tf.paragraphs[0]; p.alignment = align
         r = p.add_run(); r.text = text or ""
-        r.font.size = Pt(_S_BODY); r.font.bold = bold; r.font.name = (_HEAD if bold else _BODY); r.font.color.rgb = color
+        r.font.size = Pt(_SZ_BODY); r.font.bold = bold; r.font.name = (_HEAD if bold else _BODY); r.font.color.rgb = color
     for j, head in enumerate(headers):
         _cell(tbl.cell(0, j), head, bold=True, color=_WHITE, fill=_TEAL)
     for i, row in enumerate(rows, start=1):
@@ -764,22 +806,17 @@ def _fill_comparison(prs, spec: dict, light_index: int) -> None:
 
 def _fill_stat(prs, spec: dict, dark_index: int) -> None:
     """Hero stats: 1-3 big red figures with labels (the '50+ / 135+' treatment)."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
-    if spec.get("caption"):
-        _place_text(slide, 0.6, 1.45, 12.1, 0.5, spec["caption"], 13, _LTEAL, italic=True)
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     stats = (spec.get("stats") or [])[:3]
     n = max(1, len(stats))
-    cw = 12.0 / n
-    x0 = (13.333 - 12.0) / 2
+    cw = (_CONTENT_W - (n - 1) * _GUTTER) / n     # equal columns, one standard gutter
+    vy = _BODY_TOP + 0.8
     for i, st in enumerate(stats):
-        x = x0 + i * cw
-        _place_text(slide, x, 2.5, cw, 1.3, st.get("value", ""), 72, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x + 0.2, 3.95, cw - 0.4, 0.6, st.get("label", ""), 16, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        x = _MARGIN + i * (cw + _GUTTER)
+        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_HERO, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, vy + 1.05, cw, 0.5, st.get("label", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         if st.get("note"):
-            _place_text(slide, x + 0.3, 4.65, cw - 0.6, 1.4, st["note"], 12.5, _LTEAL, align=PP_ALIGN.CENTER)
+            _place_text(slide, x + 0.2, vy + 1.6, cw - 0.4, 1.4, st["note"], _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
 
 
 _HB_GLYPH = {0: "○", 1: "◔", 2: "◑", 3: "◕", 4: "●"}  # ○ ◔ ◑ ◕ ●
@@ -787,21 +824,17 @@ _HB_GLYPH = {0: "○", 1: "◔", 2: "◑", 3: "◕", 4: "●"}  # ○ ◔ ◑ �
 
 def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
     """Harvey-ball rating grid: criteria (rows) x options (columns), each cell a 0-4 filled circle."""
-    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _set_white_bg(slide)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
     options = spec.get("options") or []
     criteria = spec.get("criteria") or []
     ncols = len(options) + 1
     nrows = len(criteria) + 1
     if ncols < 2 or nrows < 2:
         return
-    h = min(4.9, 0.55 + 0.62 * (nrows - 1))
-    tbl = slide.shapes.add_table(nrows, ncols, Inches(0.6), Inches(1.7), Inches(12.13), Inches(h)).table
+    h = min(_BODY_H, 0.55 + 0.62 * (nrows - 1))
+    tbl = slide.shapes.add_table(nrows, ncols, Inches(_MARGIN), Inches(_BODY_TOP), Inches(_CONTENT_W), Inches(h)).table
     tbl.first_row = False; tbl.horz_banding = False
-    def _cell(cell, text, *, bold, color, fill, size=13, center=False, font=_BODY):
+    def _cell(cell, text, *, bold, color, fill, size=_SZ_BODY, center=False, font=_BODY):
         cell.fill.solid(); cell.fill.fore_color.rgb = fill
         cell.margin_left = cell.margin_right = Inches(0.12)
         tf = cell.text_frame; tf.word_wrap = True
@@ -819,100 +852,116 @@ def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
         scores = crit.get("scores") or []
         for j in range(1, ncols):
             sc = scores[j - 1] if j - 1 < len(scores) else 0
-            _cell(tbl.cell(i, j), _HB_GLYPH.get(int(sc), "○"), bold=False, color=_RED, fill=band, size=20, center=True)
+            _cell(tbl.cell(i, j), _HB_GLYPH.get(int(sc), "○"), bold=False, color=_RED, fill=band, size=_SZ_TITLE, center=True)
     _hbar_table(tbl)   # horizontal row lines only
 
 
 def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
-    """Horizontal timeline: dated milestones on a red line with numbered nodes."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    """Horizontal timeline: dated milestones on a red connector with round nodes."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     ms = (spec.get("milestones") or [])[:6]
     n = len(ms)
     if not n:
         return
-    gap = _GUTTER
-    sw = min(2.3, (12.0 - (n - 1) * gap) / n)
-    total = n * sw + (n - 1) * gap
+    sw = min(2.3, (_CONTENT_W - (n - 1) * _GUTTER) / n)
+    total = n * sw + (n - 1) * _GUTTER
     x0 = (13.333 - total) / 2
-    cy = 3.6
-    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + gap) + sw / 2
-    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cxf), Inches(cy + 0.24), Inches(cxl - cxf), Inches(0.05))
+    line_y = _BODY_TOP + 1.4
+    dot = 0.28
+    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + _GUTTER) + sw / 2
+    line = slide.shapes.add_shape(_BOX, Inches(cxf), Inches(line_y - 0.025), Inches(cxl - cxf), Inches(0.05))
     line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
     for i, mstone in enumerate(ms):
-        x = x0 + i * (sw + gap); cx = x + sw / 2
-        _place_text(slide, x, 2.5, sw, 0.4, mstone.get("date", ""), 13, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x, 2.9, sw, 0.5, mstone.get("heading", ""), 14, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - 0.11), Inches(cy + 0.11), Inches(0.3), Inches(0.3))
+        x = x0 + i * (sw + _GUTTER); cx = x + sw / 2
+        _place_text(slide, x, _BODY_TOP, sw, 0.35, mstone.get("date", ""), _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, _BODY_TOP + 0.38, sw, line_y - dot / 2 - (_BODY_TOP + 0.38) - 0.05,
+                    mstone.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
+                    align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
+        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - dot / 2), Inches(line_y - dot / 2), Inches(dot), Inches(dot))
         c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
-        _place_text(slide, x, cy + 0.65, sw, 1.6, mstone.get("body", ""), 12, _LTEAL, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, line_y + dot / 2 + 0.15, sw, _BODY_BOTTOM - (line_y + dot / 2 + 0.15),
+                    mstone.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
 
 
 def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
     """Funnel: centred bars that narrow top-to-bottom, one per stage, heading + body."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     stages = (spec.get("stages") or [])[:5]
     n = len(stages)
     if not n:
         return
-    top, wide, narrow, bh, gap = 1.9, 9.0, 4.2, 0.82, 0.18
+    wide, narrow = 9.0, 4.5
+    bh = (_BODY_H - (n - 1) * _GUTTER) / n          # bars fill the body zone, one standard gutter
     for i, st in enumerate(stages):
         w = wide - (wide - narrow) * (i / max(1, n - 1))
         x = (13.333 - w) / 2
-        y = top + i * (bh + gap)
+        y = _BODY_TOP + i * (bh + _GUTTER)
         bar = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(w), Inches(bh))
-        bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL if i % 2 == 0 else RGBColor(0x2C, 0x74, 0x82)
+        bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL if i % 2 == 0 else _TEAL2
         bar.line.fill.background(); bar.shadow.inherit = False
         tf = bar.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-        r = p.add_run(); r.text = st.get("heading", ""); r.font.size = Pt(15); r.font.bold = True
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = st.get("heading", ""); r.font.size = Pt(_SZ_BODY); r.font.bold = True
         r.font.name = _HEAD; r.font.color.rgb = _WHITE
         if st.get("body"):
-            p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER
-            r2 = p2.add_run(); r2.text = st["body"]; r2.font.size = Pt(10.5); r2.font.name = _BODY
+            p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER; p2.line_spacing = _LINE_SPACING
+            r2 = p2.add_run(); r2.text = st["body"]; r2.font.size = Pt(_SZ_SMALL); r2.font.name = _BODY
             r2.font.color.rgb = RGBColor(0xE9, 0xF7, 0xF8)
 
 
 def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
     """Case study / proof point: study eyebrow + three equal panels (Design, Result, Takeaway)."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), _S_TITLE, _WHITE, bold=True, font=_HEAD)
     eyebrow = "CASE STUDY" + (f"   ·   {spec['study']}" if spec.get("study") else "")
-    _place_text(slide, 0.6, 1.42, 12.1, 0.4, eyebrow, 12, _LTEAL, bold=True, font=_HEAD)
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=eyebrow)
     blocks = [("DESIGN", spec.get("design", "")), ("RESULT", spec.get("result", "")),
               ("TAKEAWAY", spec.get("takeaway", ""))]
-    pw = (12.13 - 2 * _GUTTER) / 3
-    x0, top, ph = 0.6, 2.15, 4.3
+    pw = (_CONTENT_W - 2 * _GUTTER) / 3            # three equal panels, one standard gutter
+    top, panh = _BODY_TOP, _BODY_H
     for i, (lab, body) in enumerate(blocks):
-        x = x0 + i * (pw + _GUTTER)
-        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(ph))
+        x = _MARGIN + i * (pw + _GUTTER)
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(panh))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
         if lab == "RESULT":  # highlight the insight with a red top accent
             acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.09))
             acc.fill.solid(); acc.fill.fore_color.rgb = _RED; acc.line.fill.background(); acc.shadow.inherit = False
-        _place_text(slide, x + 0.22, top + 0.22, pw - 0.44, 0.4, lab, 13, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, x + 0.22, top + 0.78, pw - 0.44, ph - 1.0, body, _S_BODY, _LTEAL)
+        _place_text(slide, x + _PAD, top + _PAD, pw - 2 * _PAD, 0.4, lab, _SZ_SMALL, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, x + _PAD, top + 0.72, pw - 2 * _PAD, panh - 0.9, body, _SZ_BODY, _LTEAL)
 
 
 def _fill_closing(prs, spec: dict, dark_index: int) -> None:
     """Closing / contact: a closing statement, optional tagline, and contact details."""
-    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
-    for ph in list(slide.shapes):
-        ph._element.getparent().remove(ph._element)
-    bar = slide.shapes.add_shape(_BOX, Inches(0.6), Inches(2.2), Inches(0.18), Inches(1.5))
+    slide = _synth_slide(prs, dark_index)
+    cy = 2.6
+    bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(cy), Inches(0.16), Inches(1.5))
     bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
-    _place_text(slide, 1.05, 2.2, 11.2, 1.6, spec.get("title", ""), 32, _WHITE, bold=True, font=_HEAD)
+    _place_text(slide, _MARGIN + 0.45, cy, _CONTENT_W - 0.5, 1.6, spec.get("title", ""), _SZ_TITLE, _WHITE, bold=True, font=_HEAD)
     if spec.get("tagline"):
-        _place_text(slide, 1.05, 3.85, 11.2, 0.8, spec["tagline"], 16, _LTEAL)
+        _place_text(slide, _MARGIN + 0.45, cy + 1.6, _CONTENT_W - 0.5, 0.8, spec["tagline"], _SZ_BODY, _LTEAL)
     if spec.get("contact"):
-        _place_text(slide, 1.05, 5.9, 11.2, 0.6, spec["contact"], 14, _LTEAL, bold=True, font=_HEAD)
+        _place_text(slide, _MARGIN + 0.45, _BODY_BOTTOM - 0.5, _CONTENT_W - 0.5, 0.5, spec["contact"], _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
+
+
+def _slide_has_white_bg(slide) -> bool:
+    cSld = slide._element.find(qn("p:cSld"))
+    bg = cSld.find(qn("p:bg")) if cSld is not None else None
+    return bg is not None and "FFFFFF" in (bg.xml or "")
+
+
+def _add_page_number(slide, n: int) -> None:
+    """A page number in an identical bottom-centre position on every slide (the template carries none),
+    coloured for the slide's background. Footer element — excluded from the type-scale count."""
+    color = _TEAL if _slide_has_white_bg(slide) else _LTEAL
+    tb = slide.shapes.add_textbox(Inches((13.333 - 1.0) / 2), Inches(7.06), Inches(1.0), Inches(0.3))
+    tf = tb.text_frame
+    tf.word_wrap = False
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    r = p.add_run()
+    r.text = str(n)
+    r.font.size = Pt(10)
+    r.font.name = _BODY
+    r.font.color.rgb = color
 
 
 def render_deck(plan: dict) -> bytes:
@@ -971,6 +1020,12 @@ def render_deck(plan: dict) -> bytes:
     benefits = ids[-1]
     sldIdLst.remove(benefits)
     sldIdLst.insert(max(1, len(sldIdLst) - 1), benefits)
+
+    # Page numbers in a fixed position on every slide (cover excluded), stamped in final order.
+    for i, slide in enumerate(prs.slides):
+        if i == 0:
+            continue
+        _add_page_number(slide, i + 1)
 
     buf = io.BytesIO()
     prs.save(buf)

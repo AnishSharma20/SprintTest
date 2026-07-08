@@ -130,8 +130,20 @@ AGENDA (REQUIRED — every deck): the SECOND slide MUST be an `agenda` slide lis
 sections. Title is exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section
 label, well within 26 characters). They render as branded bullets on the standard Agenda layout.
 
-ACTION TITLES: every title is a full-sentence claim the slide proves (e.g. "Superba raised the Omega-3
-Index by 65% in 12 weeks"), not a topic label ("Omega-3 Index"). Mirror this across the deck.
+ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
+claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
+Index"). Keep it to AT MOST 2 lines, roughly 90 characters — a reader who skims only the titles should get
+the whole argument. Mirror this discipline across the deck.
+
+BULLETS (discipline — a consulting deck is disciplined, not dense):
+- At most 5 to 6 top-level bullets on a slide; if you have more, cap the CONTENT (split into two slides or
+  cut) rather than cramming — never shrink to fit.
+- Each bullet is ONE idea, about 15 to 20 words, on a single thought (no run-on sentences stitched with
+  commas). At most 2 indent levels; prefer just one.
+- PARALLEL PHRASING inside a group: every bullet in a list starts the same grammatical way (all verbs, or
+  all noun phrases) and has a similar length and shape, so the group reads as a set.
+- LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
+  SIMILAR number of lines (and similar bullet counts) so the slide looks balanced, not lopsided.
 
 INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
 nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,

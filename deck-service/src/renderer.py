@@ -19,11 +19,14 @@ import io
 import re
 
 from pptx import Presentation
+from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
-from pptx.enum.text import MSO_AUTO_SIZE
+from pptx.enum.chart import XL_CHART_TYPE
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.oxml import parse_xml
 from pptx.oxml.ns import nsdecls, qn
-from pptx.util import Inches, Pt
+from pptx.util import Emu, Inches, Pt
 
 from . import config
 
@@ -446,6 +449,126 @@ def _add_benefits_slide(prs, master_index: int) -> None:
         spTree.append(el)
 
 
+# ---------------------------------------------------------------------------
+# Synthetic (code-built) layouts — mechanism B. The renderer reproduces a faithful structure on a
+# Blank layout (inheriting the master's background + logos) and fills it from the plan: text into
+# slots, AI-picked brand icons into circles, or a native chart. Brand palette / fonts below.
+# ---------------------------------------------------------------------------
+_RED = RGBColor(0xE5, 0x0A, 0x1A)
+_TEAL = RGBColor(0x18, 0x59, 0x68)
+_PANEL = RGBColor(0xE4, 0xF1, 0xF1)
+_INKC = RGBColor(0x16, 0x35, 0x36)
+_LTEAL = RGBColor(0xA9, 0xDB, 0xD5)
+_WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+_HEAD, _BODY = "Exo 2", "Manrope"
+_CHART_COLORS = [_RED, RGBColor(0x2C, 0x74, 0x82), _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
+
+
+def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=_BODY,
+                align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, italic=False):
+    tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    tf.vertical_anchor = anchor
+    tf.margin_left = tf.margin_right = Emu(0)
+    p = tf.paragraphs[0]
+    p.alignment = align
+    r = p.add_run()
+    r.text = text or ""
+    r.font.size = Pt(size)
+    r.font.bold = bold
+    r.font.italic = italic
+    r.font.name = font
+    r.font.color.rgb = color
+    return tb
+
+
+def _fill_key_points(prs, spec: dict, light_index: int) -> None:
+    """4-icon-card 'key points' layout: banner + panels + circles, filled from the plan; the
+    AI-picked brand icon goes in each circle. On a white background with the light-master logos."""
+    slide = prs.slides.add_slide(_blank_layout(prs, light_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _set_white_bg(slide)
+
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), 26, _INKC, bold=True, font=_HEAD)
+    banner = spec.get("banner")
+    if banner:
+        ban = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.53), Inches(1.55), Inches(12.27), Inches(0.55))
+        ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL; ban.line.fill.background(); ban.shadow.inherit = False
+        tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = banner; r.font.size = Pt(15); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    pw, gap = 2.85, 0.29
+    x0 = (13.333 - (n * pw + (n - 1) * gap)) / 2
+    ptop, pbot = (2.65, 6.75) if banner else (2.2, 6.75)
+    d = 0.95
+    for i, it in enumerate(items):
+        x = x0 + i * (pw + gap); cx = x + pw / 2
+        pan = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(ptop), Inches(pw), Inches(pbot - ptop))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _PANEL; pan.line.fill.background(); pan.shadow.inherit = False
+        circ = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(ptop - d / 2), Inches(d), Inches(d))
+        circ.fill.solid(); circ.fill.fore_color.rgb = _WHITE
+        circ.line.color.rgb = _RED; circ.line.width = Pt(2.25); circ.shadow.inherit = False
+        ip = _icon_path(it.get("icon")) or _generic_icon_path(it.get("icon_generic"))
+        if ip:
+            slide.shapes.add_picture(str(ip), Inches(cx - 0.25), Inches(ptop - 0.25), Inches(0.5), Inches(0.5))
+        _place_text(slide, x + 0.15, ptop + 0.55, pw - 0.3, 0.5, it.get("heading", ""), 14.5, _INKC,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + 0.2, ptop + 1.15, pw - 0.4, pbot - ptop - 1.4, it.get("body", ""), 12, _INKC,
+                    align=PP_ALIGN.CENTER)
+
+
+_CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
+                "line": XL_CHART_TYPE.LINE}
+
+
+def _fill_chart(prs, spec: dict, dark_index: int) -> None:
+    """Native, editable PowerPoint chart from the plan's categories + series, brand-coloured, on the
+    deep-sea master (inherits background + logos). Data comes only from the plan (claim fidelity)."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+
+    _place_text(slide, 0.6, 0.5, 12.1, 0.9, spec.get("title", ""), 26, _WHITE, bold=True, font=_HEAD)
+    if spec.get("caption"):
+        _place_text(slide, 0.6, 1.45, 12.1, 0.5, spec["caption"], 13, _LTEAL, italic=True)
+
+    cats = spec.get("categories") or []
+    series = spec.get("series") or []
+    if not cats or not series:
+        return
+    cd = CategoryChartData()
+    cd.categories = cats
+    for s in series:
+        vals = [(v if isinstance(v, (int, float)) else None) for v in (s.get("values") or [])]
+        cd.add_series(s.get("name", ""), vals)
+    ctype = _CHART_TYPES.get(spec.get("chart_type", "column"), XL_CHART_TYPE.COLUMN_CLUSTERED)
+    gf = slide.shapes.add_chart(ctype, Inches(0.9), Inches(2.15), Inches(11.5), Inches(4.0), cd)
+    chart = gf.chart
+    chart.font.color.rgb = _WHITE
+    chart.font.size = Pt(12)
+    chart.font.name = _BODY
+    multi = len(series) > 1
+    chart.has_legend = multi
+    if multi:
+        from pptx.enum.chart import XL_LEGEND_POSITION
+        chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+        chart.legend.include_in_layout = False
+    for i, plot_series in enumerate(chart.plots[0].series):
+        try:
+            plot_series.format.fill.solid()
+            plot_series.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+        except Exception:  # noqa: BLE001 — line charts style the line, handled below
+            plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+
+
 def render_deck(plan: dict) -> bytes:
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
@@ -456,6 +579,12 @@ def render_deck(plan: dict) -> bytes:
         layout_name = spec["layout"]
         if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
             _add_ingredient_slide(prs, dark)
+            continue
+        if layout_name == "key_points":   # code-built 4-icon-card layout (mechanism B)
+            _fill_key_points(prs, spec, light)
+            continue
+        if layout_name == "chart":        # native pptx chart (mechanism B)
+            _fill_chart(prs, spec, dark)
             continue
         cat = catalog.get(layout_name)
         if not cat:

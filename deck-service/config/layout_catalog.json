@@ -361,5 +361,27 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "key_points": {
+    "template_layout": "Blank",
+    "kind": "key_points",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "chart": {
+    "template_layout": "Blank",
+    "kind": "chart",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

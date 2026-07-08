@@ -263,6 +263,45 @@ def main():
         "then": {"required": ["layout"]}})
     summary.append(("ingredient", "Blank (verbatim AKBM slide)", ["dark"], {"content": "fixed"}))
 
+    # --- Synthetic, code-built layouts (mechanism B) -----------------------------------------
+    # NOT from the template: the renderer BUILDS these on a Blank layout (like 'ingredient') and
+    # fills them from the plan (text into slots + AI-picked brand icons / native charts). Registered
+    # here so the planner can choose them and the schema validates their fields.
+    catalog["key_points"] = {"template_layout": "Blank", "kind": "key_points", "backgrounds": ["light"],
+                             "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
+    conditionals.append({
+        "if": {"properties": {"layout": {"const": "key_points"}}, "required": ["layout"]},
+        "then": {"required": ["layout", "title", "items"],
+                 "properties": {
+                     "title": {"type": "string", "maxLength": 46},
+                     "banner": {"type": "string", "maxLength": 70},
+                     "items": {"type": "array", "minItems": 3, "maxItems": 4,
+                               "items": {"type": "object", "additionalProperties": False,
+                                         "required": ["heading", "body"],
+                                         "properties": {"heading": {"type": "string", "maxLength": 26},
+                                                        "body": {"type": "string", "maxLength": 95},
+                                                        "icon": {"enum": benefits},
+                                                        "icon_generic": {"enum": generic}}}}}}})
+    summary.append(("key_points", "Blank (code-built: 4 icon cards)", ["light"], {"items": "3-4 x {head,body,icon}"}))
+
+    catalog["chart"] = {"template_layout": "Blank", "kind": "chart", "backgrounds": ["dark"],
+                        "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
+    conditionals.append({
+        "if": {"properties": {"layout": {"const": "chart"}}, "required": ["layout"]},
+        "then": {"required": ["layout", "title", "categories", "series"],
+                 "properties": {
+                     "title": {"type": "string", "maxLength": 46},
+                     "caption": {"type": "string", "maxLength": 100},
+                     "chart_type": {"enum": ["column", "bar", "line"]},
+                     "categories": {"type": "array", "minItems": 2, "maxItems": 8,
+                                    "items": {"type": "string", "maxLength": 24}},
+                     "series": {"type": "array", "minItems": 1, "maxItems": 4,
+                                "items": {"type": "object", "additionalProperties": False,
+                                          "required": ["name", "values"],
+                                          "properties": {"name": {"type": "string", "maxLength": 40},
+                                                         "values": {"type": "array", "items": {"type": "number"}}}}}}}})
+    summary.append(("chart", "Blank (native pptx chart)", ["dark"], {"data": "categories+series"}))
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -279,7 +318,7 @@ def main():
                     "additionalProperties": False,
                     "required": ["layout"],
                     "properties": {
-                        "layout": {"enum": list(LAYOUTS) + ["ingredient"]},
+                        "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -288,7 +327,15 @@ def main():
                         "body": {"type": "string"},
                         "eyebrow": {"type": "string"},
                         "bottom_note": {"type": "string"},
-                        "items": {"type": "array", "items": {"type": "string"}},
+                        "banner": {"type": "string"},
+                        "caption": {"type": "string"},
+                        "chart_type": {"enum": ["column", "bar", "line"]},
+                        "categories": {"type": "array", "items": {"type": "string"}},
+                        "series": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"name": {"type": "string"},
+                                           "values": {"type": "array", "items": {"type": "number"}}}}},
+                        "items": {"type": "array"},
                         "columns": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"},

@@ -42,6 +42,8 @@ LAYOUT_USAGE = {
     "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars.",
     "four_columns":       "FOUR short parallel points.",
     "ingredient":         "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck.",
+    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body` (one short sentence), and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Ideal for a benefits or 'why it works' overview.",
+    "chart":              "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the takeaway), an optional `caption` (what is measured + units), `chart_type` ('column' default / 'bar' / 'line'), `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). Use ONLY figures explicitly stated in the source; never invent numbers. Use when the source gives comparable numbers.",
 }
 
 TONE_GUIDANCE = {

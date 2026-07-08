@@ -11,7 +11,9 @@ import { supabase, dbNotConfigured } from "../../../lib/supabase";
 import { extractForStudy } from "../../../lib/claims-extract";
 
 export const runtime = "nodejs";
-export const maxDuration = 800;
+// Vercel Hobby caps maxDuration at 300s. This is a local/admin pre-fill route (dev has no
+// timeout, so it runs to completion there); 300 keeps the production build valid.
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   const sb = supabase();

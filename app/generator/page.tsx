@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
+import {
+  loadApprovedClaims,
+  buildClaimsSourceFile,
+  recordAssetClaims,
+  type ApprovedClaim,
+} from "../claims-source";
+
+const REVIEWER_KEY = "claimsReviewerName:v1";
 
 type ProductId = "superba" | "lysoveta" | "revervia";
 
@@ -224,6 +232,33 @@ export default function ContentGenerator() {
   const [studieSok, setStudieSok] = useState("");
   const [studieKat, setStudieKat] = useState<string | null>(null);
 
+  // Phase 2 — approved-claims source. `inkluderClaims` toggles the block on; an empty
+  // `claimKatFilter` means "all approved claims", otherwise it narrows to the ticked categories.
+  const [approvedClaims, setApprovedClaims] = useState<ApprovedClaim[]>([]);
+  const [claimsConfigured, setClaimsConfigured] = useState(true);
+  const [inkluderClaims, setInkluderClaims] = useState(false);
+  const [claimKatFilter, setClaimKatFilter] = useState<Set<string>>(new Set());
+
+  const claimKategorier = useMemo(() => {
+    const m = new Map<string, { name: string; count: number }>();
+    approvedClaims.forEach((c) => {
+      const e = m.get(c.category_id) ?? { name: c.categoryName, count: 0 };
+      e.count += 1;
+      m.set(c.category_id, e);
+    });
+    return [...m.entries()].sort((a, b) => b[1].count - a[1].count);
+  }, [approvedClaims]);
+
+  const inkluderteClaims = useMemo(
+    () =>
+      !inkluderClaims
+        ? []
+        : approvedClaims.filter(
+            (c) => claimKatFilter.size === 0 || claimKatFilter.has(c.category_id)
+          ),
+    [inkluderClaims, approvedClaims, claimKatFilter]
+  );
+
   const studieKategorier = useMemo(() => {
     const m = new Map<string, number>();
     studier.forEach((s) => m.set(s.kategori, (m.get(s.kategori) ?? 0) + 1));
@@ -248,7 +283,20 @@ export default function ContentGenerator() {
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => setStudier(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : []))
       .catch(() => setStudier([]));
+    void loadApprovedClaims().then((res) => {
+      setClaimsConfigured(res.configured);
+      setApprovedClaims(res.claims);
+    });
   }, []);
+
+  function toggleClaimKat(id: string) {
+    setClaimKatFilter((prev) => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+    setKjoringer([]);
+  }
 
   function toggleStudie(pmid: string) {
     setValgteStudier((prev) => {
@@ -298,9 +346,16 @@ export default function ContentGenerator() {
   }
 
   // Build the source material shared by every asset: uploaded files +
-  // the picked scientific studies synthesized into one text file.
-  function byggKilder(): File[] {
+  // the picked scientific studies synthesized into one text file + (optionally) the
+  // approved-claims block. Returns the claim ids fed in so each asset can record them.
+  function byggKilder(): { files: File[]; claimIds: string[] } {
     const kilder = [...filer];
+    let claimIds: string[] = [];
+    const claimsKilde = buildClaimsSourceFile(inkluderteClaims);
+    if (claimsKilde) {
+      kilder.push(claimsKilde.file);
+      claimIds = claimsKilde.claimIds;
+    }
     const valgte = studier.filter((s) => valgteStudier.has(s.pmid));
     if (valgte.length) {
       const tekst = valgte
@@ -321,13 +376,13 @@ export default function ContentGenerator() {
           "Selected-scientific-studies.txt", { type: "text/plain" })
       );
     }
-    return kilder;
+    return { files: kilder, claimIds };
   }
 
   // Run one content type end-to-end: start a job, poll it, then handle its
   // result (deck → download, blog → editable panel). Errors are recorded on
   // that asset's row so the other assets keep running.
-  async function kjorEn(type: ContentType, kilder: File[]) {
+  async function kjorEn(type: ContentType, kilder: File[], claimIds: string[]) {
     try {
       const form = new FormData();
       kilder.forEach((f) => form.append("filer", f));
@@ -373,6 +428,17 @@ export default function ContentGenerator() {
         URL.revokeObjectURL(url);
       }
       oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
+
+      // Record which approved claims this asset drew on (retraction traceability). Only
+      // deck/blog/whitepaper are ever generated, and only when claims were fed in.
+      if (claimIds.length && (type === "deck" || type === "blog" || type === "whitepaper")) {
+        const reviewer =
+          typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
+        void recordAssetClaims(type, claimIds, {
+          title: `${type} · ${new Date().toISOString().slice(0, 10)}`,
+          createdBy: reviewer,
+        });
+      }
     } catch (e) {
       oppdaterKjoring(type, { status: "error", step: "Failed", error: (e as Error).message });
     }
@@ -384,8 +450,8 @@ export default function ContentGenerator() {
       setFeil("Pick at least one thing to create.");
       return;
     }
-    if (filer.length === 0 && valgteStudier.size === 0) {
-      setFeil("Add at least one source file or pick a study to base the content on.");
+    if (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0) {
+      setFeil("Add at least one source file, pick a study, or include approved claims to base the content on.");
       return;
     }
     setLaster(true);
@@ -394,8 +460,8 @@ export default function ContentGenerator() {
     setKjoringer(typer.map((type) => ({ type, progress: 0, step: "Starting…", status: "running" })));
 
     // Each asset reads the same sources independently, so run them in parallel.
-    const kilder = byggKilder();
-    await Promise.all(typer.map((type) => kjorEn(type, kilder)));
+    const { files, claimIds } = byggKilder();
+    await Promise.all(typer.map((type) => kjorEn(type, files, claimIds)));
     setLaster(false);
   }
 
@@ -644,6 +710,80 @@ export default function ContentGenerator() {
               </p>
             </div>
 
+            {/* Approved science claims (Phase 2) — authoritative, science-reviewed facts the
+                generators compose from and cite. Recorded per asset for retraction traceability. */}
+            <div className="mt-6 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
+                    ✓ Approved science claims
+                  </div>
+                  <p className="mt-1 max-w-lg text-xs text-zinc-500">
+                    {claimsConfigured
+                      ? "Facts reviewed and approved by the science team. Included as an authoritative source the AI prefers and cites."
+                      : "The claims library is not set up yet, so there are no approved claims to include."}
+                  </p>
+                </div>
+                {claimsConfigured && approvedClaims.length > 0 && (
+                  <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-[#052A4E]">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-[#0A7A8A]"
+                      checked={inkluderClaims}
+                      onChange={(e) => {
+                        setInkluderClaims(e.target.checked);
+                        setKjoringer([]);
+                      }}
+                    />
+                    Include ({approvedClaims.length})
+                  </label>
+                )}
+              </div>
+
+              {claimsConfigured && approvedClaims.length === 0 && (
+                <p className="mt-2 text-xs text-zinc-400">
+                  No approved claims yet. Approve some in the Research tab, then they show up here.
+                </p>
+              )}
+
+              {inkluderClaims && approvedClaims.length > 0 && (
+                <div className="mt-3">
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setClaimKatFilter(new Set());
+                        setKjoringer([]);
+                      }}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        claimKatFilter.size === 0
+                          ? "bg-[#0A7A8A] text-white"
+                          : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+                      }`}
+                    >
+                      All ({approvedClaims.length})
+                    </button>
+                    {claimKategorier.map(([id, { name, count }]) => (
+                      <button
+                        key={id}
+                        onClick={() => toggleClaimKat(id)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                          claimKatFilter.has(id)
+                            ? "bg-[#0A7A8A] text-white"
+                            : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+                        }`}
+                      >
+                        {name} ({count})
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs font-semibold text-[#0A7A8A]">
+                    {inkluderteClaims.length} claim{inkluderteClaims.length === 1 ? "" : "s"} will be fed to
+                    the AI as authoritative source and cited in the output.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Options */}
             <div className="mt-6 space-y-4">
               {/* Deck-specific settings live in their own labelled card, so when a
@@ -769,7 +909,11 @@ export default function ContentGenerator() {
         {/* Produce */}
         <button
           onClick={produser}
-          disabled={laster || !harValgt || (filer.length === 0 && valgteStudier.size === 0)}
+          disabled={
+            laster ||
+            !harValgt ||
+            (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0)
+          }
           className="mt-6 w-full rounded-xl bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {laster

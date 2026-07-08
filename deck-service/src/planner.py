@@ -28,6 +28,18 @@ CLAIM_RULES = """CLAIM FIDELITY (non-negotiable):
 - Put heavy detail (effect sizes, CI, p-values, dose, study design, full citations) in speaker_notes,
   not on the slide."""
 
+# Applied only when the source contains an approved-claims block (Phase 2 — claims library). The
+# block is injected by the frontend from the science team's APPROVED claims; each claim is numbered
+# [C1], [C2], ... (no dash characters, so the no-dash strip leaves the tags intact).
+APPROVED_CLAIMS_RULE = """APPROVED CLAIMS (only when the source contains an "APPROVED SCIENCE CLAIMS" block):
+- Those statements have been reviewed and approved by Aker BioMarine's science team. Treat them as the
+  AUTHORITATIVE basis for the scientific content and prefer them over anything less certain in the source.
+- Each approved claim is tagged [C1], [C2], and so on. When a slide, section or sentence draws on one,
+  cite it by that tag: on a deck slide put the tag(s) in `source_citations`; in a blog or whitepaper put
+  the tag in the sentence or its References entry. Cite every approved claim you actually use.
+- Never state a scientific fact that neither an approved claim nor the rest of the source supports. The
+  tags are plain text with no dashes, so keep them exactly as written (e.g. [C3])."""
+
 LAYOUT_USAGE = {
     "title":              "Deck COVER — use once, as the first slide. `title` is a SHORT, punchy claim (one line — well within the limit); let `subtitle` carry the qualifier/detail.",
     "section":            "Section divider that chunks the deck into parts. Just a `title` (the section name, short). No body.",
@@ -210,6 +222,8 @@ or a hyphen between words; rephrase to avoid them (write "evidence based", "doub
 NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `asset_id` (leave those exact).
 
 {CLAIM_RULES}
+
+{APPROVED_CLAIMS_RULE}
 
 Emit the plan now via emit_plan."""
 

@@ -14,7 +14,7 @@ import anthropic
 
 from . import config
 from .blog import markdown_to_docx, strip_dashes  # reuse the converter + no-dash net
-from .planner import CLAIM_RULES
+from .planner import APPROVED_CLAIMS_RULE, CLAIM_RULES
 
 # Whitepapers run long; word bands are per whole document.
 WORDS = {"kort": "800–1200", "standard": "1500–2500", "detaljert": "3000–5000"}
@@ -85,6 +85,7 @@ USING THE SCIENCE (critical):
 - Ground everything in the studies present in the source; name study types, sample sizes and the real
   figures AS STATED. Attribute with author + year.
 - {CLAIM_RULES}
+- {APPROVED_CLAIMS_RULE}
 - Do NOT invent studies, numbers, quotes or references. If the source is thin on a point, keep it general.
 
 LANGUAGE: if the user context specifies an output language, write the ENTIRE whitepaper in that language;

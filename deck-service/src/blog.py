@@ -15,7 +15,7 @@ import re
 import anthropic
 
 from . import config
-from .planner import CLAIM_RULES
+from .planner import APPROVED_CLAIMS_RULE, CLAIM_RULES
 
 
 def strip_dashes(md: str) -> str:
@@ -84,6 +84,7 @@ USING THE SCIENCE (critical):
   double-blind, placebo-controlled trial"), sample sizes, and the real figures (%, effect sizes, p-values)
   AS STATED in the source. Attribute with author + year.
 - {CLAIM_RULES}
+- {APPROVED_CLAIMS_RULE}
 - Do NOT invent studies, numbers, quotes or references. If the source is thin on a point, keep it general
   rather than fabricating specifics. Distinguish clearly between what a study showed and general mechanism.
 

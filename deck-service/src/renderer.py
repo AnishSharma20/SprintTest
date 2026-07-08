@@ -351,17 +351,27 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
 
 
 _R_ATTRS = (qn("r:embed"), qn("r:link"), qn("r:id"))
-_INGREDIENT_SRC = None
+_DESIGN_SRC = None
 
 
-def _ingredient_source():
-    """Cache-load the standalone ingredient slide (`assets/ingredient_slide.pptx`) — AKBM's real,
-    verbatim 'Key Cellular Nutrients' slide, self-contained (its own full-bleed background,
-    capsule, connectors, footer logos, citation links)."""
-    global _INGREDIENT_SRC
-    if _INGREDIENT_SRC is None:
-        _INGREDIENT_SRC = Presentation(str(config.resolve_asset("assets/ingredient_slide.pptx")))
-    return _INGREDIENT_SRC
+def _design_source():
+    """Cache-load template.pptx — the SINGLE design file. It holds the master layouts + theme +
+    logos AND the verbatim source slides (ingredient, benefits) that the renderer splices in, so all
+    design the AI uses lives in one place."""
+    global _DESIGN_SRC
+    if _DESIGN_SRC is None:
+        _DESIGN_SRC = Presentation(str(config.template_path()))
+    return _DESIGN_SRC
+
+
+def _find_design_slide(marker: str):
+    """Find a verbatim source slide inside template.pptx by a case-insensitive text marker."""
+    m = marker.upper()
+    for s in _design_source().slides:
+        for sh in s.shapes:
+            if sh.has_text_frame and m in sh.text_frame.text.upper():
+                return s
+    raise ValueError(f"Design source slide not found in template.pptx (marker {marker!r}).")
 
 
 def _add_ingredient_slide(prs, master_index: int) -> None:
@@ -370,7 +380,7 @@ def _add_ingredient_slide(prs, master_index: int) -> None:
     its external hyperlinks. Fidelity is perfect: the slide carries its own full-bleed background,
     so the host layout (a Blank one) is completely hidden behind it. Content is FIXED (the product
     composition never changes), so nothing here is generated."""
-    src_slide = _ingredient_source().slides[0]
+    src_slide = _find_design_slide("Cellular Nutrient")
     slide = prs.slides.add_slide(_find_layout(prs, "Blank", master_index))
     for ph in list(slide.shapes):                 # drop the Blank layout's own placeholders
         ph._element.getparent().remove(ph._element)
@@ -390,18 +400,6 @@ def _add_ingredient_slide(prs, master_index: int) -> None:
                         _, new = slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
                     node.set(a, new)
         spTree.append(el)
-
-
-_BENEFITS_SRC = None
-
-
-def _benefits_source():
-    """Cache-load the standalone benefits slide (`assets/benefits_slide.pptx`) — AKBM's verbatim
-    'Multiple, Proven Health Benefits' overview (benefit hexagon cards + trial counts + capsule photo)."""
-    global _BENEFITS_SRC
-    if _BENEFITS_SRC is None:
-        _BENEFITS_SRC = Presentation(str(config.resolve_asset("assets/benefits_slide.pptx")))
-    return _BENEFITS_SRC
 
 
 def _blank_layout(prs, master_index: int):
@@ -426,7 +424,7 @@ def _set_white_bg(slide) -> None:
 def _add_benefits_slide(prs, master_index: int) -> None:
     """Splice AKBM's verbatim benefits-overview slide onto a white background, using the LIGHT master's
     blank layout so the footer logos are the light-background (red/dark) colourway. Content is FIXED."""
-    src_slide = _benefits_source().slides[0]
+    src_slide = _find_design_slide("PROVEN HEALTH BENEFITS")
     slide = prs.slides.add_slide(_blank_layout(prs, master_index))
     for ph in list(slide.shapes):
         ph._element.getparent().remove(ph._element)

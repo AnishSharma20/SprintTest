@@ -72,10 +72,32 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   **NOTE:** built + planner-aware, but a live "does the AI actually *choose* these well" review pass
   is still pending (see open steps).
 
-**⚠ KNOWN WEAKNESS (USER-FLAGGED — fix later):** edited-summary persistence is **localStorage-only** — edits live
-in one browser, NOT shared across users/devices or with the backend. The user explicitly wants this upgraded to a
-**shared store (e.g. Supabase)** later, and asked to be **reminded when relevant** (touching Tab 1 summaries,
-multi-user needs, or persistence) so it isn't forgotten. See memory `summary-edit-persistence-localstorage`.
+**Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
+we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
+Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/
+safety_dosage) and **marketing** (differentiators/sustainability/certifications/product/messaging). Two claim
+scopes: **paper-level** (grounded in a verbatim quote) and **category-level** (aggregates approved paper claims).
+- **Anti-hallucination = deterministic quote check**, not just RAG. AI extracts each claim with a verbatim quote;
+  the server checks the quote is a normalized substring of the source text (`app/api/extract-claims`). A failed
+  match inserts the claim with `verified=false` and flags it in the UI. Nothing is ever auto-approved.
+- **Science accountability:** claims are reviewed ONCE (reusable across all assets), not per-generated-deck.
+  Approval workflow with audit trail (`claim_events`), required rejection reason (kept as a `rejection_reason`
+  comment; rejected claims stay visible so they are not re-proposed), and edit-as-new-version (`supersedes`,
+  approved text never mutated). `asset_claims` will later answer "which decks used this claim" for retractions.
+- **Backend = Supabase** (`supabase/migrations/0001_claims_library.sql`), server-only via service-role key
+  (`app/lib/supabase.ts`); RLS on, no policies (anon can't touch it). Routes: `/api/claims`, `/api/claims/[id]`,
+  `/api/extract-claims`, `/api/summaries`, `/api/admin/seed-studies`. All degrade gracefully (503 / `configured:false`)
+  when env vars are absent, so the app runs unchanged until Supabase is set up.
+- **Review UI** lives in Tab 1 (`app/claims-panel.tsx`, wired into `app/wiki.tsx`): per-study "Review claims"
+  panel with Pending/Approved/Rejected/All filters, approve/reject/edit/comment, quote + verification state shown.
+  A **Reviewer name** field (localStorage) is recorded on every action for the audit trail.
+- **Summary-edit persistence weakness RESOLVED:** `app/summary-overrides.ts` now write-throughs to
+  `/api/summaries` → Supabase `summary_overrides` (shared across users/devices), with localStorage kept as an
+  offline cache + fallback and a one-time migration of existing local edits.
+- **NEW env vars:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (both server-only, set in `.env.local` + Vercel);
+  optional `CLAIMS_MODEL` (default `claude-sonnet-5`), `SEED_TOKEN` (gate the seed route on deployed envs).
+- **Open next (Phase 2/3):** wire the generators to compose from approved claims + emit claim-ID citations
+  (`asset_claims`); category-level claim authoring UI; RAG over full texts for narrative depth.
 
 **Open next steps (if wanted):**
 - **InDesign whitepapers (IDML)** — the whitepaper `plan` dict is already the single source of truth; the only

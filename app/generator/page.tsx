@@ -243,7 +243,7 @@ export default function ContentGenerator() {
   }, [studier, studieSok, studieKat]);
 
   useEffect(() => {
-    setOverrides(loadOverrides());
+    void loadOverrides().then(setOverrides);
     fetch("/api/studies")
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => setStudier(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : []))

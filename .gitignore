@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Office lock/owner files
 ~$*
+
+# Claude Code local tooling (session dirs + isolated worktrees)
+.claude/

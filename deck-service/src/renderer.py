@@ -334,6 +334,25 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     if benefit and cat["kind"] in ("highlight", "section"):
         _place_icon(slide, (Inches(0.5), Inches(0.42), Inches(0.95), Inches(0.95)), _icon_path(benefit))
 
+    # A takeaway title can run to two lines, but some layouts (Text Slide, Picture With Title, Title
+    # Only) have a ONE-line title box, so the second line collides with the content below. When such a
+    # layout gets a long title, push any filled content that sits too high down to clear a two-line
+    # title. Set the FULL box from the layout (left/width too) so we don't drop the inherited width.
+    title_idx = fields.get("title")
+    tbox = _layout_box(layout_name, master_index, title_idx) if title_idx is not None else None
+    if tbox and title and len(str(title)) > 48 and tbox[3] < Inches(0.72):   # short (1-line) title box
+        safe_top = tbox[1] + int(Inches(1.02))
+        for idx in filled:
+            if idx == title_idx or idx in CHROME_IDX:
+                continue
+            box = _layout_box(layout_name, master_index, idx)
+            ph = phmap.get(idx)
+            if ph is None or not box or box[1] >= safe_top:
+                continue
+            delta = safe_top - box[1]
+            ph.left, ph.width = Emu(box[0]), Emu(box[2])
+            ph.top, ph.height = Emu(safe_top), Emu(max(int(Inches(0.6)), box[3] - delta))
+
     # AI-generated disclaimer along the bottom of the cover slide.
     if cat["kind"] == "title":
         _add_disclaimer(slide, dark)
@@ -557,6 +576,61 @@ def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
     return slide
 
 
+def _consistent_icons(objs):
+    """All-or-nothing, one-source, distinct brand icons for a list of objects carrying icon/icon_generic.
+    Returns a list of icon paths (one per object) or None if the set can't be cleanly covered — so a
+    layout shows a full icon set or none, never a half-empty/mixed ring (the tell-tale AI look)."""
+    def _c(paths):
+        s = [str(p) for p in paths]
+        return paths if paths and all(paths) and len(set(s)) == len(s) else None
+    return (_c([_icon_path(o.get("icon")) for o in objs])
+            or _c([_generic_icon_path(o.get("icon_generic")) for o in objs]))
+
+
+def _icon_disc(slide, cx, cy, d, icon_path=None, number=None):
+    """A soft light disc centred at (cx, cy) holding the red brand icon (or a red number) — the
+    consulting 'icon chip' treatment that replaces ad-hoc accent bars on list slides."""
+    disc = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(cy - d / 2), Inches(d), Inches(d))
+    disc.fill.solid(); disc.fill.fore_color.rgb = _PANEL; disc.line.fill.background(); disc.shadow.inherit = False
+    if icon_path:
+        pad = d * 0.28
+        _place_icon(slide, (Inches(cx - d / 2 + pad), Inches(cy - d / 2 + pad), Inches(d - 2 * pad), Inches(d - 2 * pad)), icon_path)
+    elif number is not None:
+        tf = disc.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.text = str(number)
+        rr = tf.paragraphs[0].runs[0]
+        rr.font.size = Pt(_SZ_BODY); rr.font.bold = True; rr.font.color.rgb = _RED; rr.font.name = _HEAD
+        tf.paragraphs[0].alignment = PP_ALIGN.CENTER
+    return disc
+
+
+def _place_bullets(slide, l, t, w, h, lines, size, color, *, font=_BODY,
+                   anchor=MSO_ANCHOR.TOP, rid=None):
+    """Render lines as a Superba teal picture-bullet list in a synthetic textbox (the standard brand
+    bullet). A single line still gets a bullet, so lists read consistently across the deck."""
+    lines = [ln.strip() for ln in lines if ln and ln.strip()]
+    tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    try:
+        tf.auto_size = MSO_AUTO_SIZE.NONE
+    except Exception:  # noqa: BLE001
+        pass
+    tf.vertical_anchor = anchor
+    tf.margin_left = tf.margin_right = Emu(0)
+    if rid is None:
+        rid = _bullet_rid(slide)
+    for i, ln in enumerate(lines):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.line_spacing = _LINE_SPACING
+        p.space_after = Pt(6)
+        r = p.add_run(); r.text = ln
+        r.font.size = Pt(size); r.font.name = font; r.font.color.rgb = color
+        if rid:
+            _apply_picture_bullet(p._p, rid)
+    return tb
+
+
 def _fill_key_points(prs, spec: dict, light_index: int) -> None:
     """'Key points' cards: a teal banner, then equal-height panels with a brand icon in a circle,
     a heading and a body. Icons are all-or-nothing from ONE source (never a partial/empty set)."""
@@ -574,13 +648,7 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
     n = len(items)
     if not n:
         return
-    # Icon consistency across the whole slide: every card gets a distinct icon from one source, or
-    # none do (an empty/partial ring of circles is the classic AI-generated look — avoid it).
-    def _consistent(paths):
-        s = [str(p) for p in paths]
-        return paths if paths and all(paths) and len(set(s)) == len(s) else None
-    icons = (_consistent([_icon_path(it.get("icon")) for it in items])
-             or _consistent([_generic_icon_path(it.get("icon_generic")) for it in items]))
+    icons = _consistent_icons(items)              # all-or-nothing, one source, distinct (no AI-look ring)
     d = _ICON_DISC
     ptop = (_EYEBROW_Y + 0.55 + d / 2 + 0.05) if banner else (_BODY_TOP + d / 2)
     if not icons:
@@ -599,8 +667,9 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
             _place_icon(slide, (Inches(cx - 0.26), Inches(ptop - 0.26), Inches(0.52), Inches(0.52)), icons[i])
         _place_text(slide, x + _PAD, hy, pw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _INKC,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x + _PAD, hy + 0.55, pw - 2 * _PAD, pbot - (hy + 0.55) - _PAD,
-                    it.get("body", ""), _SZ_SMALL, _INKC, align=PP_ALIGN.CENTER)
+        # Body as standard Superba teal bullets (one short point per line).
+        _place_bullets(slide, x + _PAD, hy + 0.6, pw - 2 * _PAD, pbot - (hy + 0.6) - _PAD,
+                       str(it.get("body", "")).split("\n"), _SZ_SMALL, _INKC)
 
 
 _CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.BAR_CLUSTERED,
@@ -728,18 +797,23 @@ def _fill_journey(prs, spec: dict, dark_index: int) -> None:
 
 
 def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
-    """Executive summary: red-accented key points on the left, a picture (or teal panel) on the right."""
+    """Executive summary: key points as icon-chip rows on the left, a picture (or teal panel) on the right.
+    Each point gets its own icon disc (a brand icon, or a numbered chip) — the consulting look, no accent bars."""
     slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
     pts = (spec.get("points") or [])[:4]
     n = max(1, len(pts))
-    left_w = 6.9
+    icons = _consistent_icons(pts)
+    left_w = 7.0
+    disc = 0.72
+    text_x = _MARGIN + disc + 0.3
+    tw = left_w - (disc + 0.3)
     step = _BODY_H / n                     # equal vertical slot per point
     for i, pt in enumerate(pts):
         y = _BODY_TOP + i * step
-        bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y + 0.06), Inches(0.14), Inches(step - 0.5))
-        bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
-        _place_text(slide, _MARGIN + 0.35, y, left_w, 0.5, pt.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, _MARGIN + 0.35, y + 0.48, left_w, step - 0.55, pt.get("body", ""), _SZ_BODY, _LTEAL)
+        _icon_disc(slide, _MARGIN + disc / 2, y + 0.42, disc,
+                   icon_path=(icons[i] if icons else None), number=(None if icons else i + 1))
+        _place_text(slide, text_x, y + 0.12, tw, 0.5, pt.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, text_x, y + 0.6, tw, step - 0.68, pt.get("body", ""), _SZ_BODY, _LTEAL)
     # right: photo if picked, else a teal panel — spans the full body zone
     ix = _MARGIN + left_w + 0.6
     iw = 13.333 - _MARGIN - ix

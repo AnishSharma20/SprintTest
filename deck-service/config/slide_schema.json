@@ -230,6 +230,57 @@
                 },
                 "body": {
                   "type": "string"
+                },
+                "icon": {
+                  "enum": [
+                    "heart",
+                    "liver",
+                    "joint",
+                    "muscle",
+                    "skin",
+                    "eye",
+                    "cognitive",
+                    "pms",
+                    "sports",
+                    "absorption",
+                    "whole_body",
+                    "none"
+                  ]
+                },
+                "icon_generic": {
+                  "enum": [
+                    "absorption",
+                    "award",
+                    "brain",
+                    "cell",
+                    "dosage",
+                    "energy",
+                    "eye",
+                    "global",
+                    "growth",
+                    "heart",
+                    "immunity",
+                    "joint",
+                    "krill",
+                    "molecule",
+                    "muscle",
+                    "ocean",
+                    "omega3",
+                    "people",
+                    "process",
+                    "proven",
+                    "purity",
+                    "quality",
+                    "research",
+                    "routine",
+                    "safety",
+                    "science",
+                    "sleep",
+                    "sourcing",
+                    "sustainability",
+                    "traceability",
+                    "none"
+                  ]
                 }
               }
             }
@@ -1558,7 +1609,58 @@
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 120
+                        "maxLength": 160
+                      },
+                      "icon": {
+                        "enum": [
+                          "heart",
+                          "liver",
+                          "joint",
+                          "muscle",
+                          "skin",
+                          "eye",
+                          "cognitive",
+                          "pms",
+                          "sports",
+                          "absorption",
+                          "whole_body",
+                          "none"
+                        ]
+                      },
+                      "icon_generic": {
+                        "enum": [
+                          "absorption",
+                          "award",
+                          "brain",
+                          "cell",
+                          "dosage",
+                          "energy",
+                          "eye",
+                          "global",
+                          "growth",
+                          "heart",
+                          "immunity",
+                          "joint",
+                          "krill",
+                          "molecule",
+                          "muscle",
+                          "ocean",
+                          "omega3",
+                          "people",
+                          "process",
+                          "proven",
+                          "purity",
+                          "quality",
+                          "research",
+                          "routine",
+                          "safety",
+                          "science",
+                          "sleep",
+                          "sourcing",
+                          "sustainability",
+                          "traceability",
+                          "none"
+                        ]
                       }
                     }
                   }

@@ -334,7 +334,8 @@ def main():
         "points": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading", "body"],
             "properties": {"heading": {"type": "string", "maxLength": 42},
-                           "body": {"type": "string", "maxLength": 120}}}}}, "text points + image")
+                           "body": {"type": "string", "maxLength": 160},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "text points + image")
 
     _synth("quote", "quote", "dark", ["layout", "quote"], {
         "title": {"type": "string", "maxLength": 60},
@@ -443,7 +444,8 @@ def main():
                                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}},
                         "points": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
-                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"},
+                                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}},
                         "headers": {"type": "array", "items": {"type": "string"}},
                         "rows": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,

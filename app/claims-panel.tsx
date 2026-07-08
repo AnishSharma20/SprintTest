@@ -7,9 +7,11 @@
 // of time (see /api/admin/extract-all); this screen is review + manual authoring only.
 
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Studie } from "./wiki";
 import type { Claim, ClaimStatus, Category } from "./lib/claims-types";
 import type { StudyMeta } from "./lib/claims-db";
+import { decodeEntities } from "./lib/text";
 
 type Filter = "pending_review" | "approved" | "rejected" | "all";
 
@@ -65,35 +67,42 @@ export default function ClaimsModal({
     };
   }, [onClose]);
 
-  return (
+  // Render into <body> via a portal so the dialog is a true top-level popup — never affected by a
+  // parent card's transform/filter/overflow (which would otherwise break `position: fixed`).
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#031B34]/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-[#031B34]/60 p-4 backdrop-blur-sm sm:p-6"
       onClick={onClose}
     >
       <div
-        className="my-8 w-full max-w-3xl rounded-2xl bg-white shadow-2xl"
+        className="my-6 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 rounded-t-2xl border-b border-[#D6E6EE] bg-[#F4FBFC] px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-5">
           <div>
             <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">
               Claims for this study
             </div>
-            <p className="mt-1 line-clamp-2 max-w-xl text-sm font-semibold text-[#052A4E]">{s.tittel}</p>
+            <p className="mt-1.5 max-w-2xl text-[15px] font-semibold leading-snug text-[#052A4E]">
+              {s.tittel}
+            </p>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="shrink-0 rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+            className="shrink-0 rounded-full p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
           >
             <span className="text-xl leading-none">✕</span>
           </button>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto px-5 py-4">
+        <div className="max-h-[78vh] overflow-y-auto px-6 py-5">
           <ClaimsBody s={s} reviewer={reviewer} />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -195,7 +204,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
             : "No claims in this view."}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {visible.map((c) => (
             <ClaimRow key={c.id} claim={c} categories={categories} reviewer={reviewer} onChanged={load} />
           ))}
@@ -364,8 +373,8 @@ function ClaimRow({
   }
 
   return (
-    <li className="rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-3">
-      <div className="mb-1.5 flex flex-wrap items-center gap-2">
+    <li className="rounded-xl border border-[#E2EDF2] bg-[#FAFDFE] p-4">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLE[claim.status]}`}>
           {STATUS_LABEL[claim.status]}
         </span>
@@ -390,8 +399,8 @@ function ClaimRow({
       )}
 
       {quotes.map((q) => (
-        <div key={q.id} className="mt-2 border-l-2 border-[#C2D9E3] pl-2.5">
-          <p className="text-[12px] italic text-zinc-500">“{q.quote}”</p>
+        <div key={q.id} className="mt-2.5 border-l-2 border-[#C2D9E3] pl-3">
+          <p className="text-[12px] italic leading-relaxed text-zinc-500">“{decodeEntities(q.quote)}”</p>
           <span
             className={`text-[10px] font-semibold ${q.verified ? "text-[#1B7A3D]" : "text-[#9A2A2A]"}`}
           >

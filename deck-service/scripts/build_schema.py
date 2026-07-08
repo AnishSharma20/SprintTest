@@ -381,6 +381,19 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 30},
                            "body": {"type": "string", "maxLength": 90}}}}}, "funnel")
 
+    # Client-requested layouts.
+    _synth("case_study", "case_study", "dark", ["layout", "title", "design", "result", "takeaway"], {
+        "title": {"type": "string", "maxLength": 60},
+        "study": {"type": "string", "maxLength": 80},
+        "design": {"type": "string", "maxLength": 220},
+        "result": {"type": "string", "maxLength": 220},
+        "takeaway": {"type": "string", "maxLength": 160}}, "case study / proof point")
+
+    _synth("closing", "closing", "dark", ["layout", "title"], {
+        "title": {"type": "string", "maxLength": 90},
+        "tagline": {"type": "string", "maxLength": 90},
+        "contact": {"type": "string", "maxLength": 160}}, "closing / contact")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -399,7 +412,8 @@ def main():
                     "properties": {
                         "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
                                                             "matrix", "journey", "exec_summary", "quote", "comparison",
-                                                            "stat", "harvey_ball", "timeline", "funnel"]},
+                                                            "stat", "harvey_ball", "timeline", "funnel",
+                                                            "case_study", "closing"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -448,6 +462,9 @@ def main():
                         "stages": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                        "study": {"type": "string"}, "design": {"type": "string"},
+                        "result": {"type": "string"}, "takeaway": {"type": "string"},
+                        "tagline": {"type": "string"}, "contact": {"type": "string"},
                         "items": {"type": "array"},
                         "columns": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,

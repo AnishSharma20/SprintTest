@@ -459,7 +459,36 @@ _INKC = RGBColor(0x16, 0x35, 0x36)
 _LTEAL = RGBColor(0xA9, 0xDB, 0xD5)
 _WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 _HEAD, _BODY = "Exo 2", "Manrope"
-_CHART_COLORS = [_RED, RGBColor(0x2C, 0x74, 0x82), _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
+_TEAL2 = RGBColor(0x2C, 0x74, 0x82)   # secondary panel teal
+_CHART_COLORS = [_RED, _TEAL2, _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
+_TBL_LINE = "C9D9D9"                  # table row-line colour (hex, for XML)
+# --- one consistent design system for the synthetic layouts (client spec) ---
+_GUTTER = 0.3                         # standard gutter between side-by-side boxes
+_STEP_BADGE = 0.56                    # standard numbered/step badge diameter
+_ICON_DISC = 0.9                      # standard icon-circle diameter
+_BOX = MSO_SHAPE.RECTANGLE            # one shape style for content boxes (square, consulting look)
+_S_TITLE, _S_HEAD, _S_BODY, _S_NOTE = 26, 15, 12.5, 12   # type scale
+
+
+def _is_num(s: str) -> bool:
+    s = (s or "").strip()
+    return bool(s) and bool(re.search(r"\d", s)) and bool(re.fullmatch(r"[0-9.,%×xX+\-/()\s]+", s))
+
+
+def _hbar_table(tbl) -> None:
+    """Consulting-style table borders: horizontal row lines only, no vertical gridlines."""
+    def _ln(tag, solid):
+        inner = f'<a:solidFill><a:srgbClr val="{_TBL_LINE}"/></a:solidFill>' if solid else '<a:noFill/>'
+        w = ' w="9525" cap="flat"' if solid else ''
+        return parse_xml(f'<a:{tag} {nsdecls("a")}{w}>{inner}</a:{tag}>')
+    for row in tbl.rows:
+        for cell in row.cells:
+            tcPr = cell._tc.get_or_add_tcPr()
+            for tag in ("lnL", "lnR", "lnT", "lnB"):
+                for el in tcPr.findall(qn("a:" + tag)):
+                    tcPr.remove(el)
+            for tag in ("lnB", "lnT", "lnR", "lnL"):   # insert at 0 -> final order lnL,lnR,lnT,lnB
+                tcPr.insert(0, _ln(tag, tag == "lnB"))
 
 
 def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=_BODY,
@@ -503,7 +532,7 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
     n = len(items)
     if not n:
         return
-    pw, gap = 2.85, 0.29
+    pw, gap = 2.85, _GUTTER
     x0 = (13.333 - (n * pw + (n - 1) * gap)) / 2
     ptop, pbot = (2.65, 6.75) if banner else (2.2, 6.75)
     d = 0.95
@@ -610,7 +639,7 @@ def _fill_journey(prs, spec: dict, dark_index: int) -> None:
     n = len(steps)
     if not n:
         return
-    gap = 0.35
+    gap = _GUTTER
     sw = min(2.6, (12.0 - (n - 1) * gap) / n)
     total = n * sw + (n - 1) * gap
     x0 = (13.333 - total) / 2
@@ -659,7 +688,7 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
         except Exception:  # noqa: BLE001
             placed = False
     if not placed:
-        pan = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
+        pan = slide.shapes.add_shape(_BOX, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
         pan.fill.solid(); pan.fill.fore_color.rgb = RGBColor(0x2C, 0x74, 0x82); pan.line.fill.background(); pan.shadow.inherit = False
 
 
@@ -693,20 +722,23 @@ def _fill_comparison(prs, spec: dict, light_index: int) -> None:
     gf = slide.shapes.add_table(nrows, ncols, Inches(0.6), Inches(1.7), Inches(12.13), Inches(h))
     tbl = gf.table
     tbl.first_row = False; tbl.horz_banding = False
-    def _cell(cell, text, *, bold, color, fill):
+    def _cell(cell, text, *, bold, color, fill, align=PP_ALIGN.LEFT):
         cell.fill.solid(); cell.fill.fore_color.rgb = fill
         cell.margin_left = cell.margin_right = Inches(0.12)
         tf = cell.text_frame; tf.word_wrap = True
-        p = tf.paragraphs[0]
+        p = tf.paragraphs[0]; p.alignment = align
         r = p.add_run(); r.text = text or ""
-        r.font.size = Pt(12.5); r.font.bold = bold; r.font.name = (_HEAD if bold else _BODY); r.font.color.rgb = color
+        r.font.size = Pt(_S_BODY); r.font.bold = bold; r.font.name = (_HEAD if bold else _BODY); r.font.color.rgb = color
     for j, head in enumerate(headers):
         _cell(tbl.cell(0, j), head, bold=True, color=_WHITE, fill=_TEAL)
     for i, row in enumerate(rows, start=1):
         cells = (row.get("cells") or [])
         band = RGBColor(0xF1, 0xF8, 0xF8) if i % 2 else _WHITE
         for j in range(ncols):
-            _cell(tbl.cell(i, j), cells[j] if j < len(cells) else "", bold=(j == 0), color=_INKC, fill=band)
+            val = cells[j] if j < len(cells) else ""
+            al = PP_ALIGN.RIGHT if (j > 0 and _is_num(val)) else PP_ALIGN.LEFT   # numbers right, text left
+            _cell(tbl.cell(i, j), val, bold=(j == 0), color=_INKC, fill=band, align=al)
+    _hbar_table(tbl)   # horizontal row lines only
 
 
 def _fill_stat(prs, spec: dict, dark_index: int) -> None:
@@ -767,6 +799,7 @@ def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
         for j in range(1, ncols):
             sc = scores[j - 1] if j - 1 < len(scores) else 0
             _cell(tbl.cell(i, j), _HB_GLYPH.get(int(sc), "○"), bold=False, color=_RED, fill=band, size=20, center=True)
+    _hbar_table(tbl)   # horizontal row lines only
 
 
 def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
@@ -779,7 +812,7 @@ def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
     n = len(ms)
     if not n:
         return
-    gap = 0.3
+    gap = _GUTTER
     sw = min(2.3, (12.0 - (n - 1) * gap) / n)
     total = n * sw + (n - 1) * gap
     x0 = (13.333 - total) / 2
@@ -811,7 +844,7 @@ def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
         w = wide - (wide - narrow) * (i / max(1, n - 1))
         x = (13.333 - w) / 2
         y = top + i * (bh + gap)
-        bar = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(bh))
+        bar = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(w), Inches(bh))
         bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL if i % 2 == 0 else RGBColor(0x2C, 0x74, 0x82)
         bar.line.fill.background(); bar.shadow.inherit = False
         tf = bar.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
@@ -822,6 +855,43 @@ def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
             p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER
             r2 = p2.add_run(); r2.text = st["body"]; r2.font.size = Pt(10.5); r2.font.name = _BODY
             r2.font.color.rgb = RGBColor(0xE9, 0xF7, 0xF8)
+
+
+def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
+    """Case study / proof point: study eyebrow + three equal panels (Design, Result, Takeaway)."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    _place_text(slide, 0.6, 0.5, 12.1, 0.8, spec.get("title", ""), _S_TITLE, _WHITE, bold=True, font=_HEAD)
+    eyebrow = "CASE STUDY" + (f"   ·   {spec['study']}" if spec.get("study") else "")
+    _place_text(slide, 0.6, 1.42, 12.1, 0.4, eyebrow, 12, _LTEAL, bold=True, font=_HEAD)
+    blocks = [("DESIGN", spec.get("design", "")), ("RESULT", spec.get("result", "")),
+              ("TAKEAWAY", spec.get("takeaway", ""))]
+    pw = (12.13 - 2 * _GUTTER) / 3
+    x0, top, ph = 0.6, 2.15, 4.3
+    for i, (lab, body) in enumerate(blocks):
+        x = x0 + i * (pw + _GUTTER)
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(ph))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
+        if lab == "RESULT":  # highlight the insight with a red top accent
+            acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.09))
+            acc.fill.solid(); acc.fill.fore_color.rgb = _RED; acc.line.fill.background(); acc.shadow.inherit = False
+        _place_text(slide, x + 0.22, top + 0.22, pw - 0.44, 0.4, lab, 13, _WHITE, bold=True, font=_HEAD)
+        _place_text(slide, x + 0.22, top + 0.78, pw - 0.44, ph - 1.0, body, _S_BODY, _LTEAL)
+
+
+def _fill_closing(prs, spec: dict, dark_index: int) -> None:
+    """Closing / contact: a closing statement, optional tagline, and contact details."""
+    slide = prs.slides.add_slide(_blank_layout(prs, dark_index))
+    for ph in list(slide.shapes):
+        ph._element.getparent().remove(ph._element)
+    bar = slide.shapes.add_shape(_BOX, Inches(0.6), Inches(2.2), Inches(0.18), Inches(1.5))
+    bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
+    _place_text(slide, 1.05, 2.2, 11.2, 1.6, spec.get("title", ""), 32, _WHITE, bold=True, font=_HEAD)
+    if spec.get("tagline"):
+        _place_text(slide, 1.05, 3.85, 11.2, 0.8, spec["tagline"], 16, _LTEAL)
+    if spec.get("contact"):
+        _place_text(slide, 1.05, 5.9, 11.2, 0.6, spec["contact"], 14, _LTEAL, bold=True, font=_HEAD)
 
 
 def render_deck(plan: dict) -> bytes:
@@ -859,6 +929,10 @@ def render_deck(plan: dict) -> bytes:
             _fill_timeline(prs, spec, dark); continue
         if layout_name == "funnel":
             _fill_funnel(prs, spec, dark); continue
+        if layout_name == "case_study":
+            _fill_case_study(prs, spec, dark); continue
+        if layout_name == "closing":
+            _fill_closing(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

@@ -482,5 +482,27 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "case_study": {
+    "template_layout": "Blank",
+    "kind": "case_study",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "closing": {
+    "template_layout": "Blank",
+    "kind": "closing",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

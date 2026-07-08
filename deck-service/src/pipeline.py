@@ -19,7 +19,8 @@ from . import planner, qa_gate, renderer, validate
 # (may contain DOIs/identifiers) are deliberately left untouched.
 _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "caption",
                    "speaker_notes", "heading", "banner", "quote", "author", "x_axis", "y_axis",
-                   "label", "note", "date", "value"}
+                   "label", "note", "date", "value",
+                   "study", "design", "result", "takeaway", "tagline", "contact"}
 
 
 def _strip_text(s: str) -> str:

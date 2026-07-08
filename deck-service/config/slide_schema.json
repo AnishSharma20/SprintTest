@@ -56,7 +56,9 @@
               "stat",
               "harvey_ball",
               "timeline",
-              "funnel"
+              "funnel",
+              "case_study",
+              "closing"
             ]
           },
           "background": {
@@ -327,6 +329,24 @@
                 }
               }
             }
+          },
+          "study": {
+            "type": "string"
+          },
+          "design": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "takeaway": {
+            "type": "string"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
           },
           "items": {
             "type": "array"
@@ -1841,6 +1861,81 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "case_study"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "design",
+                "result",
+                "takeaway"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 60
+                },
+                "study": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "design": {
+                  "type": "string",
+                  "maxLength": 220
+                },
+                "result": {
+                  "type": "string",
+                  "maxLength": 220
+                },
+                "takeaway": {
+                  "type": "string",
+                  "maxLength": 160
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "closing"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "tagline": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "contact": {
+                  "type": "string",
+                  "maxLength": 160
                 }
               }
             }

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import copy
 import io
+import math
 import re
 
 from pptx import Presentation
@@ -75,6 +76,46 @@ def _autofit(tf, *, shrink: bool = True) -> None:
         tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE if shrink else MSO_AUTO_SIZE.NONE
     except Exception:  # noqa: BLE001
         pass
+
+
+def _shrink_to_fit(ph, text: str, base_pt: float, min_pt: float = 18) -> None:
+    """Deterministically shrink a placeholder's font so `text` fits its box (width x height). The
+    template's own shrink-to-fit is unreliable in headless render, so a long title would otherwise
+    overflow past its box (into the footer, or onto the content below). Estimates lines from the box
+    width and steps the size down until the wrapped text fits the box height. Only ever shrinks."""
+    w_in = (ph.width or 0) / 914400.0
+    h_in = (ph.height or 0) / 914400.0
+    if not text or w_in <= 0 or h_in <= 0:
+        return
+    pt = base_pt
+    while pt > min_pt:
+        cpl = max(1.0, (w_in * 72.0) / (pt * 0.52))     # chars per line at this size
+        lines = max(1, math.ceil(len(text) / cpl))
+        if lines * pt * 1.2 / 72.0 <= h_in:             # wrapped height fits the box
+            break
+        pt -= 1
+    for p in ph.text_frame.paragraphs:
+        for r in p.runs:
+            r.font.size = Pt(pt)
+
+
+def _set_ph_box(ph, l, t, w, h) -> None:
+    """Reposition/resize a placeholder by writing its full a:xfrm directly. Safer than the python-pptx
+    left/top setters, which raise on placeholders that inherit their geometry (no spPr/xfrm yet).
+    l, t, w, h are EMU (ints, e.g. Inches(...))."""
+    sp = ph._element
+    spPr = sp.find(qn("p:spPr"))
+    if spPr is None:
+        spPr = sp.makeelement(qn("p:spPr"), {})
+        nv = sp.find(qn("p:nvSpPr")) or sp.find(qn("p:nvPicPr"))
+        (nv.addnext(spPr) if nv is not None else sp.insert(0, spPr))
+    for x in spPr.findall(qn("a:xfrm")):
+        spPr.remove(x)
+    xfrm = spPr.makeelement(qn("a:xfrm"), {})
+    off = xfrm.makeelement(qn("a:off"), {"x": str(int(l)), "y": str(int(t))})
+    ext = xfrm.makeelement(qn("a:ext"), {"cx": str(int(w)), "cy": str(int(h))})
+    xfrm.append(off); xfrm.append(ext)
+    spPr.insert(0, xfrm)
 
 
 def _set_text(ph, text: str) -> None:
@@ -334,19 +375,36 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     if benefit and cat["kind"] in ("highlight", "section"):
         _place_icon(slide, (Inches(0.5), Inches(0.42), Inches(0.95), Inches(0.95)), _icon_path(benefit))
 
-    # Text-with-picture: the template stacks a small sub-heading + body low in the left column, which
-    # reads as bottom-heavy. Drop the sub-heading (not wanted) and lift the body to just under the
-    # title, widening it to the full left column.
+    # Text-with-picture: make the title FULL WIDTH (the narrow template title box overflows a long
+    # takeaway), drop the unused sub-heading, and place the body (left) and picture (right) BELOW the
+    # title with a fixed margin so the body never touches the title.
     if cat["kind"] == "text_picture":
+        tph = phmap.get(fields.get("title"))
+        if tph is not None:
+            _set_ph_box(tph, Inches(_MARGIN), Inches(0.746), Inches(_CONTENT_W), Inches(1.0))
+            _shrink_to_fit(tph, str(title or ""), base_pt=32, min_pt=20)
         hidx = fields.get("heading")
         if hidx in filled and hidx in phmap:
             phmap[hidx]._element.getparent().remove(phmap[hidx]._element)
             filled.discard(hidx)
-        bidx = fields.get("body")
-        bph = phmap.get(bidx)
+        body_top = 2.1                               # title bottom ~1.75 + a fixed ~0.35 margin
+        bidx = fields.get("body"); bph = phmap.get(bidx)
         if bph is not None and bidx in filled:
-            bph.left, bph.top = Emu(int(Inches(0.5))), Emu(int(Inches(2.05)))
-            bph.width, bph.height = Emu(int(Inches(4.1))), Emu(int(Inches(4.3)))
+            _set_ph_box(bph, Inches(_MARGIN), Inches(body_top), Inches(4.1), Inches(_BODY_BOTTOM - body_top))
+        pidx = fields.get("picture")
+        if pidx is not None and pidx in filled:
+            # insert_picture replaced the placeholder element, so re-fetch it fresh from the slide.
+            pph = next((p for p in slide.placeholders if p.placeholder_format.idx == pidx), None)
+            if pph is not None:
+                _set_ph_box(pph, Inches(5.0), Inches(body_top), Inches(7.83), Inches(_BODY_BOTTOM - body_top))
+
+    # Section divider: a long section title overflows its short template box down into the footer.
+    # Give it a taller box (clear of the footer) and shrink the font deterministically to fit.
+    if cat["kind"] == "section":
+        stph = phmap.get(fields.get("title"))
+        if stph is not None and title and len(str(title)) > 40:
+            _set_ph_box(stph, Inches(0.97), Inches(3.2), Inches(7.30), Inches(3.0))
+            _shrink_to_fit(stph, str(title), base_pt=40, min_pt=24)
 
     # A takeaway title can run to two lines, but some layouts (Text Slide, Picture With Title, Title
     # Only) have a ONE-line title box, so the second line collides with the content below. When such a
@@ -756,6 +814,25 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
         except (ValueError, KeyError, IndexError):  # axis absent for this chart type
             pass
 
+    # Line charts: pull the plot to the axis edges (first category flush left) instead of the default
+    # half-category padding, so the first point (e.g. "Day 0") sits at the left edge.
+    if spec.get("chart_type") == "line":
+        try:
+            valAx = chart.value_axis._element
+            existing = valAx.find(qn("c:crossBetween"))
+            if existing is not None:
+                existing.set("val", "midCat")
+            else:
+                anchor = None
+                for tag in ("c:crossAx", "c:crosses", "c:crossesAt"):
+                    el = valAx.find(qn(tag))
+                    if el is not None:
+                        anchor = el
+                cb = valAx.makeelement(qn("c:crossBetween"), {"val": "midCat"})
+                anchor.addnext(cb) if anchor is not None else valAx.append(cb)
+        except Exception:  # noqa: BLE001
+            pass
+
     # Think-cell-style delta callout: for a 2-bar single-series column chart, reserve headroom on the
     # value axis, then draw a bracket spanning the two columns with a red delta chip (the % change) —
     # the classic "highlight the difference" annotation.
@@ -884,16 +961,14 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
 
 
 def _fill_quote(prs, spec: dict, dark_index: int) -> None:
-    """Pull quote: a red accent rule, the quotation set in the title size, and the attribution."""
+    """Pull quote: the quotation set in the title size + attribution. Clean typography, no accent bar."""
     slide = _synth_slide(prs, dark_index, eyebrow=spec.get("title"))
     qy, qh = _BODY_TOP + 0.5, 2.8
-    bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(qy), Inches(0.16), Inches(qh))
-    bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
     quote = spec.get("quote", "")
-    _place_text(slide, _MARGIN + 0.5, qy, _CONTENT_W - 0.6, qh, f"“{quote}”" if quote else "",
+    _place_text(slide, _MARGIN, qy, _CONTENT_W, qh, f"“{quote}”" if quote else "",
                 _SZ_TITLE, _WHITE, font=_HEAD, anchor=MSO_ANCHOR.TOP)
     if spec.get("author"):
-        _place_text(slide, _MARGIN + 0.5, qy + qh + 0.15, _CONTENT_W - 0.6, 0.5, spec["author"],
+        _place_text(slide, _MARGIN, qy + qh + 0.15, _CONTENT_W, 0.5, spec["author"],
                     _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
 
 
@@ -1050,9 +1125,9 @@ def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
         x = _MARGIN + i * (pw + _GUTTER)
         pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(panh))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
-        if lab == "RESULT":  # highlight the insight with a red top accent
-            acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.09))
-            acc.fill.solid(); acc.fill.fore_color.rgb = _RED; acc.line.fill.background(); acc.shadow.inherit = False
+        # Every panel gets the SAME subtle top accent (associated light teal) — never single one out.
+        acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.07))
+        acc.fill.solid(); acc.fill.fore_color.rgb = _LTEAL; acc.line.fill.background(); acc.shadow.inherit = False
         _icon_disc(slide, x + _PAD + dd / 2, top + 0.34 + dd / 2, dd, icon_path=_generic_icon_path(ic))
         _place_text(slide, x + _PAD + dd + 0.18, top + 0.34, pw - 2 * _PAD - dd - 0.18, dd, lab,
                     _SZ_SMALL, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)

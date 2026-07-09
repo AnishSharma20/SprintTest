@@ -71,9 +71,12 @@ export async function POST(req: Request) {
 Findings from the reviewed studies, each tagged [C1], [C2], and so on:
 ${evText}
 
-Write 2 to 4 marketing claims for "${cat.name}". Rules:
-- Plain, product/benefit facing language (e.g. "Superba krill oil supports healthy joint comfort in adults").
-- Every claim must be supported by one or more of the findings; do not overstate beyond them.
+Write 2 to 4 MARKETING CLAIMS for "${cat.name}" — confident, benefit led copy of the kind that would appear on a product slide or in a brochure for supplement brands and informed consumers. The linked findings are the substantiation; the claim itself should read as marketing, not as a study.
+
+Rules:
+- Lead with the product benefit, in plain, positive language (e.g. "Superba krill oil supports healthy joint comfort in adults", "Superba krill oil raises your Omega 3 Index"). Do NOT write hedged, regulatory sounding restatements of the study. Avoid clinical phrasings like "reported adverse events at a similar or lower rate", "no toxicologically significant effects", "well tolerated in clinical research" — say it plainly and positively instead.
+- Stay TRUE to the evidence: never claim a benefit, or a strength, the findings do not support. If the findings only show safety or tolerability, the claim is about being gentle and safe, not about efficacy. Never invent an effect.
+- Each claim must be backed by one or more of the findings.
 - Do NOT use dash characters ("-", "—", "–"); reword instead.
 - Keep each claim to one sentence.
 Return ONLY JSON: {"claims":[{"text":"...","supports":["C1","C3"]}]}`;

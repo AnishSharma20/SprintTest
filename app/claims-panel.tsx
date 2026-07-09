@@ -83,7 +83,7 @@ export default function ClaimsModal({
         <div className="flex items-start justify-between gap-4 border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-5">
           <div>
             <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">
-              Claims for this study
+              Evidence from this study
             </div>
             <p className="mt-1.5 max-w-2xl text-[15px] font-semibold leading-snug text-[#052A4E]">
               {s.tittel}
@@ -178,7 +178,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
           onClick={() => setAdding((a) => !a)}
           className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
         >
-          {adding ? "Cancel" : "➕ Add a claim"}
+          {adding ? "Cancel" : "➕ Add evidence"}
         </button>
       </div>
 
@@ -200,8 +200,8 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
       ) : visible.length === 0 ? (
         <p className="rounded-lg border border-dashed border-[#C2D9E3] p-4 text-center text-sm text-zinc-400">
           {counts.all === 0
-            ? "No claims for this study yet. Use “Add a claim” to author one."
-            : "No claims in this view."}
+            ? "No evidence for this study yet. Use “Add evidence” to add a finding."
+            : "No evidence in this view."}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -273,7 +273,7 @@ function AddClaimForm({
 
   return (
     <div className="mb-3 rounded-xl border-2 border-[#3FD0C9] bg-[#F4FBFC] p-3">
-      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">Add a claim</div>
+      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">Add evidence</div>
       <label className="mb-1 block text-xs font-semibold text-zinc-600">Category</label>
       <select
         value={categoryId}
@@ -296,7 +296,7 @@ function AddClaimForm({
           ))}
         </optgroup>
       </select>
-      <label className="mb-1 block text-xs font-semibold text-zinc-600">Claim (one clear sentence)</label>
+      <label className="mb-1 block text-xs font-semibold text-zinc-600">Finding (one clear sentence)</label>
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -319,7 +319,7 @@ function AddClaimForm({
         disabled={busy || !text.trim() || !categoryId}
         className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
       >
-        {busy ? "Adding…" : "Add claim (pending review)"}
+        {busy ? "Adding…" : "Add evidence (pending review)"}
       </button>
     </div>
   );

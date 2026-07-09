@@ -340,7 +340,7 @@ function StudyCard({
           onClick={() => setClaimsOpen(true)}
           className="ml-auto rounded-md bg-[#E1F4F3] px-3 py-1 font-semibold text-[#0A7A8A] transition-colors hover:bg-[#0A7A8A] hover:text-white"
         >
-          View claims
+          View evidence
         </button>
       </div>
 

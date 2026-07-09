@@ -201,36 +201,36 @@ function MarketingCard({
               No evidence linked yet. A marketing claim needs backing before it can be approved.
             </p>
           ) : (
-            backing.map((b) => (
-              <div key={b.id} className="rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-3">
-                <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide ${STATUS_STYLE[b.status]}`}>
-                    {STATUS_LABEL[b.status] ?? b.status}
-                  </span>
-                </div>
-                <p className="text-[13px] text-zinc-800">{decodeEntities(b.text)}</p>
-                {(b.claim_quotes ?? [])[0] && (
-                  <p className="mt-1 border-l-2 border-[#C2D9E3] pl-2.5 text-[11px] italic text-zinc-500">
-                    “{decodeEntities((b.claim_quotes ?? [])[0].quote)}”
+            backing.map((b) => {
+              const qte = (b.claim_quotes ?? [])[0];
+              return (
+                <div key={b.id} className="rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-3">
+                  {/* The evidence IS the verbatim quote from the study, not a restated claim. */}
+                  <p className="border-l-2 border-[#C2D9E3] pl-2.5 text-[12px] italic leading-relaxed text-zinc-600">
+                    “{decodeEntities(qte?.quote ?? b.text)}”
                   </p>
-                )}
-                {b.studies?.title && (
-                  <div className="mt-1 text-[11px] text-zinc-500">
-                    {b.studies.title}
-                    {b.studies.pmid && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500">
+                    {b.studies?.title && (
+                      <span className="font-medium text-[#052A4E]">{b.studies.title}</span>
+                    )}
+                    {qte?.location && <span className="text-zinc-400">· {qte.location}</span>}
+                    {b.studies?.pmid && (
                       <a
                         href={`https://pubmed.ncbi.nlm.nih.gov/${b.studies.pmid}/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="ml-2 font-semibold text-[#0A7A8A] hover:underline"
+                        className="font-semibold text-[#0A7A8A] hover:underline"
                       >
                         PubMed {b.studies.pmid} →
                       </a>
                     )}
+                    {qte && !qte.verified && (
+                      <span className="font-semibold text-[#9A2A2A]">⚠︎ quote not verbatim</span>
+                    )}
                   </div>
-                )}
-              </div>
-            ))
+                </div>
+              );
+            })
           )}
         </div>
       )}

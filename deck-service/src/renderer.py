@@ -552,7 +552,9 @@ _INKC = RGBColor(0x16, 0x35, 0x36)
 _LTEAL = RGBColor(0xA9, 0xDB, 0xD5)
 _ONTEAL = RGBColor(0xEC, 0xF5, 0xF5)  # body text ON a solid teal panel — high contrast (LTEAL was too dim)
 _WHITE = RGBColor(0xFF, 0xFF, 0xFF)
-_HEAD, _BODY = "Exo 2", "Manrope"
+_HEAD, _BODY = "Exo 2", "+mn-lt"   # body = the theme MINOR font (embedded Manrope), referenced the same
+                                   # way the template placeholders do; a hard-coded "Manrope" can bind to a
+                                   # wrong/cursive installed variant instead of the embedded regular one.
 _CHART_COLORS = [_RED, _TEAL2, _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
 _TBL_LINE = "C9D9D9"                  # table row-line colour (hex, for XML)
 

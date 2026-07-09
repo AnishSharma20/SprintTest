@@ -57,6 +57,20 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             { status: 409 }
           );
       }
+      // A marketing claim ("what we can say about the product") must have at least one piece
+      // of backing evidence before it can be approved — no unsubstantiated marketing claims.
+      if (claim.claim_type === "marketing") {
+        const backing = await sb
+          .from("claim_links")
+          .select("child_claim_id")
+          .eq("parent_claim_id", id)
+          .eq("relation", "backed_by");
+        if ((backing.data ?? []).length === 0)
+          return Response.json(
+            { error: "A marketing claim needs at least one piece of backing evidence before it can be approved." },
+            { status: 409 }
+          );
+      }
       const upd = await sb
         .from("claims")
         .update({ status: "approved", approved_by: actor, approved_at: new Date().toISOString() })

@@ -3,11 +3,16 @@
 // Claims Library — browse the whole approved-claims library across studies. Filter by category
 // and status, search, and see each claim's source (study + PubMed link) and its verified quote.
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Claim, ClaimStatus, Category } from "../lib/claims-types";
 import { decodeEntities } from "../lib/text";
+import MarketingClaims from "../marketing-claims";
+
+const REVIEWER_KEY = "claimsReviewerName:v1";
 
 type StatusFilter = "all" | "approved" | "pending_review" | "rejected";
+type View = "marketing" | "science";
+type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
 
 type LibClaim = Claim & { studies?: { pmid: string | null; title: string } | null };
 
@@ -30,22 +35,41 @@ export default function ClaimsLibrary() {
   const [configured, setConfigured] = useState(true);
   const [loading, setLoading] = useState(true);
   const [claims, setClaims] = useState<LibClaim[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [status, setStatus] = useState<StatusFilter>("all");
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [view, setView] = useState<View>("marketing");
+  const [reviewer, setReviewer] = useState("");
+
+  const load = useCallback(async () => {
+    try {
+      const d = await (await fetch("/api/claims")).json();
+      setConfigured(d.configured !== false);
+      setClaims((d.claims ?? []).filter((c: Claim) => c.status !== "superseded"));
+      setLinks(d.links ?? []);
+      setCategories(d.categories ?? []);
+    } catch {
+      setConfigured(false);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch("/api/claims")
-      .then((r) => r.json())
-      .then((d) => {
-        setConfigured(d.configured !== false);
-        setClaims((d.claims ?? []).filter((c: Claim) => c.status !== "superseded"));
-        setCategories(d.categories ?? []);
-      })
-      .catch(() => setConfigured(false))
-      .finally(() => setLoading(false));
-  }, []);
+    void load();
+    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
+  }, [load]);
+
+  const onReviewerChange = (v: string) => {
+    setReviewer(v);
+    try {
+      window.localStorage.setItem(REVIEWER_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const catName = useMemo(() => {
     const m: Record<string, string> = {};
@@ -57,6 +81,7 @@ export default function ClaimsLibrary() {
   const matched = useMemo(() => {
     const needle = q.toLowerCase().trim();
     return claims.filter((c) => {
+      if (c.claim_type === "marketing") return false; // shown in the Marketing view, not here
       if (status !== "all" && c.status !== status) return false;
       if (!needle) return true;
       return (
@@ -101,13 +126,25 @@ export default function ClaimsLibrary() {
             Claims Library
           </div>
           <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-white">
-            Approved science claims
+            Claims Library
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Every claim in the library, grouped by category, with the study it comes from and its
-            supporting quote. Approve claims in the Scientific Studies tab; approved ones feed the
-            content generators.
+            Two layers: the <strong className="font-semibold text-white">marketing claims</strong> we can
+            make about the product, each linked to the <strong className="font-semibold text-white">science
+            evidence</strong> that substantiates it (study, quote and section).
           </p>
+          <div className="mt-5 flex items-center gap-2">
+            <label htmlFor="reviewer" className="text-xs font-semibold text-[#7FD4E6]">
+              Reviewer
+            </label>
+            <input
+              id="reviewer"
+              value={reviewer}
+              onChange={(e) => onReviewerChange(e.target.value)}
+              placeholder="Your name (recorded on actions)"
+              className="w-64 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"
+            />
+          </div>
         </div>
       </header>
 
@@ -120,8 +157,33 @@ export default function ClaimsLibrary() {
           <p className="text-zinc-400">Loading claims…</p>
         ) : (
           <>
-            {/* Search + status */}
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* View: marketing-claims layer vs science-evidence layer */}
+            <div className="mb-6 inline-flex rounded-xl border border-[#D6E6EE] bg-white p-1 shadow-sm">
+              {(["marketing", "science"] as View[]).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors ${
+                    view === v ? "bg-[#0A7A8A] text-white" : "text-zinc-600 hover:bg-[#E1F4F3]"
+                  }`}
+                >
+                  {v === "marketing" ? "Marketing claims" : "Science evidence"}
+                </button>
+              ))}
+            </div>
+
+            {view === "marketing" ? (
+              <MarketingClaims
+                claims={claims}
+                links={links}
+                categories={categories}
+                reviewer={reviewer}
+                onChanged={load}
+              />
+            ) : (
+              <>
+                {/* Search + status */}
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -190,6 +252,8 @@ export default function ClaimsLibrary() {
                   </section>
                 ))}
               </div>
+            )}
+              </>
             )}
           </>
         )}

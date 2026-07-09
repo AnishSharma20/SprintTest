@@ -37,7 +37,17 @@ export async function GET(req: Request) {
 
   const claims = await q;
   if (claims.error) return Response.json({ error: claims.error.message }, { status: 500 });
-  return Response.json({ configured: true, categories: categories.data, claims: claims.data });
+
+  // Backing links (marketing claim → the science claims that substantiate it). Small table;
+  // returned in full so the UI can resolve evidence against the claims it already has.
+  const links = await sb.from("claim_links").select("parent_claim_id, child_claim_id, relation");
+
+  return Response.json({
+    configured: true,
+    categories: categories.data,
+    claims: claims.data,
+    links: links.data ?? [],
+  });
 }
 
 export async function POST(req: Request) {
@@ -54,6 +64,7 @@ export async function POST(req: Request) {
       created_by,
       study, // StudyMeta — required for paper claims
       quote, // optional supporting quote for a manually-added claim
+      backed_by, // marketing claim: ids of the science claims that substantiate it
     } = body as {
       scope?: string;
       claim_type?: string;
@@ -62,6 +73,7 @@ export async function POST(req: Request) {
       created_by?: string;
       study?: StudyMeta;
       quote?: string;
+      backed_by?: string[];
     };
 
     if (!text?.trim()) return Response.json({ error: "Claim text is required." }, { status: 400 });
@@ -101,6 +113,17 @@ export async function POST(req: Request) {
         verified,
         verified_at: verified ? new Date().toISOString() : null,
       });
+    }
+
+    // Marketing claim: link it to the science claims that substantiate it (relation backed_by).
+    if (claim_type === "marketing" && Array.isArray(backed_by) && backed_by.length) {
+      const rows = backed_by.map((cid) => ({
+        parent_claim_id: inserted.data.id,
+        child_claim_id: cid,
+        relation: "backed_by",
+      }));
+      const link = await sb.from("claim_links").insert(rows);
+      if (link.error) return Response.json({ error: link.error.message }, { status: 500 });
     }
 
     await logEvent(sb, inserted.data.id, created_by ?? "unknown", null, "pending_review", "Created manually");

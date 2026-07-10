@@ -251,24 +251,52 @@ def generate_whitepaper_idml(client: anthropic.Anthropic, source_text: str, base
     _p(8, "Reading the source & studies")
     manifest = idml_mod.load_manifest()
     schema = idml_mod.build_idml_schema()
+    required_sections = list(manifest["groups"]["sections"]["sections"].keys())
+
+    def _missing(plan: dict) -> list[str]:
+        """Which required parts of the plan are absent — a whole-document fill must have them
+        all. A truncated tool call (hit max_tokens) shows up here as missing tail sections."""
+        gaps = [k for k in ("cover", "intro", "sections", "conclusion", "cta") if not plan.get(k)]
+        secs = plan.get("sections") or {}
+        gaps += [f"sections.{s}" for s in required_sections if not secs.get(s)]
+        gaps += [f"sections.{s}.cards" for s in required_sections
+                 if secs.get(s) and not (secs[s].get("cards"))]
+        return gaps
+
+    # A full whitepaper plan is large (5 sections + up to 16 trial cards). 8k tokens truncates
+    # it silently — the tail sections never arrive. Give it real headroom and, if the tool call
+    # is still cut short, retry once harder before failing loudly (never ship a partial fill).
     _p(20, "Writing the whitepaper to the template")
-    msg = client.messages.create(
-        model=config.MODEL, max_tokens=8000,
-        system=_idml_system(instructions, manifest),
-        tools=[{"name": "emit_idml_whitepaper",
-                "description": "Fill every text slot of the Superba InDesign whitepaper template.",
-                "input_schema": schema}],
-        tool_choice={"type": "tool", "name": "emit_idml_whitepaper"},
-        messages=[{"role": "user", "content":
-                   f"SOURCE MATERIAL:\n{source_text}\n\nFill the Superba whitepaper template now."}],
-    )
     plan = None
-    for b in msg.content:
-        if b.type == "tool_use" and isinstance(b.input, dict) and b.input.get("cover"):
-            plan = b.input
+    for attempt, budget in enumerate((24000, 32000)):
+        # Streaming is required at these token budgets (the SDK refuses a non-streaming request
+        # that could run past its 10 minute ceiling); we only need the final assembled message.
+        with client.messages.stream(
+            model=config.MODEL, max_tokens=budget,
+            system=_idml_system(instructions, manifest),
+            tools=[{"name": "emit_idml_whitepaper",
+                    "description": "Fill every text slot of the Superba InDesign whitepaper template.",
+                    "input_schema": schema}],
+            tool_choice={"type": "tool", "name": "emit_idml_whitepaper"},
+            messages=[{"role": "user", "content":
+                       f"SOURCE MATERIAL:\n{source_text}\n\nFill the Superba whitepaper template now."}],
+        ) as stream:
+            msg = stream.get_final_message()
+        candidate = next((b.input for b in msg.content
+                          if b.type == "tool_use" and isinstance(b.input, dict) and b.input.get("cover")), None)
+        if candidate is None:
+            raise ValueError("The model did not fill the whitepaper (no emit_idml_whitepaper tool call).")
+        gaps = _missing(candidate)
+        if not gaps:
+            plan = candidate
             break
-    if plan is None:
-        raise ValueError("The model did not fill the whitepaper (no emit_idml_whitepaper tool call).")
+        if msg.stop_reason == "max_tokens" and attempt == 0:
+            _p(35, "Whitepaper was long, expanding and retrying")
+            continue
+        raise ValueError(
+            "The whitepaper came back incomplete (stop reason: "
+            f"{msg.stop_reason}; missing: {', '.join(gaps)}). This usually means the source was "
+            "very large for one document. Try again, or generate from fewer studies at a time.")
 
     _p(80, "Rendering the InDesign document")
     idml_bytes = idml_mod.fill_idml(plan)

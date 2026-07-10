@@ -211,26 +211,18 @@ def fill_idml(plan: dict, template_path: Path | None = None) -> bytes:
         src = changed.get(name) or zin.read(name)
         changed[name] = _fill_story_texts(src, texts, caps)
 
+    # Every MAPPED slot is either filled from the plan OR blanked. Original template text is
+    # NEVER left behind in a fillable region — otherwise a partial plan would ship a document
+    # that looks finished but still carries the wrong (template) content. Locked/unmapped
+    # stories are untouched by construction (they are never yielded here).
     for slot, value in _iter_slots(manifest, plan):
-        if value is None and slot["mode"] != "single":
-            continue  # untouched slot keeps template text (unfilled cards are blanked below)
         texts = _slot_texts(slot, value)
         caps = [ln["cap"] for ln in slot.get("lines") or []]
-        if not texts:
-            continue
-        fill(slot["story"], texts, caps)
-
-    # Blank the trial cards the plan did not fill (fewer studies than template card frames).
-    for skey, section in manifest["groups"]["sections"]["sections"].items():
-        cards = ((plan.get("sections") or {}).get(skey) or {}).get("cards") or []
-        for i, card in enumerate(section.get("cards") or []):
-            if i < len(cards) and cards[i]:
-                continue
-            fill(card["header"]["story"], [""], [10])
-            n = len(card["body"].get("lines") or []) or 1
-            fill(card["body"]["story"], [""] * n, [10])
-            for dslot in card.get("doses") or []:
-                fill(dslot["story"], [""], [10])
+        if texts:
+            fill(slot["story"], texts, caps)
+        else:
+            n = len(slot.get("lines") or []) or 1
+            fill(slot["story"], [""] * n, [10] * n)
 
     # Deterministic extras: edition line + the AI disclaimer on the back page.
     year = datetime.date.today().year

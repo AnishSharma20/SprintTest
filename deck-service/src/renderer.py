@@ -1562,6 +1562,54 @@ def _fill_cycle(prs, spec: dict, dark_index: int) -> None:
         r.font.name = _HEAD; r.font.color.rgb = _WHITE
 
 
+def _fill_gantt(prs, spec: dict, dark_index: int) -> None:
+    """Gantt / project schedule: task rows against a period axis. Each task spans `start`..`end`
+    columns as a bar; a task flagged `milestone` renders as a red diamond at its `start` period."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    periods = spec.get("periods") or []
+    items = (spec.get("items") or [])[:8]
+    npp, n = len(periods), len(items)
+    if not n or not npp:
+        return
+    label_w = 3.4
+    grid_x = _MARGIN + label_w + 0.15
+    grid_w = _CONTENT_W - label_w - 0.15
+    col_w = grid_w / npp
+    header_h = 0.42
+    top = _BODY_TOP + header_h + 0.12
+    rows_h = _BODY_BOTTOM - top
+    for j, p in enumerate(periods):
+        px = grid_x + j * col_w
+        _place_text(slide, px, _BODY_TOP, col_w, header_h, p, _SZ_SMALL, _LTEAL, bold=True,
+                    font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        _rule(slide, px, top, 0.015, rows_h, _TEAL2)
+    _rule(slide, grid_x + grid_w, top, 0.015, rows_h, _TEAL2)
+    rh = rows_h / n
+    bar_h = min(0.34, rh * 0.52)
+    for i, it in enumerate(items):
+        y = top + i * rh
+        cy = y + rh / 2
+        _place_text(slide, _MARGIN, y, label_w, rh, it.get("label", ""), _SZ_SMALL, _WHITE,
+                    bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        s = max(1, min(int(it.get("start", 1) or 1), npp))
+        if it.get("milestone"):
+            mx = grid_x + (s - 0.5) * col_w
+            dsz = min(0.3, rh * 0.5)
+            dia = slide.shapes.add_shape(MSO_SHAPE.DIAMOND, Inches(mx - dsz / 2), Inches(cy - dsz / 2),
+                                         Inches(dsz), Inches(dsz))
+            dia.fill.solid(); dia.fill.fore_color.rgb = _RED; dia.line.fill.background(); dia.shadow.inherit = False
+        else:
+            e = max(s, min(int(it.get("end", s) or s), npp))
+            bx = grid_x + (s - 1) * col_w + 0.06
+            bw = (e - s + 1) * col_w - 0.12
+            bar = slide.shapes.add_shape(_BOX, Inches(bx), Inches(cy - bar_h / 2), Inches(bw), Inches(bar_h))
+            bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL_TINTS[i % len(_TEAL_TINTS)]
+            bar.line.fill.background(); bar.shadow.inherit = False
+            if it.get("note") and bw >= 1.0:
+                _place_text(slide, bx, cy - bar_h / 2, bw, bar_h, it["note"], _SZ_SMALL, _WHITE,
+                            bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -1648,6 +1696,8 @@ def render_deck(plan: dict) -> bytes:
             _fill_decision_tree(prs, spec, dark); continue
         if layout_name == "cycle":
             _fill_cycle(prs, spec, dark); continue
+        if layout_name == "gantt":
+            _fill_gantt(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

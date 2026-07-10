@@ -636,5 +636,16 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "gantt": {
+    "template_layout": "Blank",
+    "kind": "gantt",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

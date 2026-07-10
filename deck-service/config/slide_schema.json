@@ -70,7 +70,8 @@
               "cause_effect",
               "org_chart",
               "decision_tree",
-              "cycle"
+              "cycle",
+              "gantt"
             ]
           },
           "background": {
@@ -413,6 +414,12 @@
           },
           "center": {
             "type": "string"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "before": {
             "type": "object",
@@ -2851,6 +2858,79 @@
                       "body": {
                         "type": "string",
                         "maxLength": 80
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "gantt"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "periods",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "caption": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "periods": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 8,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 14
+                  }
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "start"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "start": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "end": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "note": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "milestone": {
+                        "type": "boolean"
                       }
                     }
                   }

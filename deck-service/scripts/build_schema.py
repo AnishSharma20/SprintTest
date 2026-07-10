@@ -498,6 +498,19 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 26},
                            "body": {"type": "string", "maxLength": 80}}}}}, "cycle around a hub")
 
+    _synth("gantt", "gantt", "dark", ["layout", "title", "periods", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 100},
+        "periods": {"type": "array", "minItems": 2, "maxItems": 8,
+                    "items": {"type": "string", "maxLength": 14}},
+        "items": {"type": "array", "minItems": 2, "maxItems": 8, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "start"],
+            "properties": {"label": {"type": "string", "maxLength": 40},
+                           "start": {"type": "integer", "minimum": 1},
+                           "end": {"type": "integer", "minimum": 1},
+                           "note": {"type": "string", "maxLength": 40},
+                           "milestone": {"type": "boolean"}}}}}, "gantt / project schedule")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -521,7 +534,7 @@ def main():
                                                             "kpi_dashboard", "roadmap",
                                                             "icon_grid", "takeaways", "from_to",
                                                             "pillars", "team", "metric_bars", "cause_effect",
-                                                            "org_chart", "decision_tree", "cycle"]},
+                                                            "org_chart", "decision_tree", "cycle", "gantt"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -576,6 +589,7 @@ def main():
                             "properties": {"value": {"type": "string"}, "label": {"type": "string"},
                                            "note": {"type": "string"}}}},
                         "center": {"type": "string"},
+                        "periods": {"type": "array", "items": {"type": "string"}},
                         "before": {"type": "object", "additionalProperties": False,
                                    "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}},
                         "after": {"type": "object", "additionalProperties": False,

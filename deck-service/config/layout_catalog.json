@@ -504,5 +504,38 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "pyramid": {
+    "template_layout": "Blank",
+    "kind": "pyramid",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "kpi_dashboard": {
+    "template_layout": "Blank",
+    "kind": "kpi_dashboard",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "roadmap": {
+    "template_layout": "Blank",
+    "kind": "roadmap",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

@@ -397,6 +397,31 @@ def main():
         "tagline": {"type": "string", "maxLength": 90},
         "contact": {"type": "string", "maxLength": 160}}, "closing / contact")
 
+    # More MBB layouts.
+    _synth("pyramid", "pyramid", "dark", ["layout", "title", "levels"], {
+        "title": {"type": "string", "maxLength": 90},
+        "levels": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 30},
+                           "body": {"type": "string", "maxLength": 120}}}}}, "layered pyramid")
+
+    _synth("kpi_dashboard", "kpi_dashboard", "dark", ["layout", "title", "metrics"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 100},
+        "metrics": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["value", "label"],
+            "properties": {"value": {"type": "string", "maxLength": 12},
+                           "label": {"type": "string", "maxLength": 42},
+                           "note": {"type": "string", "maxLength": 60}}}}}, "KPI dashboard tiles")
+
+    _synth("roadmap", "roadmap", "dark", ["layout", "title", "phases"], {
+        "title": {"type": "string", "maxLength": 90},
+        "phases": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"date": {"type": "string", "maxLength": 20},
+                           "heading": {"type": "string", "maxLength": 26},
+                           "body": {"type": "string", "maxLength": 170}}}}}, "roadmap phases (chevrons)")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -416,7 +441,8 @@ def main():
                         "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
                                                             "matrix", "journey", "exec_summary", "quote", "comparison",
                                                             "stat", "harvey_ball", "timeline", "funnel",
-                                                            "case_study", "closing"]},
+                                                            "case_study", "closing",
+                                                            "pyramid", "kpi_dashboard", "roadmap"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -466,6 +492,17 @@ def main():
                         "stages": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                        "levels": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
+                        "metrics": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"value": {"type": "string"}, "label": {"type": "string"},
+                                           "note": {"type": "string"}}}},
+                        "phases": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"date": {"type": "string"}, "heading": {"type": "string"},
+                                           "body": {"type": "string"}}}},
                         "study": {"type": "string"}, "design": {"type": "string"},
                         "result": {"type": "string"}, "takeaway": {"type": "string"},
                         "tagline": {"type": "string"}, "contact": {"type": "string"},

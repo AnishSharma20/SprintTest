@@ -67,6 +67,9 @@ LAYOUT_USAGE = {
     "funnel":             "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process.",
     "case_study":         "A structured CASE STUDY / proof point for ONE clinical trial. Emit `title` (the takeaway), `study` (citation, e.g. 'Deutsch 2007, RCT'), `design` (population, n, dose, duration), `result` (the key finding with the real numbers), and `takeaway` (the implication). Use to spotlight a single pivotal study.",
     "closing":            "The FINAL slide: a closing statement + contact. Emit `title` (a short closing line), optional `tagline`, and optional `contact` (email / website). Use once, as the last slide.",
+    "pyramid":            "A layered PYRAMID for a hierarchy or foundation-to-peak structure (e.g. data -> insight -> action, or foundation -> pillars -> vision). Emit `title` and `levels`: 2 to 5 objects TOP-TO-BOTTOM (apex first), each a short `heading` and an optional one-line `body` description. Use when the levels build on each other, not for a flat list.",
+    "kpi_dashboard":      "A KPI DASHBOARD: a grid of 3 to 6 headline metric tiles. Emit `title`, optional `caption`, and `metrics`: each a short `value` (e.g. '65%', '2x', '50+'), a `label`, and an optional one-line `note`. Use ONLY real figures from the source. Great for a results scoreboard (more tiles than `stat`, which is 1 to 3 hero numbers).",
+    "roadmap":            "A ROADMAP of 2 to 5 sequential PHASES as interlocking chevrons. Emit `title` and `phases`: each with an optional `date` (e.g. 'Q1' or '0 to 3 months'), a short `heading` (the phase name), and a `body` of the phase's activities. Use for a plan/workstream over time (phases with content), vs `timeline` which marks point-in-time milestones.",
 }
 
 TONE_GUIDANCE = {

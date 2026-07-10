@@ -1197,6 +1197,96 @@ def _fill_closing(prs, spec: dict, dark_index: int) -> None:
         _place_text(slide, _MARGIN, _BODY_BOTTOM - 0.5, _CONTENT_W, 0.5, spec["contact"], _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
 
 
+# Same-family teal tints (apex/first = darkest, base/last = lightest) — used by layered/sequenced layouts.
+_TEAL_TINTS = [_TEAL, RGBColor(0x24, 0x6C, 0x79), RGBColor(0x36, 0x86, 0x90),
+               RGBColor(0x50, 0xA0, 0xA7), RGBColor(0x72, 0xB8, 0xBB)]
+
+
+def _fill_pyramid(prs, spec: dict, dark_index: int) -> None:
+    """Layered pyramid: centred bands widening toward the base, each a level with a heading inside and an
+    optional description to the right. Same-family teal tints, apex on top."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    levels = (spec.get("levels") or [])[:5]
+    n = len(levels)
+    if not n:
+        return
+    gap = 0.12
+    bh = (_BODY_H - (n - 1) * gap) / n
+    px_center = _MARGIN + 3.1                       # pyramid centred in the left region
+    min_w, max_w = 1.9, 5.6
+    desc_x = _MARGIN + 6.6
+    desc_w = 13.333 - _MARGIN - desc_x
+    for i, lv in enumerate(levels):
+        w = min_w + (max_w - min_w) * (i / max(1, n - 1))
+        x = px_center - w / 2
+        y = _BODY_TOP + i * (bh + gap)
+        band = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(w), Inches(bh))
+        band.fill.solid(); band.fill.fore_color.rgb = _TEAL_TINTS[i % len(_TEAL_TINTS)]
+        band.line.fill.background(); band.shadow.inherit = False
+        tf = band.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = lv.get("heading", ""); r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        if lv.get("body"):
+            _place_text(slide, desc_x, y, desc_w, bh, lv["body"], _SZ_SMALL, _LTEAL, anchor=MSO_ANCHOR.MIDDLE)
+
+
+def _fill_kpi_dashboard(prs, spec: dict, dark_index: int) -> None:
+    """KPI dashboard: a grid of metric tiles (a hero figure + label + optional note) — the MBB scoreboard."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    metrics = (spec.get("metrics") or [])[:6]
+    n = len(metrics)
+    if not n:
+        return
+    cols = n if n <= 3 else 3
+    rows = (n + cols - 1) // cols
+    tw = (_CONTENT_W - (cols - 1) * _GUTTER) / cols
+    th = (_BODY_H - (rows - 1) * _GUTTER) / rows
+    for i, m in enumerate(metrics):
+        rr, cc = divmod(i, cols)
+        x = _MARGIN + cc * (tw + _GUTTER)
+        y = _BODY_TOP + rr * (th + _GUTTER)
+        tile = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(tw), Inches(th))
+        tile.fill.solid(); tile.fill.fore_color.rgb = _PANEL; tile.line.fill.background(); tile.shadow.inherit = False
+        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _RED,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
+        _place_text(slide, x + _PAD, y + th * 0.52, tw - 2 * _PAD, 0.5, m.get("label", ""), _SZ_BODY, _INKC,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        if m.get("note"):
+            _place_text(slide, x + _PAD, y + th * 0.52 + 0.5, tw - 2 * _PAD, 0.5, m["note"], _SZ_SMALL, _INKC,
+                        align=PP_ALIGN.CENTER)
+
+
+def _fill_roadmap(prs, spec: dict, dark_index: int) -> None:
+    """Roadmap: left-to-right interlocking chevron phases, each with a date above, a heading inside, and
+    activities below. Same-family teal tints so it reads as one sequence."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    phases = (spec.get("phases") or [])[:5]
+    n = len(phases)
+    if not n:
+        return
+    overlap = 0.35
+    cw = (_CONTENT_W + (n - 1) * overlap) / n       # chevrons overlap so the arrows interlock
+    ch = 0.95
+    cy = _BODY_TOP + 0.45
+    for i, ph in enumerate(phases):
+        x = _MARGIN + i * (cw - overlap)
+        if ph.get("date"):
+            _place_text(slide, x, cy - 0.4, cw - overlap, 0.35, ph["date"], _SZ_SMALL, _LTEAL,
+                        bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        chev = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(x), Inches(cy), Inches(cw), Inches(ch))
+        chev.fill.solid(); chev.fill.fore_color.rgb = _TEAL_TINTS[i % len(_TEAL_TINTS)]
+        chev.line.fill.background(); chev.shadow.inherit = False
+        tf = chev.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = Inches(0.3)                # the chevron point eats space on the right
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = ph.get("heading", ""); r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        if ph.get("body"):
+            _place_text(slide, x + 0.3, cy + ch + 0.3, cw - overlap - 0.3, _BODY_BOTTOM - (cy + ch + 0.3),
+                        ph["body"], _SZ_SMALL, _LTEAL)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -1259,6 +1349,12 @@ def render_deck(plan: dict) -> bytes:
             _fill_case_study(prs, spec, dark); continue
         if layout_name == "closing":
             _fill_closing(prs, spec, dark); continue
+        if layout_name == "pyramid":
+            _fill_pyramid(prs, spec, dark); continue
+        if layout_name == "kpi_dashboard":
+            _fill_kpi_dashboard(prs, spec, dark); continue
+        if layout_name == "roadmap":
+            _fill_roadmap(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

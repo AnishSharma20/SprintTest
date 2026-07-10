@@ -398,13 +398,6 @@ def main():
         "contact": {"type": "string", "maxLength": 160}}, "closing / contact")
 
     # More MBB layouts.
-    _synth("pyramid", "pyramid", "dark", ["layout", "title", "levels"], {
-        "title": {"type": "string", "maxLength": 90},
-        "levels": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
-            "type": "object", "additionalProperties": False, "required": ["heading"],
-            "properties": {"heading": {"type": "string", "maxLength": 30},
-                           "body": {"type": "string", "maxLength": 120}}}}}, "layered pyramid")
-
     _synth("kpi_dashboard", "kpi_dashboard", "dark", ["layout", "title", "metrics"], {
         "title": {"type": "string", "maxLength": 90},
         "caption": {"type": "string", "maxLength": 100},
@@ -442,7 +435,7 @@ def main():
                                                             "matrix", "journey", "exec_summary", "quote", "comparison",
                                                             "stat", "harvey_ball", "timeline", "funnel",
                                                             "case_study", "closing",
-                                                            "pyramid", "kpi_dashboard", "roadmap"]},
+                                                            "kpi_dashboard", "roadmap"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -490,9 +483,6 @@ def main():
                             "properties": {"date": {"type": "string"}, "heading": {"type": "string"},
                                            "body": {"type": "string"}}}},
                         "stages": {"type": "array", "items": {
-                            "type": "object", "additionalProperties": False,
-                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
-                        "levels": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
                         "metrics": {"type": "array", "items": {

@@ -1202,35 +1202,6 @@ _TEAL_TINTS = [_TEAL, RGBColor(0x24, 0x6C, 0x79), RGBColor(0x36, 0x86, 0x90),
                RGBColor(0x50, 0xA0, 0xA7), RGBColor(0x72, 0xB8, 0xBB)]
 
 
-def _fill_pyramid(prs, spec: dict, dark_index: int) -> None:
-    """Layered pyramid: centred bands widening toward the base, each a level with a heading inside and an
-    optional description to the right. Same-family teal tints, apex on top."""
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
-    levels = (spec.get("levels") or [])[:5]
-    n = len(levels)
-    if not n:
-        return
-    gap = 0.12
-    bh = (_BODY_H - (n - 1) * gap) / n
-    px_center = _MARGIN + 3.1                       # pyramid centred in the left region
-    min_w, max_w = 1.9, 5.6
-    desc_x = _MARGIN + 6.6
-    desc_w = 13.333 - _MARGIN - desc_x
-    for i, lv in enumerate(levels):
-        w = min_w + (max_w - min_w) * (i / max(1, n - 1))
-        x = px_center - w / 2
-        y = _BODY_TOP + i * (bh + gap)
-        band = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(w), Inches(bh))
-        band.fill.solid(); band.fill.fore_color.rgb = _TEAL_TINTS[i % len(_TEAL_TINTS)]
-        band.line.fill.background(); band.shadow.inherit = False
-        tf = band.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
-        r = p.add_run(); r.text = lv.get("heading", ""); r.font.size = Pt(_SZ_BODY); r.font.bold = True
-        r.font.name = _HEAD; r.font.color.rgb = _WHITE
-        if lv.get("body"):
-            _place_text(slide, desc_x, y, desc_w, bh, lv["body"], _SZ_SMALL, _LTEAL, anchor=MSO_ANCHOR.MIDDLE)
-
-
 def _fill_kpi_dashboard(prs, spec: dict, dark_index: int) -> None:
     """KPI dashboard: a grid of metric tiles (a hero figure + label + optional note) — the MBB scoreboard."""
     slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
@@ -1349,8 +1320,6 @@ def render_deck(plan: dict) -> bytes:
             _fill_case_study(prs, spec, dark); continue
         if layout_name == "closing":
             _fill_closing(prs, spec, dark); continue
-        if layout_name == "pyramid":
-            _fill_pyramid(prs, spec, dark); continue
         if layout_name == "kpi_dashboard":
             _fill_kpi_dashboard(prs, spec, dark); continue
         if layout_name == "roadmap":

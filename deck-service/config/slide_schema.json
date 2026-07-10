@@ -59,7 +59,6 @@
               "funnel",
               "case_study",
               "closing",
-              "pyramid",
               "kpi_dashboard",
               "roadmap"
             ]
@@ -370,21 +369,6 @@
             }
           },
           "stages": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "heading": {
-                  "type": "string"
-                },
-                "body": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "levels": {
             "type": "array",
             "items": {
               "type": "object",
@@ -2102,53 +2086,6 @@
                 "contact": {
                   "type": "string",
                   "maxLength": 160
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
-                  "const": "pyramid"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout",
-                "title",
-                "levels"
-              ],
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "maxLength": 90
-                },
-                "levels": {
-                  "type": "array",
-                  "minItems": 2,
-                  "maxItems": 5,
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "heading"
-                    ],
-                    "properties": {
-                      "heading": {
-                        "type": "string",
-                        "maxLength": 30
-                      },
-                      "body": {
-                        "type": "string",
-                        "maxLength": 120
-                      }
-                    }
-                  }
                 }
               }
             }

@@ -440,6 +440,64 @@ def main():
                   "properties": {"heading": {"type": "string", "maxLength": 40},
                                  "body": {"type": "string", "maxLength": 220}}}}, "from-to transformation")
 
+    _synth("pillars", "pillars", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "banner": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 28},
+                           "body": {"type": "string", "maxLength": 220},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "pillars under a roof")
+
+    _synth("team", "team", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["name"],
+            "properties": {"name": {"type": "string", "maxLength": 36},
+                           "role": {"type": "string", "maxLength": 46},
+                           "bio": {"type": "string", "maxLength": 160}}}}}, "team member cards")
+
+    _synth("metric_bars", "metric_bars", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 100},
+        "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "pct"],
+            "properties": {"label": {"type": "string", "maxLength": 46},
+                           "value": {"type": "string", "maxLength": 16},
+                           "pct": {"type": "number"},
+                           "note": {"type": "string", "maxLength": 60}}}}}, "metric bars")
+
+    _synth("cause_effect", "cause_effect", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
+            "properties": {"heading": {"type": "string", "maxLength": 40},
+                           "body": {"type": "string", "maxLength": 170}}}}}, "cause and effect rows")
+
+    _synth("org_chart", "org_chart", "dark", ["layout", "title", "center", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "center": {"type": "string", "maxLength": 40},
+        "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 28},
+                           "body": {"type": "string", "maxLength": 130}}}}}, "org chart")
+
+    _synth("decision_tree", "decision_tree", "dark", ["layout", "title", "center", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "center": {"type": "string", "maxLength": 44},
+        "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 30},
+                           "body": {"type": "string", "maxLength": 150}}}}}, "decision tree")
+
+    _synth("cycle", "cycle", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "center": {"type": "string", "maxLength": 22},
+        "items": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 26},
+                           "body": {"type": "string", "maxLength": 80}}}}}, "cycle around a hub")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -461,7 +519,9 @@ def main():
                                                             "stat", "harvey_ball", "timeline", "funnel",
                                                             "case_study", "closing",
                                                             "kpi_dashboard", "roadmap",
-                                                            "icon_grid", "takeaways", "from_to"]},
+                                                            "icon_grid", "takeaways", "from_to",
+                                                            "pillars", "team", "metric_bars", "cause_effect",
+                                                            "org_chart", "decision_tree", "cycle"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -515,6 +575,7 @@ def main():
                             "type": "object", "additionalProperties": False,
                             "properties": {"value": {"type": "string"}, "label": {"type": "string"},
                                            "note": {"type": "string"}}}},
+                        "center": {"type": "string"},
                         "before": {"type": "object", "additionalProperties": False,
                                    "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}},
                         "after": {"type": "object", "additionalProperties": False,

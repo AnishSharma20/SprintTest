@@ -559,5 +559,82 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "pillars": {
+    "template_layout": "Blank",
+    "kind": "pillars",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "team": {
+    "template_layout": "Blank",
+    "kind": "team",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "metric_bars": {
+    "template_layout": "Blank",
+    "kind": "metric_bars",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "cause_effect": {
+    "template_layout": "Blank",
+    "kind": "cause_effect",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "org_chart": {
+    "template_layout": "Blank",
+    "kind": "org_chart",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "decision_tree": {
+    "template_layout": "Blank",
+    "kind": "decision_tree",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "cycle": {
+    "template_layout": "Blank",
+    "kind": "cycle",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

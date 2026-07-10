@@ -1350,6 +1350,218 @@ def _fill_from_to(prs, spec: dict, dark_index: int) -> None:
     _panel(ax + arrow_w + _GUTTER, _TEAL2, "TO", after)
 
 
+def _rule(slide, x, y, w, h, color):
+    """A thin filled rectangle used as a connector line."""
+    ln = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(max(w, 0.02)), Inches(max(h, 0.02)))
+    ln.fill.solid(); ln.fill.fore_color.rgb = color; ln.line.fill.background(); ln.shadow.inherit = False
+    return ln
+
+
+def _fill_pillars(prs, spec: dict, dark_index: int) -> None:
+    """Pillars under a roof: an optional roof banner across the top, then 2 to 5 tall pillars, each with an
+    icon chip, a heading and a body. For 'our approach rests on N pillars' framing."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:5]
+    n = len(items)
+    if not n:
+        return
+    icons = _consistent_icons(items)
+    top = _BODY_TOP
+    banner = spec.get("banner")
+    if banner:
+        ban = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(_EYEBROW_Y), Inches(_CONTENT_W), Inches(0.55))
+        ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL2; ban.line.fill.background(); ban.shadow.inherit = False
+        tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = banner; r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        top = _EYEBROW_Y + 0.55 + 0.14
+    pw = (_CONTENT_W - (n - 1) * _GUTTER) / n
+    ph = _BODY_BOTTOM - top
+    d = _ICON_DISC
+    for i, it in enumerate(items):
+        x = _MARGIN + i * (pw + _GUTTER)
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(ph))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
+        hy = top + 0.3
+        if icons:
+            _icon_disc(slide, x + pw / 2, top + 0.55, d, icon_path=icons[i]); hy = top + 1.15
+        _place_text(slide, x + _PAD, hy, pw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + _PAD, hy + 0.55, pw - 2 * _PAD, top + ph - (hy + 0.55) - _PAD,
+                    it.get("body", ""), _SZ_SMALL, _ONTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_team(prs, spec: dict, dark_index: int) -> None:
+    """Team cards: 2 to 4 members, each a person chip (light disc + person icon), name, role and short bio."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    cw = (_CONTENT_W - (n - 1) * _GUTTER) / n
+    top = _BODY_TOP + 0.3
+    d = 1.5
+    ppl = _generic_icon_path("people")
+    for i, m in enumerate(items):
+        x = _MARGIN + i * (cw + _GUTTER); cx = x + cw / 2
+        disc = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(top), Inches(d), Inches(d))
+        disc.fill.solid(); disc.fill.fore_color.rgb = _PANEL; disc.line.fill.background(); disc.shadow.inherit = False
+        if ppl:
+            pad = d * 0.26
+            _place_icon(slide, (Inches(cx - d / 2 + pad), Inches(top + pad), Inches(d - 2 * pad), Inches(d - 2 * pad)), ppl)
+        ny = top + d + 0.25
+        _place_text(slide, x, ny, cw, 0.4, m.get("name", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, ny + 0.42, cw, 0.35, m.get("role", ""), _SZ_SMALL, _LTEAL, bold=True, align=PP_ALIGN.CENTER)
+        if m.get("bio"):
+            _place_text(slide, x + _PAD, ny + 0.85, cw - 2 * _PAD, _BODY_BOTTOM - (ny + 0.85),
+                        m["bio"], _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_metric_bars(prs, spec: dict, dark_index: int) -> None:
+    """Metric bars: rows of label + a horizontal bar (length = pct) + the value on the right (bullet-chart
+    style). For KPI rows where the magnitude matters."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    items = (spec.get("items") or [])[:6]
+    n = len(items)
+    if not n:
+        return
+    rh = _BODY_H / n
+    label_w, val_w = 3.6, 1.3
+    bar_x = _MARGIN + label_w + 0.2
+    bar_w = _CONTENT_W - label_w - 0.2 - val_w - 0.2
+    for i, it in enumerate(items):
+        y = _BODY_TOP + i * rh
+        cy = y + rh / 2
+        _place_text(slide, _MARGIN, y, label_w, rh, it.get("label", ""), _SZ_BODY, _WHITE, bold=True,
+                    font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        _rule(slide, bar_x, cy - 0.15, bar_w, 0.3, _TEAL2)
+        pct = max(0.0, min(100.0, float(it.get("pct", 0) or 0)))
+        if pct > 0:
+            _rule(slide, bar_x, cy - 0.15, bar_w * pct / 100.0, 0.3, _RED)
+        val = it.get("value") or f"{pct:g}%"
+        _place_text(slide, bar_x + bar_w + 0.2, y, val_w, rh, val, _SZ_BODY, _WHITE, bold=True,
+                    font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+
+
+def _fill_cause_effect(prs, spec: dict, dark_index: int) -> None:
+    """Cause and effect: parallel rows, each a cause panel, a teal arrow, and the resulting effect text."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    gap = 0.22
+    rh = (_BODY_H - (n - 1) * gap) / n
+    cause_w, arrow_w = 4.0, 0.7
+    eff_x = _MARGIN + cause_w + arrow_w + 0.5
+    eff_w = 13.333 - _MARGIN - eff_x
+    for i, it in enumerate(items):
+        y = _BODY_TOP + i * (rh + gap)
+        pan = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y), Inches(cause_w), Inches(rh))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
+        _place_text(slide, _MARGIN + _PAD, y, cause_w - 2 * _PAD, rh, it.get("heading", ""), _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        ar = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(_MARGIN + cause_w + 0.2), Inches(y + rh / 2 - 0.22),
+                                    Inches(arrow_w), Inches(0.44))
+        ar.fill.solid(); ar.fill.fore_color.rgb = _LTEAL; ar.line.fill.background(); ar.shadow.inherit = False
+        _place_text(slide, eff_x, y, eff_w, rh, it.get("body", ""), _SZ_BODY, _LTEAL, anchor=MSO_ANCHOR.MIDDLE)
+
+
+def _fill_org_chart(prs, spec: dict, dark_index: int) -> None:
+    """Org chart: a top box connected down to 2 to 4 child boxes with a bus connector."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    tb_w, tb_h = 3.2, 0.8
+    tb_x, tb_y = (13.333 - tb_w) / 2, _BODY_TOP + 0.3
+    box = slide.shapes.add_shape(_BOX, Inches(tb_x), Inches(tb_y), Inches(tb_w), Inches(tb_h))
+    box.fill.solid(); box.fill.fore_color.rgb = _TEAL2; box.line.fill.background(); box.shadow.inherit = False
+    _place_text(slide, tb_x, tb_y, tb_w, tb_h, spec.get("center", ""), _SZ_BODY, _WHITE, bold=True,
+                font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    cw = (_CONTENT_W - (n - 1) * _GUTTER) / n
+    cy = tb_y + tb_h + 0.9
+    chh = min(_BODY_BOTTOM - cy, 2.4)
+    bus_y = tb_y + tb_h + 0.45
+    centers = [_MARGIN + i * (cw + _GUTTER) + cw / 2 for i in range(n)]
+    _rule(slide, 13.333 / 2 - 0.01, tb_y + tb_h, 0.02, bus_y - (tb_y + tb_h), _LTEAL)
+    _rule(slide, centers[0], bus_y - 0.01, centers[-1] - centers[0], 0.02, _LTEAL)
+    for i, it in enumerate(items):
+        x = _MARGIN + i * (cw + _GUTTER); ccx = x + cw / 2
+        _rule(slide, ccx - 0.01, bus_y, 0.02, cy - bus_y, _LTEAL)
+        cb = slide.shapes.add_shape(_BOX, Inches(x), Inches(cy), Inches(cw), Inches(chh))
+        cb.fill.solid(); cb.fill.fore_color.rgb = _TEAL; cb.line.fill.background(); cb.shadow.inherit = False
+        _place_text(slide, x + _PAD, cy + 0.18, cw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + _PAD, cy + 0.72, cw - 2 * _PAD, chh - 0.9, it.get("body", ""), _SZ_SMALL,
+                    _ONTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_decision_tree(prs, spec: dict, dark_index: int) -> None:
+    """Decision tree: a root box on the left branching to 2 to 4 outcome boxes on the right."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    rb_w, rb_h = 3.0, 1.1
+    rb_x = _MARGIN
+    rb_y = _BODY_TOP + (_BODY_H - rb_h) / 2
+    root = slide.shapes.add_shape(_BOX, Inches(rb_x), Inches(rb_y), Inches(rb_w), Inches(rb_h))
+    root.fill.solid(); root.fill.fore_color.rgb = _TEAL2; root.line.fill.background(); root.shadow.inherit = False
+    _place_text(slide, rb_x + _PAD, rb_y, rb_w - 2 * _PAD, rb_h, spec.get("center", ""), _SZ_BODY, _WHITE,
+                bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    bus_x = rb_x + rb_w + 0.6
+    bx = bus_x + 0.6
+    bw = 13.333 - _MARGIN - bx
+    gap = 0.25
+    bh = (_BODY_H - (n - 1) * gap) / n
+    root_cy = rb_y + rb_h / 2
+    centers = [_BODY_TOP + i * (bh + gap) + bh / 2 for i in range(n)]
+    _rule(slide, rb_x + rb_w, root_cy - 0.01, 0.6, 0.02, _LTEAL)
+    _rule(slide, bus_x - 0.01, min(centers[0], root_cy), 0.02, max(centers[-1], root_cy) - min(centers[0], root_cy), _LTEAL)
+    for i, it in enumerate(items):
+        y = _BODY_TOP + i * (bh + gap); bcy = y + bh / 2
+        _rule(slide, bus_x, bcy - 0.01, bx - bus_x, 0.02, _LTEAL)
+        bb = slide.shapes.add_shape(_BOX, Inches(bx), Inches(y), Inches(bw), Inches(bh))
+        bb.fill.solid(); bb.fill.fore_color.rgb = _TEAL; bb.line.fill.background(); bb.shadow.inherit = False
+        _place_text(slide, bx + _PAD, y + 0.12, bw - 2 * _PAD, 0.45, it.get("heading", ""), _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD)
+        if it.get("body"):
+            _place_text(slide, bx + _PAD, y + 0.6, bw - 2 * _PAD, bh - 0.72, it["body"], _SZ_SMALL, _ONTEAL)
+
+
+def _fill_cycle(prs, spec: dict, dark_index: int) -> None:
+    """Cycle: 3 to 6 labelled nodes arranged in a ring around an optional hub."""
+    import math
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:6]
+    n = len(items)
+    if not n:
+        return
+    cx, cy = 13.333 / 2, _BODY_TOP + _BODY_H / 2 + 0.05
+    ring_r, node_d = 1.55, 1.5
+    if spec.get("center"):
+        hub_d = 1.5
+        hub = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - hub_d / 2), Inches(cy - hub_d / 2), Inches(hub_d), Inches(hub_d))
+        hub.fill.solid(); hub.fill.fore_color.rgb = _TEAL2; hub.line.fill.background(); hub.shadow.inherit = False
+        _place_text(slide, cx - hub_d / 2, cy - hub_d / 2, hub_d, hub_d, spec["center"], _SZ_SMALL, _WHITE,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    for i, it in enumerate(items):
+        ang = -math.pi / 2 + 2 * math.pi * i / n
+        nx, ny = cx + ring_r * math.cos(ang), cy + ring_r * math.sin(ang)
+        node = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(nx - node_d / 2), Inches(ny - node_d / 2), Inches(node_d), Inches(node_d))
+        node.fill.solid(); node.fill.fore_color.rgb = _TEAL_TINTS[i % len(_TEAL_TINTS)]
+        node.line.color.rgb = _WHITE; node.line.width = Pt(1.5); node.shadow.inherit = False
+        tf = node.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = tf.margin_right = Inches(0.06)
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+        r = p.add_run(); r.text = it.get("heading", ""); r.font.size = Pt(_SZ_SMALL); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -1422,6 +1634,20 @@ def render_deck(plan: dict) -> bytes:
             _fill_takeaways(prs, spec, dark); continue
         if layout_name == "from_to":
             _fill_from_to(prs, spec, dark); continue
+        if layout_name == "pillars":
+            _fill_pillars(prs, spec, dark); continue
+        if layout_name == "team":
+            _fill_team(prs, spec, dark); continue
+        if layout_name == "metric_bars":
+            _fill_metric_bars(prs, spec, dark); continue
+        if layout_name == "cause_effect":
+            _fill_cause_effect(prs, spec, dark); continue
+        if layout_name == "org_chart":
+            _fill_org_chart(prs, spec, dark); continue
+        if layout_name == "decision_tree":
+            _fill_decision_tree(prs, spec, dark); continue
+        if layout_name == "cycle":
+            _fill_cycle(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

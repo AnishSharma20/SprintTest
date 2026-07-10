@@ -63,7 +63,14 @@
               "roadmap",
               "icon_grid",
               "takeaways",
-              "from_to"
+              "from_to",
+              "pillars",
+              "team",
+              "metric_bars",
+              "cause_effect",
+              "org_chart",
+              "decision_tree",
+              "cycle"
             ]
           },
           "background": {
@@ -403,6 +410,9 @@
                 }
               }
             }
+          },
+          "center": {
+            "type": "string"
           },
           "before": {
             "type": "object",
@@ -2427,6 +2437,421 @@
                     "body": {
                       "type": "string",
                       "maxLength": 220
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "pillars"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "banner": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 5,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 28
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 220
+                      },
+                      "icon": {
+                        "enum": [
+                          "heart",
+                          "liver",
+                          "joint",
+                          "muscle",
+                          "skin",
+                          "eye",
+                          "cognitive",
+                          "pms",
+                          "sports",
+                          "absorption",
+                          "whole_body",
+                          "none"
+                        ]
+                      },
+                      "icon_generic": {
+                        "enum": [
+                          "absorption",
+                          "award",
+                          "brain",
+                          "cell",
+                          "dosage",
+                          "energy",
+                          "eye",
+                          "global",
+                          "growth",
+                          "heart",
+                          "immunity",
+                          "joint",
+                          "krill",
+                          "molecule",
+                          "muscle",
+                          "ocean",
+                          "omega3",
+                          "people",
+                          "process",
+                          "proven",
+                          "purity",
+                          "quality",
+                          "research",
+                          "routine",
+                          "safety",
+                          "science",
+                          "sleep",
+                          "sourcing",
+                          "sustainability",
+                          "traceability",
+                          "none"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "team"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "name"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 36
+                      },
+                      "role": {
+                        "type": "string",
+                        "maxLength": 46
+                      },
+                      "bio": {
+                        "type": "string",
+                        "maxLength": 160
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "metric_bars"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "caption": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "pct"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 46
+                      },
+                      "value": {
+                        "type": "string",
+                        "maxLength": 16
+                      },
+                      "pct": {
+                        "type": "number"
+                      },
+                      "note": {
+                        "type": "string",
+                        "maxLength": 60
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "cause_effect"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading",
+                      "body"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 170
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "org_chart"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "center",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "center": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 28
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 130
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "decision_tree"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "center",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "center": {
+                  "type": "string",
+                  "maxLength": 44
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 30
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 150
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "cycle"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "center": {
+                  "type": "string",
+                  "maxLength": 22
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 26
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 80
+                      }
                     }
                   }
                 }

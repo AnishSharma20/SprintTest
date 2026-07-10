@@ -79,13 +79,14 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Studies = real studies only** — the PubMed query excludes non-study publication types
   (`NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])`).
 - **Synthetic (code-built) layouts** — beyond the template's own layouts, the planner can pick
-  **25** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
+  **26** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
   `key_points`, `chart` (native pptx chart: column/bar/line/stacked/100%/doughnut, data from the plan;
   a 2-bar column also gets a Think-cell-style delta callout), `matrix` (2x2), `journey`, `exec_summary`,
   `quote`, `comparison` (native table), `stat` (hero numbers), `harvey_ball` (drawn-shape rating grid,
   qualitative only), `timeline`, `funnel`, `case_study`, `closing`, `kpi_dashboard`, `roadmap`,
   `icon_grid`, `takeaways`, `from_to`, and (NEW 2026-07-10) `pillars`, `team`, `metric_bars`
-  (bullet-chart rows), `cause_effect`, `org_chart`, `decision_tree`, `cycle`. Registered like
+  (bullet-chart rows), `cause_effect`, `org_chart`, `decision_tree`, `cycle`, `gantt` (task bars +
+  milestone diamonds against a period axis). Registered like
   `ingredient` in `scripts/build_schema.py` (survive config regen) → `renderer._fill_*` + a
   `render_deck` branch + a `LAYOUT_USAGE` line. Repeatable recipe for adding more from the template
   library. A full one-slide-per-layout gallery ships as `Superba_layout_galleri_ALLE.pptx`.

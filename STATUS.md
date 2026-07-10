@@ -63,14 +63,24 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Studies = real studies only** — the PubMed query excludes non-study publication types
   (`NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])`).
 - **Synthetic (code-built) layouts** — beyond the template's own layouts, the planner can pick
-  **11** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
-  `key_points`, `chart` (native pptx chart: column/bar/line/stacked/100%/doughnut, data from the plan),
-  `matrix` (2x2), `journey`, `exec_summary`, `quote`, `comparison` (native table), `stat` (hero
-  numbers), `harvey_ball` (rating grid), `timeline`, `funnel`. Registered like `ingredient` in
+  **13** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
+  `key_points`, `chart` (native pptx chart: column/bar/line/stacked/100%/doughnut, data from the plan;
+  a 2-bar column also gets a Think-cell-style delta callout), `matrix` (2x2), `journey`, `exec_summary`,
+  `quote`, `comparison` (native table), `stat` (hero numbers), `harvey_ball` (drawn-shape rating grid,
+  qualitative only), `timeline`, `funnel`, `case_study`, `closing`. Registered like `ingredient` in
   `scripts/build_schema.py` (survive config regen) → `renderer._fill_*` + a `render_deck` branch +
   a `LAYOUT_USAGE` line. Repeatable recipe for adding more from the template library.
-  **NOTE:** built + planner-aware, but a live "does the AI actually *choose* these well" review pass
-  is still pending (see open steps).
+
+- **Consultancy design system (NEW 2026-07-10, shipped).** All synthetic layouts share ONE fixed
+  skeleton (`renderer._synth_slide`): identical title/eyebrow/footer/page-number positions (title at the
+  template's 0.5in/0.746in), one gutter (`_GUTTER`), equal box heights, a strict **3-size type scale**
+  (title 24 / body 14 / small 11, plus one hero figure + footer), fixed line spacing, and content is
+  **capped, not shrunk**. Takeaway titles (≤2 lines, ~90 chars). Bullet discipline + column line-balance
+  in the planner. **Anti-AI-look rules:** no decorative red bars (red is reserved for icons, data and the
+  logo); icon "chips" (a brand icon in a light disc) instead of accent bars; icons are all-or-nothing from
+  one source; body text uses the theme font ref (`+mn-lt`) so it renders the embedded regular Manrope, not
+  a cursive fallback. Harvey balls are drawn shapes (equal size) and planner-gated to qualitative ratings.
+  → detail in the `deck-service-architecture` memory (update hh).
 
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.

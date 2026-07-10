@@ -1021,7 +1021,34 @@ def _fill_stat(prs, spec: dict, dark_index: int) -> None:
             _place_text(slide, x + 0.2, vy + 1.6, cw - 0.4, 1.4, st["note"], _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
 
 
-_HB_GLYPH = {0: "○", 1: "◔", 2: "◑", 3: "◕", 4: "●"}  # ○ ◔ ◑ ◕ ●
+def _set_pie_angles(shape, a1_deg, a2_deg):
+    """Set a PIE shape's start/end angles (degrees, clockwise from 3 o'clock) via its geometry guides."""
+    geom = shape._element.spPr.find(qn("a:prstGeom"))
+    av = geom.find(qn("a:avLst"))
+    if av is None:
+        av = geom.makeelement(qn("a:avLst"), {}); geom.append(av)
+    for el in list(av):
+        av.remove(el)
+    for name, val in (("adj1", a1_deg), ("adj2", a2_deg)):
+        av.append(av.makeelement(qn("a:gd"), {"name": name, "fmla": f"val {int(round(val * 60000))}"}))
+
+
+def _harvey_ball(slide, cx, cy, d, score):
+    """A fixed-diameter harvey ball centred at (cx, cy): a red ring always, plus a red pie wedge for the
+    filled fraction (score 0..4). Drawn as real shapes so every ball is exactly the same size."""
+    ring = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(cy - d / 2), Inches(d), Inches(d))
+    ring.fill.background(); ring.line.color.rgb = _RED; ring.line.width = Pt(1.5); ring.shadow.inherit = False
+    f = max(0, min(4, int(round(score)))) / 4.0
+    if f <= 0:
+        return
+    if f >= 1:
+        disc = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(cy - d / 2), Inches(d), Inches(d))
+        disc.fill.solid(); disc.fill.fore_color.rgb = _RED
+        disc.line.color.rgb = _RED; disc.line.width = Pt(1.5); disc.shadow.inherit = False
+        return
+    pie = slide.shapes.add_shape(MSO_SHAPE.PIE, Inches(cx - d / 2), Inches(cy - d / 2), Inches(d), Inches(d))
+    pie.fill.solid(); pie.fill.fore_color.rgb = _RED; pie.line.fill.background(); pie.shadow.inherit = False
+    _set_pie_angles(pie, 270.0, (270.0 + 360.0 * f) % 360.0)   # fill from 12 o'clock, clockwise
 
 
 def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
@@ -1033,29 +1060,50 @@ def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
     nrows = len(criteria) + 1
     if ncols < 2 or nrows < 2:
         return
-    h = min(_BODY_H, 0.55 + 0.62 * (nrows - 1))
+    nopt = len(options)
+    label_w = 3.2
+    opt_w = (_CONTENT_W - label_w) / nopt
+    hr0 = 0.6                                        # header row height
+    hr = min(1.0, (_BODY_H - hr0) / (nrows - 1))     # data row height
+    h = hr0 + (nrows - 1) * hr
     tbl = slide.shapes.add_table(nrows, ncols, Inches(_MARGIN), Inches(_BODY_TOP), Inches(_CONTENT_W), Inches(h)).table
     tbl.first_row = False; tbl.horz_banding = False
-    def _cell(cell, text, *, bold, color, fill, size=_SZ_BODY, center=False, font=_BODY):
+    tbl.columns[0].width = Inches(label_w)           # explicit widths so ball centres are known
+    for j in range(1, ncols):
+        tbl.columns[j].width = Inches(opt_w)
+    tbl.rows[0].height = Inches(hr0)
+    for i in range(1, nrows):
+        tbl.rows[i].height = Inches(hr)
+
+    def _cell(cell, text, *, bold, color, fill, center=False, font=_BODY):
         cell.fill.solid(); cell.fill.fore_color.rgb = fill
         cell.margin_left = cell.margin_right = Inches(0.12)
+        cell.vertical_anchor = MSO_ANCHOR.MIDDLE
         tf = cell.text_frame; tf.word_wrap = True
         p = tf.paragraphs[0]
         if center:
             p.alignment = PP_ALIGN.CENTER
         r = p.add_run(); r.text = text or ""
-        r.font.size = Pt(size); r.font.bold = bold; r.font.name = font; r.font.color.rgb = color
+        r.font.size = Pt(_SZ_BODY); r.font.bold = bold; r.font.name = font; r.font.color.rgb = color
     _cell(tbl.cell(0, 0), "", bold=True, color=_WHITE, fill=_TEAL)
     for j, opt in enumerate(options, start=1):
         _cell(tbl.cell(0, j), opt, bold=True, color=_WHITE, fill=_TEAL, center=True, font=_HEAD)
     for i, crit in enumerate(criteria, start=1):
         band = RGBColor(0xF1, 0xF8, 0xF8) if i % 2 else _WHITE
         _cell(tbl.cell(i, 0), crit.get("label", ""), bold=True, color=_INKC, fill=band)
-        scores = crit.get("scores") or []
         for j in range(1, ncols):
-            sc = scores[j - 1] if j - 1 < len(scores) else 0
-            _cell(tbl.cell(i, j), _HB_GLYPH.get(int(sc), "○"), bold=False, color=_RED, fill=band, size=_SZ_TITLE, center=True)
+            _cell(tbl.cell(i, j), "", bold=False, color=_INKC, fill=band)   # empty — ball is drawn on top
     _hbar_table(tbl)   # horizontal row lines only
+
+    # Overlay fixed-size harvey balls at each score cell's centre (so every ball is identical).
+    d = min(0.5, hr * 0.55)
+    for i, crit in enumerate(criteria):
+        scores = crit.get("scores") or []
+        cy = _BODY_TOP + hr0 + i * hr + hr / 2
+        for j in range(nopt):
+            sc = scores[j] if j < len(scores) else 0
+            cx = _MARGIN + label_w + j * opt_w + opt_w / 2
+            _harvey_ball(slide, cx, cy, d, sc)
 
 
 def _fill_timeline(prs, spec: dict, dark_index: int) -> None:

@@ -47,18 +47,18 @@ LAYOUT_USAGE = {
     "highlight":          "ONE big statement on an open slide (a 'breathing' beat). ONLY a `title`. Use for a pivotal claim or takeaway — never a list.",
     "title_only":         "Just a title over the branded background. Use rarely (a transitional beat).",
     "text":               "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points.",
-    "text_with_picture":  "`title` + a short `heading` + `body` on one side, a supporting photo on the other. Set `asset_id`.",
+    "text_with_picture":  "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`.",
     "picture_with_title": "A large photo with a title strip — high visual impact. `asset_id` required.",
     "picture_full":       "A full-bleed photo with a compact title — a strong visual break. `asset_id` required.",
     "two_columns":        "TWO parallel points side by side; each column = `heading` + a substantive `body` of 2 to 3 sentences (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas.",
     "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 2 to 3 full sentences that fill the panel, not a single line.",
     "four_columns":       "FOUR parallel points; each column `body` should be 2 to 3 full sentences (roughly 120 to 200 characters) that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty.",
     "ingredient":         "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck.",
-    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). The cards are TALL: write a substantive `body` of 2 to 3 full sentences per card (roughly 220 to 300 characters) that explains the point AND its supporting evidence or mechanism — never a terse fragment, and never leave the card looking half-empty. Ideal for a benefits or 'why it works' overview.",
+    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 2 to 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Keep each bullet to roughly 6 to 12 words, use parallel phrasing across the bullets, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
     "chart":              "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers.",
     "matrix":             "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`.",
     "journey":            "A horizontal process / journey of 3 to 5 stages. Emit `title` and `steps`: 3 to 5 objects each with a short `heading`, a one-line `body`, and optionally an `icon`/`icon_generic`. Use for a sequence: sourcing -> extraction -> outcome, or a study-to-benefit flow.",
-    "exec_summary":       "An executive-summary opener: 2 to 4 key `points` (each `heading` + short `body`) beside an image. Emit `title`, `points`, and optionally an `asset_id` photo for the right side. Good as an early overview slide.",
+    "exec_summary":       "An executive-summary opener: 2 to 4 key `points` (each `heading` + short `body`) beside an image. Give EVERY point an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword) so each point shows as an icon chip; all points must draw from ONE source and be distinct (or give none an icon). Emit `title`, `points`, and optionally an `asset_id` photo for the right side. Good as an early overview slide.",
     "quote":              "A pull quote for a testimonial or a striking statement from the source. Emit `quote` (the sentence), an optional `author` (name / role), and an optional short `title` eyebrow. Use sparingly, once at most.",
     "comparison":         "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil).",
     "stat":               "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point.",
@@ -142,8 +142,20 @@ AGENDA (REQUIRED — every deck): the SECOND slide MUST be an `agenda` slide lis
 sections. Title is exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section
 label, well within 26 characters). They render as branded bullets on the standard Agenda layout.
 
-ACTION TITLES: every title is a full-sentence claim the slide proves (e.g. "Superba raised the Omega-3
-Index by 65% in 12 weeks"), not a topic label ("Omega-3 Index"). Mirror this across the deck.
+ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
+claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
+Index"). Keep it to AT MOST 2 lines, roughly 90 characters — a reader who skims only the titles should get
+the whole argument. Mirror this discipline across the deck.
+
+BULLETS (discipline — a consulting deck is disciplined, not dense):
+- At most 5 to 6 top-level bullets on a slide; if you have more, cap the CONTENT (split into two slides or
+  cut) rather than cramming — never shrink to fit.
+- Each bullet is ONE idea, about 15 to 20 words, on a single thought (no run-on sentences stitched with
+  commas). At most 2 indent levels; prefer just one.
+- PARALLEL PHRASING inside a group: every bullet in a list starts the same grammatical way (all verbs, or
+  all noun phrases) and has a similar length and shape, so the group reads as a set.
+- LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
+  SIMILAR number of lines (and similar bullet counts) so the slide looks balanced, not lopsided.
 
 INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
 nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,
@@ -197,6 +209,10 @@ by the renderer, so follow them exactly or the icons are silently dropped.
     slides (e.g. science, research, molecule, omega3, sustainability, ocean, sourcing, purity, quality, safety,
     growth, proven, process).
 RULES (column layouts):
+- ADD ICONS BY DEFAULT to two/three/four_columns, key_points and exec_summary: these layouts look empty and
+  unbalanced without an icon per item, so give EVERY item one unless truly nothing fits. When the items are
+  not health benefits (e.g. two forms of omega 3, a process, a quality point) use `icon_generic` keywords such
+  as molecule, omega3, cell, research, science, sourcing, purity, sustainability, proven.
 - ALL-OR-NOTHING + ONE SOURCE. Either give EVERY column a branded `icon`, OR give EVERY column an
   `icon_generic`, OR give no column any icon. NEVER mix the two fields on one slide and NEVER fill only some
   columns — a partial or mixed set is dropped entirely, so it's wasted effort.

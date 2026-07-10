@@ -60,7 +60,10 @@
               "case_study",
               "closing",
               "kpi_dashboard",
-              "roadmap"
+              "roadmap",
+              "icon_grid",
+              "takeaways",
+              "from_to"
             ]
           },
           "background": {
@@ -398,6 +401,30 @@
                 "note": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "before": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "heading": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          },
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "heading": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
               }
             }
           },
@@ -2191,6 +2218,215 @@
                         "type": "string",
                         "maxLength": 170
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "icon_grid"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "banner": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 28
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 150
+                      },
+                      "icon": {
+                        "enum": [
+                          "heart",
+                          "liver",
+                          "joint",
+                          "muscle",
+                          "skin",
+                          "eye",
+                          "cognitive",
+                          "pms",
+                          "sports",
+                          "absorption",
+                          "whole_body",
+                          "none"
+                        ]
+                      },
+                      "icon_generic": {
+                        "enum": [
+                          "absorption",
+                          "award",
+                          "brain",
+                          "cell",
+                          "dosage",
+                          "energy",
+                          "eye",
+                          "global",
+                          "growth",
+                          "heart",
+                          "immunity",
+                          "joint",
+                          "krill",
+                          "molecule",
+                          "muscle",
+                          "ocean",
+                          "omega3",
+                          "people",
+                          "process",
+                          "proven",
+                          "purity",
+                          "quality",
+                          "research",
+                          "routine",
+                          "safety",
+                          "science",
+                          "sleep",
+                          "sourcing",
+                          "sustainability",
+                          "traceability",
+                          "none"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "takeaways"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "items"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "heading"
+                    ],
+                    "properties": {
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 90
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 170
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "from_to"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "before",
+                "after"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "before": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "heading"
+                  ],
+                  "properties": {
+                    "heading": {
+                      "type": "string",
+                      "maxLength": 40
+                    },
+                    "body": {
+                      "type": "string",
+                      "maxLength": 220
+                    }
+                  }
+                },
+                "after": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "heading"
+                  ],
+                  "properties": {
+                    "heading": {
+                      "type": "string",
+                      "maxLength": 40
+                    },
+                    "body": {
+                      "type": "string",
+                      "maxLength": 220
                     }
                   }
                 }

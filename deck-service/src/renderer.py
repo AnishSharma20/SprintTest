@@ -1258,6 +1258,98 @@ def _fill_roadmap(prs, spec: dict, dark_index: int) -> None:
                         ph["body"], _SZ_SMALL, _LTEAL)
 
 
+def _fill_icon_grid(prs, spec: dict, dark_index: int) -> None:
+    """A grid of 3 to 6 icon tiles (icon chip + heading + body), 3 across. Optional teal banner. Icons
+    are all-or-nothing from one source. Covers the client's icon-card slides."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    banner = spec.get("banner")
+    top = _BODY_TOP
+    if banner:
+        ban = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(_EYEBROW_Y), Inches(_CONTENT_W), Inches(0.55))
+        ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL; ban.line.fill.background(); ban.shadow.inherit = False
+        tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = banner; r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        top = _EYEBROW_Y + 0.55 + 0.35
+    items = (spec.get("items") or [])[:6]
+    n = len(items)
+    if not n:
+        return
+    icons = _consistent_icons(items)
+    cols = 2 if n == 4 else (n if n <= 3 else 3)
+    rows = (n + cols - 1) // cols
+    cw = (_CONTENT_W - (cols - 1) * _GUTTER) / cols
+    ch = (_BODY_BOTTOM - top - (rows - 1) * _GUTTER) / rows
+    d = 0.82
+    for i, it in enumerate(items):
+        rr, cc = divmod(i, cols)
+        x = _MARGIN + cc * (cw + _GUTTER)
+        y = top + rr * (ch + _GUTTER)
+        cx = x + cw / 2
+        if icons:
+            _icon_disc(slide, cx, y + d / 2 + 0.08, d, icon_path=icons[i])
+            hy = y + d + 0.28
+        else:
+            hy = y + 0.25
+        _place_text(slide, x + _PAD, hy, cw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + _PAD, hy + 0.5, cw - 2 * _PAD, y + ch - (hy + 0.5) - 0.05,
+                    it.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_takeaways(prs, spec: dict, dark_index: int) -> None:
+    """Numbered 'key messages' rows: a red-number chip + a bold statement + supporting detail, one per
+    row with a thin divider between. Covers the client's summary / takeaways slides."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:6]
+    n = len(items)
+    if not n:
+        return
+    rh = _BODY_H / n
+    d = 0.5
+    for i, it in enumerate(items):
+        y = _BODY_TOP + i * rh
+        _icon_disc(slide, _MARGIN + d / 2, y + rh / 2 - 0.05, d, number=i + 1)
+        tx = _MARGIN + d + 0.35
+        tw = _CONTENT_W - (d + 0.35)
+        if it.get("body"):
+            _place_text(slide, tx, y + 0.1, tw, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
+            _place_text(slide, tx, y + 0.6, tw, rh - 0.72, it["body"], _SZ_SMALL, _LTEAL)
+        else:
+            _place_text(slide, tx, y, tw, rh - 0.1, it.get("heading", ""), _SZ_BODY, _WHITE, bold=True,
+                        font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        if i < n - 1:
+            ln = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y + rh - 0.02), Inches(_CONTENT_W), Inches(0.012))
+            ln.fill.solid(); ln.fill.fore_color.rgb = _TEAL2; ln.line.fill.background(); ln.shadow.inherit = False
+
+
+def _fill_from_to(prs, spec: dict, dark_index: int) -> None:
+    """Transformation: a FROM panel, a teal arrow, and a TO panel — each with a small eyebrow, a heading
+    and a body. Covers the client's from/to and before/after slides (no red block)."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    before = spec.get("before") or {}
+    after = spec.get("after") or {}
+    py = _BODY_TOP + 0.4
+    ph = _BODY_H - 0.8
+    arrow_w = 1.1
+    pw = (_CONTENT_W - arrow_w - 2 * _GUTTER) / 2
+
+    def _panel(x, fill, eyebrow, obj):
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(py), Inches(pw), Inches(ph))
+        pan.fill.solid(); pan.fill.fore_color.rgb = fill; pan.line.fill.background(); pan.shadow.inherit = False
+        _place_text(slide, x + _PAD, py + _PAD, pw - 2 * _PAD, 0.35, eyebrow, _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
+        _place_text(slide, x + _PAD, py + 0.7, pw - 2 * _PAD, 0.9, obj.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
+        if obj.get("body"):
+            _place_text(slide, x + _PAD, py + 1.5, pw - 2 * _PAD, ph - 1.7, obj["body"], _SZ_SMALL, _ONTEAL)
+
+    _panel(_MARGIN, RGBColor(0x22, 0x55, 0x5E), "FROM", before)
+    ax = _MARGIN + pw + _GUTTER
+    arr = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(ax), Inches(py + ph / 2 - 0.55), Inches(arrow_w), Inches(1.1))
+    arr.fill.solid(); arr.fill.fore_color.rgb = _LTEAL; arr.line.fill.background(); arr.shadow.inherit = False
+    _panel(ax + arrow_w + _GUTTER, _TEAL2, "TO", after)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -1324,6 +1416,12 @@ def render_deck(plan: dict) -> bytes:
             _fill_kpi_dashboard(prs, spec, dark); continue
         if layout_name == "roadmap":
             _fill_roadmap(prs, spec, dark); continue
+        if layout_name == "icon_grid":
+            _fill_icon_grid(prs, spec, dark); continue
+        if layout_name == "takeaways":
+            _fill_takeaways(prs, spec, dark); continue
+        if layout_name == "from_to":
+            _fill_from_to(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

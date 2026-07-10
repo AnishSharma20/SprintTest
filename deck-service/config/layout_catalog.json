@@ -526,5 +526,38 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "icon_grid": {
+    "template_layout": "Blank",
+    "kind": "icon_grid",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "takeaways": {
+    "template_layout": "Blank",
+    "kind": "takeaways",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "from_to": {
+    "template_layout": "Blank",
+    "kind": "from_to",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

@@ -415,6 +415,31 @@ def main():
                            "heading": {"type": "string", "maxLength": 26},
                            "body": {"type": "string", "maxLength": 170}}}}}, "roadmap phases (chevrons)")
 
+    _synth("icon_grid", "icon_grid", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "banner": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 28},
+                           "body": {"type": "string", "maxLength": 150},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "icon tile grid")
+
+    _synth("takeaways", "takeaways", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 90},
+                           "body": {"type": "string", "maxLength": 170}}}}}, "numbered takeaways")
+
+    _synth("from_to", "from_to", "dark", ["layout", "title", "before", "after"], {
+        "title": {"type": "string", "maxLength": 90},
+        "before": {"type": "object", "additionalProperties": False, "required": ["heading"],
+                   "properties": {"heading": {"type": "string", "maxLength": 40},
+                                  "body": {"type": "string", "maxLength": 220}}},
+        "after": {"type": "object", "additionalProperties": False, "required": ["heading"],
+                  "properties": {"heading": {"type": "string", "maxLength": 40},
+                                 "body": {"type": "string", "maxLength": 220}}}}, "from-to transformation")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -435,7 +460,8 @@ def main():
                                                             "matrix", "journey", "exec_summary", "quote", "comparison",
                                                             "stat", "harvey_ball", "timeline", "funnel",
                                                             "case_study", "closing",
-                                                            "kpi_dashboard", "roadmap"]},
+                                                            "kpi_dashboard", "roadmap",
+                                                            "icon_grid", "takeaways", "from_to"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -489,6 +515,10 @@ def main():
                             "type": "object", "additionalProperties": False,
                             "properties": {"value": {"type": "string"}, "label": {"type": "string"},
                                            "note": {"type": "string"}}}},
+                        "before": {"type": "object", "additionalProperties": False,
+                                   "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}},
+                        "after": {"type": "object", "additionalProperties": False,
+                                  "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}},
                         "phases": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"date": {"type": "string"}, "heading": {"type": "string"},

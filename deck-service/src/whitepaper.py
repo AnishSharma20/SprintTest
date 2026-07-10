@@ -177,3 +177,103 @@ def to_docx(plan_or_markdown) -> bytes:
     """Convenience: structured plan OR markdown string -> Word .docx bytes."""
     md = plan_or_markdown if isinstance(plan_or_markdown, str) else plan_to_markdown(plan_or_markdown)
     return markdown_to_docx(md)
+
+
+# ===========================================================================
+# InDesign (.idml) whitepaper — the direct analog of the pptx template-fill.
+#
+# Instead of the free-form Markdown plan above, the model fills the EXACT slot map of
+# AKBM's real Healthy Aging whitepaper (config/idml_manifest.json): a fixed set of
+# semantic frames with per-line character budgets measured from the template. src.idml
+# then rewrites only the <Content> text of those frames, so the deliverable is a designed
+# InDesign document (fonts, gradients, images, EFSA grid, layout all inherited) rather than
+# a Word draft. The LLM never emits styling or geometry — same contract as the deck.
+# ===========================================================================
+
+def _idml_system(instructions: str, manifest: dict) -> str:
+    src_doc = manifest.get("source_document", "an AKBM whitepaper")
+    instr = ""
+    if (instructions or "").strip():
+        instr = ("\n\nUSER CONTEXT & INSTRUCTIONS (high priority — audience, angle, emphasis, "
+                 "terminology, output language, what to include/avoid; follow unless it conflicts "
+                 "with claim fidelity):\n\"\"\"\n" + instructions.strip() + "\n\"\"\"\n")
+    return f"""You are a scientific writer for Aker BioMarine's Superba Krill. Fill a REAL InDesign
+whitepaper template via the emit_idml_whitepaper tool. The template is a finished, designed
+document ({src_doc}); you are ONLY replacing its text, slot by slot. All design, layout, images,
+fonts, the benefits grid and legal text are inherited and INVISIBLE to you.
+
+CRITICAL — this is a template FILL, not free writing:
+- Emit EXACTLY the structure the tool schema defines: cover, running_topic, intro, five content
+  sections (s1..s5), conclusion, cta. Every field maps to a real text frame.
+- RESPECT EVERY maxLength AND the per line budgets in each field's description. The frames are a
+  fixed size and CANNOT grow; text over budget is cut. Write to fit, do not fill to overflow.
+- Each section has trial-summary CARDS. Emit ONE card per human clinical trial actually present in
+  the source, in a sensible order, up to that section's card count. Do NOT invent trials to fill
+  empty cards; unused cards are removed cleanly.
+- The section "topic" hints describe how the ORIGINAL used each page (heart, cognitive, muscle,
+  joint, eye...). Re-theme them to whatever benefit areas the SOURCE actually supports; keep roughly
+  the same amount of text per slot.
+
+CARD FIELDS: year_author ("2022 STONEHOUSE"); title (the paper title); design (e.g. "Published
+randomized, double blind, placebo controlled trial"); meta (location / time frame / subjects);
+findings (key results WITH the real numbers, %s, p-values AS STATED in the source); doses (one line
+per study arm, e.g. "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)").
+
+USING THE SCIENCE (critical):
+- Ground everything ONLY in the source material. Name study types, sample sizes and the real figures.
+- {CLAIM_RULES}
+- {APPROVED_CLAIMS_RULE}
+- Never invent studies, numbers, quotes or references.
+
+LANGUAGE: if the user context specifies an output language, write ALL reader-facing text in it;
+otherwise match the source. Keep brand names (Superba, Aker BioMarine) as-is.
+
+TEXT STYLE (strict brand rule): NO dash characters in any field. Never an em dash, en dash or a
+hyphen between words; rephrase ("evidence based", "double blind", "Omega 3", "12 week").
+{instr}
+Fill the whitepaper now via emit_idml_whitepaper."""
+
+
+def generate_whitepaper_idml(client: anthropic.Anthropic, source_text: str, base_name: str, *,
+                             length: str = "standard", tone: str = "balansert",
+                             instructions: str = "", on_progress=None) -> dict:
+    """Plan-and-fill a real Superba .idml whitepaper. Returns the .idml bytes + a Markdown
+    preview + the structured plan (base_name kept for parity with the other generators)."""
+    from . import idml as idml_mod
+
+    def _p(pct, step):
+        if on_progress:
+            try:
+                on_progress(pct, step)
+            except Exception:  # noqa: BLE001
+                pass
+
+    _p(8, "Reading the source & studies")
+    manifest = idml_mod.load_manifest()
+    schema = idml_mod.build_idml_schema()
+    _p(20, "Writing the whitepaper to the template")
+    msg = client.messages.create(
+        model=config.MODEL, max_tokens=8000,
+        system=_idml_system(instructions, manifest),
+        tools=[{"name": "emit_idml_whitepaper",
+                "description": "Fill every text slot of the Superba InDesign whitepaper template.",
+                "input_schema": schema}],
+        tool_choice={"type": "tool", "name": "emit_idml_whitepaper"},
+        messages=[{"role": "user", "content":
+                   f"SOURCE MATERIAL:\n{source_text}\n\nFill the Superba whitepaper template now."}],
+    )
+    plan = None
+    for b in msg.content:
+        if b.type == "tool_use" and isinstance(b.input, dict) and b.input.get("cover"):
+            plan = b.input
+            break
+    if plan is None:
+        raise ValueError("The model did not fill the whitepaper (no emit_idml_whitepaper tool call).")
+
+    _p(80, "Rendering the InDesign document")
+    idml_bytes = idml_mod.fill_idml(plan)
+    markdown = f"{WP_DISCLAIMER}\n\n{idml_mod.idml_plan_to_markdown(plan)}"
+    title = (plan.get("cover") or {}).get("title") or base_name
+    _p(95, "Packaging")
+    return {"idml": idml_bytes, "plan": plan, "markdown": markdown,
+            "filename": f"{base_name}.idml", "title": title}

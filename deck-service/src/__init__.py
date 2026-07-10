@@ -9,7 +9,8 @@ inherited from the template's slide layouts.
 """
 from __future__ import annotations
 
-__all__ = ["generate", "generate_blog", "generate_whitepaper", "markdown_to_docx"]
+__all__ = ["generate", "generate_blog", "generate_whitepaper", "generate_whitepaper_idml",
+           "markdown_to_docx"]
 
 
 def generate(*args, **kwargs):
@@ -26,9 +27,15 @@ def generate_blog(*args, **kwargs):
 
 
 def generate_whitepaper(*args, **kwargs):
-    """Lazy entrypoint for the whitepaper generator."""
+    """Lazy entrypoint for the whitepaper generator (Markdown/Word draft)."""
     from .whitepaper import generate_whitepaper as _generate_whitepaper
     return _generate_whitepaper(*args, **kwargs)
+
+
+def generate_whitepaper_idml(*args, **kwargs):
+    """Lazy entrypoint for the InDesign (.idml) whitepaper generator."""
+    from .whitepaper import generate_whitepaper_idml as _generate_whitepaper_idml
+    return _generate_whitepaper_idml(*args, **kwargs)
 
 
 def markdown_to_docx(*args, **kwargs):

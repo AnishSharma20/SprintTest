@@ -1,0 +1,2044 @@
+{
+  "template": "assets/whitepaper_template.idml",
+  "source_document": "Superba_Healthy_Aging_Whitepaper_07Dec25 (AKBM design team, 2026-07)",
+  "edition_stories": [
+    "u4b59",
+    "u1eb8"
+  ],
+  "disclaimer_story": "u1809",
+  "groups": {
+    "cover": {
+      "slots": {
+        "title": {
+          "story": "u41a4",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 56
+            }
+          ],
+          "sample": "Supporting Healthspan at the Cellular and Physical level"
+        },
+        "subtitle": {
+          "story": "u41bb",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 38
+            }
+          ],
+          "sample": "Living better, for as long as possible"
+        },
+        "hero": {
+          "story": "u418d",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 163
+            }
+          ],
+          "sample": "This White Paper discovers how Superba Krill is clinically researched to support  key heal"
+        }
+      }
+    },
+    "running_topic": {
+      "stories": [
+        "u4616",
+        "u4660",
+        "u473a",
+        "u47a5"
+      ],
+      "cap": 28,
+      "sample": "Healthy Aging Research"
+    },
+    "intro": {
+      "slots": {
+        "title": {
+          "story": "u3ab",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 64
+            }
+          ],
+          "sample": "Krill Oil Phospholipids:  Cellular Nutrition in its Optimal Form"
+        },
+        "lead": {
+          "story": "u3c2",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 376
+            }
+          ],
+          "sample": "Healthy aging is not defined by how long we live, but by how long we stay strong, mobile, "
+        },
+        "body_1": {
+          "story": "u3d9",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 574
+            },
+            {
+              "cap": 673
+            },
+            {
+              "cap": 233
+            }
+          ],
+          "sample": "These changes are interconnected and rooted in the biology of aging. At the cellular level"
+        },
+        "body_2": {
+          "story": "u57c",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 238
+            },
+            {
+              "cap": 173
+            }
+          ],
+          "sample": "For nutrients like omega-3s and choline to truly benefit the body, they must first be abso"
+        }
+      }
+    },
+    "sections": {
+      "sections": {
+        "s1": {
+          "topic_hint": "Largest section: pages 3 and 4, benefit theme #1 (heart health in the template). 8 trial cards.",
+          "slots": {
+            "benefits_title": {
+              "story": "u1a5a",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "KRILL OIL / Heart Benefits"
+            },
+            "benefits": {
+              "story": "u1a71",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 50
+                },
+                {
+                  "cap": 35
+                },
+                {
+                  "cap": 26
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "•\tSupports a healthy heart and cardiovascular system / •\tLower triglycerides levels in blo"
+            },
+            "body": {
+              "story": "u645",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 279
+                },
+                {
+                  "cap": 380
+                },
+                {
+                  "cap": 673
+                },
+                {
+                  "cap": 664
+                },
+                {
+                  "cap": 839
+                },
+                {
+                  "cap": 244
+                }
+              ],
+              "sample": "More and more people are at risk for cardiovascular disease. Recent studies have found tha"
+            },
+            "trial_header": {
+              "story": "u94e",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 60
+                }
+              ],
+              "sample": "8 Published Human Trials: Krill Oil’s Effect on Heart Health"
+            },
+            "trial_notes": {
+              "story": "u407a",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 34
+                },
+                {
+                  "cap": 63
+                },
+                {
+                  "cap": 88
+                }
+              ],
+              "sample": "Krill Oil Group B / n=30"
+            }
+          },
+          "cards": [
+            {
+              "header": {
+                "story": "uda5",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2022 MOZAFFARIAN"
+              },
+              "body": {
+                "story": "udbd",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 124
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 44
+                  },
+                  {
+                    "cap": 51
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 71
+                  },
+                  {
+                    "cap": 71
+                  },
+                  {
+                    "cap": 34
+                  },
+                  {
+                    "cap": 31
+                  },
+                  {
+                    "cap": 46
+                  }
+                ],
+                "sample": "Effectiveness of a Novel Omega-3 Krill Oil Agent in Patients with Severe Hypertrigly- ceri"
+              },
+              "doses": [
+                {
+                  "story": "udd9",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 52
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
+                },
+                {
+                  "story": "udf0",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 28
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of  Cornstarch"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "ue21",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2018 RUNDBLAD"
+              },
+              "body": {
+                "story": "ue38",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 106
+                  },
+                  {
+                    "cap": 47
+                  },
+                  {
+                    "cap": 50
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 50
+                  }
+                ],
+                "sample": "Effects of krill oil and lean and fatty fish on cardiovascular risk markers: a randomized "
+              },
+              "doses": [
+                {
+                  "story": "ue55",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 52
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
+                },
+                {
+                  "story": "ue6c",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 49
+                    }
+                  ],
+                  "sample": "Dose: 3 weekly fish meals (246 g lean/fatty fish)"
+                },
+                {
+                  "story": "ue84",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 41
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of High-oleic sunflower oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "ueb3",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2016 CICero"
+              },
+              "body": {
+                "story": "ueca",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 124
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 59
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 64
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 60
+                  }
+                ],
+                "sample": "Lipid-lowering and anti-inflammatory effects of omega 3 ethyl esters and krill oil: a rand"
+              },
+              "doses": [
+                {
+                  "story": "uee6",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 51
+                    }
+                  ],
+                  "sample": "Dose: 1 g/day of Krill oil (150 mg EPA, 90 mg DHA)"
+                },
+                {
+                  "story": "uefd",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 51
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Fish oil EE (85%, .9:1.5 EPA/DHA )"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u13e6",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2015 Lobraico"
+              },
+              "body": {
+                "story": "u13fd",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 153
+                  },
+                  {
+                    "cap": 72
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 34
+                  },
+                  {
+                    "cap": 32
+                  }
+                ],
+                "sample": "Effects of krill oil on endothelial function  and other cardiovascular risk factors in  pa"
+              },
+              "doses": [
+                {
+                  "story": "u141b",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 51
+                    }
+                  ],
+                  "sample": "Dose: 1 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
+                },
+                {
+                  "story": "u1432",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 26
+                    }
+                  ],
+                  "sample": "Dose: 1 g/day of Olive oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u1462",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2013 Berge K"
+              },
+              "body": {
+                "story": "u1479",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 166
+                  },
+                  {
+                    "cap": 61
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 52
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 75
+                  },
+                  {
+                    "cap": 76
+                  }
+                ],
+                "sample": "Krill oil supplementation lowers serum triglycerides without increasing low-density lipopr"
+              },
+              "doses": [
+                {
+                  "story": "u1495",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 61
+                    }
+                  ],
+                  "sample": "Dose: 5, 1, 2 or 4 g/day Krill  oil (100 mg EPA/DHA per.5 g)"
+                },
+                {
+                  "story": "u14ac",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 26
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Olive oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u14f2",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2011 Banni"
+              },
+              "body": {
+                "story": "u1509",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 34
+                  },
+                  {
+                    "cap": 29
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 47
+                  },
+                  {
+                    "cap": 61
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 64
+                  }
+                ],
+                "sample": "Krill oil significantly decreases / 2-arachidonoylglycerol plasma"
+              },
+              "doses": [
+                {
+                  "story": "u1526",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 47
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Krill oil (309 mg 2:1 EPA/DHA)"
+                },
+                {
+                  "story": "u153d",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 50
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Menhaden oil (390 mg 1:1 EPA/DHA)"
+                },
+                {
+                  "story": "u1613",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 26
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Olive oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u3e8a",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2015 Berge R"
+              },
+              "body": {
+                "story": "u3ea1",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 184
+                  },
+                  {
+                    "cap": 72
+                  },
+                  {
+                    "cap": 56
+                  },
+                  {
+                    "cap": 31
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 96
+                  }
+                ],
+                "sample": "Krill oil reduces plasma triacylglycerol level  and improves related lipoprotein particle "
+              },
+              "doses": []
+            },
+            {
+              "header": {
+                "story": "u4015",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2004 Bunea"
+              },
+              "body": {
+                "story": "u402c",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 89
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 51
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "Evaluation of the effects of Neptune  Krill Oil on the clinical course  of hyperlipidemia "
+              },
+              "doses": [
+                {
+                  "story": "u405f",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 40
+                    }
+                  ],
+                  "sample": "Dose: 2-3g/day of Krill oil based on BMI"
+                },
+                {
+                  "story": "u4096",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 30
+                    }
+                  ],
+                  "sample": "Dose: 1-1.5 g/day of Krill oil"
+                },
+                {
+                  "story": "u40b2",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 40
+                    }
+                  ],
+                  "sample": "Dose: 3 g/day Microcrystalline cellulose"
+                },
+                {
+                  "story": "u40ce",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 47
+                    }
+                  ],
+                  "sample": "Dose: 3 g/day Fish Oil (180 mg EPA, 120 mg DHA)"
+                }
+              ]
+            }
+          ]
+        },
+        "s2": {
+          "topic_hint": "Page 5, benefit theme #2 (cognitive health in the template). 1 trial card + a long deep-dive body.",
+          "slots": {
+            "page_topic": {
+              "story": "u462e",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 28
+                }
+              ],
+              "sample": "Krill Oil Cognitive Benefits"
+            },
+            "benefits_title": {
+              "story": "u193a",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "KRILL OIL / Cognitive Benefits"
+            },
+            "benefits": {
+              "story": "u1951",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 43
+                },
+                {
+                  "cap": 41
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "•\tActivates cognitive function in the elderly / •\tSupports memory and brain task managemen"
+            },
+            "lead": {
+              "story": "u19cb",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 310
+                },
+                {
+                  "cap": 486
+                }
+              ],
+              "sample": "Keeping an active mind is the most important aspect of healthy aging for consumers1. Accor"
+            },
+            "body": {
+              "story": "u1ace",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 455
+                },
+                {
+                  "cap": 519
+                },
+                {
+                  "cap": 854
+                },
+                {
+                  "cap": 309
+                },
+                {
+                  "cap": 605
+                },
+                {
+                  "cap": 289
+                },
+                {
+                  "cap": 870
+                },
+                {
+                  "cap": 385
+                }
+              ],
+              "sample": "The left cerebral cortex handles speech and language, while the right cerebral cortex prov"
+            },
+            "trial_header": {
+              "story": "u1c1b",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 61
+                }
+              ],
+              "sample": "Published Human Trial: Krill Oil’s Effect on Cognitive Health"
+            }
+          },
+          "cards": [
+            {
+              "header": {
+                "story": "u1cf1",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2013 Konagai"
+              },
+              "body": {
+                "story": "u1d08",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 170
+                  },
+                  {
+                    "cap": 42
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 96
+                  },
+                  {
+                    "cap": 98
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 148
+                  },
+                  {
+                    "cap": 134
+                  },
+                  {
+                    "cap": 122
+                  }
+                ],
+                "sample": "Effects of krill oil containing n-3 polyunsaturated fatty acids  in phospholipid form on h"
+              },
+              "doses": [
+                {
+                  "story": "u1d24",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 26
+                    },
+                    {
+                      "cap": 24
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Krill oil / (193 mg EPA, 92 mg DHA)"
+                },
+                {
+                  "story": "u1d3b",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 53
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Sardine oil (491 mg EPA, 251 mg DHA)"
+                },
+                {
+                  "story": "u1d80",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 42
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Medium Chain Triglyceride"
+                }
+              ]
+            }
+          ]
+        },
+        "s3": {
+          "topic_hint": "Pages 6 and 7, benefit theme #3 (muscle & mobility in the template). One preclinical card + one human trial card.",
+          "slots": {
+            "page_topic": {
+              "story": "u4677",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 27
+                }
+              ],
+              "sample": "Krill Oil Mobility Benefits"
+            },
+            "benefits_title": {
+              "story": "u1f06",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "KRILL OIL / Mobility Benefits"
+            },
+            "benefits_box_1": {
+              "story": "u1f1d",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 31
+                },
+                {
+                  "cap": 27
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 57
+                }
+              ],
+              "sample": "MUSCLE Health / •\tSupports muscle mass & function"
+            },
+            "benefits_box_2": {
+              "story": "u1fa8",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 72
+                },
+                {
+                  "cap": 48
+                },
+                {
+                  "cap": 46
+                },
+                {
+                  "cap": 40
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 25
+                }
+              ],
+              "sample": "Joint Health / •\tSupports joint comfort, mobility  and flexibility in as little as 7 days"
+            },
+            "body_1": {
+              "story": "u1f63",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 327
+                },
+                {
+                  "cap": 501
+                },
+                {
+                  "cap": 457
+                },
+                {
+                  "cap": 442
+                }
+              ],
+              "sample": "Common afflictions of the elderly population are both sarcopenia, loss of muscle and stren"
+            },
+            "body_2": {
+              "story": "u1fcb",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 440
+                },
+                {
+                  "cap": 1170
+                },
+                {
+                  "cap": 583
+                },
+                {
+                  "cap": 233
+                },
+                {
+                  "cap": 708
+                },
+                {
+                  "cap": 843
+                }
+              ],
+              "sample": "Characteristics of OA include inflammation and structural changes in joints that lead to p"
+            },
+            "preclinical_header": {
+              "story": "u2e50",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 93
+                }
+              ],
+              "sample": "Published in vivo and in vitro TRIAL:  Krill Oil’s Effect on Cognitive Health & Healthy ag"
+            },
+            "preclinical_body": {
+              "story": "u2f1c",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 435
+                },
+                {
+                  "cap": 730
+                }
+              ],
+              "sample": "A study using a model of Parkinson’s disease in nematode worms called Caenorhabditis elega"
+            },
+            "trial_header": {
+              "story": "u30d7",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 60
+                }
+              ],
+              "sample": "Published Human TRIAL: Krill Oil’s Effect on Muscle STrength"
+            }
+          },
+          "cards": [
+            {
+              "header": {
+                "story": "u2e84",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2022 SenGupta"
+              },
+              "body": {
+                "story": "u2e9b",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 157
+                  },
+                  {
+                    "cap": 95
+                  },
+                  {
+                    "cap": 68
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 28
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 97
+                  },
+                  {
+                    "cap": 65
+                  },
+                  {
+                    "cap": 71
+                  },
+                  {
+                    "cap": 56
+                  },
+                  {
+                    "cap": 62
+                  },
+                  {
+                    "cap": 80
+                  },
+                  {
+                    "cap": 65
+                  },
+                  {
+                    "cap": 57
+                  }
+                ],
+                "sample": "Krill oil protects dopaminergic neurons from age-related  degeneration through temporal tr"
+              },
+              "doses": [
+                {
+                  "story": "u2eb3",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 24
+                    },
+                    {
+                      "cap": 24
+                    },
+                    {
+                      "cap": 24
+                    }
+                  ],
+                  "sample": "Untreated Group: / WT"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u3133",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2022 Alkhedhairi"
+              },
+              "body": {
+                "story": "u314b",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 123
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 95
+                  },
+                  {
+                    "cap": 101
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 56
+                  },
+                  {
+                    "cap": 41
+                  },
+                  {
+                    "cap": 73
+                  },
+                  {
+                    "cap": 58
+                  },
+                  {
+                    "cap": 49
+                  }
+                ],
+                "sample": "The effect of krill oil supplementation on skeletal muscle function and size in older adul"
+              },
+              "doses": [
+                {
+                  "story": "u31b2",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 52
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Krill oil (772 mg EPA, 384 mg DHA)"
+                },
+                {
+                  "story": "u31c9",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 54
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of vegetable oil  (<1 mg/g EPA and DHA)"
+                }
+              ]
+            }
+          ]
+        },
+        "s4": {
+          "topic_hint": "Page 8, benefit themes #4 (joint health: 3 cards) and #5 (metabolic/body composition: 1 card).",
+          "slots": {
+            "page_topic": {
+              "story": "u4752",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 27
+                }
+              ],
+              "sample": "Krill Oil Mobility Benefits"
+            },
+            "trial_header": {
+              "story": "u394f",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 60
+                }
+              ],
+              "sample": "3 Published Human Trials: Krill Oil’s Effect on Joint health"
+            },
+            "trial_header_2": {
+              "story": "u4bbd",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 74
+                }
+              ],
+              "sample": "published human trial: KRILL OIL ­­­Metabolic & Body Composition Benefits"
+            },
+            "body": {
+              "story": "u3514",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 388
+                },
+                {
+                  "cap": 584
+                },
+                {
+                  "cap": 242
+                }
+              ],
+              "sample": "Maintaining muscle mass and metabolic health is fundamental to extending healthspan, as bo"
+            },
+            "benefits": {
+              "story": "u4c7c",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 53
+                },
+                {
+                  "cap": 58
+                }
+              ],
+              "sample": "•\tHelp support a healthy metabolism  during weight loss / •\tHelp preserve muscle mass  and"
+            }
+          },
+          "cards": [
+            {
+              "header": {
+                "story": "u37e2",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2022 Stonehouse"
+              },
+              "body": {
+                "story": "u37f9",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 170
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 95
+                  },
+                  {
+                    "cap": 75
+                  },
+                  {
+                    "cap": 58
+                  }
+                ],
+                "sample": "Krill oil improved osteoarthritic knee pain in adults with mild to moderate knee osteoarth"
+              },
+              "doses": [
+                {
+                  "story": "u3c8f",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 52
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Krill oil  (600 mg EPA, 280 mg DHA)"
+                },
+                {
+                  "story": "u3cc4",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 26
+                    },
+                    {
+                      "cap": 24
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Vegetable / oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u385b",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2016 Suzuki"
+              },
+              "body": {
+                "story": "u3872",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 62
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 40
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 52
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 47
+                  },
+                  {
+                    "cap": 54
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 75
+                  },
+                  {
+                    "cap": 56
+                  },
+                  {
+                    "cap": 29
+                  },
+                  {
+                    "cap": 38
+                  }
+                ],
+                "sample": "Krill oil improves mild knee pain:  a randomized control trial / Published Randomized, dou"
+              },
+              "doses": [
+                {
+                  "story": "u388e",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 51
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of Krill oil (240 mg EPA, 110 mg DHA)"
+                },
+                {
+                  "story": "u38a6",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 31
+                    }
+                  ],
+                  "sample": "Dose: 2 g/day of  Safflower oil"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u38ed",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2007 DEUtsch"
+              },
+              "body": {
+                "story": "u3904",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 92
+                  },
+                  {
+                    "cap": 61
+                  },
+                  {
+                    "cap": 51
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 49
+                  }
+                ],
+                "sample": "Evaluation of the effect of Neptune krill oil in chronic inflammation and arthritic sympto"
+              },
+              "doses": [
+                {
+                  "story": "u3920",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 48
+                    }
+                  ],
+                  "sample": "Dose: 300 mg/day of Krill  oil (17% EPA,10% DHA)"
+                },
+                {
+                  "story": "u3937",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 56
+                    }
+                  ],
+                  "sample": "Dose: 300 mg/day of placebo (microcrystalline cellulose)"
+                }
+              ]
+            },
+            {
+              "header": {
+                "story": "u3cfe",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2025 Alblaji"
+              },
+              "body": {
+                "story": "u3d15",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 110
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 85
+                  },
+                  {
+                    "cap": 98
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 69
+                  },
+                  {
+                    "cap": 81
+                  }
+                ],
+                "sample": "Krill oil Supplementation during body weight loss attenuates the decline in fat-free mass "
+              },
+              "doses": [
+                {
+                  "story": "u3d2d",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 82
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of Krill oil (772 mg EPA, 384 mg DHA) on alternate days from fasting"
+                },
+                {
+                  "story": "u3d44",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 67
+                    }
+                  ],
+                  "sample": "Dose: 4 g/day of mixed vegetable oil on alternate days from fasting"
+                }
+              ]
+            }
+          ]
+        },
+        "s5": {
+          "topic_hint": "Pages 9 and 10, benefit theme #6 (eye health in the template) + a broader research outlook body. 1 trial card.",
+          "slots": {
+            "page_topic": {
+              "story": "u47bc",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "Krill Oil Eye Benefits"
+            },
+            "benefits_title": {
+              "story": "u31ef",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                }
+              ],
+              "sample": "KRILL OIL / Eye Benefits"
+            },
+            "benefits": {
+              "story": "u3206",
+              "mode": "lines",
+              "lines": [
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 24
+                },
+                {
+                  "cap": 29
+                },
+                {
+                  "cap": 33
+                },
+                {
+                  "cap": 37
+                }
+              ],
+              "sample": "•\tSupports eye hydration / •\tSupports eye health"
+            },
+            "body": {
+              "story": "u3220",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 197
+                },
+                {
+                  "cap": 448
+                },
+                {
+                  "cap": 674
+                },
+                {
+                  "cap": 513
+                },
+                {
+                  "cap": 848
+                },
+                {
+                  "cap": 791
+                }
+              ],
+              "sample": "Aging naturally comes with a decline of vision and can potentially lead to more harmful co"
+            },
+            "outlook_body": {
+              "story": "u349e",
+              "mode": "prose",
+              "lines": [
+                {
+                  "cap": 532
+                },
+                {
+                  "cap": 996
+                },
+                {
+                  "cap": 521
+                },
+                {
+                  "cap": 681
+                }
+              ],
+              "sample": "Moreover, based on human observational studies, omega-3 fatty acids have shown promise as "
+            },
+            "trial_header": {
+              "story": "u33a8",
+              "mode": "single",
+              "lines": [
+                {
+                  "cap": 55
+                }
+              ],
+              "sample": "Published Human Trial: Krill Oil’s Effect on eye Health"
+            }
+          },
+          "cards": [
+            {
+              "header": {
+                "story": "u33db",
+                "mode": "single",
+                "lines": [
+                  {
+                    "cap": 24
+                  }
+                ],
+                "sample": "2016 Deinema"
+              },
+              "body": {
+                "story": "u33f2",
+                "mode": "card",
+                "lines": [
+                  {
+                    "cap": 57
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 36
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 96
+                  },
+                  {
+                    "cap": 97
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 24
+                  },
+                  {
+                    "cap": 45
+                  },
+                  {
+                    "cap": 33
+                  },
+                  {
+                    "cap": 69
+                  },
+                  {
+                    "cap": 38
+                  },
+                  {
+                    "cap": 31
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 74
+                  }
+                ],
+                "sample": "A Randomized, Double-Masked, Placebo-Controlled Clinical / Trial of Two Forms of Omega-3 S"
+              },
+              "doses": [
+                {
+                  "story": "u340a",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 27
+                    },
+                    {
+                      "cap": 24
+                    }
+                  ],
+                  "sample": "Dose: 5 g/day of Krill oil / (945 mg EHA, 510 DHA)"
+                },
+                {
+                  "story": "u3421",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 48
+                    }
+                  ],
+                  "sample": "Dose: 5 g/day Fish Oil (1000 mg EPA, 500 mg DHA)"
+                },
+                {
+                  "story": "u3438",
+                  "mode": "single",
+                  "lines": [
+                    {
+                      "cap": 25
+                    }
+                  ],
+                  "sample": "Dose: 1.5 g/day Olive Oil"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "conclusion": {
+      "slots": {
+        "para_1": {
+          "story": "u2df6",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 425
+            }
+          ],
+          "sample": "Healthy aging begins at the cellular level, where changes in membranes, metabolism, inflam"
+        },
+        "para_2": {
+          "story": "u2e0d",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 357
+            },
+            {
+              "cap": 247
+            }
+          ],
+          "sample": "With its phospholipid-bound omega-3s and choline, krill oil  delivers essential nutrients "
+        }
+      }
+    },
+    "cta": {
+      "slots": {
+        "text": {
+          "story": "u1835",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 89
+            }
+          ],
+          "sample": "Contact us to get the unique power of krill  oil for your next healthy aging formulation!"
+        }
+      }
+    }
+  }
+}

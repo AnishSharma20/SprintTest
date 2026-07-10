@@ -20,7 +20,7 @@ const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean
   { id: "revervia", label: "Revervia", hint: "", available: false },
 ];
 
-type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper";
+type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper" | "whitepaper_idml";
 
 const CONTENT_TYPES: {
   id: ContentType;
@@ -34,6 +34,7 @@ const CONTENT_TYPES: {
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
   { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Clinical long-form", available: true },
+  { id: "whitepaper_idml", label: "Whitepaper (InDesign)", icon: "🎨", hint: "Designed .idml, on brand", available: true },
 ];
 
 // Content types whose result is a Markdown draft (shown in an editable panel + Word download),
@@ -423,7 +424,11 @@ export default function ContentGenerator() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = blob.type.includes("zip") ? "content-decks.zip" : "content-deck.pptx";
+        if (type === "whitepaper_idml") {
+          a.download = "superba-whitepaper-indesign.zip";
+        } else {
+          a.download = blob.type.includes("zip") ? "content-decks.zip" : "content-deck.pptx";
+        }
         a.click();
         URL.revokeObjectURL(url);
       }
@@ -431,7 +436,10 @@ export default function ContentGenerator() {
 
       // Record which approved claims this asset drew on (retraction traceability). Only
       // deck/blog/whitepaper are ever generated, and only when claims were fed in.
-      if (claimIds.length && (type === "deck" || type === "blog" || type === "whitepaper")) {
+      if (
+        claimIds.length &&
+        (type === "deck" || type === "blog" || type === "whitepaper" || type === "whitepaper_idml")
+      ) {
         const reviewer =
           typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
         void recordAssetClaims(type, claimIds, {

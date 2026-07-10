@@ -46,11 +46,27 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Blog generation** — `src/blog.py`: a science-based **blog draft** in the superbakrill.com/blog style
   (problem-hook → mechanism → clinical evidence → whitepaper CTA; cites the source studies). Shows editable in
   Tab 2; **Download Word (.docx)** via `/blog/docx` + `/api/blog-docx` (converts the *edited* draft).
-- **Whitepaper generation** — `src/whitepaper.py`: Claude emits a **structured plan** (title, hero_statement,
+- **Whitepaper generation (Word)** — `src/whitepaper.py`: Claude emits a **structured plan** (title, hero_statement,
   intro, trial_summaries[], sections[], key_benefits[], references[], cta) → editable Markdown draft + Word
   download. Recipe from AKBM's real InDesign whitepapers (hero statement → numbered "Human Clinical Trial
-  Summaries" → problem/mechanism → references; runs long). The plan is ALSO the object a future `fill_idml()`
-  will consume — see InDesign next-step below.
+  Summaries" → problem/mechanism → references; runs long).
+- **Whitepaper generation (InDesign .idml) — NEW 2026-07-10, shipped.** The direct analog of the pptx
+  template-fill: fills AKBM's REAL designed whitepaper (`assets/whitepaper_template.idml` = the Healthy Aging
+  whitepaper). `src/idml.py` `build_idml_schema()` emits a forced-tool schema from `config/idml_manifest.json`
+  (curated story→slot map with **per-line char budgets measured from the template**); Claude fills every slot
+  (cover, running topic, intro/mechanism page, 5 benefit sections each with benefit bullets + narrative + trial
+  **cards** [year+author, title, design, meta, findings, dose boxes], conclusion, CTA); `fill_idml()` rewrites
+  **only** the `<Content>` text of those frames (line-mapped, bullet markers + tabs preserved, capped-not-shrunk,
+  dash-stripped) and repacks the zip (mimetype first/stored). Everything not mapped (EFSA "Scientifically Proven
+  Benefits" grid, stats, diagram labels, trademark, legal) is **locked** and byte-identical. No headless IDML
+  renderer exists (InDesign Server is paid) so there is **no visual QA gate** — safety is deterministic (fixed
+  slot counts + measured budgets). The model **re-themes** the healthy-aging pages to whatever benefits the
+  SOURCE supports (verified live: sports-performance source → strength/omega-3 pages). Unused trial cards are
+  blanked; edition line + an **AI disclaimer** on the legal note are stamped in. Tooling: `scripts/inspect_idml.py`
+  (dump structure) + `scripts/build_idml_manifest.py` (regenerate the manifest; template-agnostic like the pptx
+  `scripts/`). Delivered as a **zip** (`.idml` + `.preview.md` + `OPEN_IN_INDESIGN.txt` for the designer to relink
+  Links/fonts). Frontend: Tab 2 content type **"Whitepaper (InDesign)"** (`whitepaper_idml`, binary/zip download
+  path like the deck). Service: `innholdstype=whitepaper_idml` job branch in `main.py`.
 - **No-dash brand rule** — no "-" in visible UI copy OR generated output. Enforced in the blog/whitepaper/deck
   prompts AND stripped deterministically (`blog.strip_dashes`, `pipeline._strip_dashes_plan`; leaves layout/icon
   enums, asset ids and citation DOIs intact).
@@ -130,12 +146,14 @@ is pre-filled + reviewed in a dedicated surface.
   `asset_claims`); RAG over full texts for narrative depth.
 
 **Open next steps (if wanted):**
-- **InDesign whitepapers (IDML)** — the whitepaper `plan` dict is already the single source of truth; the only
-  remaining piece is `fill_idml(plan, template)` using **`SimpleIDML`** to fill a real Superba **`.idml`**
-  template (the direct analog to the pptx template-fill). **BLOCKED only on the design team providing an
-  `.idml`** (an `.indd` exported to `.idml`) — the user will send it and flag immediately. The whitepaper PDFs
-  in Downloads are exported OUTPUT, not the editable source, so they served as the recipe only. Caveat: no free
-  headless IDML renderer (Adobe InDesign Server is paid), so an IDML deliverable won't get the deck's visual QA.
+- **InDesign whitepapers (IDML) — DONE 2026-07-10** (design team delivered the `.idml`s; see the "Whitepaper
+  generation (InDesign .idml)" section above). Built with a hand-written `<Content>`-only fill engine
+  (`src/idml.py`), NOT SimpleIDML — the fill must not touch styles/geometry, so rewriting text nodes in place is
+  safer than a library that re-serialises the package. Follow-ons if wanted: (a) support the **other 4 templates**
+  in the pack (Sport Performance, Sustainability, Fish Oil Supply, Brochure) — each just needs a curated story
+  map + `build_idml_manifest.py` run, then expose a template picker; (b) **image swaps** (replace `Links/` assets
+  by benefit theme) — currently images are inherited as-is; (c) a paid **InDesign Server** render for a visual QA
+  gate parity with the deck.
 - Wire the **product selector** to the backend (Lysoveta / Revervia templates + brand rules).
 - **Podcast** as the next Tab-2 type (Claude two-host script → TTS [ElevenLabs/Cartesia, or free Piper/Kokoro
   on-server] → FFmpeg); cheap and good. Video is a bigger cost/control decision (avatar vs generative).

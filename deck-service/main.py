@@ -33,6 +33,22 @@ app = FastAPI(title="Superba Deck Generator")
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
+_IDML_README = (
+    "Superba whitepaper — InDesign (.idml)\n"
+    "=====================================\n\n"
+    "This .idml is the AKBM whitepaper template with its text replaced by AI generated,\n"
+    "source grounded content. All design (fonts, gradients, images, the benefits grid and\n"
+    "legal text) is inherited from the original document and was NOT altered.\n\n"
+    "To use:\n"
+    "  1. Open the .idml in Adobe InDesign (File > Open). It becomes a normal .indd.\n"
+    "  2. Links/fonts: if prompted, point InDesign at the original package's Links and\n"
+    "     Document fonts folders (the same ones the design team supplied).\n"
+    "  3. Review EVERY page. This is an AI draft: check all claims, figures and study\n"
+    "     details against the source, and fix any text that runs long in a frame (overset,\n"
+    "     shown by a red + on the frame) before exporting to PDF.\n\n"
+    "The .preview.md file in this zip is the same content as plain text for quick review.\n"
+)
+
 
 def _read_summary(name: str, data: bytes) -> str:
     if name.lower().endswith(".docx"):
@@ -71,13 +87,29 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                              f"(Superba, Aker BioMarine) and study citations intact.\n\n"
                              + (instruksjoner or ""))
 
-        if innholdstype in ("blog", "whitepaper"):
-            # One long-form draft from ALL sources combined (files + picked study summaries).
+        if innholdstype in ("blog", "whitepaper", "whitepaper_idml"):
+            # One long-form asset from ALL sources combined (files + picked study summaries).
             parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
             source = "\n\n".join(parts)
             if not source:
                 raise ValueError("No text found in the provided files/studies.")
             base = (files[0][0] if files else innholdstype).rsplit(".", 1)[0] or innholdstype
+
+            if innholdstype == "whitepaper_idml":
+                # Fill the real Superba InDesign template -> a designed .idml the design team opens.
+                b = src.generate_whitepaper_idml(
+                    client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
+                    on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+                zbuf = io.BytesIO()
+                with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
+                    z.writestr(b["filename"], b["idml"])
+                    z.writestr(base + ".preview.md", b["markdown"])
+                    z.writestr("OPEN_IN_INDESIGN.txt", _IDML_README)
+                JOBS[job_id].update(status="done", progress=100, step="Done",
+                                    result=zbuf.getvalue(), media_type="application/zip",
+                                    filename=base + "-indesign.zip")
+                return
+
             fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog
             b = fn(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                    on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))

@@ -84,7 +84,7 @@ export function buildClaimsSourceFile(
 
 /** Record which approved claims a generated asset drew on (best-effort; no-op if unconfigured). */
 export async function recordAssetClaims(
-  assetType: "deck" | "blog" | "whitepaper",
+  assetType: "deck" | "blog" | "whitepaper" | "whitepaper_idml",
   claimIds: string[],
   opts: { title?: string; createdBy?: string } = {}
 ): Promise<void> {

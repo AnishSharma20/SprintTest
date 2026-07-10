@@ -1160,13 +1160,14 @@ def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
 
 
 def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
-    """Case study / proof point: study eyebrow + three compact panels (Design, Result, Takeaway), each
-    with an icon chip and a red accent on Result. Body text is bright for contrast on the teal panel."""
+    """Case study / proof point: study eyebrow + three compact panels (Design, Result, Takeaway), each with
+    an icon chip. Each panel has a top header band in its own shade of the same teal family (no red)."""
     eyebrow = "CASE STUDY" + (f"   ·   {spec['study']}" if spec.get("study") else "")
     slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=eyebrow)
     blocks = [("DESIGN", spec.get("design", ""), "research"),
               ("RESULT", spec.get("result", ""), "proven"),
               ("TAKEAWAY", spec.get("takeaway", ""), "molecule")]
+    hdr = [_TEAL2, RGBColor(0x4A, 0x93, 0x9C), RGBColor(0x6C, 0xB2, 0xB6)]   # same family, no contrast jump
     pw = (_CONTENT_W - 2 * _GUTTER) / 3            # three equal panels, one standard gutter
     panh = 3.4
     top = _BODY_TOP + (_BODY_H - panh) / 2 + 0.1   # compact panels, vertically centred in the body zone
@@ -1175,9 +1176,9 @@ def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
         x = _MARGIN + i * (pw + _GUTTER)
         pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(panh))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
-        # Every panel gets the SAME subtle top accent (associated light teal) — never single one out.
-        acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.07))
-        acc.fill.solid(); acc.fill.fore_color.rgb = _LTEAL; acc.line.fill.background(); acc.shadow.inherit = False
+        # Each panel's top header band is a different shade of the SAME teal family (never red, no big jump).
+        acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.12))
+        acc.fill.solid(); acc.fill.fore_color.rgb = hdr[i % 3]; acc.line.fill.background(); acc.shadow.inherit = False
         _icon_disc(slide, x + _PAD + dd / 2, top + 0.34 + dd / 2, dd, icon_path=_generic_icon_path(ic))
         _place_text(slide, x + _PAD + dd + 0.18, top + 0.34, pw - 2 * _PAD - dd - 0.18, dd, lab,
                     _SZ_SMALL, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
@@ -1189,13 +1190,11 @@ def _fill_closing(prs, spec: dict, dark_index: int) -> None:
     """Closing / contact: a closing statement, optional tagline, and contact details."""
     slide = _synth_slide(prs, dark_index)
     cy = 2.6
-    bar = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(cy), Inches(0.16), Inches(1.5))
-    bar.fill.solid(); bar.fill.fore_color.rgb = _RED; bar.line.fill.background(); bar.shadow.inherit = False
-    _place_text(slide, _MARGIN + 0.45, cy, _CONTENT_W - 0.5, 1.6, spec.get("title", ""), _SZ_TITLE, _WHITE, bold=True, font=_HEAD)
+    _place_text(slide, _MARGIN, cy, _CONTENT_W, 1.6, spec.get("title", ""), _SZ_TITLE, _WHITE, bold=True, font=_HEAD)
     if spec.get("tagline"):
-        _place_text(slide, _MARGIN + 0.45, cy + 1.6, _CONTENT_W - 0.5, 0.8, spec["tagline"], _SZ_BODY, _LTEAL)
+        _place_text(slide, _MARGIN, cy + 1.6, _CONTENT_W, 0.8, spec["tagline"], _SZ_BODY, _LTEAL)
     if spec.get("contact"):
-        _place_text(slide, _MARGIN + 0.45, _BODY_BOTTOM - 0.5, _CONTENT_W - 0.5, 0.5, spec["contact"], _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
+        _place_text(slide, _MARGIN, _BODY_BOTTOM - 0.5, _CONTENT_W, 0.5, spec["contact"], _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
 
 
 def _slide_has_white_bg(slide) -> bool:

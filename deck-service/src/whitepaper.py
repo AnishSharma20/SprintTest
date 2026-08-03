@@ -219,6 +219,17 @@ randomized, double blind, placebo controlled trial"); meta (location / time fram
 findings (key results WITH the real numbers, %s, p-values AS STATED in the source); doses (one line
 per study arm, e.g. "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)").
 
+FRAME DISCIPLINE (the frames are physically small and CANNOT grow):
+- Benefit page titles are TINY: the second line must be ONE or TWO short words naming the benefit
+  (like the template's "Heart", "Joints", "Eye", "Muscle"), never a long phrase. Prefer "Immunity"
+  over "Immune and Inflammatory Support".
+- running_topic and each sub_header: 2 to 3 words maximum.
+- cta: ONE short sentence.
+- Do NOT start any bullet, benefit or finding with a dash, asterisk or bullet character; the design
+  adds its own bullet. Write the bare text.
+- references: emit a numbered reference for every source you cite inline; number them to match the
+  citation markers in your body text so the two agree.
+
 USING THE SCIENCE (critical):
 - Ground everything ONLY in the source material. Name study types, sample sizes and the real figures.
 - {CLAIM_RULES}

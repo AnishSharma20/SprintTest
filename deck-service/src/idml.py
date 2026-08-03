@@ -134,6 +134,15 @@ def _strip_dashes(s: str) -> str:
     return strip_dashes(s)
 
 
+_LEAD_MARKER_RE = re.compile(r"^\s*[•·▪‣\-\*–—]+\s+")
+
+
+def _strip_lead_marker(s: str) -> str:
+    """Drop a leading bullet/dash the model may have added — the template frames already carry
+    their own bullet marker, so a model-supplied one renders as a doubled bullet."""
+    return _LEAD_MARKER_RE.sub("", s or "")
+
+
 def _fill_story_texts(xml: bytes, texts: list[str], caps: list[int]) -> bytes:
     """Map `texts` onto the story's payload lines 1:1; blank leftover lines; merge overflow
     items into the last text so nothing is silently dropped."""
@@ -147,7 +156,7 @@ def _fill_story_texts(xml: bytes, texts: list[str], caps: list[int]) -> bytes:
     for i, ln in enumerate(lines):
         if i < len(texts):
             cap = caps[i] if i < len(caps) else (caps[-1] if caps else 400)
-            set_line(ln, truncate(_strip_dashes(texts[i] or ""), cap))
+            set_line(ln, truncate(_strip_lead_marker(_strip_dashes(texts[i] or "")), cap))
         else:
             set_line(ln, "")
     return _serialize_story(root)
@@ -224,6 +233,19 @@ def fill_idml(plan: dict, template_path: Path | None = None) -> bytes:
             n = len(slot.get("lines") or []) or 1
             fill(slot["story"], [""] * n, [10] * n)
 
+    # References list: payload line 0 is the "References" heading (kept); fill the entries from the
+    # plan's references[], blank the unused tail so no stale template citations survive.
+    ref = manifest.get("references") or {}
+    if ref.get("story"):
+        name = member(ref["story"])
+        root = _parse_story(changed.get(name) or zin.read(name))
+        lines = payload_lines(root)
+        refs = [str(r) for r in (plan.get("references") or []) if str(r).strip()]
+        cap = ref.get("cap", 220)
+        for i, ln in enumerate(lines[1:]):   # keep lines[0] = "References" heading
+            set_line(ln, truncate(_strip_dashes(refs[i]), cap) if i < len(refs) else "")
+        changed[name] = _serialize_story(root)
+
     # Deterministic extras: edition line + the AI disclaimer on the back page.
     year = datetime.date.today().year
     for sid in manifest.get("edition_stories") or []:
@@ -262,10 +284,12 @@ def _slot_schema(slot: dict, what: str) -> dict:
     if sample:
         desc += f' Role example from the current document (NEVER copy it): "{sample}"'
     if slot["mode"] == "single":
-        return {"type": "string", "maxLength": max(caps[0], 10), "description": desc}
+        return {"type": "string", "maxLength": max(caps[0], 8), "description": desc}
+    # Item cap = the MEASURED per-line budget (no inflated floor). These frames are physically
+    # sized, so an over-generous maxLength let the planner overrun narrow title/label frames.
     return {"type": "array", "minItems": 1, "maxItems": len(caps),
-            "items": {"type": "string", "maxLength": max(max(caps), 40)},
-            "description": desc + f" Exactly up to {len(caps)} lines/paragraphs."}
+            "items": {"type": "string", "maxLength": max(max(caps), 12)},
+            "description": desc + f" Exactly up to {len(caps)} lines/paragraphs; keep each within its budget."}
 
 
 def _card_schema(cards: list[dict]) -> dict:
@@ -323,7 +347,9 @@ def build_idml_schema() -> dict:
         sections_props[skey] = sec
         sections_props[skey]["description"] = section.get("topic_hint", "")
 
-    return {
+    ref = m.get("references") or {}
+    ref_slots = ref.get("slots", 40)
+    schema = {
         "type": "object", "additionalProperties": False,
         "required": ["cover", "running_topic", "intro", "sections", "conclusion", "cta"],
         "properties": {
@@ -331,14 +357,27 @@ def build_idml_schema() -> dict:
                                                "subtitle": "Short evocative subtitle.",
                                                "hero": "One sentence: what this whitepaper shows."}),
             "running_topic": {"type": "string", "maxLength": g["running_topic"]["cap"],
-                              "description": 'Running page header naming the research area, e.g. "Healthy Aging Research".'},
-            "intro": group_schema(g["intro"], {}),
+                              "description": 'Running page header naming the research area, e.g. "Healthy Aging Research". Keep it SHORT (2 to 3 words).'},
+            "intro": group_schema(g["intro"], {
+                "title": "Heading of the mechanism/absorption page.",
+                "sub_header": "Very short running sub-header for this page (2 to 3 words, e.g. \"Krill Oil Phospholipids\").",
+                "lead": "Opening paragraph framing the problem.",
+                "body_1": "Main mechanism narrative.", "body_2": "Secondary narrative / absorption."}),
             "sections": {"type": "object", "additionalProperties": False,
                          "required": list(sections_props), "properties": sections_props},
             "conclusion": group_schema(g["conclusion"], {}),
-            "cta": group_schema(g["cta"], {"text": "Closing call to action to contact Aker BioMarine."}),
+            "cta": group_schema(g["cta"], {"text": "Closing call to action to contact Aker BioMarine. ONE short sentence."}),
+            "references": {
+                "type": "array", "minItems": 0, "maxItems": ref_slots,
+                "items": {"type": "string", "maxLength": max(ref.get("cap", 220), 60)},
+                "description": ("Numbered reference list for the back page, one entry per string in "
+                                "citation order (author, year, title, journal). Number them to match the "
+                                "inline citation markers you use in the body text. Emit only the references "
+                                "you actually cite; do NOT invent sources."),
+            },
         },
     }
+    return schema
 
 
 # ---------------------------------------------------------------------------
@@ -394,4 +433,8 @@ def idml_plan_to_markdown(plan: dict) -> str:
     if cta:
         parts.append("## Next steps")
         parts.append(cta)
+    refs = [str(r) for r in (plan.get("references") or []) if str(r).strip()]
+    if refs:
+        parts.append("## References")
+        parts += [f"{i}. {r}" for i, r in enumerate(refs, 1)]
     return strip_dashes("\n\n".join(p for p in parts if p and str(p).strip()))

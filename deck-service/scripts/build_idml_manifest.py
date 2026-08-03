@@ -40,12 +40,14 @@ OUT = ROOT / "config" / "idml_manifest.json"
 
 COVER = {"title": ("u41a4", "single"), "subtitle": ("u41bb", "single"), "hero": ("u418d", "single")}
 
-RUNNING_TOPIC = ["u4616", "u4660", "u473a", "u47a5"]   # "Healthy Aging Research" corners
-EDITION = ["u4b59", "u1eb8"]                            # "White Paper – 2025" corners
+RUNNING_TOPIC = ["u4616", "u4660", "u473a", "u47a5", "u2db"]   # every "Healthy Aging Research" corner
+EDITION = ["u4b59", "u1eb8", "u309"]                   # every "White Paper – 2025" corner
 DISCLAIMER = "u1809"                                    # legal note (AI note is prepended)
+REFERENCES = "u65e"                                     # back page numbered reference list (66 lines)
 
 INTRO = {  # page 2: the mechanism/absorption story
     "title": ("u3ab", "single"),
+    "sub_header": ("u2f2", "single"),   # running sub-header on p2 ("Krill Oil Phospholipids")
     "lead": ("u3c2", "prose"),
     "body_1": ("u3d9", "prose"),
     "body_2": ("u57c", "prose"),
@@ -142,11 +144,13 @@ def _story_root(z: zipfile.ZipFile, sid: str) -> ET.Element:
 
 
 def _cap(n: int, mode: str) -> int:
-    """Per-line budget from the measured length: a little headroom for prose, floors for
-    short labels so the planner is not squeezed into 10-char titles."""
+    """Per-line budget from the measured length. Prose gets headroom; labels/titles stay CLOSE to
+    the measured width (a small +2 tolerance, floor 8) because those frames are physically narrow —
+    a generous floor let the planner write a phrase that overflows a one-word frame (e.g. a benefit
+    title sized for "Heart" cannot hold "Immune & Inflammatory")."""
     if mode == "prose":
         return max(int(n * 1.1) + 10, 60)
-    return max(n, 24)
+    return max(n + 2, 8)
 
 
 def _slot(z: zipfile.ZipFile, sid: str, mode: str) -> dict:
@@ -181,11 +185,17 @@ def main() -> None:
     rt_lines = payload_lines(rt_root)
     rt_cap = max((len(payload_text(rt_lines[0])) + 6) if rt_lines else 28, 28)
 
+    # References: payload line 0 is the "References" heading (kept); the rest are numbered entries
+    # the planner refills. Record how many entry lines exist so we blank the unused tail cleanly.
+    ref_lines = payload_lines(_story_root(z, REFERENCES))
+    references = {"story": REFERENCES, "slots": max(len(ref_lines) - 1, 1), "cap": 220}
+
     manifest = {
         "template": "assets/whitepaper_template.idml",
         "source_document": "Superba_Healthy_Aging_Whitepaper_07Dec25 (AKBM design team, 2026-07)",
         "edition_stories": EDITION,
         "disclaimer_story": DISCLAIMER,
+        "references": references,
         "groups": {
             "cover": _group(z, COVER),
             "running_topic": {"stories": RUNNING_TOPIC, "cap": rt_cap,

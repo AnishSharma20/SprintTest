@@ -3,9 +3,15 @@
   "source_document": "Superba_Healthy_Aging_Whitepaper_07Dec25 (AKBM design team, 2026-07)",
   "edition_stories": [
     "u4b59",
-    "u1eb8"
+    "u1eb8",
+    "u309"
   ],
   "disclaimer_story": "u1809",
+  "references": {
+    "story": "u65e",
+    "slots": 66,
+    "cap": 220
+  },
   "groups": {
     "cover": {
       "slots": {
@@ -14,7 +20,7 @@
           "mode": "single",
           "lines": [
             {
-              "cap": 56
+              "cap": 58
             }
           ],
           "sample": "Supporting Healthspan at the Cellular and Physical level"
@@ -24,7 +30,7 @@
           "mode": "single",
           "lines": [
             {
-              "cap": 38
+              "cap": 40
             }
           ],
           "sample": "Living better, for as long as possible"
@@ -34,7 +40,7 @@
           "mode": "single",
           "lines": [
             {
-              "cap": 163
+              "cap": 165
             }
           ],
           "sample": "This White Paper discovers how Superba Krill is clinically researched to support  key heal"
@@ -46,7 +52,8 @@
         "u4616",
         "u4660",
         "u473a",
-        "u47a5"
+        "u47a5",
+        "u2db"
       ],
       "cap": 28,
       "sample": "Healthy Aging Research"
@@ -58,10 +65,20 @@
           "mode": "single",
           "lines": [
             {
-              "cap": 64
+              "cap": 66
             }
           ],
           "sample": "Krill Oil Phospholipids:  Cellular Nutrition in its Optimal Form"
+        },
+        "sub_header": {
+          "story": "u2f2",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 25
+            }
+          ],
+          "sample": "Krill Oil Phospholipids"
         },
         "lead": {
           "story": "u3c2",
@@ -114,10 +131,10 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 11
                 },
                 {
-                  "cap": 24
+                  "cap": 16
                 }
               ],
               "sample": "KRILL OIL / Heart Benefits"
@@ -127,16 +144,16 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 50
+                  "cap": 52
                 },
                 {
-                  "cap": 35
+                  "cap": 37
                 },
                 {
-                  "cap": 26
+                  "cap": 28
                 },
                 {
-                  "cap": 24
+                  "cap": 17
                 }
               ],
               "sample": "•\tSupports a healthy heart and cardiovascular system / •\tLower triglycerides levels in blo"
@@ -171,7 +188,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 60
+                  "cap": 62
                 }
               ],
               "sample": "8 Published Human Trials: Krill Oil’s Effect on Heart Health"
@@ -181,31 +198,31 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 19
                 },
                 {
-                  "cap": 24
+                  "cap": 8
                 },
                 {
-                  "cap": 24
+                  "cap": 17
                 },
                 {
-                  "cap": 24
+                  "cap": 8
                 },
                 {
-                  "cap": 24
+                  "cap": 16
                 },
                 {
-                  "cap": 24
+                  "cap": 8
                 },
                 {
-                  "cap": 34
+                  "cap": 36
                 },
                 {
-                  "cap": 63
+                  "cap": 65
                 },
                 {
-                  "cap": 88
+                  "cap": 90
                 }
               ],
               "sample": "Krill Oil Group B / n=30"
@@ -218,7 +235,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 18
                   }
                 ],
                 "sample": "2022 MOZAFFARIAN"
@@ -228,49 +245,49 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 124
+                    "cap": 126
+                  },
+                  {
+                    "cap": 38
+                  },
+                  {
+                    "cap": 26
+                  },
+                  {
+                    "cap": 46
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 17
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 15
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 73
+                  },
+                  {
+                    "cap": 73
                   },
                   {
                     "cap": 36
                   },
                   {
-                    "cap": 24
+                    "cap": 33
                   },
                   {
-                    "cap": 44
-                  },
-                  {
-                    "cap": 51
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 46
-                  },
-                  {
-                    "cap": 71
-                  },
-                  {
-                    "cap": 71
-                  },
-                  {
-                    "cap": 34
-                  },
-                  {
-                    "cap": 31
-                  },
-                  {
-                    "cap": 46
+                    "cap": 48
                   }
                 ],
                 "sample": "Effectiveness of a Novel Omega-3 Krill Oil Agent in Patients with Severe Hypertrigly- ceri"
@@ -281,7 +298,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 52
+                      "cap": 54
                     }
                   ],
                   "sample": "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
@@ -291,7 +308,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 28
+                      "cap": 30
                     }
                   ],
                   "sample": "Dose: 4 g/day of  Cornstarch"
@@ -304,7 +321,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 15
                   }
                 ],
                 "sample": "2018 RUNDBLAD"
@@ -314,46 +331,46 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 106
+                    "cap": 108
                   },
                   {
-                    "cap": 47
+                    "cap": 49
                   },
                   {
-                    "cap": 50
+                    "cap": 52
                   },
                   {
-                    "cap": 54
+                    "cap": 56
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 12
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 35
+                    "cap": 37
                   },
                   {
-                    "cap": 60
+                    "cap": 62
                   },
                   {
-                    "cap": 46
+                    "cap": 48
                   },
                   {
-                    "cap": 50
+                    "cap": 52
                   }
                 ],
                 "sample": "Effects of krill oil and lean and fatty fish on cardiovascular risk markers: a randomized "
@@ -364,7 +381,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 52
+                      "cap": 54
                     }
                   ],
                   "sample": "Dose: 4 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
@@ -374,7 +391,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 49
+                      "cap": 51
                     }
                   ],
                   "sample": "Dose: 3 weekly fish meals (246 g lean/fatty fish)"
@@ -384,7 +401,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 41
+                      "cap": 43
                     }
                   ],
                   "sample": "Dose: 4 g/day of High-oleic sunflower oil"
@@ -397,7 +414,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 13
                   }
                 ],
                 "sample": "2016 CICero"
@@ -407,43 +424,43 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 124
+                    "cap": 126
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 24
+                    "cap": 18
                   },
                   {
-                    "cap": 59
+                    "cap": 61
                   },
                   {
-                    "cap": 54
+                    "cap": 56
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 16
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 35
+                    "cap": 37
                   },
                   {
-                    "cap": 64
+                    "cap": 66
                   },
                   {
-                    "cap": 48
+                    "cap": 50
                   },
                   {
-                    "cap": 60
+                    "cap": 62
                   }
                 ],
                 "sample": "Lipid-lowering and anti-inflammatory effects of omega 3 ethyl esters and krill oil: a rand"
@@ -454,7 +471,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 51
+                      "cap": 53
                     }
                   ],
                   "sample": "Dose: 1 g/day of Krill oil (150 mg EPA, 90 mg DHA)"
@@ -464,7 +481,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 51
+                      "cap": 53
                     }
                   ],
                   "sample": "Dose: 2 g/day of Fish oil EE (85%, .9:1.5 EPA/DHA )"
@@ -477,7 +494,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 15
                   }
                 ],
                 "sample": "2015 Lobraico"
@@ -487,40 +504,40 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 153
+                    "cap": 155
                   },
                   {
-                    "cap": 72
+                    "cap": 74
                   },
                   {
-                    "cap": 60
+                    "cap": 62
                   },
                   {
-                    "cap": 54
+                    "cap": 56
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 46
+                    "cap": 48
                   },
                   {
-                    "cap": 54
+                    "cap": 56
+                  },
+                  {
+                    "cap": 36
                   },
                   {
                     "cap": 34
-                  },
-                  {
-                    "cap": 32
                   }
                 ],
                 "sample": "Effects of krill oil on endothelial function  and other cardiovascular risk factors in  pa"
@@ -531,7 +548,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 51
+                      "cap": 53
                     }
                   ],
                   "sample": "Dose: 1 g/day of Krill oil (885 mg EPA, 354 mg DHA)"
@@ -541,7 +558,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 26
+                      "cap": 28
                     }
                   ],
                   "sample": "Dose: 1 g/day of Olive oil"
@@ -554,7 +571,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2013 Berge K"
@@ -564,37 +581,37 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 166
+                    "cap": 168
                   },
                   {
-                    "cap": 61
+                    "cap": 63
                   },
                   {
-                    "cap": 60
+                    "cap": 62
                   },
                   {
-                    "cap": 52
+                    "cap": 54
                   },
                   {
-                    "cap": 24
+                    "cap": 20
                   },
                   {
-                    "cap": 24
+                    "cap": 11
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 35
+                    "cap": 37
                   },
                   {
-                    "cap": 75
+                    "cap": 77
                   },
                   {
-                    "cap": 76
+                    "cap": 78
                   }
                 ],
                 "sample": "Krill oil supplementation lowers serum triglycerides without increasing low-density lipopr"
@@ -605,7 +622,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 61
+                      "cap": 63
                     }
                   ],
                   "sample": "Dose: 5, 1, 2 or 4 g/day Krill  oil (100 mg EPA/DHA per.5 g)"
@@ -615,7 +632,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 26
+                      "cap": 28
                     }
                   ],
                   "sample": "Dose: 4 g/day of Olive oil"
@@ -628,7 +645,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 12
                   }
                 ],
                 "sample": "2011 Banni"
@@ -638,46 +655,46 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 34
+                    "cap": 36
                   },
                   {
-                    "cap": 29
+                    "cap": 31
                   },
                   {
-                    "cap": 24
+                    "cap": 26
                   },
                   {
-                    "cap": 47
+                    "cap": 49
                   },
                   {
-                    "cap": 61
+                    "cap": 63
                   },
                   {
-                    "cap": 53
+                    "cap": 55
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 16
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 35
+                    "cap": 37
                   },
                   {
-                    "cap": 64
+                    "cap": 66
                   }
                 ],
                 "sample": "Krill oil significantly decreases / 2-arachidonoylglycerol plasma"
@@ -688,7 +705,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 47
+                      "cap": 49
                     }
                   ],
                   "sample": "Dose: 2 g/day of Krill oil (309 mg 2:1 EPA/DHA)"
@@ -698,7 +715,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 50
+                      "cap": 52
                     }
                   ],
                   "sample": "Dose: 2 g/day of Menhaden oil (390 mg 1:1 EPA/DHA)"
@@ -708,7 +725,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 26
+                      "cap": 28
                     }
                   ],
                   "sample": "Dose: 2 g/day of Olive oil"
@@ -721,7 +738,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2015 Berge R"
@@ -731,22 +748,22 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 184
+                    "cap": 186
                   },
                   {
-                    "cap": 72
+                    "cap": 74
                   },
                   {
-                    "cap": 56
+                    "cap": 58
                   },
                   {
-                    "cap": 31
+                    "cap": 33
                   },
                   {
-                    "cap": 35
+                    "cap": 37
                   },
                   {
-                    "cap": 96
+                    "cap": 98
                   }
                 ],
                 "sample": "Krill oil reduces plasma triacylglycerol level  and improves related lipoprotein particle "
@@ -759,7 +776,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 12
                   }
                 ],
                 "sample": "2004 Bunea"
@@ -769,25 +786,25 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 89
+                    "cap": 91
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 24
+                    "cap": 26
                   },
                   {
-                    "cap": 51
+                    "cap": 53
                   },
                   {
-                    "cap": 54
+                    "cap": 56
                   },
                   {
-                    "cap": 24
+                    "cap": 19
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   }
                 ],
                 "sample": "Evaluation of the effects of Neptune  Krill Oil on the clinical course  of hyperlipidemia "
@@ -798,7 +815,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 40
+                      "cap": 42
                     }
                   ],
                   "sample": "Dose: 2-3g/day of Krill oil based on BMI"
@@ -808,7 +825,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 30
+                      "cap": 32
                     }
                   ],
                   "sample": "Dose: 1-1.5 g/day of Krill oil"
@@ -818,7 +835,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 40
+                      "cap": 42
                     }
                   ],
                   "sample": "Dose: 3 g/day Microcrystalline cellulose"
@@ -828,7 +845,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 47
+                      "cap": 49
                     }
                   ],
                   "sample": "Dose: 3 g/day Fish Oil (180 mg EPA, 120 mg DHA)"
@@ -845,7 +862,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 28
+                  "cap": 30
                 }
               ],
               "sample": "Krill Oil Cognitive Benefits"
@@ -855,10 +872,10 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 11
                 },
                 {
-                  "cap": 24
+                  "cap": 20
                 }
               ],
               "sample": "KRILL OIL / Cognitive Benefits"
@@ -868,13 +885,13 @@
               "mode": "lines",
               "lines": [
                 {
+                  "cap": 45
+                },
+                {
                   "cap": 43
                 },
                 {
-                  "cap": 41
-                },
-                {
-                  "cap": 24
+                  "cap": 23
                 }
               ],
               "sample": "•\tActivates cognitive function in the elderly / •\tSupports memory and brain task managemen"
@@ -928,7 +945,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 61
+                  "cap": 63
                 }
               ],
               "sample": "Published Human Trial: Krill Oil’s Effect on Cognitive Health"
@@ -941,7 +958,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2013 Konagai"
@@ -951,49 +968,49 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 170
+                    "cap": 172
                   },
                   {
-                    "cap": 42
+                    "cap": 44
                   },
                   {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 96
+                    "cap": 26
                   },
                   {
                     "cap": 98
                   },
                   {
-                    "cap": 24
+                    "cap": 100
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 16
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 35
+                    "cap": 8
                   },
                   {
-                    "cap": 148
+                    "cap": 37
                   },
                   {
-                    "cap": 134
+                    "cap": 150
                   },
                   {
-                    "cap": 122
+                    "cap": 136
+                  },
+                  {
+                    "cap": 124
                   }
                 ],
                 "sample": "Effects of krill oil containing n-3 polyunsaturated fatty acids  in phospholipid form on h"
@@ -1004,10 +1021,10 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 26
+                      "cap": 28
                     },
                     {
-                      "cap": 24
+                      "cap": 25
                     }
                   ],
                   "sample": "Dose: 2 g/day of Krill oil / (193 mg EPA, 92 mg DHA)"
@@ -1017,7 +1034,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 53
+                      "cap": 55
                     }
                   ],
                   "sample": "Dose: 2 g/day of Sardine oil (491 mg EPA, 251 mg DHA)"
@@ -1027,7 +1044,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 42
+                      "cap": 44
                     }
                   ],
                   "sample": "Dose: 2 g/day of Medium Chain Triglyceride"
@@ -1044,7 +1061,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 27
+                  "cap": 29
                 }
               ],
               "sample": "Krill Oil Mobility Benefits"
@@ -1054,10 +1071,10 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 11
                 },
                 {
-                  "cap": 24
+                  "cap": 19
                 }
               ],
               "sample": "KRILL OIL / Mobility Benefits"
@@ -1067,19 +1084,19 @@
               "mode": "lines",
               "lines": [
                 {
+                  "cap": 15
+                },
+                {
+                  "cap": 33
+                },
+                {
+                  "cap": 29
+                },
+                {
                   "cap": 24
                 },
                 {
-                  "cap": 31
-                },
-                {
-                  "cap": 27
-                },
-                {
-                  "cap": 24
-                },
-                {
-                  "cap": 57
+                  "cap": 59
                 }
               ],
               "sample": "MUSCLE Health / •\tSupports muscle mass & function"
@@ -1089,28 +1106,28 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 14
                 },
                 {
-                  "cap": 72
+                  "cap": 74
+                },
+                {
+                  "cap": 50
                 },
                 {
                   "cap": 48
                 },
                 {
-                  "cap": 46
+                  "cap": 42
                 },
                 {
-                  "cap": 40
+                  "cap": 18
                 },
                 {
-                  "cap": 24
+                  "cap": 23
                 },
                 {
-                  "cap": 24
-                },
-                {
-                  "cap": 25
+                  "cap": 27
                 }
               ],
               "sample": "Joint Health / •\tSupports joint comfort, mobility  and flexibility in as little as 7 days"
@@ -1164,7 +1181,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 93
+                  "cap": 95
                 }
               ],
               "sample": "Published in vivo and in vitro TRIAL:  Krill Oil’s Effect on Cognitive Health & Healthy ag"
@@ -1187,7 +1204,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 60
+                  "cap": 62
                 }
               ],
               "sample": "Published Human TRIAL: Krill Oil’s Effect on Muscle STrength"
@@ -1200,7 +1217,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 15
                   }
                 ],
                 "sample": "2022 SenGupta"
@@ -1210,58 +1227,58 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 157
-                  },
-                  {
-                    "cap": 95
-                  },
-                  {
-                    "cap": 68
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 28
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 48
+                    "cap": 159
                   },
                   {
                     "cap": 97
                   },
                   {
-                    "cap": 65
+                    "cap": 70
                   },
                   {
-                    "cap": 71
+                    "cap": 13
                   },
                   {
-                    "cap": 56
+                    "cap": 26
                   },
                   {
-                    "cap": 62
+                    "cap": 30
                   },
                   {
-                    "cap": 80
+                    "cap": 18
                   },
                   {
-                    "cap": 65
+                    "cap": 16
                   },
                   {
-                    "cap": 57
+                    "cap": 8
+                  },
+                  {
+                    "cap": 50
+                  },
+                  {
+                    "cap": 99
+                  },
+                  {
+                    "cap": 67
+                  },
+                  {
+                    "cap": 73
+                  },
+                  {
+                    "cap": 58
+                  },
+                  {
+                    "cap": 64
+                  },
+                  {
+                    "cap": 82
+                  },
+                  {
+                    "cap": 67
+                  },
+                  {
+                    "cap": 59
                   }
                 ],
                 "sample": "Krill oil protects dopaminergic neurons from age-related  degeneration through temporal tr"
@@ -1272,13 +1289,13 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 24
+                      "cap": 18
                     },
                     {
-                      "cap": 24
+                      "cap": 8
                     },
                     {
-                      "cap": 24
+                      "cap": 8
                     }
                   ],
                   "sample": "Untreated Group: / WT"
@@ -1291,7 +1308,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 18
                   }
                 ],
                 "sample": "2022 Alkhedhairi"
@@ -1301,46 +1318,46 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 123
+                    "cap": 125
                   },
                   {
-                    "cap": 60
+                    "cap": 62
                   },
                   {
-                    "cap": 95
+                    "cap": 97
                   },
                   {
-                    "cap": 101
+                    "cap": 103
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 46
-                  },
-                  {
-                    "cap": 56
-                  },
-                  {
-                    "cap": 41
-                  },
-                  {
-                    "cap": 73
+                    "cap": 48
                   },
                   {
                     "cap": 58
                   },
                   {
-                    "cap": 49
+                    "cap": 43
+                  },
+                  {
+                    "cap": 75
+                  },
+                  {
+                    "cap": 60
+                  },
+                  {
+                    "cap": 51
                   }
                 ],
                 "sample": "The effect of krill oil supplementation on skeletal muscle function and size in older adul"
@@ -1351,7 +1368,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 52
+                      "cap": 54
                     }
                   ],
                   "sample": "Dose: 4 g/day of Krill oil (772 mg EPA, 384 mg DHA)"
@@ -1361,7 +1378,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 54
+                      "cap": 56
                     }
                   ],
                   "sample": "Dose: 4 g/day of vegetable oil  (<1 mg/g EPA and DHA)"
@@ -1378,7 +1395,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 27
+                  "cap": 29
                 }
               ],
               "sample": "Krill Oil Mobility Benefits"
@@ -1388,7 +1405,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 60
+                  "cap": 62
                 }
               ],
               "sample": "3 Published Human Trials: Krill Oil’s Effect on Joint health"
@@ -1398,7 +1415,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 74
+                  "cap": 76
                 }
               ],
               "sample": "published human trial: KRILL OIL ­­­Metabolic & Body Composition Benefits"
@@ -1424,10 +1441,10 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 53
+                  "cap": 55
                 },
                 {
-                  "cap": 58
+                  "cap": 60
                 }
               ],
               "sample": "•\tHelp support a healthy metabolism  during weight loss / •\tHelp preserve muscle mass  and"
@@ -1440,7 +1457,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 17
                   }
                 ],
                 "sample": "2022 Stonehouse"
@@ -1450,46 +1467,46 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 170
+                    "cap": 172
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 24
+                    "cap": 26
                   },
                   {
-                    "cap": 53
+                    "cap": 55
                   },
                   {
-                    "cap": 54
+                    "cap": 56
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 46
+                    "cap": 8
                   },
                   {
                     "cap": 48
                   },
                   {
-                    "cap": 95
+                    "cap": 50
                   },
                   {
-                    "cap": 75
+                    "cap": 97
                   },
                   {
-                    "cap": 58
+                    "cap": 77
+                  },
+                  {
+                    "cap": 60
                   }
                 ],
                 "sample": "Krill oil improved osteoarthritic knee pain in adults with mild to moderate knee osteoarth"
@@ -1500,7 +1517,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 52
+                      "cap": 54
                     }
                   ],
                   "sample": "Dose: 4 g/day of Krill oil  (600 mg EPA, 280 mg DHA)"
@@ -1510,10 +1527,10 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 26
+                      "cap": 28
                     },
                     {
-                      "cap": 24
+                      "cap": 8
                     }
                   ],
                   "sample": "Dose: 4 g/day of Vegetable / oil"
@@ -1526,7 +1543,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 13
                   }
                 ],
                 "sample": "2016 Suzuki"
@@ -1536,52 +1553,52 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 62
+                    "cap": 64
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 40
+                    "cap": 42
                   },
                   {
-                    "cap": 53
-                  },
-                  {
-                    "cap": 52
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 47
+                    "cap": 55
                   },
                   {
                     "cap": 54
                   },
                   {
-                    "cap": 35
+                    "cap": 17
                   },
                   {
-                    "cap": 75
+                    "cap": 8
+                  },
+                  {
+                    "cap": 15
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 49
                   },
                   {
                     "cap": 56
                   },
                   {
-                    "cap": 29
+                    "cap": 37
                   },
                   {
-                    "cap": 38
+                    "cap": 77
+                  },
+                  {
+                    "cap": 58
+                  },
+                  {
+                    "cap": 31
+                  },
+                  {
+                    "cap": 40
                   }
                 ],
                 "sample": "Krill oil improves mild knee pain:  a randomized control trial / Published Randomized, dou"
@@ -1592,7 +1609,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 51
+                      "cap": 53
                     }
                   ],
                   "sample": "Dose: 2 g/day of Krill oil (240 mg EPA, 110 mg DHA)"
@@ -1602,7 +1619,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 31
+                      "cap": 33
                     }
                   ],
                   "sample": "Dose: 2 g/day of  Safflower oil"
@@ -1615,7 +1632,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2007 DEUtsch"
@@ -1625,46 +1642,46 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 92
+                    "cap": 94
                   },
                   {
-                    "cap": 61
+                    "cap": 63
+                  },
+                  {
+                    "cap": 53
+                  },
+                  {
+                    "cap": 55
+                  },
+                  {
+                    "cap": 17
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 15
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 50
+                  },
+                  {
+                    "cap": 50
+                  },
+                  {
+                    "cap": 55
+                  },
+                  {
+                    "cap": 62
                   },
                   {
                     "cap": 51
-                  },
-                  {
-                    "cap": 53
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 46
-                  },
-                  {
-                    "cap": 48
-                  },
-                  {
-                    "cap": 48
-                  },
-                  {
-                    "cap": 53
-                  },
-                  {
-                    "cap": 60
-                  },
-                  {
-                    "cap": 49
                   }
                 ],
                 "sample": "Evaluation of the effect of Neptune krill oil in chronic inflammation and arthritic sympto"
@@ -1675,7 +1692,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 48
+                      "cap": 50
                     }
                   ],
                   "sample": "Dose: 300 mg/day of Krill  oil (17% EPA,10% DHA)"
@@ -1685,7 +1702,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 56
+                      "cap": 58
                     }
                   ],
                   "sample": "Dose: 300 mg/day of placebo (microcrystalline cellulose)"
@@ -1698,7 +1715,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2025 Alblaji"
@@ -1708,43 +1725,43 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 110
+                    "cap": 112
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 24
+                    "cap": 26
                   },
                   {
-                    "cap": 85
+                    "cap": 87
                   },
                   {
-                    "cap": 98
+                    "cap": 100
                   },
                   {
-                    "cap": 24
+                    "cap": 17
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 24
+                    "cap": 15
                   },
                   {
-                    "cap": 24
+                    "cap": 8
                   },
                   {
-                    "cap": 46
+                    "cap": 48
                   },
                   {
-                    "cap": 36
+                    "cap": 38
                   },
                   {
-                    "cap": 69
+                    "cap": 71
                   },
                   {
-                    "cap": 81
+                    "cap": 83
                   }
                 ],
                 "sample": "Krill oil Supplementation during body weight loss attenuates the decline in fat-free mass "
@@ -1755,7 +1772,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 82
+                      "cap": 84
                     }
                   ],
                   "sample": "Dose: 4 g/day of Krill oil (772 mg EPA, 384 mg DHA) on alternate days from fasting"
@@ -1765,7 +1782,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 67
+                      "cap": 69
                     }
                   ],
                   "sample": "Dose: 4 g/day of mixed vegetable oil on alternate days from fasting"
@@ -1792,10 +1809,10 @@
               "mode": "lines",
               "lines": [
                 {
-                  "cap": 24
+                  "cap": 11
                 },
                 {
-                  "cap": 24
+                  "cap": 14
                 }
               ],
               "sample": "KRILL OIL / Eye Benefits"
@@ -1808,19 +1825,19 @@
                   "cap": 24
                 },
                 {
-                  "cap": 24
+                  "cap": 21
                 },
                 {
                   "cap": 24
                 },
                 {
-                  "cap": 29
+                  "cap": 31
                 },
                 {
-                  "cap": 33
+                  "cap": 35
                 },
                 {
-                  "cap": 37
+                  "cap": 39
                 }
               ],
               "sample": "•\tSupports eye hydration / •\tSupports eye health"
@@ -1874,7 +1891,7 @@
               "mode": "single",
               "lines": [
                 {
-                  "cap": 55
+                  "cap": 57
                 }
               ],
               "sample": "Published Human Trial: Krill Oil’s Effect on eye Health"
@@ -1887,7 +1904,7 @@
                 "mode": "single",
                 "lines": [
                   {
-                    "cap": 24
+                    "cap": 14
                   }
                 ],
                 "sample": "2016 Deinema"
@@ -1897,64 +1914,64 @@
                 "mode": "card",
                 "lines": [
                   {
-                    "cap": 57
+                    "cap": 59
                   },
                   {
-                    "cap": 46
+                    "cap": 48
                   },
                   {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 36
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 96
-                  },
-                  {
-                    "cap": 97
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 24
-                  },
-                  {
-                    "cap": 45
-                  },
-                  {
-                    "cap": 33
-                  },
-                  {
-                    "cap": 69
+                    "cap": 26
                   },
                   {
                     "cap": 38
                   },
                   {
-                    "cap": 31
+                    "cap": 26
                   },
                   {
-                    "cap": 46
+                    "cap": 98
                   },
                   {
-                    "cap": 74
+                    "cap": 99
+                  },
+                  {
+                    "cap": 17
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 16
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 15
+                  },
+                  {
+                    "cap": 8
+                  },
+                  {
+                    "cap": 47
+                  },
+                  {
+                    "cap": 35
+                  },
+                  {
+                    "cap": 71
+                  },
+                  {
+                    "cap": 40
+                  },
+                  {
+                    "cap": 33
+                  },
+                  {
+                    "cap": 48
+                  },
+                  {
+                    "cap": 76
                   }
                 ],
                 "sample": "A Randomized, Double-Masked, Placebo-Controlled Clinical / Trial of Two Forms of Omega-3 S"
@@ -1965,10 +1982,10 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 27
+                      "cap": 29
                     },
                     {
-                      "cap": 24
+                      "cap": 23
                     }
                   ],
                   "sample": "Dose: 5 g/day of Krill oil / (945 mg EHA, 510 DHA)"
@@ -1978,7 +1995,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 48
+                      "cap": 50
                     }
                   ],
                   "sample": "Dose: 5 g/day Fish Oil (1000 mg EPA, 500 mg DHA)"
@@ -1988,7 +2005,7 @@
                   "mode": "single",
                   "lines": [
                     {
-                      "cap": 25
+                      "cap": 27
                     }
                   ],
                   "sample": "Dose: 1.5 g/day Olive Oil"
@@ -2033,7 +2050,7 @@
           "mode": "single",
           "lines": [
             {
-              "cap": 89
+              "cap": 91
             }
           ],
           "sample": "Contact us to get the unique power of krill  oil for your next healthy aging formulation!"

@@ -356,9 +356,13 @@ whitepaper that is being assembled from REAL designed brochure pages: {", ".join
 
 This is a template FILL. Every field maps to an existing text frame in a finished InDesign page.
 - RESPECT EVERY maxLength and the per line budgets in each field's description. The frames are a
-  fixed physical size and CANNOT grow; text over budget is cut off.
+  fixed physical size and CANNOT grow; text over budget is CUT OFF and lost. COUNT characters and
+  aim a little UNDER each budget, never at or over it.
 - Match the AMOUNT of text to the budget: a 2000 character body wants full paragraphs of real
   evidence, a 25 character heading wants two or three words.
+- When a field is typeset over several lines, EVERY line has its own budget, and a 12 character
+  line really does hold about one word. Count each line separately: a two line title of 12 plus 12
+  means a two word title, not a four word phrase.
 - Do NOT start any line with a dash, asterisk or bullet character; the design adds its own.
 
 AUDIENCE: supplement brand owners, formulators and health professionals. Clinical, credible, B2B.

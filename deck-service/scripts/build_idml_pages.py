@@ -145,13 +145,17 @@ EXCLUDED = {
 
 
 def _cap(n: int, mode: str) -> int:
-    """Per line budget measured from the text the frame holds today (same rule as the single
-    template manifest): prose gets headroom, labels stay close to the real width."""
+    """Per line budget MEASURED from the text the frame holds today.
+
+    Deliberately conservative: the designer's own text is assumed to roughly FILL its frame, so
+    adding headroom (an earlier version used n*1.1+10) guaranteed overset on any frame that was
+    already full — the cover lost a whole title line that way. We therefore aim slightly UNDER the
+    measured length. Erring short leaves a little white space; erring long silently hides text,
+    and with no IDML renderer we cannot see which happened.
+    """
     if mode == "prose":
-        return max(int(n * 1.1) + 10, 60)
-    return max(n + 2, 8)
-
-
+        return max(int(n * 0.95), 30)
+    return max(n, 6)
 def _slot(src: Source, story: str, mode: str) -> dict:
     root = src.story_root(story)
     lines = payload_lines(root)

@@ -143,6 +143,38 @@ def _strip_lead_marker(s: str) -> str:
     return _LEAD_MARKER_RE.sub("", s or "")
 
 
+def _trim_trailing_empty_paragraphs(root: ET.Element) -> None:
+    """Drop paragraphs left empty at the END of a story.
+
+    Blanking a line is not enough when the paragraph style auto-numbers: an emptied entry in the
+    reference list still renders its number, so a document citing 3 sources showed "4." to "11."
+    as bare numerals. Removing the trailing <Br/> removes the paragraph itself.
+    """
+    parents = {child: parent for parent in root.iter() for child in parent}
+    while True:
+        brs = [el for el in root.iter() if el.tag.rsplit("}", 1)[-1] == "Br"]
+        if not brs:
+            return
+        last = brs[-1]
+        # Everything after the final Br is the last paragraph; if it carries no text, drop it.
+        seen_last = False
+        tail: list[ET.Element] = []
+        for el in root.iter():
+            tag = el.tag.rsplit("}", 1)[-1]
+            if el is last:
+                seen_last = True
+                continue
+            if seen_last and tag == "Content":
+                tail.append(el)
+        if any((el.text or "").strip() for el in tail):
+            return
+        for el in (*tail, last):
+            parent = parents.get(el)
+            if parent is not None:
+                parent.remove(el)
+        parents = {child: parent for parent in root.iter() for child in parent}
+
+
 def _fill_story_texts(xml: bytes, texts: list[str], caps: list[int]) -> bytes:
     """Map `texts` onto the story's payload lines 1:1; blank leftover lines; merge overflow
     items into the last text so nothing is silently dropped."""
@@ -159,6 +191,8 @@ def _fill_story_texts(xml: bytes, texts: list[str], caps: list[int]) -> bytes:
             set_line(ln, truncate(_strip_lead_marker(_strip_dashes(texts[i] or "")), cap))
         else:
             set_line(ln, "")
+    if len(texts) < len(lines):
+        _trim_trailing_empty_paragraphs(root)
     return _serialize_story(root)
 
 

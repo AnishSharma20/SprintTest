@@ -227,6 +227,25 @@ def _layout_box(layout_name: str, master_index: int, idx: int):
     return None
 
 
+def _layout_ph_font_pt(layout_name: str, master_index: int, idx: int, default: float = 32.0) -> float:
+    """The font size (pt) a placeholder's text will actually render at, read from the LAYOUT's own
+    list style. Needed because the template's title placeholders are 32pt, not the synthetic
+    _SZ_TITLE — so any 'how tall will this title be' maths must use the template's number."""
+    import re
+    from lxml import etree
+    try:
+        lay = _find_layout(_design_source(), layout_name, master_index)
+        for ph in lay.placeholders:
+            if ph.placeholder_format.idx != idx:
+                continue
+            sizes = re.findall(rb'sz="(\d+)"', etree.tostring(ph._element))
+            if sizes:
+                return int(sizes[0]) / 100.0
+    except Exception:  # noqa: BLE001
+        pass
+    return default
+
+
 def _place_icon(slide, box, icon_path) -> bool:
     """Add an icon scaled to FIT (letterbox), centred in the box — icons must not be
     crop-to-filled the way insert_picture would. box = (left, top, width, height) in EMU."""
@@ -432,14 +451,34 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     # title. Set the FULL box from the layout (left/width too) so we don't drop the inherited width.
     title_idx = fields.get("title")
     tbox = _layout_box(layout_name, master_index, title_idx) if title_idx is not None else None
-    if tbox and title and len(str(title)) > 48 and tbox[3] < Inches(0.72):   # short (1-line) title box
-        safe_top = tbox[1] + int(Inches(1.02))
+    # text_picture re-lays out its own title/body/picture above (with its own margin), so the generic
+    # push-down must not re-read the LAYOUT boxes and fight it.
+    if cat["kind"] == "text_picture":
+        tbox = None
+    if tbox and title:
+        # How tall will the title REALLY be? Use the layout's own font size (32pt on this template,
+        # not _SZ_TITLE) and the wrapped line count for the box width. A fixed clearance can't work:
+        # at 32pt a 2-line title needs ~1.07in, so the old hardcoded 1.02in dropped the body ON TOP
+        # of the title's second line, leaving zero visible margin.
+        t_pt = _layout_ph_font_pt(layout_name, master_index, title_idx)
+        lines = _est_lines(str(title), tbox[2] / 914400.0, t_pt)
+        title_h = Inches(lines * t_pt * 1.25 / 72.0)      # 1.25 ≈ single line spacing, rounded up
+        # Preserve the gap the DESIGNER put between the title box and the first thing below it.
+        below = [_layout_box(layout_name, master_index, i) for i in filled
+                 if i != title_idx and i not in CHROME_IDX]
+        tops = [b[1] for b in below if b and b[1] >= tbox[1] + tbox[3] - Inches(0.05)]
+        gap = max(int(Inches(0.22)), (min(tops) - (tbox[1] + tbox[3])) if tops else 0)
+        safe_top = tbox[1] + int(title_h) + gap
         for idx in filled:
             if idx == title_idx or idx in CHROME_IDX:
                 continue
             box = _layout_box(layout_name, master_index, idx)
             ph = phmap.get(idx)
             if ph is None or not box or box[1] >= safe_top:
+                continue
+            # Only push things stacked BELOW the title — never a side-by-side picture that legally
+            # starts level with (or above) the title box.
+            if box[1] < tbox[1] + tbox[3] - Inches(0.05):
                 continue
             delta = safe_top - box[1]
             ph.left, ph.width = Emu(box[0]), Emu(box[2])

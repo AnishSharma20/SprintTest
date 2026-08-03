@@ -67,6 +67,26 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   `scripts/`). Delivered as a **zip** (`.idml` + `.preview.md` + `OPEN_IN_INDESIGN.txt` for the designer to relink
   Links/fonts). Frontend: Tab 2 content type **"Whitepaper (InDesign)"** (`whitepaper_idml`, binary/zip download
   path like the deck). Service: `innholdstype=whitepaper_idml` job branch in `main.py`.
+- **Whitepaper (mixed pages) — NEW 2026-08-03, shipped & visually verified.** Composes ONE whitepaper from
+  designed pages taken from SEVERAL Superba brochures, so output is no longer identical every time. Tab 2 type
+  **"Whitepaper (mixed pages)"** (`whitepaper_mix`). Page library = `config/idml_pages.json` (built by
+  `scripts/build_idml_pages.py`) over the **three standard A4 brochures** (`assets/whitepaper_sport.idml`,
+  `whitepaper_sustainability.idml`, `whitepaper_brochure.idml`). Fish Oil is excluded (**not Superba**) and
+  Healthy Aging is excluded from the library (US Letter + far longer than AKBM's standard; it keeps its own
+  `idml_manifest.json`). 8 pages: 6 fillable (2 covers, a credentials cover with 4 headline figures, a 4 section
+  narrative spread, a closing+outlook+references page, a sports narrative with real data charts) + 2 **verbatim**
+  (benefit grid, ingredient/portfolio spread — their icons and mg values are brand facts, so re-theming them
+  would put a heart icon over immune copy); Sport's middle spread is **excluded** (61 frames of chart axis ticks
+  welded to fixed chart images). Pipeline (`src/idml_library.py`, mirrors the deck's plan→validate→render):
+  Claude picks an ordered page set → `validate_selection()` repairs it deterministically (one cover first, one
+  closing last, no dupes, **at least one fillable body page**, and the chart page only when the SOURCE really
+  reports that trial data) → a fill schema built from only the chosen pages' measured slots → line-mapped into
+  the composed package. **Manual override**: `/idml/pages` + `/api/idml-pages` feed a page picker in Tab 2
+  (empty = automatic). `src/idml_compose.py` does the merge; each non-base template is **namespaced** (ids +
+  its own style/colour names) because the three files reuse ids (`ud1` in all three) and define DIFFERENT things
+  under the same names (`Title H1` differs) — so every page keeps its own typography. Delivered as a zip
+  (.idml + preview.md + designer note listing the linked images, which can span several original packages).
+  **Verified in InDesign**: 7 pages, all A4, each page in its own design, text fitting its frames.
 - **No-dash brand rule** — no "-" in visible UI copy OR generated output. Enforced in the blog/whitepaper/deck
   prompts AND stripped deterministically (`blog.strip_dashes`, `pipeline._strip_dashes_plan`; leaves layout/icon
   enums, asset ids and citation DOIs intact).

@@ -647,5 +647,60 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "serpentine": {
+    "template_layout": "Blank",
+    "kind": "serpentine",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "coverage_matrix": {
+    "template_layout": "Blank",
+    "kind": "coverage_matrix",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "photo_stats": {
+    "template_layout": "Blank",
+    "kind": "photo_stats",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "numbered_cards": {
+    "template_layout": "Blank",
+    "kind": "numbered_cards",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "implications": {
+    "template_layout": "Blank",
+    "kind": "implications",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

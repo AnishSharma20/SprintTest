@@ -511,6 +511,55 @@ def main():
                            "note": {"type": "string", "maxLength": 40},
                            "milestone": {"type": "boolean"}}}}}, "gantt / project schedule")
 
+    _synth("serpentine", "serpentine", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 3, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 34},
+                           "body": {"type": "string", "maxLength": 130},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}},
+           "serpentine S-curve flow")
+
+    _synth("coverage_matrix", "coverage_matrix", "light", ["layout", "title", "headers", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 100},
+        "headers": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"type": "string", "maxLength": 18}},
+        "items": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "marks"],
+            "properties": {"label": {"type": "string", "maxLength": 26},
+                           "body": {"type": "string", "maxLength": 110},
+                           "marks": {"type": "array", "minItems": 2, "maxItems": 8,
+                                     "items": {"type": "boolean"}}}}}}, "coverage tick matrix")
+
+    _synth("photo_stats", "photo_stats", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 110},
+        "items": {"type": "array", "minItems": 2, "maxItems": 3, "items": {
+            "type": "object", "additionalProperties": False, "required": ["value", "label"],
+            "properties": {"value": {"type": "string", "maxLength": 10},
+                           "label": {"type": "string", "maxLength": 32},
+                           "note": {"type": "string", "maxLength": 90},
+                           "asset_id": {"enum": asset_ids + [None]}}}}}, "photo-topped stat cards")
+
+    _synth("numbered_cards", "numbered_cards", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"heading": {"type": "string", "maxLength": 40},
+                           "body": {"type": "string", "maxLength": 190},
+                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}},
+           "numbered cards with corner icon")
+
+    _synth("implications", "implications", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "headers": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "maxLength": 26}},
+        "items": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading", "body", "implication"],
+            "properties": {"heading": {"type": "string", "maxLength": 34},
+                           "body": {"type": "string", "maxLength": 240},
+                           "implication": {"type": "string", "maxLength": 130}}}}},
+           "trend / overview / implication rows")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -534,7 +583,9 @@ def main():
                                                             "kpi_dashboard", "roadmap",
                                                             "icon_grid", "takeaways", "from_to",
                                                             "pillars", "team", "metric_bars", "cause_effect",
-                                                            "org_chart", "decision_tree", "cycle", "gantt"]},
+                                                            "org_chart", "decision_tree", "cycle", "gantt",
+                                                            "serpentine", "coverage_matrix", "photo_stats",
+                                                            "numbered_cards", "implications"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},

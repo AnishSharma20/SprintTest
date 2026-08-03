@@ -247,6 +247,26 @@ def _place_icon(slide, box, icon_path) -> bool:
         return False
 
 
+def _place_cropped(slide, path, l, t, w, h) -> bool:
+    """Add a photo that FILLS the box (cover), centre-cropping the overflow instead of stretching —
+    the opposite of _place_icon's letterbox fit. Sizes in inches."""
+    try:
+        pic = slide.shapes.add_picture(str(path), Inches(l), Inches(t), Inches(w), Inches(h))
+        from PIL import Image
+        with Image.open(path) as im:
+            iw, ih = im.size
+        src, box = iw / ih, w / h
+        if src > box:                       # source too wide → trim the sides
+            keep = box / src
+            pic.crop_left = pic.crop_right = (1 - keep) / 2
+        elif src < box:                     # source too tall → trim top and bottom
+            keep = src / box
+            pic.crop_top = pic.crop_bottom = (1 - keep) / 2
+        return True
+    except Exception:  # noqa: BLE001 — fall back to the caller's solid panel
+        return False
+
+
 def _fit(text, limit):
     """Hard word-boundary truncation for collision-prone 1-line label fields (cover/agenda
     title, headings). The planner + validation retry keep these within the limit almost
@@ -1610,6 +1630,275 @@ def _fill_gantt(prs, spec: dict, dark_index: int) -> None:
                             bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
 
 
+def _sine_spine(slide, x0, x1, cy, amp, n_nodes, color, width_pt=2.25, segments=160):
+    """A smooth S-curve polyline (approximated with many short segments, since python-pptx freeforms
+    have no bezier API) running left→right. The phase is set so node i — sampled at t=(i+0.5)/n —
+    lands exactly on a crest or trough, alternating high/low. Returns those node (x, y) points."""
+    import math
+    span = x1 - x0
+
+    def y_at(t):                      # crest/trough at t = (i+0.5)/n_nodes
+        return cy - amp * math.cos((t * n_nodes - 0.5) * math.pi)
+
+    pts = [(x0 + span * i / segments, y_at(i / segments)) for i in range(segments + 1)]
+    try:
+        b = slide.shapes.build_freeform(Inches(pts[0][0]), Inches(pts[0][1]))
+        b.add_line_segments([(Inches(x), Inches(y)) for x, y in pts[1:]], close=False)
+        sh = b.convert_to_shape()
+        sh.fill.background(); sh.line.color.rgb = color; sh.line.width = Pt(width_pt)
+        sh.shadow.inherit = False
+    except Exception:  # noqa: BLE001 — the spine is decorative; never break the render
+        pass
+    return [(x0 + span * (i + 0.5) / n_nodes, y_at((i + 0.5) / n_nodes)) for i in range(n_nodes)]
+
+
+def _fill_serpentine(prs, spec: dict, dark_index: int) -> None:
+    """Serpentine flow: 3 or 4 stages threaded on an S-curve, numbered discs sitting on the crests and
+    each stage's text alternating above / below — text always on the OUTER side of its crest, so the
+    two text bands stay clear of the curve. For a narrative sequence of shifts or forces."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    icons = _consistent_icons(items)
+    band_h = 1.45                              # text band at the top and at the bottom
+    cy = _BODY_TOP + _BODY_H / 2
+    amp = 0.55
+    nodes = _sine_spine(slide, _MARGIN + 0.35, _MARGIN + _CONTENT_W - 0.35, cy, amp, n, _LTEAL)
+    disc, ic = 0.46, 0.52
+    cw = _CONTENT_W / n
+    for i, (it, (nx, ny)) in enumerate(zip(items, nodes)):
+        high = i % 2 == 0                      # even nodes crest UP → their text goes in the top band
+        d = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(nx - disc / 2), Inches(ny - disc / 2),
+                                   Inches(disc), Inches(disc))
+        d.fill.solid(); d.fill.fore_color.rgb = _TEAL2
+        d.line.color.rgb = _LTEAL; d.line.width = Pt(1.25); d.shadow.inherit = False
+        tf = d.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+        r = p.add_run(); r.text = f"{i + 1:02d}"; r.font.size = Pt(_SZ_SMALL); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        tx = min(max(nx - cw / 2, _MARGIN), _MARGIN + _CONTENT_W - cw)
+        if high:                               # top band: heading, body, then the icon nearest the curve
+            hy, byy = _BODY_TOP, _BODY_TOP + 0.48
+            icy = _BODY_TOP + band_h - ic / 2
+        else:                                  # bottom band: icon nearest the curve, then heading, body
+            icy = _BODY_BOTTOM - band_h + ic / 2
+            hy, byy = _BODY_BOTTOM - band_h + ic + 0.06, _BODY_BOTTOM - band_h + ic + 0.54
+        if icons:
+            _icon_disc(slide, nx, icy, ic, icon_path=icons[i])
+        _place_text(slide, tx, hy, cw, 0.46, it.get("heading", ""), _SZ_BODY, _WHITE, bold=True,
+                    font=_HEAD, align=PP_ALIGN.CENTER)
+        if it.get("body"):
+            _place_text(slide, tx + 0.12, byy, cw - 0.24, 0.44, it["body"], _SZ_SMALL,
+                        _LTEAL, align=PP_ALIGN.CENTER)
+
+
+def _fill_coverage_matrix(prs, spec: dict, light_index: int) -> None:
+    """Coverage matrix: entities as rows, capabilities as columns, a filled tick where the entity
+    covers that capability. The right home for BINARY yes/no comparisons (harvey balls misread those)."""
+    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""),
+                         eyebrow=spec.get("caption"))
+    heads = spec.get("headers") or []
+    items = (spec.get("items") or [])[:5]
+    nc, nr = len(heads), len(items)
+    if not nc or not nr:
+        return
+    label_w = 3.5
+    grid_x = _MARGIN + label_w + 0.25
+    col_w = (_CONTENT_W - label_w - 0.25) / nc
+    head_h = 0.62
+    top = _BODY_TOP + head_h + 0.14
+    for j, h in enumerate(heads):
+        _place_text(slide, grid_x + j * col_w, _BODY_TOP, col_w, head_h, h, _SZ_SMALL, _TEAL,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
+    _rule(slide, _MARGIN, top - 0.07, _CONTENT_W, 0.02, _TEAL)
+    rh = (_BODY_BOTTOM - top) / nr
+    tick = min(0.42, rh * 0.46)
+    for i, it in enumerate(items):
+        y = top + i * rh
+        _place_text(slide, _MARGIN, y + 0.1, label_w, 0.42, it.get("label", ""), _SZ_BODY, _INKC,
+                    bold=True, font=_HEAD)
+        if it.get("body"):
+            _place_text(slide, _MARGIN, y + 0.54, label_w - 0.15, rh - 0.66, it["body"], _SZ_SMALL, _TEAL2)
+        if i:
+            _rule(slide, _MARGIN, y, _CONTENT_W, 0.01, _PANEL)
+        for j, on in enumerate(list(it.get("marks") or [])[:nc]):
+            if not on:
+                continue
+            cx = grid_x + j * col_w + col_w / 2
+            box = slide.shapes.add_shape(_BOX, Inches(cx - tick / 2), Inches(y + rh / 2 - tick / 2),
+                                         Inches(tick), Inches(tick))
+            box.fill.solid(); box.fill.fore_color.rgb = _TEAL
+            box.line.fill.background(); box.shadow.inherit = False
+            tf = box.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+            tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+            p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+            r = p.add_run(); r.text = "✓"; r.font.size = Pt(_SZ_BODY); r.font.bold = True
+            r.font.name = _HEAD; r.font.color.rgb = _WHITE
+
+
+def _fill_photo_stats(prs, spec: dict, dark_index: int) -> None:
+    """Photo-topped stat cards: 2 or 3 cards, each a photo above a solid panel carrying an eyebrow
+    label, ONE hero figure and a supporting line. High-impact proof-point opener."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    items = (spec.get("items") or [])[:3]
+    n = len(items)
+    if not n:
+        return
+    cw = (_CONTENT_W - (n - 1) * _GUTTER) / n
+    top = _BODY_TOP + 0.18
+    total_h = _BODY_BOTTOM - top
+    photo_h = total_h * 0.56
+    pan_h = total_h - photo_h
+    for i, it in enumerate(items):
+        x = _MARGIN + i * (cw + _GUTTER)
+        placed = False
+        aid = it.get("asset_id")
+        if aid:
+            try:
+                path = config.resolve_asset(config.asset_index()[aid]["path"])
+                if path.exists():
+                    _place_cropped(slide, path, x, top, cw, photo_h); placed = True
+            except Exception:  # noqa: BLE001
+                placed = False
+        if not placed:
+            ph = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(cw), Inches(photo_h))
+            ph.fill.solid(); ph.fill.fore_color.rgb = _TEAL2
+            ph.line.fill.background(); ph.shadow.inherit = False
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top + photo_h), Inches(cw), Inches(pan_h))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL
+        pan.line.fill.background(); pan.shadow.inherit = False
+        # label / hero figure / note stacked and centred as a group inside the panel
+        note_h = 0.62 if it.get("note") else 0.0
+        blk_h = 0.3 + 0.95 + note_h
+        py = top + photo_h + max(0.12, (pan_h - blk_h) / 2)
+        _place_text(slide, x + _PAD, py, cw - 2 * _PAD, 0.3, (it.get("label") or "").upper(),
+                    _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x + _PAD, py + 0.3, cw - 2 * _PAD, 0.95, it.get("value", ""),
+                    _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                    anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
+        if it.get("note"):
+            _place_text(slide, x + _PAD, py + 1.27, cw - 2 * _PAD, note_h, it["note"],
+                        _SZ_SMALL, _ONTEAL, align=PP_ALIGN.CENTER)
+
+
+def _est_lines(text, width_in, size_pt) -> int:
+    """Rough wrapped-line count for a run of text in a box of the given width — enough to size a
+    panel to its content instead of stretching it over the whole body zone."""
+    if not text:
+        return 0
+    per_line = max(8, int(width_in * 145.0 / size_pt))   # ~13 chars/inch at 11pt, ~10 at 14pt
+    return max(1, -(-len(text) // per_line))
+
+
+def _fill_numbered_cards(prs, spec: dict, dark_index: int) -> None:
+    """Numbered cards: 2 to 4 equal panels, each with a number badge top-left, an optional icon chip
+    top-right, a bold heading and a body. The 'three reasons why' card set. Cards are sized to the
+    LONGEST card's content (equal heights) and centred in the body zone, so they never stretch empty."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:4]
+    n = len(items)
+    if not n:
+        return
+    icons = _consistent_icons(items)
+    cw = (_CONTENT_W - (n - 1) * _GUTTER) / n
+    badge = 0.52
+    tw = cw - 2 * _PAD
+    need = 0.0
+    for it in items:
+        h = _PAD + badge + 0.2 + _est_lines(it.get("heading"), tw, _SZ_BODY) * 0.25 + _PAD
+        if it.get("body"):
+            h += 0.14 + _est_lines(it["body"], tw, _SZ_SMALL) * 0.20
+        need = max(need, h)
+    ch = min(_BODY_H, max(1.9, need) + 1.1)      # content + breathing room inside the card
+    top = _BODY_TOP + (_BODY_H - ch) / 2         # balanced margin above and below
+    for i, it in enumerate(items):
+        x = _MARGIN + i * (cw + _GUTTER)
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(cw), Inches(ch))
+        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL
+        pan.line.fill.background(); pan.shadow.inherit = False
+        bd = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x + _PAD), Inches(top + _PAD),
+                                    Inches(badge), Inches(badge))
+        bd.fill.solid(); bd.fill.fore_color.rgb = _TEAL2
+        bd.line.fill.background(); bd.shadow.inherit = False
+        tf = bd.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+        r = p.add_run(); r.text = str(i + 1); r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+        if icons:                              # brand icon chip (light disc), matching the rest of the library
+            _icon_disc(slide, x + cw - _PAD - badge / 2, top + _PAD + badge / 2, badge + 0.06,
+                       icon_path=icons[i])
+        # heading + body as ONE vertically-centred block, so a short card never leaves a dead gap
+        ty = top + _PAD + badge + 0.2
+        tb = slide.shapes.add_textbox(Inches(x + _PAD), Inches(ty), Inches(cw - 2 * _PAD),
+                                      Inches(top + ch - ty - _PAD))
+        tf = tb.text_frame
+        tf.word_wrap = True
+        try:
+            tf.auto_size = MSO_AUTO_SIZE.NONE
+        except Exception:  # noqa: BLE001
+            pass
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = tf.margin_right = Emu(0)
+        ph = tf.paragraphs[0]; ph.line_spacing = _LINE_SPACING
+        rh_ = ph.add_run(); rh_.text = it.get("heading", "")
+        rh_.font.size = Pt(_SZ_BODY); rh_.font.bold = True
+        rh_.font.name = _HEAD; rh_.font.color.rgb = _WHITE
+        if it.get("body"):
+            pb = tf.add_paragraph(); pb.line_spacing = _LINE_SPACING
+            pb.space_before = Pt(10)
+            rb = pb.add_run(); rb.text = it["body"]
+            rb.font.size = Pt(_SZ_SMALL); rb.font.name = _BODY; rb.font.color.rgb = _ONTEAL
+
+
+def _fill_implications(prs, spec: dict, dark_index: int) -> None:
+    """Trend / overview / implication rows: a numbered label pill, the detail, then a chevron into the
+    'so what'. The classic three-column analysis table (mega-trends → market implications)."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:5]
+    n = len(items)
+    if not n:
+        return
+    heads = spec.get("headers") or []
+    lab_w, imp_w, arrow_w = 3.0, 3.5, 0.42
+    ov_x = _MARGIN + lab_w + 0.25
+    ov_w = _CONTENT_W - lab_w - 0.25 - arrow_w - imp_w - 0.4
+    ar_x = ov_x + ov_w + 0.2
+    imp_x = ar_x + arrow_w + 0.2
+    top = _BODY_TOP
+    if heads[:3]:
+        hh = 0.4
+        for hx, hw, ht in ((_MARGIN, lab_w, heads[0]), (ov_x, ov_w, heads[1]), (imp_x, imp_w, heads[2])):
+            _place_text(slide, hx, top, hw, hh, ht, _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
+            _rule(slide, hx, top + hh, hw, 0.02, _TEAL2)
+        top += hh + 0.16
+    gap = 0.18
+    rh = (_BODY_BOTTOM - top - (n - 1) * gap) / n
+    badge = min(0.46, rh * 0.62)
+    for i, it in enumerate(items):
+        y = top + i * (rh + gap)
+        pill = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y), Inches(lab_w), Inches(rh))
+        pill.fill.solid(); pill.fill.fore_color.rgb = _TEAL
+        pill.line.fill.background(); pill.shadow.inherit = False
+        _icon_disc(slide, _MARGIN + 0.1 + badge / 2, y + rh / 2, badge, number=i + 1)
+        _place_text(slide, _MARGIN + 0.2 + badge, y, lab_w - 0.3 - badge, rh, it.get("heading", ""),
+                    _SZ_BODY, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
+        _place_text(slide, ov_x, y, ov_w, rh, it.get("body", ""), _SZ_SMALL, _LTEAL,
+                    anchor=MSO_ANCHOR.MIDDLE)
+        ar = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(ar_x), Inches(y + rh / 2 - 0.17),
+                                    Inches(arrow_w), Inches(0.34))
+        ar.fill.solid(); ar.fill.fore_color.rgb = _LTEAL
+        ar.line.fill.background(); ar.shadow.inherit = False
+        ip = slide.shapes.add_shape(_BOX, Inches(imp_x), Inches(y), Inches(imp_w), Inches(rh))
+        ip.fill.solid(); ip.fill.fore_color.rgb = _TEAL2
+        ip.line.fill.background(); ip.shadow.inherit = False
+        _place_text(slide, imp_x + _PAD, y, imp_w - 2 * _PAD, rh, it.get("implication", ""),
+                    _SZ_SMALL, _ONTEAL, anchor=MSO_ANCHOR.MIDDLE)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -1698,6 +1987,16 @@ def render_deck(plan: dict) -> bytes:
             _fill_cycle(prs, spec, dark); continue
         if layout_name == "gantt":
             _fill_gantt(prs, spec, dark); continue
+        if layout_name == "serpentine":
+            _fill_serpentine(prs, spec, dark); continue
+        if layout_name == "coverage_matrix":
+            _fill_coverage_matrix(prs, spec, light); continue
+        if layout_name == "photo_stats":
+            _fill_photo_stats(prs, spec, dark); continue
+        if layout_name == "numbered_cards":
+            _fill_numbered_cards(prs, spec, dark); continue
+        if layout_name == "implications":
+            _fill_implications(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

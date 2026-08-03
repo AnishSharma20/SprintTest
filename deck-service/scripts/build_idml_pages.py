@@ -32,6 +32,7 @@ import json
 import sys
 import zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -136,6 +137,20 @@ PAGES = [
     },
 ]
 
+# Swappable PHOTO frames per page: the hero and atmosphere photographs only.
+# Everything else stays: certification marks (MSC, Friend of the Sea, Flexitech), the UN SDG icons,
+# the Area 48 map, product shots, the phospholipid and cell illustrations, and — most importantly —
+# the trial CHART image on narrative_with_charts (u1092e), which is real study data.
+PHOTO_SLOTS = {
+    "cover_sports": ["u10b86"],
+    "cover_whole_body": ["u1500"],
+    "cover_credentials": ["u800"],
+    "narrative_four_sections": ["u404"],
+    "closing_outlook": ["u818", "u808", "u810"],
+    "narrative_with_charts": ["u10bac"],
+}
+
+
 # Pages deliberately kept out of the library, with the reason (so this is a decision, not an oversight).
 EXCLUDED = {
     "sport/uf465": ("61 text frames that are almost entirely chart axis ticks, figure numbers and "
@@ -166,6 +181,31 @@ def _slot(src: Source, story: str, mode: str) -> dict:
     }
 
 
+def _photo_slots(src: Source, spread: str, image_ids: list[str]) -> list[dict]:
+    """Measure each swappable photo frame so a replacement can be orientation matched."""
+    if not image_ids:
+        return []
+    root = ET.fromstring(src.read(f"Spreads/Spread_{spread}.xml"))
+    parents = {child: parent for parent in root.iter() for child in parent}
+    out = []
+    for image in root.iter("Image"):
+        if image.get("Self") not in image_ids:
+            continue
+        frame = parents.get(image)
+        xs, ys = [], []
+        for pp in (frame.iter("PathPointType") if frame is not None else []):
+            ax, ay = (float(v) for v in pp.get("Anchor").split())
+            xs.append(ax)
+            ys.append(ay)
+        if not xs:
+            continue
+        w, h = max(xs) - min(xs), max(ys) - min(ys)
+        out.append({"image": image.get("Self"), "w": round(w), "h": round(h),
+                    "orientation": "landscape" if w > h * 1.05 else
+                                   ("portrait" if h > w * 1.05 else "square")})
+    return out
+
+
 def main() -> None:
     missing = [t for t, rel in TEMPLATES.items() if not (ROOT / rel).exists()]
     if missing:
@@ -179,6 +219,7 @@ def main() -> None:
         src = srcs[spec["template"]]
         entry = {k: v for k, v in spec.items() if k != "slots"}
         entry["images"] = sorted(spread_images(src, spec["spread"]))
+        entry["photo_slots"] = _photo_slots(src, spec["spread"], PHOTO_SLOTS.get(spec["id"], []))
         if spec.get("fill"):
             entry["slots"] = {name: _slot(src, story, mode)
                               for name, (story, mode) in spec["slots"].items()}

@@ -1,0 +1,307 @@
+{
+  "note": "Photo catalogue for theme matched image swaps. Dimensions measured from the files. No sports / joint / brain imagery exists here on purpose: for those subjects the template's own photograph is kept.",
+  "photos": [
+    {
+      "file": "photo_antarctic_sunset.jpg",
+      "px_w": 1600,
+      "px_h": 900,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "ocean"
+      ],
+      "bytes": 147787
+    },
+    {
+      "file": "photo_breakfast.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "consumer",
+        "supplement"
+      ],
+      "bytes": 230799
+    },
+    {
+      "file": "photo_capsule_single.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 34441
+    },
+    {
+      "file": "photo_capsules_glass.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 198043
+    },
+    {
+      "file": "photo_capsules_heart.jpg",
+      "px_w": 1067,
+      "px_h": 1600,
+      "orientation": "portrait",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 150658
+    },
+    {
+      "file": "photo_capsules_pattern.jpg",
+      "px_w": 1365,
+      "px_h": 1600,
+      "orientation": "portrait",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 364676
+    },
+    {
+      "file": "photo_capsules_white.jpg",
+      "px_w": 1067,
+      "px_h": 1600,
+      "orientation": "portrait",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 117268
+    },
+    {
+      "file": "photo_capsules_wood.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "supplement"
+      ],
+      "bytes": 275919
+    },
+    {
+      "file": "photo_jar_antarctic.jpg",
+      "px_w": 520,
+      "px_h": 340,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "sourcing"
+      ],
+      "bytes": 33856
+    },
+    {
+      "file": "photo_krill_closeup.jpg",
+      "px_w": 1600,
+      "px_h": 962,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "science"
+      ],
+      "bytes": 137215
+    },
+    {
+      "file": "photo_krill_single.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "science"
+      ],
+      "bytes": 183406
+    },
+    {
+      "file": "photo_oil_texture.jpg",
+      "px_w": 1600,
+      "px_h": 615,
+      "orientation": "landscape",
+      "themes": [
+        "science",
+        "absorption"
+      ],
+      "bytes": 91063
+    },
+    {
+      "file": "photo_team.jpg",
+      "px_w": 800,
+      "px_h": 533,
+      "orientation": "landscape",
+      "themes": [
+        "company",
+        "supply"
+      ],
+      "bytes": 94890
+    },
+    {
+      "file": "photo_antarctic_land.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "sourcing",
+        "ocean"
+      ],
+      "bytes": 287555
+    },
+    {
+      "file": "photo_capsules_daily.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "supplement",
+        "generic"
+      ],
+      "bytes": 77728
+    },
+    {
+      "file": "photo_iceberg.jpg",
+      "px_w": 1600,
+      "px_h": 894,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "ocean",
+        "sourcing"
+      ],
+      "bytes": 135440
+    },
+    {
+      "file": "photo_ingredients.jpg",
+      "px_w": 1600,
+      "px_h": 1037,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "formulation",
+        "generic"
+      ],
+      "bytes": 164227
+    },
+    {
+      "file": "photo_krill_ice.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "sourcing",
+        "sustainability"
+      ],
+      "bytes": 470587
+    },
+    {
+      "file": "photo_krill_swarm.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "sourcing",
+        "ocean"
+      ],
+      "bytes": 425698
+    },
+    {
+      "file": "photo_lab.jpg",
+      "px_w": 800,
+      "px_h": 500,
+      "orientation": "landscape",
+      "themes": [
+        "science",
+        "quality",
+        "generic"
+      ],
+      "bytes": 72334
+    },
+    {
+      "file": "photo_oil_in_water.jpg",
+      "px_w": 799,
+      "px_h": 533,
+      "orientation": "landscape",
+      "themes": [
+        "science",
+        "absorption",
+        "formulation"
+      ],
+      "bytes": 38837
+    },
+    {
+      "file": "photo_oil_lab.jpg",
+      "px_w": 1600,
+      "px_h": 900,
+      "orientation": "landscape",
+      "themes": [
+        "science",
+        "quality",
+        "formulation"
+      ],
+      "bytes": 99601
+    },
+    {
+      "file": "photo_warehouse.jpg",
+      "px_w": 800,
+      "px_h": 533,
+      "orientation": "landscape",
+      "themes": [
+        "supply",
+        "quality",
+        "sourcing"
+      ],
+      "bytes": 175837
+    },
+    {
+      "file": "photo_antarctic_bright.jpg",
+      "px_w": 1600,
+      "px_h": 1064,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "sourcing",
+        "ocean",
+        "generic"
+      ],
+      "bytes": 324970
+    },
+    {
+      "file": "photo_antarctic_ocean.jpg",
+      "px_w": 1600,
+      "px_h": 1067,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "sourcing",
+        "ocean",
+        "generic"
+      ],
+      "bytes": 214172
+    },
+    {
+      "file": "photo_krill_blue_water.jpg",
+      "px_w": 1600,
+      "px_h": 853,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "sourcing",
+        "ocean",
+        "generic"
+      ],
+      "bytes": 54488
+    }
+  ]
+}

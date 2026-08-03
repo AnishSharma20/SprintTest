@@ -78,10 +78,23 @@ def build_selection_schema() -> dict:
                                 "verbatim page only when it genuinely supports the story. Available "
                                 "pages:\n" + "\n".join(described)),
             },
+            "photo_theme": {
+                "type": "string", "enum": sorted(photo_themes()) + ["keep_designed"],
+                "description": ("Subject for the PHOTOGRAPHS. Pick the theme that matches the "
+                                "source, or \"keep_designed\" to keep the brochures' own pictures. "
+                                "There is no imagery for sports, joint, brain or eye topics, so "
+                                "choose keep_designed for those: the designers' photograph is "
+                                "better than a mismatched substitute."),
+            },
             "rationale": {"type": "string", "maxLength": 600,
                           "description": "One or two sentences: why this page set fits the source."},
         },
     }
+
+
+def photo_themes() -> set[str]:
+    from . import idml_images
+    return {t for p in idml_images.load_photos()["photos"] for t in p["themes"]}
 
 
 def validate_selection(page_ids: list[str], *, allow_data_pages: bool = False) -> list[str]:
@@ -174,18 +187,47 @@ def _describe(slot_name: str) -> str:
 # Compose + fill
 # ---------------------------------------------------------------------------
 
-def compose_and_fill(page_ids: list[str], plan: dict) -> tuple[bytes, set[str]]:
-    """Assemble the chosen pages and pour the plan's text into them.
+def compose_and_fill(page_ids: list[str], plan: dict, *,
+                     photo_theme: str = "") -> tuple[bytes, set[str], dict]:
+    """Assemble the chosen pages, pour the plan's text in, and optionally swap the photos.
 
     Every slot of a fillable page is either written or BLANKED, so a page can never ship with the
     brochure's original wording still in it. Verbatim pages are untouched by construction.
+
+    Returns (idml_bytes, linked_images_expected, photo_report). `photo_report` records which photos
+    were replaced and, importantly, which were LEFT ALONE and why — a frame keeps its designed
+    photograph when the library cannot fill it at print resolution.
     """
+    from . import idml_images
+
     lib = pages_by_id()
     refs = [PageRef(lib[pid]["template"], lib[pid]["spread"]) for pid in page_ids]
     comp: Composition = compose(refs, templates())
 
     zin = zipfile.ZipFile(io.BytesIO(comp.data))
     changed: dict[str, bytes] = {}
+
+    photo_report: dict = {"theme": photo_theme, "replaced": [], "kept": []}
+    if photo_theme and photo_theme != "keep_designed":
+        for pid in page_ids:
+            page = lib[pid]
+            slots = page.get("photo_slots") or []
+            if not slots:
+                continue
+            picks, skipped = idml_images.pick_photos(photo_theme, slots)
+            # ids inside the composed package carry the source's namespace prefix
+            picks = {comp.story_id(page["template"], img): ph for img, ph in picks.items()}
+            member = f"Spreads/Spread_{comp.story_id(page['template'], page['spread'])}.xml"
+            if member not in zin.namelist() or not picks:
+                photo_report["kept"] += [{"page": pid, **s} for s in skipped]
+                continue
+            xml = (changed.get(member) or zin.read(member)).decode("utf-8")
+            xml, placed = idml_images.swap_photos_in_spread(xml, picks)
+            if placed:
+                changed[member] = xml.encode("utf-8")
+                comp.images |= placed
+                photo_report["replaced"] += [{"page": pid, "file": f} for f in sorted(placed)]
+            photo_report["kept"] += [{"page": pid, **s} for s in skipped]
 
     def fill(story: str, texts: list[str], caps: list[int]) -> None:
         member = f"Stories/Story_{story}.xml"
@@ -214,7 +256,7 @@ def compose_and_fill(page_ids: list[str], plan: dict) -> tuple[bytes, set[str]]:
             if name == "mimetype":
                 continue
             zout.writestr(name, changed.get(name, zin.read(name)))
-    return out.getvalue(), comp.images
+    return out.getvalue(), comp.images, photo_report
 
 
 def plan_to_markdown(page_ids: list[str], plan: dict) -> str:

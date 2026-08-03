@@ -20,6 +20,14 @@
       "images": [
         "AdobeStock_121166552.jpeg"
       ],
+      "photo_slots": [
+        {
+          "image": "u10b86",
+          "w": 624,
+          "h": 620,
+          "orientation": "square"
+        }
+      ],
       "slots": {
         "title": {
           "story": "ufa5c",
@@ -67,6 +75,14 @@
       "images": [
         "Superba_01.jpg"
       ],
+      "photo_slots": [
+        {
+          "image": "u1500",
+          "w": 624,
+          "h": 577,
+          "orientation": "landscape"
+        }
+      ],
       "slots": {
         "title": {
           "story": "u1c4",
@@ -103,6 +119,14 @@
       "hint": "Scientific cover carrying FOUR headline figures (trials, studies, health domains, EFSA claims). Use when the evidence base itself is the story.",
       "images": [
         "Krill_Visuals_5_cred Aker BioMarine copy.jpg"
+      ],
+      "photo_slots": [
+        {
+          "image": "u800",
+          "w": 624,
+          "h": 620,
+          "orientation": "square"
+        }
       ],
       "slots": {
         "eyebrow": {
@@ -244,6 +268,14 @@
         "E_SDG_PRINT-12.jpg",
         "E_SDG_PRINT-14.jpg",
         "eco-harvesting (1).ai"
+      ],
+      "photo_slots": [
+        {
+          "image": "u404",
+          "w": 1342,
+          "h": 895,
+          "orientation": "landscape"
+        }
       ],
       "slots": {
         "lead": {
@@ -399,6 +431,26 @@
         "msc logo (1).ai",
         "sfp_padded.ai"
       ],
+      "photo_slots": [
+        {
+          "image": "u818",
+          "w": 624,
+          "h": 247,
+          "orientation": "landscape"
+        },
+        {
+          "image": "u808",
+          "w": 828,
+          "h": 477,
+          "orientation": "landscape"
+        },
+        {
+          "image": "u810",
+          "w": 650,
+          "h": 337,
+          "orientation": "landscape"
+        }
+      ],
       "slots": {
         "heading": {
           "story": "u328",
@@ -480,6 +532,14 @@
       "images": [
         "Screenshot 2024-12-02 at 10.17.17.png",
         "victor-freitas-WvDYdXDzkhs-unsplash.jpg"
+      ],
+      "photo_slots": [
+        {
+          "image": "u10bac",
+          "w": 624,
+          "h": 245,
+          "orientation": "landscape"
+        }
       ],
       "slots": {
         "heading": {
@@ -583,7 +643,8 @@
       "hint": "VERBATIM. The Scientifically Proven Benefits grid: 13 benefit tiles whose hexagon icons and published trial counts are brand facts. Include it to substantiate the product; never re-theme it.",
       "images": [
         "SUPERBA_KRILL_®_LANDSCAPE_SUPERBA_KRILL_POS_LANDSCAPE_®.eps"
-      ]
+      ],
+      "photo_slots": []
     },
     {
       "id": "composition_portfolio",
@@ -614,7 +675,8 @@
         "eco-harvesting.png",
         "msc logo (1).ai",
         "sfp_padded.ai"
-      ]
+      ],
+      "photo_slots": []
     }
   ]
 }

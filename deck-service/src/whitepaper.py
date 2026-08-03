@@ -404,6 +404,7 @@ def generate_whitepaper_composed(client: anthropic.Anthropic, source_text: str, 
     if pages:
         chosen = lib.validate_selection(list(pages), allow_data_pages=True)
         rationale = "Pages chosen manually."
+        photo_theme = "keep_designed"
     else:
         _p(18, "Choosing which designed pages to use")
         msg = client.messages.create(
@@ -417,11 +418,13 @@ def generate_whitepaper_composed(client: anthropic.Anthropic, source_text: str, 
                        if b.type == "tool_use" and isinstance(b.input, dict) and b.input.get("pages")), None)
         if picked is None:
             chosen, rationale = lib.default_selection(), "Fell back to the default page set."
+            photo_theme = "keep_designed"
         else:
             # The source's own mention of the chart data decides whether the data bound page is legal.
             allow = bool(re.search(r"grip strength|muscle thickness|WOMAC|knee", source_text, re.I))
             chosen = lib.validate_selection(picked["pages"], allow_data_pages=allow)
             rationale = picked.get("rationale", "")
+            photo_theme = picked.get("photo_theme", "keep_designed")
 
     _p(35, f"Writing text for {len(chosen)} designed pages")
     schema = lib.build_fill_schema(chosen)
@@ -462,11 +465,11 @@ def generate_whitepaper_composed(client: anthropic.Anthropic, source_text: str, 
                          f"{msg.stop_reason}; missing: {', '.join(gaps[:8])}).")
 
     _p(80, "Assembling the InDesign document")
-    idml_bytes, images = lib.compose_and_fill(chosen, plan)
+    idml_bytes, images, photos = lib.compose_and_fill(chosen, plan, photo_theme=photo_theme)
     markdown = f"{WP_DISCLAIMER}\n\n{lib.plan_to_markdown(chosen, plan)}"
     first = next((p for p in chosen if (plan.get(p) or {}).get("title")), None)
     title = ((plan.get(first) or {}).get("title") if first else None) or base_name
     _p(95, "Packaging")
     return {"idml": idml_bytes, "plan": plan, "markdown": markdown, "pages": chosen,
-            "rationale": rationale, "images": sorted(images),
+            "rationale": rationale, "images": sorted(images), "photos": photos,
             "filename": f"{base_name}.idml", "title": title}

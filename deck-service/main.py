@@ -50,7 +50,8 @@ _IDML_README = (
 )
 
 
-def _mix_readme(pages: list[str], rationale: str, images: list[str]) -> str:
+def _mix_readme(pages: list[str], rationale: str, images: list[str],
+                photos: dict | None = None) -> str:
     """Designer note for a COMPOSED whitepaper. Images are linked, and a composed document can pull
     pages from more than one brochure, so it may need Links from several of the original packages —
     which the design team already has. We cannot ship them (they run to hundreds of MB)."""
@@ -72,9 +73,26 @@ def _mix_readme(pages: list[str], rationale: str, images: list[str]) -> str:
         "  3. Fonts: Manrope, Exo 2, Montserrat.\n"
         "  4. Review every page, then export to PDF.\n\n"
         "AI GENERATED DRAFT. Review all content, claims and figures before any use.\n\n"
+        + _photo_note(photos) +
         f"Linked images this document expects ({len(images)}):\n" +
         "".join(f"  {n}\n" for n in images)
     )
+
+
+def _photo_note(photos: dict | None) -> str:
+    """Tell the designer which photographs were substituted and which were deliberately kept.
+
+    A frame keeps its original photograph when our library cannot fill it at print resolution, and
+    saying so beats leaving the designer to wonder why some pictures changed and others did not.
+    """
+    if not photos:
+        return ""
+    lines = [f"PHOTOGRAPHS (subject: {photos.get('theme') or 'kept as designed'})\n"]
+    for r in photos.get("replaced", []):
+        lines.append(f"  replaced on {r['page']}: {r['file']} (bundled in Links)\n")
+    for k in photos.get("kept", []):
+        lines.append(f"  kept the designed photo on {k['page']}: {k['reason']}\n")
+    return "".join(lines) + "\n" if len(lines) > 1 else ""
 
 
 def _read_summary(name: str, data: bytes) -> str:

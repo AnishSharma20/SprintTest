@@ -1,0 +1,620 @@
+{
+  "templates": {
+    "sport": "assets/whitepaper_sport.idml",
+    "sustainability": "assets/whitepaper_sustainability.idml",
+    "brochure": "assets/whitepaper_brochure.idml"
+  },
+  "note": "Page library for cross template composition. Pages with fill=false are placed verbatim. Every frame not listed as a slot is inherited unchanged.",
+  "excluded": {
+    "sport/uf465": "61 text frames that are almost entirely chart axis ticks, figure numbers and significance markers bound to fixed chart images; re-theming the words would mislabel real study data."
+  },
+  "pages": [
+    {
+      "id": "cover_sports",
+      "template": "sport",
+      "spread": "u10a81",
+      "role": "cover",
+      "theme": "sports",
+      "fill": true,
+      "hint": "Athletic cover photo (running shoes). Use for performance, muscle, recovery topics.",
+      "images": [
+        "AdobeStock_121166552.jpeg"
+      ],
+      "slots": {
+        "title": {
+          "story": "ufa5c",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 14
+            },
+            {
+              "cap": 14
+            }
+          ],
+          "sample": "Unlock Peak / Performance:"
+        },
+        "subtitle": {
+          "story": "ufa75",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 68
+            }
+          ],
+          "sample": "How Superba Krill supports athletic performance and overall health"
+        },
+        "hero": {
+          "story": "uf9fb",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 171
+            }
+          ],
+          "sample": "Superba Krill supports muscle functioning and strength, promotes a healthy recovery rate a"
+        }
+      }
+    },
+    {
+      "id": "cover_whole_body",
+      "template": "brochure",
+      "spread": "ud1",
+      "role": "cover",
+      "theme": "general",
+      "fill": true,
+      "hint": "Whole body wellness cover. The neutral default cover for any topic.",
+      "images": [
+        "Superba_01.jpg"
+      ],
+      "slots": {
+        "title": {
+          "story": "u1c4",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 56
+            }
+          ],
+          "sample": "Empowering Whole-Body Health and Wellness  from Within"
+        },
+        "hero": {
+          "story": "u1ab",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 165
+            },
+            {
+              "cap": 80
+            }
+          ],
+          "sample": "Superba Krill delivers a natural combination of phospholipid omega-3s  (EPA & DHA), cholin"
+        }
+      }
+    },
+    {
+      "id": "cover_credentials",
+      "template": "sustainability",
+      "spread": "ud1",
+      "role": "cover",
+      "theme": "science",
+      "fill": true,
+      "hint": "Scientific cover carrying FOUR headline figures (trials, studies, health domains, EFSA claims). Use when the evidence base itself is the story.",
+      "images": [
+        "Krill_Visuals_5_cred Aker BioMarine copy.jpg"
+      ],
+      "slots": {
+        "eyebrow": {
+          "story": "u6dd",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 24
+            }
+          ],
+          "sample": "Scientific Whitepaper"
+        },
+        "title": {
+          "story": "u1c2",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 48
+            }
+          ],
+          "sample": "Superba Krill® and the Phospholipid Advantage"
+        },
+        "subtitle": {
+          "story": "u1db",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 50
+            }
+          ],
+          "sample": "From cellular incorporation to whole-body health"
+        },
+        "byline": {
+          "story": "u1a9",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 46
+            }
+          ],
+          "sample": "Prepared by the Aker BioMarine Science Team"
+        },
+        "stat_1_value": {
+          "story": "u6f6",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 8
+            }
+          ],
+          "sample": "60+"
+        },
+        "stat_1_label": {
+          "story": "u70f",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 34
+            }
+          ],
+          "sample": "Published human clinical trials"
+        },
+        "stat_2_value": {
+          "story": "u745",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 8
+            }
+          ],
+          "sample": "135+"
+        },
+        "stat_2_label": {
+          "story": "u72c",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 27
+            }
+          ],
+          "sample": "Total published  studies"
+        },
+        "stat_3_value": {
+          "story": "u777",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 8
+            }
+          ],
+          "sample": "10+"
+        },
+        "stat_3_label": {
+          "story": "u75e",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 39
+            }
+          ],
+          "sample": "Health domains with clinical evidence"
+        },
+        "stat_4_value": {
+          "story": "u7ae",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 8
+            }
+          ],
+          "sample": "4"
+        },
+        "stat_4_label": {
+          "story": "u795",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 30
+            }
+          ],
+          "sample": "Approved EFSA health claims"
+        }
+      }
+    },
+    {
+      "id": "narrative_four_sections",
+      "template": "sustainability",
+      "spread": "ue0",
+      "role": "narrative",
+      "theme": "any",
+      "fill": true,
+      "hint": "Two page narrative spread: a lead paragraph plus FOUR heading and body sections. The workhorse page for the argument of the whitepaper.",
+      "locked_note": "Map graphic captions inherited unchanged.",
+      "images": [
+        "AdobeStock_486365700 (1).jpeg",
+        "Area 48 Updated (0-00-02-20)_1.jpg",
+        "E_SDG_PRINT-02.jpg",
+        "E_SDG_PRINT-03.jpg",
+        "E_SDG_PRINT-12.jpg",
+        "E_SDG_PRINT-14.jpg",
+        "eco-harvesting (1).ai"
+      ],
+      "slots": {
+        "lead": {
+          "story": "u214",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 386
+            }
+          ],
+          "sample": "As global attention on ocean sustainability intensifies, new data confirm that the Antarct"
+        },
+        "heading_1": {
+          "story": "u2b9",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 27
+            }
+          ],
+          "sample": "Science Driven Nutrition"
+        },
+        "body_1": {
+          "story": "u2d2",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 655
+            },
+            {
+              "cap": 395
+            },
+            {
+              "cap": 494
+            },
+            {
+              "cap": 693
+            }
+          ],
+          "sample": "Aker BioMarine is a science-driven nutrition company committed to improving human and plan"
+        },
+        "heading_2": {
+          "story": "u22e",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 44
+            }
+          ],
+          "sample": "Global Recognition from the United Nations"
+        },
+        "body_2": {
+          "story": "u261",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 331
+            },
+            {
+              "cap": 60
+            },
+            {
+              "cap": 233
+            },
+            {
+              "cap": 473
+            },
+            {
+              "cap": 195
+            },
+            {
+              "cap": 391
+            }
+          ],
+          "sample": "A new report highlights the Antarctic Krill Fishery as a model of sustainability. The Food"
+        },
+        "heading_3": {
+          "story": "u449",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 25
+            }
+          ],
+          "sample": "Responsible Harvesting"
+        },
+        "body_3": {
+          "story": "u462",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 278
+            },
+            {
+              "cap": 435
+            },
+            {
+              "cap": 684
+            }
+          ],
+          "sample": "Aker’s commitment to sustainability is embedded in every stage of its operations—from pion"
+        },
+        "heading_4": {
+          "story": "u3cf",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 56
+            }
+          ],
+          "sample": "Thriving Ecosystems & Science-Based Marine Protection"
+        },
+        "body_4": {
+          "story": "u3e8",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 417
+            },
+            {
+              "cap": 261
+            },
+            {
+              "cap": 470
+            },
+            {
+              "cap": 310
+            },
+            {
+              "cap": 314
+            }
+          ],
+          "sample": "Independent research conducted by the Norwegian Institute of Marine Research (IMR) confirm"
+        }
+      }
+    },
+    {
+      "id": "closing_outlook",
+      "template": "sustainability",
+      "spread": "uee",
+      "role": "closing",
+      "theme": "any",
+      "fill": true,
+      "hint": "Closing page: a long final section, a short forward looking block and the reference list. Use as the last text page.",
+      "locked_note": "The superbakrill.com line is inherited unchanged.",
+      "images": [
+        "Brabant_Island_pano_cred Aker BioMarine.jpg",
+        "Friend of the Sea-Full color.ai",
+        "MSC_horizontal_blue_neg_PMS.eps",
+        "USV_Trondheim-09.jpg",
+        "USV_Trondheim-31.jpg",
+        "logo-black.066aa69f.svg",
+        "msc logo (1).ai",
+        "sfp_padded.ai"
+      ],
+      "slots": {
+        "heading": {
+          "story": "u328",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 64
+            }
+          ],
+          "sample": "Transparency & Technology:  A Blueprint for Future Stewardship"
+        },
+        "body": {
+          "story": "u341",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 1316
+            },
+            {
+              "cap": 1176
+            },
+            {
+              "cap": 391
+            }
+          ],
+          "sample": "Aker places transparency and data-driven innovation at the heart of its sustainability pla"
+        },
+        "outlook_heading": {
+          "story": "u360",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 15
+            }
+          ],
+          "sample": "Looking Ahead"
+        },
+        "outlook_body": {
+          "story": "u379",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 323
+            }
+          ],
+          "sample": "As global demand for marine nutrients grows, Aker BioMarine will continue to lead through "
+        },
+        "references": {
+          "story": "u50c",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 60
+            },
+            {
+              "cap": 188
+            },
+            {
+              "cap": 169
+            },
+            {
+              "cap": 62
+            }
+          ],
+          "sample": "References: / Food and Agriculture Organization of the United Nations (FAO) report:  https"
+        }
+      }
+    },
+    {
+      "id": "narrative_with_charts",
+      "template": "sport",
+      "spread": "u10a9f",
+      "role": "closing",
+      "theme": "sports",
+      "fill": true,
+      "requires_matching_data": true,
+      "hint": "Narrative plus TWO published data charts (percent change after 6 months; WOMAC pain score), then a conclusion band and references. The charts are fixed images of real muscle and joint trial data, so only use this page when the source actually reports those trials.",
+      "locked_note": "All Fig. 4 / Fig. 5 axis and value labels are locked to the chart artwork.",
+      "images": [
+        "Screenshot 2024-12-02 at 10.17.17.png",
+        "victor-freitas-WvDYdXDzkhs-unsplash.jpg"
+      ],
+      "slots": {
+        "heading": {
+          "story": "u105a4",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 74
+            }
+          ],
+          "sample": "Omega-3 fatty acids: crucial for supporting muscle mass and joint health"
+        },
+        "body": {
+          "story": "u105bd",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 621
+            },
+            {
+              "cap": 618
+            }
+          ],
+          "sample": "Krill oil is further recognized for its benefits in sports and fitness due to its ability "
+        },
+        "conclusion_label": {
+          "story": "u10b8f",
+          "mode": "single",
+          "lines": [
+            {
+              "cap": 13
+            }
+          ],
+          "sample": "Conclusion:"
+        },
+        "conclusion": {
+          "story": "u1090c",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 670
+            }
+          ],
+          "sample": "In conclusion, research on sports nutrition emphasizes the importance of omega-3 fatty aci"
+        },
+        "references": {
+          "story": "u10231",
+          "mode": "prose",
+          "lines": [
+            {
+              "cap": 60
+            },
+            {
+              "cap": 78
+            },
+            {
+              "cap": 83
+            },
+            {
+              "cap": 65
+            },
+            {
+              "cap": 71
+            },
+            {
+              "cap": 68
+            },
+            {
+              "cap": 74
+            },
+            {
+              "cap": 70
+            },
+            {
+              "cap": 68
+            },
+            {
+              "cap": 79
+            },
+            {
+              "cap": 71
+            },
+            {
+              "cap": 69
+            },
+            {
+              "cap": 73
+            }
+          ],
+          "sample": "References: / Jäger, R., M. et al., Int. Soc. Sports Nutr, 2007. 4(1): p. 5."
+        }
+      }
+    },
+    {
+      "id": "benefit_grid",
+      "template": "brochure",
+      "spread": "ue7",
+      "role": "benefit_grid",
+      "theme": "any",
+      "fill": false,
+      "hint": "VERBATIM. The Scientifically Proven Benefits grid: 13 benefit tiles whose hexagon icons and published trial counts are brand facts. Include it to substantiate the product; never re-theme it.",
+      "images": [
+        "SUPERBA_KRILL_®_LANDSCAPE_SUPERBA_KRILL_POS_LANDSCAPE_®.eps"
+      ]
+    },
+    {
+      "id": "composition_portfolio",
+      "template": "brochure",
+      "spread": "ue0",
+      "role": "composition",
+      "theme": "any",
+      "fill": false,
+      "hint": "VERBATIM. Two page ingredient and portfolio spread: the phospholipid/choline/astaxanthin diagram plus the Superba 2 vs Boost specification table (mg values are product facts). The InDesign analog of the deck's verbatim ingredient slide.",
+      "images": [
+        "Aker_Omega3_ (40).png",
+        "Area 48 Updated (0-00-02-20)_1.jpg",
+        "Cell copy.jpg",
+        "Flexitech(R)_Horizontal_FullColor.eps",
+        "Friend of the Sea-Full color.ai",
+        "Krill produkt ny vit-39-Redigera_NY.png",
+        "Krill produkt ny vit-8-Redigera.jpg",
+        "Krill_Visuals_5_cred Aker BioMarine copy.jpg",
+        "One_krill_in_water (1).jpg",
+        "Phospholipid.psd",
+        "SUPERBA_BOOST┬«_POS_PORT.svg",
+        "SUPERBA_KRILL_DRUM_M21_NY.png",
+        "SUPERBAΓäóBOOST_POS.svg",
+        "Sci_Ill_SC_02_C_v2_3.psd",
+        "Single Capsule On White.psd",
+        "SoftGel Transparent.psd",
+        "Superba_07 EXTENDED.jpg",
+        "eco-harvesting.png",
+        "msc logo (1).ai",
+        "sfp_padded.ai"
+      ]
+    }
+  ]
+}

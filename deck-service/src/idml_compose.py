@@ -73,6 +73,10 @@ class Source:
     def read(self, member: str) -> str:
         return self.zf.read(member).decode("utf-8")
 
+    def story_root(self, story_id: str) -> ET.Element:
+        """Parsed story, for measuring how much text a frame holds (see scripts/build_idml_pages)."""
+        return ET.fromstring(self.read(f"Stories/Story_{story_id}.xml"))
+
 
 def _defined(z: zipfile.ZipFile) -> tuple[set[str], dict[str, set[str]]]:
     """Every object id and every Type/Name this package DEFINES (via Self=...)."""

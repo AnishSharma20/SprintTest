@@ -702,5 +702,38 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "alt_timeline": {
+    "template_layout": "Blank",
+    "kind": "alt_timeline",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "breakdown": {
+    "template_layout": "Blank",
+    "kind": "breakdown",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "chart_bands": {
+    "template_layout": "Blank",
+    "kind": "chart_bands",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

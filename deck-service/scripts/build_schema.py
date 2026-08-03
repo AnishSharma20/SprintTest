@@ -560,6 +560,40 @@ def main():
                            "implication": {"type": "string", "maxLength": 130}}}}},
            "trend / overview / implication rows")
 
+    _synth("alt_timeline", "alt_timeline", "dark", ["layout", "title", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 120},
+        "items": {"type": "array", "minItems": 3, "maxItems": 7, "items": {
+            "type": "object", "additionalProperties": False, "required": ["heading"],
+            "properties": {"date": {"type": "string", "maxLength": 24},
+                           "heading": {"type": "string", "maxLength": 28},
+                           "body": {"type": "string", "maxLength": 70},
+                           "tag": {"type": "string", "maxLength": 30}}}}},
+           "alternating timeline (cards above/below a spine)")
+
+    _synth("breakdown", "breakdown", "dark", ["layout", "title", "total", "items"], {
+        "title": {"type": "string", "maxLength": 90},
+        "total": {"type": "string", "maxLength": 12},
+        "caption": {"type": "string", "maxLength": 60},
+        "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "pct"],
+            "properties": {"label": {"type": "string", "maxLength": 34},
+                           "pct": {"type": "number"}}}}}, "total broken into shares")
+
+    _synth("chart_bands", "chart_bands", "dark", ["layout", "title", "categories", "values", "bands"], {
+        "title": {"type": "string", "maxLength": 90},
+        "caption": {"type": "string", "maxLength": 110},
+        "y_axis": {"type": "string", "maxLength": 40},
+        "categories": {"type": "array", "minItems": 3, "maxItems": 16,
+                       "items": {"type": "string", "maxLength": 10}},
+        "values": {"type": "array", "minItems": 3, "maxItems": 16, "items": {"type": "number"}},
+        "bands": {"type": "array", "minItems": 1, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "start", "end"],
+            "properties": {"label": {"type": "string", "maxLength": 30},
+                           "start": {"type": "integer", "minimum": 1},
+                           "end": {"type": "integer", "minimum": 1}}}}},
+           "column chart with narrative phase bands")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -585,7 +619,8 @@ def main():
                                                             "pillars", "team", "metric_bars", "cause_effect",
                                                             "org_chart", "decision_tree", "cycle", "gantt",
                                                             "serpentine", "coverage_matrix", "photo_stats",
-                                                            "numbered_cards", "implications"]},
+                                                            "numbered_cards", "implications",
+                                                            "alt_timeline", "breakdown", "chart_bands"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -640,7 +675,13 @@ def main():
                             "properties": {"value": {"type": "string"}, "label": {"type": "string"},
                                            "note": {"type": "string"}}}},
                         "center": {"type": "string"},
+                        "total": {"type": "string"},
                         "periods": {"type": "array", "items": {"type": "string"}},
+                        "values": {"type": "array", "items": {"type": "number"}},
+                        "bands": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"label": {"type": "string"},
+                                           "start": {"type": "integer"}, "end": {"type": "integer"}}}},
                         "before": {"type": "object", "additionalProperties": False,
                                    "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}},
                         "after": {"type": "object", "additionalProperties": False,

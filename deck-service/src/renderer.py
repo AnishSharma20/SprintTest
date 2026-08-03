@@ -23,7 +23,8 @@ from pptx import Presentation
 from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
-from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.dml import MSO_LINE_DASH_STYLE
+from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.oxml import parse_xml
 from pptx.oxml.ns import nsdecls, qn
@@ -1259,6 +1260,10 @@ def _fill_closing(prs, spec: dict, dark_index: int) -> None:
 # Same-family teal tints (apex/first = darkest, base/last = lightest) — used by layered/sequenced layouts.
 _TEAL_TINTS = [_TEAL, RGBColor(0x24, 0x6C, 0x79), RGBColor(0x36, 0x86, 0x90),
                RGBColor(0x50, 0xA0, 0xA7), RGBColor(0x72, 0xB8, 0xBB)]
+# Category colours for marks drawn ON a _TEAL panel — same family, all LIGHTER than the panel so
+# none of them disappears into it (_TEAL_TINTS[0] is _TEAL itself and would be invisible there).
+_TAG_TINTS = [_LTEAL, RGBColor(0x72, 0xB8, 0xBB), RGBColor(0x50, 0xA0, 0xA7),
+              RGBColor(0x36, 0x86, 0x90)]
 
 
 def _fill_kpi_dashboard(prs, spec: dict, dark_index: int) -> None:
@@ -1938,6 +1943,187 @@ def _fill_implications(prs, spec: dict, dark_index: int) -> None:
                     _SZ_SMALL, _ONTEAL, anchor=MSO_ANCHOR.MIDDLE)
 
 
+def _fill_alt_timeline(prs, spec: dict, dark_index: int) -> None:
+    """Alternating timeline: a horizontal spine with lettered nodes, and each event's card placed
+    ABOVE or BELOW in turn — so cards can be far wider than the node spacing without colliding.
+    An optional `tag` per item groups events by category and draws a swatch legend."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    items = (spec.get("items") or [])[:7]
+    n = len(items)
+    if not n:
+        return
+    tags = []
+    for it in items:                                  # distinct tags, order of first appearance
+        t = it.get("tag")
+        if t and t not in tags:
+            tags.append(t)
+    # Tag colours must read against the CARD fill (_TEAL) — _TEAL_TINTS[0] *is* _TEAL, so a tag using
+    # it would paint an invisible bar. Use only tints lighter than the card.
+    tint = {t: _TAG_TINTS[i % len(_TAG_TINTS)] for i, t in enumerate(tags)}
+    zone_top = _BODY_TOP + 0.1
+    zone_bot = _BODY_BOTTOM - (0.5 if tags else 0.0)
+    spine_y = (zone_top + zone_bot) / 2
+    node_d, clear = 0.34, 0.3
+    # Size the card to its content (date + heading + body + padding) rather than filling the half-zone,
+    # which left a large empty area under the text.
+    need = 0.26 + (0.28 if any(i.get("date") for i in items) else 0.0) + 0.34 \
+        + (0.34 if any(i.get("body") for i in items) else 0.0)
+    card_h = min(spine_y - clear - zone_top, max(0.95, need))
+    spacing = _CONTENT_W / n
+    card_w = min(2.7, spacing * 1.7)
+    _rule(slide, _MARGIN, spine_y - 0.01, _CONTENT_W, 0.02, _TEAL2)
+    for i, it in enumerate(items):
+        nx = _MARGIN + (i + 0.5) * spacing
+        col = tint.get(it.get("tag"), _TEAL2)
+        above = i % 2 == 0
+        cy = spine_y - clear - card_h if above else spine_y + clear
+        cx = min(max(nx - card_w / 2, _MARGIN), _MARGIN + _CONTENT_W - card_w)
+        _rule(slide, nx - 0.01, min(spine_y, cy + (card_h if above else 0)),
+              0.02, clear, _TEAL2)                    # stem from the spine to the card
+        card = slide.shapes.add_shape(_BOX, Inches(cx), Inches(cy), Inches(card_w), Inches(card_h))
+        card.fill.solid(); card.fill.fore_color.rgb = _TEAL
+        card.line.fill.background(); card.shadow.inherit = False
+        _rule(slide, cx, cy, card_w, 0.07, col)       # category colour bar along the card's top edge
+        ty = cy + 0.16
+        if it.get("date"):
+            _place_text(slide, cx + 0.12, ty, card_w - 0.24, 0.28, it["date"], _SZ_SMALL, _LTEAL,
+                        bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+            ty += 0.28
+        _place_text(slide, cx + 0.12, ty, card_w - 0.24, 0.34, it.get("heading", ""), _SZ_BODY,
+                    _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        if it.get("body"):
+            _place_text(slide, cx + 0.12, ty + 0.36, card_w - 0.24, cy + card_h - (ty + 0.36) - 0.1,
+                        it["body"], _SZ_SMALL, _ONTEAL, align=PP_ALIGN.CENTER)
+        nd = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(nx - node_d / 2), Inches(spine_y - node_d / 2),
+                                    Inches(node_d), Inches(node_d))
+        nd.fill.solid(); nd.fill.fore_color.rgb = col
+        nd.line.color.rgb = _WHITE; nd.line.width = Pt(1.0); nd.shadow.inherit = False
+        tf = nd.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+        r = p.add_run(); r.text = chr(ord("A") + i); r.font.size = Pt(9); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
+    if tags:                                          # swatch legend along the bottom
+        lx, ly, sw = _MARGIN, _BODY_BOTTOM - 0.34, 0.2
+        for t in tags:
+            sq = slide.shapes.add_shape(_BOX, Inches(lx), Inches(ly + 0.03), Inches(sw), Inches(sw))
+            sq.fill.solid(); sq.fill.fore_color.rgb = tint[t]
+            sq.line.fill.background(); sq.shadow.inherit = False
+            _place_text(slide, lx + sw + 0.1, ly, 3.0, 0.28, t, _SZ_SMALL, _LTEAL, font=_HEAD)
+            lx += sw + 0.1 + min(3.0, 0.11 * len(t) + 0.5) + 0.35
+
+
+def _fill_breakdown(prs, spec: dict, dark_index: int) -> None:
+    """Total broken into shares: a hub circle carrying the total, fanning out via thin connectors to
+    one bar per component. Each bar shows its share and label, tinted largest-to-smallest."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    items = (spec.get("items") or [])[:6]
+    n = len(items)
+    if not n:
+        return
+    hub_d = 2.5
+    hub_cx = _MARGIN + hub_d / 2
+    hub_cy = _BODY_TOP + _BODY_H / 2 - (0.18 if spec.get("caption") else 0.0)
+    bars_x = _MARGIN + hub_d + 1.15
+    bars_w = 13.333 - _MARGIN - bars_x
+    gap = 0.18
+    bar_h = (_BODY_H - (n - 1) * gap) / n
+    pct_w = min(1.25, bars_w * 0.22)
+    # One decimal for every share if ANY of them has a fraction, so the column reads consistently
+    # (42.9% / 8.0%, never 42.9% / 8%).
+    dec = 1 if any(float(i.get("pct", 0) or 0) % 1 for i in items) else 0
+    for i, it in enumerate(items):                    # connectors first, so bars sit on top of them
+        bcy = _BODY_TOP + i * (bar_h + gap) + bar_h / 2
+        cn = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(hub_cx + hub_d / 2),
+                                        Inches(hub_cy), Inches(bars_x), Inches(bcy))
+        cn.line.color.rgb = _TEAL2; cn.line.width = Pt(1.0); cn.shadow.inherit = False
+    hub = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(hub_cx - hub_d / 2), Inches(hub_cy - hub_d / 2),
+                                 Inches(hub_d), Inches(hub_d))
+    hub.fill.solid(); hub.fill.fore_color.rgb = _TEAL
+    hub.line.fill.background(); hub.shadow.inherit = False
+    _place_text(slide, hub_cx - hub_d / 2, hub_cy - 0.5, hub_d, 1.0, spec.get("total", ""),
+                _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
+    if spec.get("caption"):
+        _place_text(slide, hub_cx - hub_d / 2, hub_cy + hub_d / 2 + 0.1, hub_d, 0.4,
+                    spec["caption"], _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+    for i, it in enumerate(items):
+        y = _BODY_TOP + i * (bar_h + gap)
+        col = _TEAL_TINTS[i % len(_TEAL_TINTS)]
+        bar = slide.shapes.add_shape(_BOX, Inches(bars_x), Inches(y), Inches(bars_w), Inches(bar_h))
+        bar.fill.solid(); bar.fill.fore_color.rgb = col
+        bar.line.fill.background(); bar.shadow.inherit = False
+        # The share sits INSIDE the bar with a light hairline separating it from the label. An earlier
+        # version used a dark _INKC block here, but that is almost the slide background colour, so the
+        # figures looked like they were floating outside the bar.
+        pct = float(it.get("pct", 0) or 0)
+        _place_text(slide, bars_x + 0.1, y, pct_w - 0.15, bar_h, f"{pct:.{dec}f}%", _SZ_BODY, _WHITE,
+                    bold=True, font=_HEAD, align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE)
+        _rule(slide, bars_x + pct_w, y + bar_h * 0.22, 0.015, bar_h * 0.56, _ONTEAL)
+        _place_text(slide, bars_x + pct_w + _PAD, y, bars_w - pct_w - 2 * _PAD, bar_h,
+                    it.get("label", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
+                    anchor=MSO_ANCHOR.MIDDLE)
+
+
+def _fill_chart_bands(prs, spec: dict, dark_index: int) -> None:
+    """Column chart with narrative phase bands: bars drawn as shapes (NOT a native chart) so the
+    band pills under the axis line up EXACTLY with their category columns — the whole point of the
+    layout. Bands carry a number badge and span `start`..`end` categories."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    cats = spec.get("categories") or []
+    vals = [float(v) for v in (spec.get("values") or [])]
+    bands = (spec.get("bands") or [])[:4]
+    n = min(len(cats), len(vals))
+    if n < 1:
+        return
+    cats, vals = cats[:n], vals[:n]
+    band_h = 0.46
+    band_y = _BODY_BOTTOM - band_h
+    axis_y = band_y - 0.42                            # baseline: category labels sit just above it
+    plot_top = _BODY_TOP + 0.34                       # room for the value labels above the tallest bar
+    col_w = _CONTENT_W / n
+    peak = max(vals) or 1.0
+    span = axis_y - plot_top
+    if spec.get("y_axis"):
+        _place_text(slide, _MARGIN, _BODY_TOP - 0.04, 5.0, 0.3, spec["y_axis"], _SZ_SMALL,
+                    _LTEAL, bold=True, font=_HEAD)
+    _rule(slide, _MARGIN, axis_y, _CONTENT_W, 0.02, _TEAL2)
+    bw = col_w * 0.54
+    for i, (c, v) in enumerate(zip(cats, vals)):
+        cx = _MARGIN + (i + 0.5) * col_w
+        h = max(0.03, span * (v / peak))
+        bar = slide.shapes.add_shape(_BOX, Inches(cx - bw / 2), Inches(axis_y - h), Inches(bw), Inches(h))
+        bar.fill.solid(); bar.fill.fore_color.rgb = _TEAL2
+        bar.line.fill.background(); bar.shadow.inherit = False
+        _place_text(slide, cx - col_w / 2, axis_y - h - 0.3, col_w, 0.28, f"{v:g}", _SZ_SMALL,
+                    _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, cx - col_w / 2, axis_y + 0.06, col_w, 0.3, c, _SZ_SMALL, _LTEAL,
+                    bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+    for j, b in enumerate(bands):
+        s = max(1, min(int(b.get("start", 1) or 1), n))
+        e = max(s, min(int(b.get("end", s) or s), n))
+        bx = _MARGIN + (s - 1) * col_w + 0.04
+        bwd = (e - s + 1) * col_w - 0.08
+        if s > 1:                                     # dotted divider at the band boundary
+            dx = _MARGIN + (s - 1) * col_w
+            dv = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(dx), Inches(plot_top),
+                                            Inches(dx), Inches(axis_y))
+            dv.line.color.rgb = _TEAL2; dv.line.width = Pt(1.0)
+            try:
+                dv.line.dash_style = MSO_LINE_DASH_STYLE.ROUND_DOT
+            except Exception:  # noqa: BLE001 — solid is an acceptable fallback
+                pass
+            dv.shadow.inherit = False
+        pill = slide.shapes.add_shape(_BOX, Inches(bx), Inches(band_y), Inches(bwd), Inches(band_h))
+        pill.fill.solid(); pill.fill.fore_color.rgb = _TEAL_TINTS[j % len(_TEAL_TINTS)]
+        pill.line.fill.background(); pill.shadow.inherit = False
+        bd = min(0.3, band_h - 0.14)
+        _icon_disc(slide, bx + 0.12 + bd / 2, band_y + band_h / 2, bd, number=j + 1)
+        _place_text(slide, bx + 0.2 + bd, band_y, bwd - 0.3 - bd, band_h, b.get("label", ""),
+                    _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                    anchor=MSO_ANCHOR.MIDDLE)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -2036,6 +2222,12 @@ def render_deck(plan: dict) -> bytes:
             _fill_numbered_cards(prs, spec, dark); continue
         if layout_name == "implications":
             _fill_implications(prs, spec, dark); continue
+        if layout_name == "alt_timeline":
+            _fill_alt_timeline(prs, spec, dark); continue
+        if layout_name == "breakdown":
+            _fill_breakdown(prs, spec, dark); continue
+        if layout_name == "chart_bands":
+            _fill_chart_bands(prs, spec, dark); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

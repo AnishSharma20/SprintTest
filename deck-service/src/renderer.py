@@ -2124,6 +2124,161 @@ def _fill_chart_bands(prs, spec: dict, dark_index: int) -> None:
                     anchor=MSO_ANCHOR.MIDDLE)
 
 
+def _nice_max(v: float) -> float:
+    """Round an axis maximum up to a readable step, so ticks land on round numbers. The ladder is
+    deliberately fine-grained: with only 1/2/2.5/5 available, a max of 29 jumped to 50 and squeezed
+    every point into the left half of the plot."""
+    if v <= 0:
+        return 1.0
+    mag = 10.0 ** math.floor(math.log10(v))
+    for step in (1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0):
+        if v <= step * mag * 1.0000001:
+            return step * mag
+    return 10.0 * mag
+
+
+def _fmt_num(v: float) -> str:
+    return f"{v:g}"
+
+
+def _fill_chart_takeaways(prs, spec: dict, light_index: int) -> None:
+    """Bubble chart beside a key-takeaways column — the classic 'here is the landscape AND what it
+    means' slide. Bubbles are drawn as shapes (python-pptx exposes no plot-area geometry for a native
+    bubble chart, so labels could not be anchored to their points) with area proportional to `size`."""
+    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
+    bubbles = (spec.get("bubbles") or [])[:12]
+    takeaways = [t for t in (spec.get("takeaways") or []) if t and t.strip()][:5]
+    if not bubbles:
+        return
+    heads = spec.get("headers") or []
+    note = spec.get("bottom_note")
+    left_w = 8.6
+    right_x = _MARGIN + left_w + 0.35
+    right_w = 13.333 - _MARGIN - right_x
+    top = _BODY_TOP
+    if heads[:2]:                                       # column headers, each over a rule
+        for hx, hw, ht in ((_MARGIN, left_w, heads[0]), (right_x, right_w, heads[1])):
+            _place_text(slide, hx, top, hw, 0.32, ht, _SZ_BODY, _INKC, bold=True, font=_HEAD)
+            _rule(slide, hx, top + 0.34, hw, 0.025, _TEAL)
+        top += 0.46
+    bottom = _BODY_BOTTOM - (0.34 if note else 0.0)
+    # plot frame: room on the left for y tick labels, below for x ticks + the axis title
+    px0 = _MARGIN + 0.68
+    pw = left_w - 0.68
+    py0 = top + 0.32                                    # the y-axis title sits in this strip
+    py1 = bottom - 0.52
+    ph = py1 - py0
+    if ph < 1.0 or pw < 1.0:
+        return
+    xs = [float(b.get("x", 0) or 0) for b in bubbles]
+    ys = [float(b.get("y", 0) or 0) for b in bubbles]
+    sizes = [float(b.get("size", 0) or 0) for b in bubbles]
+    x_max = _nice_max(max(xs) * 1.12 if max(xs) > 0 else 1.0)
+    y_max = _nice_max(max(ys) * 1.12 if max(ys) > 0 else 1.0)
+    s_max = max(sizes) or 1.0
+    _place_text(slide, _MARGIN, top, left_w, 0.3, spec.get("y_axis", ""), _SZ_SMALL, _TEAL,
+                bold=True, font=_HEAD)
+    frame = slide.shapes.add_shape(_BOX, Inches(px0), Inches(py0), Inches(pw), Inches(ph))
+    frame.fill.background(); frame.line.color.rgb = _LTEAL; frame.line.width = Pt(0.75)
+    frame.shadow.inherit = False
+    for k in range(5):                                  # y ticks + faint gridlines
+        v = y_max * k / 4
+        gy = py1 - ph * k / 4
+        if k:
+            _rule(slide, px0, gy, pw, 0.008, _PANEL)
+        _place_text(slide, _MARGIN, gy - 0.13, 0.58, 0.26, _fmt_num(v), _SZ_SMALL, _TEAL2,
+                    align=PP_ALIGN.RIGHT)
+    for k in range(5):                                  # x ticks
+        v = x_max * k / 4
+        gx = px0 + pw * k / 4
+        _place_text(slide, gx - 0.5, py1 + 0.05, 1.0, 0.26, _fmt_num(v), _SZ_SMALL, _TEAL2,
+                    align=PP_ALIGN.CENTER)
+    _place_text(slide, px0, py1 + 0.3, pw, 0.28, spec.get("x_axis", ""), _SZ_SMALL, _TEAL,
+                bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+    r_max = min(0.5, ph * 0.15)
+    order = sorted(range(len(bubbles)), key=lambda i: -sizes[i])   # big first, so small sit on top
+    geo = []
+    for rank, i in enumerate(order):
+        bx = px0 + pw * (xs[i] / x_max if x_max else 0)
+        by = py1 - ph * (ys[i] / y_max if y_max else 0)
+        r = r_max * math.sqrt(sizes[i] / s_max) if s_max and sizes[i] > 0 else r_max * 0.3
+        geo.append((i, bx, by, max(r, 0.075), rank))
+    for i, bx, by, r, rank in geo:
+        dot = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(bx - r), Inches(by - r),
+                                     Inches(2 * r), Inches(2 * r))
+        dot.fill.solid(); dot.fill.fore_color.rgb = _TEAL_TINTS[rank % len(_TEAL_TINTS)]
+        dot.line.color.rgb = _WHITE; dot.line.width = Pt(0.75); dot.shadow.inherit = False
+        if r >= 0.24 and sizes[i] > 0:                  # value inside the bubble when it fits
+            tf = dot.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+            tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
+            p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
+            run = p.add_run(); run.text = _fmt_num(sizes[i]); run.font.size = Pt(_SZ_SMALL)
+            run.font.bold = True; run.font.name = _HEAD; run.font.color.rgb = _WHITE
+    # Labels, placed greedily (largest bubble first) into the first candidate slot that hits neither
+    # another label nor another bubble. A fixed above/below alternation collided badly wherever several
+    # small bubbles clustered.
+    def _ov_area(a, rects):
+        """Total area of `a` covered by `rects`. Used instead of a boolean hit test so that when a
+        dense cluster leaves NO free slot we can still choose the least-bad one — the earlier version
+        fell back to the first candidate, which guaranteed a collision."""
+        ax, ay, aw, ah = a
+        tot = 0.0
+        for bx2, by2, bw2, bh2 in rects:
+            ox = min(ax + aw, bx2 + bw2) - max(ax, bx2)
+            oy = min(ay + ah, by2 + bh2) - max(ay, by2)
+            if ox > 0 and oy > 0:
+                tot += ox * oy
+        return tot
+
+    bubble_rects = {i: (bx - r, by - r, 2 * r, 2 * r) for i, bx, by, r, _ in geo}
+    taken = []
+    lh = 0.25
+    for i, bx, by, r, rank in geo:
+        label = bubbles[i].get("label", "")
+        # Size the box to the TEXT (~0.095in per char at _SZ_SMALL bold). A fixed-width box reported
+        # collisions that were not real and packed the cluster far looser than it needed to be.
+        wide = max(0.45, min(1.7, 0.095 * len(label) + 0.1))
+        narrow, step = wide, lh + 0.02
+        cands = []
+        for k in range(6):                              # widen the search outward in rings
+            cands.append((bx - wide / 2, by - r - lh - k * step, wide, PP_ALIGN.CENTER))
+            cands.append((bx - wide / 2, by + r + 0.03 + k * step, wide, PP_ALIGN.CENTER))
+            dy = 0 if k == 0 else (-step * k if k % 2 else step * k)
+            cands.append((bx + r + 0.07, by - lh / 2 + dy, narrow, PP_ALIGN.LEFT))
+            cands.append((bx - r - 0.07 - narrow, by - lh / 2 + dy, narrow, PP_ALIGN.RIGHT))
+        others = [v for k, v in bubble_rects.items() if k != i]
+        pad = 0.07                                      # keep a gap: touching boxes read as one word
+        pick, best = None, None
+        for lx, ly, lwd, al in cands:
+            lx = min(max(lx, _MARGIN), 13.333 - _MARGIN - lwd)
+            ly = min(max(ly, py0 + 0.02), py1 - lh)
+            area = _ov_area((lx - pad, ly - 0.02, lwd + 2 * pad, lh + 0.04), taken + others)
+            if area <= 0:
+                pick = (lx, ly, lwd, al)
+                break
+            if best is None or area < best[0]:
+                best = (area, lx, ly, lwd, al)
+        if pick is None:                                # no free slot — take the least-overlapping one
+            pick = best[1:]
+        lx, ly, lwd, al = pick
+        taken.append((lx, ly, lwd, lh))
+        # A label pushed clear of the cluster needs a leader, or it reads as belonging to a neighbour.
+        lcx = lx + (0.12 if al == PP_ALIGN.LEFT else (lwd - 0.12 if al == PP_ALIGN.RIGHT else lwd / 2))
+        lcy = ly + lh / 2
+        d = math.hypot(lcx - bx, lcy - by)
+        if d > r + 0.42:
+            ux, uy = (lcx - bx) / d, (lcy - by) / d
+            ln = slide.shapes.add_connector(
+                MSO_CONNECTOR.STRAIGHT, Inches(bx + ux * (r + 0.02)), Inches(by + uy * (r + 0.02)),
+                Inches(lcx - ux * 0.06), Inches(lcy - uy * 0.06))
+            ln.line.color.rgb = _LTEAL; ln.line.width = Pt(0.75); ln.shadow.inherit = False
+        _place_text(slide, lx, ly, lwd, lh, label, _SZ_SMALL, _INKC, bold=True, font=_HEAD, align=al)
+    if takeaways:
+        _place_bullets(slide, right_x, py0, right_w, bottom - py0, takeaways, _SZ_SMALL, _INKC)
+    if note:
+        _place_text(slide, _MARGIN, _BODY_BOTTOM - 0.3, _CONTENT_W, 0.28, note, _SZ_SMALL, _TEAL2)
+
+
 def _slide_has_white_bg(slide) -> bool:
     cSld = slide._element.find(qn("p:cSld"))
     bg = cSld.find(qn("p:bg")) if cSld is not None else None
@@ -2228,6 +2383,8 @@ def render_deck(plan: dict) -> bytes:
             _fill_breakdown(prs, spec, dark); continue
         if layout_name == "chart_bands":
             _fill_chart_bands(prs, spec, dark); continue
+        if layout_name == "chart_takeaways":
+            _fill_chart_takeaways(prs, spec, light); continue
         cat = catalog.get(layout_name)
         if not cat:
             raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")

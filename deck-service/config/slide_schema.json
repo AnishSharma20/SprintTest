@@ -79,7 +79,8 @@
               "implications",
               "alt_timeline",
               "breakdown",
-              "chart_bands"
+              "chart_bands",
+              "chart_takeaways"
             ]
           },
           "background": {
@@ -436,6 +437,33 @@
             "type": "array",
             "items": {
               "type": "number"
+            }
+          },
+          "takeaways": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bubbles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "size": {
+                  "type": "number"
+                }
+              }
             }
           },
           "bands": {
@@ -3579,6 +3607,94 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "chart_takeaways"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "x_axis",
+                "y_axis",
+                "bubbles",
+                "takeaways"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 90
+                },
+                "headers": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 34
+                  }
+                },
+                "x_axis": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "y_axis": {
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "bubbles": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 12,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "x",
+                      "y"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 20
+                      },
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "size": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                },
+                "takeaways": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 5,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 220
+                  }
+                },
+                "bottom_note": {
+                  "type": "string",
+                  "maxLength": 180
                 }
               }
             }

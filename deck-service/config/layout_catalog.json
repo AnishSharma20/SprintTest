@@ -735,5 +735,16 @@
     "limits": {},
     "picture_slots": [],
     "removable_idx": []
+  },
+  "chart_takeaways": {
+    "template_layout": "Blank",
+    "kind": "chart_takeaways",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
   }
 }

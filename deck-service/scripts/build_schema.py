@@ -594,6 +594,23 @@ def main():
                            "end": {"type": "integer", "minimum": 1}}}}},
            "column chart with narrative phase bands")
 
+    _synth("chart_takeaways", "chart_takeaways", "light",
+           ["layout", "title", "x_axis", "y_axis", "bubbles", "takeaways"], {
+        "title": {"type": "string", "maxLength": 90},
+        "headers": {"type": "array", "minItems": 2, "maxItems": 2,
+                    "items": {"type": "string", "maxLength": 34}},
+        "x_axis": {"type": "string", "maxLength": 40},
+        "y_axis": {"type": "string", "maxLength": 40},
+        "bubbles": {"type": "array", "minItems": 3, "maxItems": 12, "items": {
+            "type": "object", "additionalProperties": False, "required": ["label", "x", "y"],
+            "properties": {"label": {"type": "string", "maxLength": 20},
+                           "x": {"type": "number"}, "y": {"type": "number"},
+                           "size": {"type": "number", "minimum": 0}}}},
+        "takeaways": {"type": "array", "minItems": 2, "maxItems": 5,
+                      "items": {"type": "string", "maxLength": 220}},
+        "bottom_note": {"type": "string", "maxLength": 180}},
+           "bubble chart + key takeaways")
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Superba deck plan",
@@ -620,7 +637,8 @@ def main():
                                                             "org_chart", "decision_tree", "cycle", "gantt",
                                                             "serpentine", "coverage_matrix", "photo_stats",
                                                             "numbered_cards", "implications",
-                                                            "alt_timeline", "breakdown", "chart_bands"]},
+                                                            "alt_timeline", "breakdown", "chart_bands",
+                                                            "chart_takeaways"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
                         "title": {"type": "string"},
@@ -678,6 +696,11 @@ def main():
                         "total": {"type": "string"},
                         "periods": {"type": "array", "items": {"type": "string"}},
                         "values": {"type": "array", "items": {"type": "number"}},
+                        "takeaways": {"type": "array", "items": {"type": "string"}},
+                        "bubbles": {"type": "array", "items": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {"label": {"type": "string"}, "x": {"type": "number"},
+                                           "y": {"type": "number"}, "size": {"type": "number"}}}},
                         "bands": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"label": {"type": "string"},

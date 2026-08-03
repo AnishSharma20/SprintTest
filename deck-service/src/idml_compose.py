@@ -208,12 +208,26 @@ def page_size(src: Source, spread_id: str) -> tuple[int, int] | None:
 # Composition
 # ---------------------------------------------------------------------------
 
-def compose(pages: list[PageRef], templates: dict[str, Path]) -> tuple[bytes, set[str]]:
+@dataclass
+class Composition:
+    """Result of a compose(): the package, the images it links, and how each source was renamed.
+
+    `prefixes` maps a template key to the prefix its ids got, so a caller holding a library slot
+    ("story u2d2 of the sustainability template") can find that story in the composed package.
+    """
+    data: bytes
+    images: set[str]
+    prefixes: dict[str, str]
+
+    def story_id(self, template: str, story: str) -> str:
+        return f"{self.prefixes.get(template, '')}{story}"
+
+
+def compose(pages: list[PageRef], templates: dict[str, Path]) -> Composition:
     """Assemble the given pages, in order, into one valid .idml package.
 
     The first page's template is the BASE: it supplies document level settings (preferences,
     tags, backing story) and keeps its own identifiers. Every other template is namespaced.
-    Returns (idml_bytes, linked_image_filenames_needed).
     """
     if not pages:
         raise ValueError("compose() needs at least one page.")
@@ -283,7 +297,7 @@ def compose(pages: list[PageRef], templates: dict[str, Path]) -> tuple[bytes, se
                    compress_type=zipfile.ZIP_STORED)
         for name, data in members.items():
             z.writestr(name, data)
-    return out.getvalue(), images
+    return Composition(out.getvalue(), images, prefixes)
 
 
 class _MasterAsSpread:

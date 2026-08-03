@@ -34,7 +34,7 @@ PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.prese
 DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 _IDML_README = (
-    "Superba whitepaper — InDesign (.idml)\n"
+    "Superba whitepaper, InDesign (.idml)\n"
     "=====================================\n\n"
     "This .idml is the AKBM whitepaper template with its text replaced by AI generated,\n"
     "source grounded content. All design (fonts, gradients, images, the benefits grid and\n"
@@ -48,6 +48,33 @@ _IDML_README = (
     "     shown by a red + on the frame) before exporting to PDF.\n\n"
     "The .preview.md file in this zip is the same content as plain text for quick review.\n"
 )
+
+
+def _mix_readme(pages: list[str], rationale: str, images: list[str]) -> str:
+    """Designer note for a COMPOSED whitepaper. Images are linked, and a composed document can pull
+    pages from more than one brochure, so it may need Links from several of the original packages —
+    which the design team already has. We cannot ship them (they run to hundreds of MB)."""
+    return (
+        "Superba whitepaper, composed from several Superba brochures\n"
+        "===========================================================\n\n"
+        f"Pages used, in order:\n" + "".join(f"  {i}. {p}\n" for i, p in enumerate(pages, 1)) +
+        (f"\nWhy these pages: {rationale}\n" if rationale else "") +
+        "\nEach page keeps the exact design it was drawn with. Pages marked verbatim in the tool\n"
+        "(the benefit grid, the ingredient and portfolio spread) are placed unchanged because their\n"
+        "icons and figures are brand facts.\n\n"
+        "TO OPEN\n"
+        "  1. Open the .idml in Adobe InDesign (File > Open).\n"
+        "  2. Images are LINKED, and because pages come from more than one brochure this document\n"
+        "     can need images from several of the original packages (Sport Performance,\n"
+        "     Sustainability, Superba Brochure). Relink via Window > Links > Relink to Folder,\n"
+        "     pointing at each package's Links folder in turn. Until then the pages show low\n"
+        "     resolution previews.\n"
+        "  3. Fonts: Manrope, Exo 2, Montserrat.\n"
+        "  4. Review every page, then export to PDF.\n\n"
+        "AI GENERATED DRAFT. Review all content, claims and figures before any use.\n\n"
+        f"Linked images this document expects ({len(images)}):\n" +
+        "".join(f"  {n}\n" for n in images)
+    )
 
 
 def _read_summary(name: str, data: bytes) -> str:
@@ -74,7 +101,7 @@ def _prune_jobs() -> None:
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
              kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
-             sprak: str = "English") -> None:
+             sprak: str = "English", sider: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -87,13 +114,30 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                              f"(Superba, Aker BioMarine) and study citations intact.\n\n"
                              + (instruksjoner or ""))
 
-        if innholdstype in ("blog", "whitepaper", "whitepaper_idml"):
+        if innholdstype in ("blog", "whitepaper", "whitepaper_idml", "whitepaper_mix"):
             # One long-form asset from ALL sources combined (files + picked study summaries).
             parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
             source = "\n\n".join(parts)
             if not source:
                 raise ValueError("No text found in the provided files/studies.")
             base = (files[0][0] if files else innholdstype).rsplit(".", 1)[0] or innholdstype
+
+            if innholdstype == "whitepaper_mix":
+                # Assembled from designed pages across SEVERAL Superba brochures, then filled.
+                b = src.generate_whitepaper_composed(
+                    client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
+                    pages=[p for p in (sider or "").split(",") if p.strip()],
+                    on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+                zbuf = io.BytesIO()
+                with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
+                    z.writestr(b["filename"], b["idml"])
+                    z.writestr(base + ".preview.md", b["markdown"])
+                    z.writestr("OPEN_IN_INDESIGN.txt",
+                               _mix_readme(b["pages"], b["rationale"], b["images"]))
+                JOBS[job_id].update(status="done", progress=100, step="Done",
+                                    result=zbuf.getvalue(), media_type="application/zip",
+                                    filename=base + "-indesign.zip")
+                return
 
             if innholdstype == "whitepaper_idml":
                 # Fill the real Superba InDesign template -> a designed .idml the design team opens.
@@ -219,6 +263,7 @@ async def create_job(
     instruksjoner: str = Form(default=""),
     innholdstype: str = Form(default="deck"),
     sprak: str = Form(default="English"),
+    sider: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -238,9 +283,19 @@ async def create_job(
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
     threading.Thread(target=_run_job,
-                     args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype, sprak),
+                     args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype,
+                           sprak, sider),
                      daemon=True).start()
     return {"job_id": job_id}
+
+
+@app.get("/idml/pages")
+def idml_pages():
+    """The composable page library, so the UI can offer a manual page override."""
+    try:
+        return {"pages": src.idml_page_library()}
+    except Exception as e:  # noqa: BLE001
+        return JSONResponse({"feil": f"Page library unavailable: {e}"}, status_code=500)
 
 
 @app.get("/jobs/{job_id}")

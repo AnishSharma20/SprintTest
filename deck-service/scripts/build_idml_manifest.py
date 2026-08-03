@@ -156,7 +156,7 @@ def _cap(n: int, mode: str) -> int:
 def _slot(z: zipfile.ZipFile, sid: str, mode: str) -> dict:
     root = _story_root(z, sid)
     lines = payload_lines(root)
-    sample = " / ".join(line_text(ln).strip() for ln in lines[:2])[:90]
+    sample = " ⏎ ".join(line_text(ln).strip() for ln in lines[:2])[:90]
     return {"story": sid, "mode": mode,
             "lines": [{"cap": _cap(len(payload_text(ln)), mode)} for ln in lines] or [{"cap": 80}],
             "sample": sample}

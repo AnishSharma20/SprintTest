@@ -10,7 +10,7 @@ inherited from the template's slide layouts.
 from __future__ import annotations
 
 __all__ = ["generate", "generate_blog", "generate_whitepaper", "generate_whitepaper_idml",
-           "markdown_to_docx"]
+           "generate_whitepaper_composed", "idml_page_library", "markdown_to_docx"]
 
 
 def generate(*args, **kwargs):
@@ -36,6 +36,18 @@ def generate_whitepaper_idml(*args, **kwargs):
     """Lazy entrypoint for the InDesign (.idml) whitepaper generator."""
     from .whitepaper import generate_whitepaper_idml as _generate_whitepaper_idml
     return _generate_whitepaper_idml(*args, **kwargs)
+
+
+def generate_whitepaper_composed(*args, **kwargs):
+    """Lazy entrypoint — InDesign whitepaper assembled from pages across several brochures."""
+    from .whitepaper import generate_whitepaper_composed as _generate_whitepaper_composed
+    return _generate_whitepaper_composed(*args, **kwargs)
+
+
+def idml_page_library():
+    """The page library summary the UI needs for its manual page override."""
+    from .idml_library import library_summary
+    return library_summary()
 
 
 def markdown_to_docx(*args, **kwargs):

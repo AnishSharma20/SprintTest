@@ -167,7 +167,10 @@ def _slot_texts(slot: dict, value) -> list[str]:
     if value is None:
         return []
     if slot["mode"] == "single":
-        return [str(value)]
+        # A "single" frame can still be several typeset lines (a two line cover title). Split on
+        # newlines so the model's line breaks map onto the frame's real lines instead of landing
+        # inside one run as a literal newline.
+        return [p.strip() for p in str(value).split("\n") if p.strip()] or [""]
     if isinstance(value, str):  # prose emitted as one string -> split paragraphs
         return [p.strip() for p in re.split(r"\n\s*\n|\n", value) if p.strip()]
     return [str(v) for v in value]
@@ -281,8 +284,12 @@ def _slot_schema(slot: dict, what: str) -> dict:
     caps = [ln["cap"] for ln in slot.get("lines") or [{"cap": 200}]]
     sample = (slot.get("sample") or "")[:90]
     desc = f"{what} Budget per line: {caps} chars."
+    if len(caps) > 1 and slot.get("mode") == "single":
+        desc += (f" This frame is typeset over {len(caps)} lines: separate them with a newline "
+                 f"character, and keep each line within its own budget.")
     if sample:
-        desc += f' Role example from the current document (NEVER copy it): "{sample}"'
+        desc += (' Role example from the current document, with ⏎ marking a line break (NEVER copy '
+                 f'the wording and never type ⏎): "{sample}"')
     if slot["mode"] == "single":
         return {"type": "string", "maxLength": max(caps[0], 8), "description": desc}
     # Item cap = the MEASURED per-line budget (no inflated floor). These frames are physically

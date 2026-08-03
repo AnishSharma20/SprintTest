@@ -44,7 +44,15 @@ export async function POST(req: Request) {
 
     const forward = new FormData();
     for (const f of filer) forward.append("filer", f, f.name);
-    for (const key of ["lengde", "tone", "kvalitet", "instruksjoner", "innholdstype", "sprak"] as const) {
+    for (const key of [
+      "lengde",
+      "tone",
+      "kvalitet",
+      "instruksjoner",
+      "innholdstype",
+      "sprak",
+      "sider",
+    ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);
     }

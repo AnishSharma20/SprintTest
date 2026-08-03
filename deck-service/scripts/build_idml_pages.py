@@ -158,7 +158,7 @@ def _slot(src: Source, story: str, mode: str) -> dict:
     return {
         "story": story, "mode": mode,
         "lines": [{"cap": _cap(len(payload_text(ln)), mode)} for ln in lines] or [{"cap": 80}],
-        "sample": " / ".join(line_text(ln).strip() for ln in lines[:2])[:90],
+        "sample": " ⏎ ".join(line_text(ln).strip() for ln in lines[:2])[:90],
     }
 
 

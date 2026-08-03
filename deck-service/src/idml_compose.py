@@ -34,10 +34,13 @@ from xml.etree import ElementTree as ET
 _PKG_NS = "http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging"
 ET.register_namespace("idPkg", _PKG_NS)
 
-# An object id: "u" + hex, optionally with a trailing alpha suffix (e.g. u9fBuildingBlock0).
+# An object id: "u" + hex, optionally with a trailing alpha suffix (e.g. u9fBuildingBlock0), and
+# optionally carrying one of our source prefixes (broc_uce). The prefix alternative matters for
+# validate(): without it the checker silently ignored every namespaced id and reported a clean bill
+# of health for a document full of dangling references.
 # Document-level ids like "d" / "dTextVariablen..." are deliberately excluded: they are never
 # imported per page (the base supplies them), and they are too short to rewrite safely.
-_ID_RE = re.compile(r"^u[0-9a-fA-F]+(?:[A-Za-z]\w*)?$")
+_ID_RE = re.compile(r"^(?:[a-z0-9]{1,8}_)?u[0-9a-fA-F]+(?:[A-Za-z]\w*)?$")
 
 # Reference types whose leaf name we namespace when it is a document-defined name.
 _NAMED_REF_TYPES = ("ParagraphStyle", "CharacterStyle", "ObjectStyle", "TableStyle", "CellStyle",
@@ -247,6 +250,15 @@ def compose(pages: list[PageRef], templates: dict[str, Path]) -> Composition:
     members: dict[str, bytes] = {}
     images: set[str] = set()
 
+    # Layers live in designmap.xml, and we keep only the BASE's designmap. So an imported page's
+    # ItemLayer would point at a layer that does not exist in the result — InDesign crashes on
+    # open. Put every imported item on the base's layer instead, which is also what a designer
+    # gets when pasting content into a document that has one layer.
+    bindings = _base_bindings(base)
+    # Master spread names must be unique too ("A-Parent" twice = another crash on open), so each
+    # imported master gets its own prefix letter and a namespaced base name.
+    master_letters = iter("BCDEFGHIJKLMNOPQRSTUVWXYZ")
+
     # ---- merged resources -------------------------------------------------
     members["Resources/Fonts.xml"] = _merge_fonts(srcs, order)
     members["Resources/Graphic.xml"] = _merge_resource(srcs, order, "Resources/Graphic.xml")
@@ -269,8 +281,8 @@ def compose(pages: list[PageRef], templates: dict[str, Path]) -> Composition:
         src = srcs[page.template]
         pfx = src.prefix
         sm = f"Spreads/Spread_{pfx}{page.spread}.xml"
-        members[sm] = _namespace_xml(src.read(f"Spreads/Spread_{page.spread}.xml"),
-                                     src).encode("utf-8")
+        members[sm] = _rebind(_namespace_xml(src.read(f"Spreads/Spread_{page.spread}.xml"), src),
+                              bindings, pfx).encode("utf-8")
         spread_members.append(sm)
         images |= spread_images(src, page.spread)
 
@@ -278,7 +290,10 @@ def compose(pages: list[PageRef], templates: dict[str, Path]) -> Composition:
             mm = f"MasterSpreads/MasterSpread_{pfx}{mid}.xml"
             orig = f"MasterSpreads/MasterSpread_{mid}.xml"
             if mm not in members and orig in src.zf.namelist():
-                members[mm] = _namespace_xml(src.read(orig), src).encode("utf-8")
+                xml = _rebind(_namespace_xml(src.read(orig), src), bindings, pfx)
+                if pfx:
+                    xml = _rename_master(xml, next(master_letters, "Z"), pfx)
+                members[mm] = xml.encode("utf-8")
                 master_members.append(mm)
                 # a master can carry its own text frames -> their stories must come along
                 for sid in spread_stories(_MasterAsSpread(src, orig), ""):
@@ -298,6 +313,47 @@ def compose(pages: list[PageRef], templates: dict[str, Path]) -> Composition:
         for name, data in members.items():
             z.writestr(name, data)
     return Composition(out.getvalue(), images, prefixes)
+
+
+def _base_bindings(base: Source) -> dict[str, str]:
+    """Document level objects an imported page must be re-bound to.
+
+    Layers and Sections are declared in designmap.xml, and we keep only the BASE's designmap, so a
+    namespaced ItemLayer / AppliedAlternateLayout would point at something that does not exist in
+    the result. InDesign does not report that, it crashes on open — hence re-binding rather than
+    importing (which would also collide on names, e.g. two layers both called "Layer 1").
+    """
+    dm = base.read("designmap.xml")
+    layer = re.search(r'<Layer\s+Self="([^"]+)"', dm)
+    section = re.search(r'<Section\s+Self="([^"]+)"', dm)
+    bindings = {"ItemLayer": layer.group(1) if layer else "ua"}
+    if section:
+        bindings["AppliedAlternateLayout"] = section.group(1)
+    return bindings
+
+
+def _rebind(xml: str, bindings: dict[str, str], prefix: str) -> str:
+    """Point an imported page's document level references at the base document's objects."""
+    if not prefix:
+        return xml
+    for attr, target in bindings.items():
+        xml = re.sub(rf'{attr}="[^"]*"', f'{attr}="{target}"', xml)
+    return xml
+
+
+def _rename_master(xml: str, letter: str, prefix: str) -> str:
+    """Give an imported master a unique prefix letter and base name (InDesign requires both)."""
+    match = re.search(r"<MasterSpread\b([^>]*)>", xml)
+    if not match:
+        return xml
+    attrs = match.group(1)
+    base_name = (re.search(r'BaseName="([^"]*)"', attrs) or [None, "Parent"])[1]
+    new_base = f"{base_name} {prefix.rstrip('_')}"
+    head = attrs
+    head = re.sub(r'NamePrefix="[^"]*"', f'NamePrefix="{letter}"', head)
+    head = re.sub(r'BaseName="[^"]*"', f'BaseName="{new_base}"', head)
+    head = re.sub(r'Name="[^"]*"', f'Name="{letter}-{new_base}"', head)
+    return xml.replace(match.group(0), f"<MasterSpread{head}>", 1)
 
 
 class _MasterAsSpread:
@@ -465,6 +521,24 @@ def validate(data: bytes) -> dict:
     if dangling:
         report["warnings"]["dangling_refs"] = dangling[:12]
         report["warnings"]["dangling_count"] = len(dangling)
+
+    # InDesign crashes on open (rather than complaining) for these two, so they are hard errors.
+    layers = {m for m in re.findall(r'<Layer\s+Self="([^"]+)"', dm)}
+    used_layers: set[str] = set()
+    master_names: list[str] = []
+    for member in z.namelist():
+        if member.startswith(("Spreads/", "MasterSpreads/")):
+            raw = z.read(member).decode("utf-8", "replace")
+            used_layers |= set(re.findall(r'ItemLayer="([^"]+)"', raw))
+        if member.startswith("MasterSpreads/"):
+            head = re.search(r"<MasterSpread\b([^>]*)>", z.read(member).decode("utf-8", "replace"))
+            if head:
+                master_names.append((re.search(r'Name="([^"]*)"', head.group(1)) or [None, ""])[1])
+    if used_layers - layers:
+        report["errors"].append(f"items on undefined layers: {sorted(used_layers - layers)}")
+    dupe_masters = {n for n in master_names if master_names.count(n) > 1}
+    if dupe_masters:
+        report["errors"].append(f"duplicate master spread names: {sorted(dupe_masters)}")
 
     spreads = re.findall(r'<idPkg:Spread src="([^"]+)"', dm)
     pages = 0

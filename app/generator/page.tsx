@@ -115,6 +115,31 @@ function flaggFor(name: string): string {
   return LANGUAGES.find((l) => l.name === name)?.flag ?? "🌐";
 }
 
+// Filename for a generated download. Prefer what the service sends in Content-Disposition (it is
+// derived from the source material), and always append a timestamp: the old code hardcoded ONE name
+// per content type, so every run landed as "superba-whitepaper-indesign (1).zip", "(2)", "(3)"… and
+// looked like the same file coming back every time.
+function nedlastingsnavn(res: Response, type: ContentType, blob: Blob): string {
+  const cd = res.headers.get("Content-Disposition") ?? "";
+  const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
+  let name = (m?.[1] ?? "").trim();
+  if (!name) {
+    name =
+      type === "whitepaper_idml" || type === "whitepaper_mix"
+        ? "superba-whitepaper-indesign.zip"
+        : blob.type.includes("zip")
+          ? "content-decks.zip"
+          : "content-deck.pptx";
+  }
+  const dot = name.lastIndexOf(".");
+  const stem = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : "";
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, "0");
+  const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+  return `${stem}-${stamp}${ext}`;
+}
+
 function LanguagePicker({
   value,
   onChange,
@@ -465,11 +490,7 @@ export default function ContentGenerator() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        if (type === "whitepaper_idml" || type === "whitepaper_mix") {
-          a.download = "superba-whitepaper-indesign.zip";
-        } else {
-          a.download = blob.type.includes("zip") ? "content-decks.zip" : "content-deck.pptx";
-        }
+        a.download = nedlastingsnavn(dl, type, blob);
         a.click();
         URL.revokeObjectURL(url);
       }

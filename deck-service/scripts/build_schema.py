@@ -304,7 +304,7 @@ def main():
                                                          "values": {"type": "array", "items": {"type": "number"}}}}}}}})
     summary.append(("chart", "Blank (native pptx chart)", ["dark"], {"data": "categories+series"}))
 
-    # Batch 1 synthetic layouts (matrix / journey / exec_summary / quote / comparison).
+    # Batch 1 synthetic layouts (matrix / exec_summary / comparison).
     def _synth(name, kind, bg, required, props, note):
         catalog[name] = {"template_layout": "Blank", "kind": kind, "backgrounds": [bg],
                          "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
@@ -320,14 +320,6 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 30},
                            "body": {"type": "string", "maxLength": 120}}}}}, "2x2 matrix")
 
-    _synth("journey", "journey", "dark", ["layout", "title", "steps"], {
-        "title": {"type": "string", "maxLength": 90},
-        "steps": {"type": "array", "minItems": 3, "maxItems": 5, "items": {
-            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
-            "properties": {"heading": {"type": "string", "maxLength": 24},
-                           "body": {"type": "string", "maxLength": 90},
-                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "process journey")
-
     _synth("exec_summary", "exec_summary", "dark", ["layout", "title", "points"], {
         "title": {"type": "string", "maxLength": 90},
         "asset_id": {"enum": asset_ids + [None]},
@@ -337,11 +329,6 @@ def main():
                            "body": {"type": "string", "maxLength": 160},
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "text points + image")
 
-    _synth("quote", "quote", "dark", ["layout", "quote"], {
-        "title": {"type": "string", "maxLength": 60},
-        "quote": {"type": "string", "maxLength": 400},
-        "author": {"type": "string", "maxLength": 70}}, "pull quote")
-
     _synth("comparison", "comparison", "light", ["layout", "title", "headers", "rows"], {
         "title": {"type": "string", "maxLength": 90},
         "headers": {"type": "array", "minItems": 2, "maxItems": 4, "items": {"type": "string", "maxLength": 30}},
@@ -350,7 +337,7 @@ def main():
             "properties": {"cells": {"type": "array", "minItems": 2, "maxItems": 4,
                                      "items": {"type": "string", "maxLength": 70}}}}}}, "comparison table")
 
-    # Batch 2 synthetic layouts (stat / harvey_ball / timeline / funnel).
+    # Batch 2 synthetic layouts (stat / harvey_ball / funnel).
     _synth("stat", "stat", "dark", ["layout", "title", "stats"], {
         "title": {"type": "string", "maxLength": 90},
         "caption": {"type": "string", "maxLength": 90},
@@ -369,14 +356,6 @@ def main():
                            "scores": {"type": "array", "minItems": 2, "maxItems": 4,
                                       "items": {"type": "integer", "minimum": 0, "maximum": 4}}}}}}, "harvey-ball grid")
 
-    _synth("timeline", "timeline", "dark", ["layout", "title", "milestones"], {
-        "title": {"type": "string", "maxLength": 90},
-        "milestones": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
-            "type": "object", "additionalProperties": False, "required": ["date", "heading"],
-            "properties": {"date": {"type": "string", "maxLength": 16},
-                           "heading": {"type": "string", "maxLength": 26},
-                           "body": {"type": "string", "maxLength": 80}}}}}, "timeline")
-
     _synth("funnel", "funnel", "dark", ["layout", "title", "stages"], {
         "title": {"type": "string", "maxLength": 90},
         "stages": {"type": "array", "minItems": 3, "maxItems": 5, "items": {
@@ -385,13 +364,6 @@ def main():
                            "body": {"type": "string", "maxLength": 90}}}}}, "funnel")
 
     # Client-requested layouts.
-    _synth("case_study", "case_study", "dark", ["layout", "title", "design", "result", "takeaway"], {
-        "title": {"type": "string", "maxLength": 90},
-        "study": {"type": "string", "maxLength": 80},
-        "design": {"type": "string", "maxLength": 220},
-        "result": {"type": "string", "maxLength": 220},
-        "takeaway": {"type": "string", "maxLength": 160}}, "case study / proof point")
-
     _synth("closing", "closing", "dark", ["layout", "title"], {
         "title": {"type": "string", "maxLength": 90},
         "tagline": {"type": "string", "maxLength": 90},
@@ -628,9 +600,9 @@ def main():
                     "required": ["layout"],
                     "properties": {
                         "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
-                                                            "matrix", "journey", "exec_summary", "quote", "comparison",
-                                                            "stat", "harvey_ball", "timeline", "funnel",
-                                                            "case_study", "closing",
+                                                            "matrix", "exec_summary", "comparison",
+                                                            "stat", "harvey_ball", "funnel",
+                                                            "closing",
                                                             "kpi_dashboard", "roadmap",
                                                             "icon_grid", "takeaways", "from_to",
                                                             "pillars", "team", "metric_bars", "cause_effect",

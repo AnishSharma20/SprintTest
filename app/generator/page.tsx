@@ -25,8 +25,6 @@ type ContentType =
   | "blog"
   | "video"
   | "podcast"
-  | "whitepaper"
-  | "whitepaper_idml"
   | "whitepaper_mix";
 
 const CONTENT_TYPES: {
@@ -37,17 +35,15 @@ const CONTENT_TYPES: {
   available: boolean;
 }[] = [
   { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "Branded slides", available: true },
+  { id: "whitepaper_mix", label: "Whitepaper", icon: "📄", hint: "Designed, on brand", available: true },
   { id: "blog", label: "Blog post", icon: "✍️", hint: "Grounded in science", available: true },
   { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
-  { id: "whitepaper", label: "Whitepaper", icon: "📄", hint: "Clinical long-form", available: true },
-  { id: "whitepaper_idml", label: "Whitepaper (InDesign)", icon: "🎨", hint: "Designed .idml, on brand", available: true },
-  { id: "whitepaper_mix", label: "Whitepaper (mixed pages)", icon: "🧩", hint: "Pages from several brochures", available: true },
 ];
 
 // Content types whose result is a Markdown draft (shown in an editable panel + Word download),
-// as opposed to a binary file (the deck) that downloads directly.
-const TEXT_TYPES = new Set<ContentType>(["blog", "whitepaper"]);
+// as opposed to a binary file (a deck or a designed whitepaper) that downloads directly.
+const TEXT_TYPES = new Set<ContentType>(["blog"]);
 
 // One composable brochure page, as offered by the service's /idml/pages route.
 type LibrarySide = {
@@ -125,7 +121,7 @@ function nedlastingsnavn(res: Response, type: ContentType, blob: Blob): string {
   let name = (m?.[1] ?? "").trim();
   if (!name) {
     name =
-      type === "whitepaper_idml" || type === "whitepaper_mix"
+      type === "whitepaper_mix"
         ? "superba-whitepaper-indesign.zip"
         : blob.type.includes("zip")
           ? "content-decks.zip"
@@ -500,11 +496,7 @@ export default function ContentGenerator() {
       // deck/blog/whitepaper are ever generated, and only when claims were fed in.
       if (
         claimIds.length &&
-        (type === "deck" ||
-          type === "blog" ||
-          type === "whitepaper" ||
-          type === "whitepaper_idml" ||
-          type === "whitepaper_mix")
+        (type === "deck" || type === "blog" || type === "whitepaper_mix")
       ) {
         const reviewer =
           typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
@@ -869,7 +861,7 @@ export default function ContentGenerator() {
               {visSideValg && sideBibliotek.length > 0 && (
                 <div className="rounded-2xl border border-[#D6E6EE] bg-[#F7FBFC] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
-                    🧩 Mixed page whitepaper
+                    📄 Whitepaper pages
                   </div>
                   <p className="mt-0.5 text-xs text-zinc-500">
                     {valgteSider.length === 0
@@ -1127,7 +1119,7 @@ export default function ContentGenerator() {
 
         {utkast.map((u) => {
           const label = CONTENT_TYPES.find((t) => t.id === u.type)?.label ?? "Draft";
-          const base = u.type === "whitepaper" ? "superba-whitepaper-draft" : "superba-blog-draft";
+          const base = "superba-blog-draft";   // the blog is the only editable draft left
           return (
             <div key={u.type} className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">

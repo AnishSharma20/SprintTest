@@ -84,6 +84,8 @@ export function buildClaimsSourceFile(
 
 /** Record which approved claims a generated asset drew on (best-effort; no-op if unconfigured). */
 export async function recordAssetClaims(
+  // "whitepaper" / "whitepaper_idml" stay accepted: older rows in generated_assets used them,
+  // and the service still exposes both paths even though the UI now offers only the composed one.
   assetType: "deck" | "blog" | "whitepaper" | "whitepaper_idml" | "whitepaper_mix",
   claimIds: string[],
   opts: { title?: string; createdBy?: string } = {}

@@ -16,8 +16,10 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import threading
 import time
+import unicodedata
 import uuid
 import zipfile
 
@@ -117,6 +119,32 @@ def _prune_jobs() -> None:
         JOBS.pop(jid, None)
 
 
+# Letters NFKD cannot fold, because they are distinct letters rather than base + combining mark.
+# Without this, a Norwegian title loses them outright: "øker" would slug to "ker".
+_TRANSLIT = str.maketrans({
+    "ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "å": "a", "Å": "A",
+    "ß": "ss", "þ": "th", "Þ": "Th", "ð": "d", "Ð": "D",
+    "ł": "l", "Ł": "L", "đ": "d", "Đ": "D", "œ": "oe", "Œ": "OE",
+})
+
+
+def _slug(text: str, limit: int = 60) -> str:
+    """A filesystem-safe ASCII stem from a GENERATED title, so a download is named after its topic
+    instead of the source file (picking studies always produced "Selected-scientific-studies").
+
+    ASCII-only on purpose: Content-Disposition here carries a plain `filename="..."`, and non-ASCII
+    there is mangled by some clients. Nordic letters are transliterated and accents folded
+    (Omega-3 nivået øker -> Omega-3-nivaet-oker); a title with no usable ASCII at all (e.g. fully
+    CJK) yields "" so the caller falls back to the source-file base name.
+    """
+    s = (text or "").translate(_TRANSLIT)
+    s = unicodedata.normalize("NFKD", s)
+    s = s.encode("ascii", "ignore").decode("ascii")
+    s = re.sub(r"[^A-Za-z0-9]+", "-", s)
+    s = re.sub(r"-{2,}", "-", s).strip("-")
+    return s[:limit].rstrip("-")
+
+
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
              kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
              sprak: str = "English", sider: str = "") -> None:
@@ -146,15 +174,16 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     pages=[p for p in (sider or "").split(",") if p.strip()],
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+                stem = _slug(b.get("title", "")) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                    z.writestr(b["filename"], b["idml"])
-                    z.writestr(base + ".preview.md", b["markdown"])
+                    z.writestr(stem + ".idml", b["idml"])
+                    z.writestr(stem + ".preview.md", b["markdown"])
                     z.writestr("OPEN_IN_INDESIGN.txt",
                                _mix_readme(b["pages"], b["rationale"], b["images"]))
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=base + "-indesign.zip")
+                                    filename=stem + "-indesign.zip")
                 return
 
             if innholdstype == "whitepaper_idml":
@@ -162,22 +191,24 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 b = src.generate_whitepaper_idml(
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+                stem = _slug(b.get("title", "")) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                    z.writestr(b["filename"], b["idml"])
-                    z.writestr(base + ".preview.md", b["markdown"])
+                    z.writestr(stem + ".idml", b["idml"])
+                    z.writestr(stem + ".preview.md", b["markdown"])
                     z.writestr("OPEN_IN_INDESIGN.txt", _IDML_README)
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=base + "-indesign.zip")
+                                    filename=stem + "-indesign.zip")
                 return
 
             fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog
             b = fn(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                    on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+            stem = _slug(b.get("title", "")) or base
             JOBS[job_id].update(status="done", progress=100, step="Done",
                                 result=b["markdown"].encode("utf-8"),
-                                media_type="text/markdown; charset=utf-8", filename=b["filename"])
+                                media_type="text/markdown; charset=utf-8", filename=stem + ".md")
             return
 
         decks: list[dict] = []
@@ -196,15 +227,28 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
             decks.append(src.generate(client, text, base, length=lengde, tone=tone,
                                        quality=kvalitet, instructions=instruksjoner, on_progress=on_prog))
 
+        # Name each deck after its own generated deck_title (the topic), falling back to the source
+        # file stem when the title yields no usable ASCII.
+        def deck_stem(d: dict) -> str:
+            return _slug((d.get("plan") or {}).get("deck_title", "")) or d["filename"].rsplit(".", 1)[0]
+
         if len(decks) == 1:
             d = decks[0]
-            result, media, filename = d["pptx"], PPTX_MEDIA, d["filename"]
+            result, media, filename = d["pptx"], PPTX_MEDIA, deck_stem(d) + ".pptx"
         else:
             zbuf = io.BytesIO()
             with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
+                seen: set[str] = set()
                 for d in decks:
-                    z.writestr(d["filename"], d["pptx"])
-                    z.writestr(d["filename"].rsplit(".", 1)[0] + ".wording.md", d["wording_md"])
+                    stem = deck_stem(d)
+                    if stem in seen:                      # two decks can share a title
+                        n = 2
+                        while f"{stem}-{n}" in seen:
+                            n += 1
+                        stem = f"{stem}-{n}"
+                    seen.add(stem)
+                    z.writestr(stem + ".pptx", d["pptx"])
+                    z.writestr(stem + ".wording.md", d["wording_md"])
             result, media, filename = zbuf.getvalue(), "application/zip", "superba-decks.zip"
 
         JOBS[job_id].update(status="done", progress=100, step="Done",

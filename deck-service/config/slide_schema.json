@@ -2645,6 +2645,10 @@
                       "heading"
                     ],
                     "properties": {
+                      "date": {
+                        "type": "string",
+                        "maxLength": 16
+                      },
                       "heading": {
                         "type": "string",
                         "maxLength": 34

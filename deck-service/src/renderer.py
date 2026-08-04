@@ -1606,13 +1606,18 @@ def _sine_spine(slide, x0, x1, cy, amp, n_nodes, color, width_pt=2.25, segments=
 def _fill_serpentine(prs, spec: dict, dark_index: int) -> None:
     """Serpentine flow: 3 or 4 stages threaded on an S-curve, numbered discs sitting on the crests and
     each stage's text alternating above / below — text always on the OUTER side of its crest, so the
-    two text bands stay clear of the curve. For a narrative sequence of shifts or forces."""
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
+    two text bands stay clear of the curve. For a narrative sequence of shifts, forces or dated events.
+
+    A per-item `date` makes this the "wavy timeline": the date takes the slot the icon chip would use,
+    because at this band height there is only room for one of them and a date is data while the icon is
+    decoration. Undated items keep the icon chip as before."""
+    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
         return
-    icons = _consistent_icons(items)
+    dated = any(it.get("date") for it in items)
+    icons = None if dated else _consistent_icons(items)
     band_h = 1.45                              # text band at the top and at the bottom
     cy = _BODY_TOP + _BODY_H / 2
     amp = 0.55
@@ -1639,6 +1644,10 @@ def _fill_serpentine(prs, spec: dict, dark_index: int) -> None:
             hy, byy = _BODY_BOTTOM - band_h + ic + 0.06, _BODY_BOTTOM - band_h + ic + 0.54
         if icons:
             _icon_disc(slide, nx, icy, ic, icon_path=icons[i])
+        elif it.get("date"):
+            # Same slot as the icon chip: nearest the curve, so the date reads as the node's label.
+            _place_text(slide, tx, icy - 0.15, cw, 0.3, it["date"], _SZ_SMALL, _LTEAL, bold=True,
+                        font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, tx, hy, cw, 0.46, it.get("heading", ""), _SZ_BODY, _WHITE, bold=True,
                     font=_HEAD, align=PP_ALIGN.CENTER)
         if it.get("body"):

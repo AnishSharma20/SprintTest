@@ -486,7 +486,8 @@ def main():
         "title": {"type": "string", "maxLength": 90},
         "items": {"type": "array", "minItems": 3, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
-            "properties": {"heading": {"type": "string", "maxLength": 34},
+            "properties": {"date": {"type": "string", "maxLength": 16},
+                           "heading": {"type": "string", "maxLength": 34},
                            "body": {"type": "string", "maxLength": 130},
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}},
            "serpentine S-curve flow")

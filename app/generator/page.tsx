@@ -46,15 +46,6 @@ const CONTENT_TYPES: {
 // as opposed to a binary file (a deck or a designed whitepaper) that downloads directly.
 const TEXT_TYPES = new Set<ContentType>(["blog"]);
 
-// One composable brochure page, as offered by the service's /idml/pages route.
-type LibrarySide = {
-  id: string;
-  role: string;
-  theme: string;
-  fill: boolean;
-  hint: string;
-  requires_matching_data: boolean;
-};
 
 // Languages with the flag of the main country that speaks them. Not exhaustive — the picker
 // also lets you type any language in the world (a custom entry appears when nothing matches).
@@ -286,11 +277,6 @@ export default function ContentGenerator() {
   const [studieSok, setStudieSok] = useState("");
   const [studieKat, setStudieKat] = useState<string | null>(null);
 
-  // Mixed-page whitepaper: the composable page library + an optional manual override. An empty
-  // selection means the generator picks the pages itself (the default).
-  const [sideBibliotek, setSideBibliotek] = useState<LibrarySide[]>([]);
-  const [valgteSider, setValgteSider] = useState<string[]>([]);
-
   // Phase 2 — approved-claims source. `inkluderClaims` toggles the block on; an empty
   // `claimKatFilter` means "all approved claims", otherwise it narrows to the ticked categories.
   const [approvedClaims, setApprovedClaims] = useState<ApprovedClaim[]>([]);
@@ -346,20 +332,8 @@ export default function ContentGenerator() {
       setClaimsConfigured(res.configured);
       setApprovedClaims(res.claims);
     });
-    fetch("/api/idml-pages")
-      .then((r) => (r.ok ? r.json() : { pages: [] }))
-      .then((d) => setSideBibliotek(Array.isArray(d.pages) ? d.pages : []))
-      .catch(() => setSideBibliotek([]));
   }, []);
 
-  // Order the manual picks the way the library lists them, so the document reads cover first.
-  function toggleSide(id: string) {
-    setValgteSider((prev) => {
-      const next = prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id];
-      return sideBibliotek.filter((s) => next.includes(s.id)).map((s) => s.id);
-    });
-    setKjoringer([]);
-  }
 
   function toggleClaimKat(id: string) {
     setClaimKatFilter((prev) => {
@@ -387,7 +361,6 @@ export default function ContentGenerator() {
   const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
   const harValgt = valgteTilgjengelige.length > 0;
   const visDeckOpsjoner = valgteTyper.has("deck");
-  const visSideValg = valgteTyper.has("whitepaper_mix");
 
   function toggleType(t: ContentType) {
     const meta = CONTENT_TYPES.find((x) => x.id === t)!;
@@ -464,10 +437,6 @@ export default function ContentGenerator() {
       form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
-      // Manual page override for the mixed-page whitepaper; empty = the generator chooses.
-      if (type === "whitepaper_mix" && valgteSider.length > 0) {
-        form.append("sider", valgteSider.join(","));
-      }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
@@ -859,85 +828,6 @@ export default function ContentGenerator() {
               {/* Deck-specific settings live in their own labelled card, so when a
                   deck AND a blog are selected it's obvious these apply to the deck
                   only — not to the blog. */}
-              {/* Mixed-page whitepaper: the generator picks designed pages from the Superba
-                  brochures on its own. This card is purely an override for when you want to
-                  decide the page set yourself. */}
-              {visSideValg && sideBibliotek.length > 0 && (
-                <div className="rounded-[4px] border border-[#D6E6EE] bg-[#F7FBFC] p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
-                    📄 Whitepaper pages
-                  </div>
-                  <p className="mt-0.5 text-xs text-zinc-500">
-                    {valgteSider.length === 0
-                      ? "The generator picks the designed pages that fit your source. Tick pages below only if you want to choose them yourself."
-                      : `You picked ${valgteSider.length} page${valgteSider.length === 1 ? "" : "s"}. They are used in the order listed here.`}
-                  </p>
-
-                  <div className="mt-3 space-y-1.5">
-                    {sideBibliotek.map((s) => {
-                      const valgt = valgteSider.includes(s.id);
-                      const nr = valgteSider.indexOf(s.id) + 1;
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => toggleSide(s.id)}
-                          className={`flex w-full items-start gap-2.5 rounded-[4px] border p-2.5 text-left transition ${
-                            valgt
-                              ? "border-[#0A7A8A] bg-white"
-                              : "border-[#E3EEF2] bg-white/60 hover:border-[#B9D6E0]"
-                          }`}
-                        >
-                          <span
-                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[4px] text-[11px] font-semibold ${
-                              valgt ? "bg-[#0A7A8A] text-white" : "bg-[#EDF5F8] text-[#8AA6B0]"
-                            }`}
-                          >
-                            {valgt ? nr : ""}
-                          </span>
-                          <span className="min-w-0">
-                            <span className="flex flex-wrap items-center gap-1.5">
-                              <span className="text-sm font-medium text-[#163536]">
-                                {s.id.replace(/_/g, " ")}
-                              </span>
-                              <span className="rounded-[4px] bg-[#EDF5F8] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#6B8B95]">
-                                {s.role.replace(/_/g, " ")}
-                              </span>
-                              {!s.fill && (
-                                <span className="rounded-[4px] bg-[#FDECEC] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#B23A3A]">
-                                  kept as designed
-                                </span>
-                              )}
-                              {s.requires_matching_data && (
-                                <span className="rounded-[4px] bg-[#FFF6E5] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#9A6B12]">
-                                  needs matching trial data
-                                </span>
-                              )}
-                            </span>
-                            <span className="mt-0.5 block text-xs leading-snug text-zinc-500">
-                              {s.hint}
-                            </span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {valgteSider.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setValgteSider([]);
-                        setKjoringer([]);
-                      }}
-                      className="mt-2.5 text-xs font-medium text-[#0A7A8A] underline"
-                    >
-                      Clear and let the generator choose
-                    </button>
-                  )}
-                </div>
-              )}
-
               {visDeckOpsjoner && (
                 <div className="rounded-[4px] border border-[#D6E6EE] bg-[#F7FBFC] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">

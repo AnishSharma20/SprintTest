@@ -767,17 +767,14 @@ def _place_bullets(slide, l, t, w, h, lines, size, color, *, font=_BODY,
 
 
 def _fill_key_points(prs, spec: dict, light_index: int) -> None:
-    """'Key points' cards: a teal banner, then equal-height panels with a brand icon in a circle,
-    a heading and a body. Icons are all-or-nothing from ONE source (never a partial/empty set)."""
+    """'Key points' cards: equal-height panels with a brand icon in a circle, a heading and a body,
+    with the summary banner CLOSING the slide underneath them. Icons are all-or-nothing from ONE
+    source (never a partial/empty set).
+
+    The banner used to sit above the panels; it reads better as the conclusion the four cards add up
+    to, and moving it down also reclaims the empty space the panels used to leave at the bottom."""
     slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
     banner = spec.get("banner")
-    if banner:
-        ban = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(_EYEBROW_Y), Inches(_CONTENT_W), Inches(0.55))
-        ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL; ban.line.fill.background(); ban.shadow.inherit = False
-        tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
-        r = p.add_run(); r.text = banner; r.font.size = Pt(_SZ_BODY); r.font.bold = True
-        r.font.name = _HEAD; r.font.color.rgb = _WHITE
 
     items = (spec.get("items") or [])[:4]
     n = len(items)
@@ -785,10 +782,17 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
         return
     icons = _consistent_icons(items)              # all-or-nothing, one source, distinct (no AI-look ring)
     d = _ICON_DISC
-    ptop = (_EYEBROW_Y + 0.55 + d / 2 + 0.05) if banner else (_BODY_TOP + d / 2)
-    if not icons:
-        ptop = (_EYEBROW_Y + 0.75) if banner else _BODY_TOP
-    pbot = _BODY_BOTTOM
+    ban_h = 0.55
+    ptop = (_BODY_TOP + d / 2) if icons else _BODY_TOP
+    pbot = _BODY_BOTTOM - (ban_h + 0.28 if banner else 0.0)
+    if banner:
+        by = pbot + 0.28
+        ban = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(by), Inches(_CONTENT_W), Inches(ban_h))
+        ban.fill.solid(); ban.fill.fore_color.rgb = _TEAL; ban.line.fill.background(); ban.shadow.inherit = False
+        tf = ban.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = _LINE_SPACING
+        r = p.add_run(); r.text = banner; r.font.size = Pt(_SZ_BODY); r.font.bold = True
+        r.font.name = _HEAD; r.font.color.rgb = _WHITE
     pw = (_CONTENT_W - (n - 1) * _GUTTER) / n     # equal panel widths, one standard gutter
     for i, it in enumerate(items):
         x = _MARGIN + i * (pw + _GUTTER); cx = x + pw / 2

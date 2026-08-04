@@ -959,37 +959,6 @@ def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
 
 
-def _fill_journey(prs, spec: dict, dark_index: int) -> None:
-    """Horizontal process journey: a red connector with numbered nodes; heading + body per step."""
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
-    steps = (spec.get("steps") or [])[:5]
-    n = len(steps)
-    if not n:
-        return
-    sw = min(2.6, (_CONTENT_W - (n - 1) * _GUTTER) / n)
-    total = n * sw + (n - 1) * _GUTTER
-    x0 = (13.333 - total) / 2
-    line_y = _BODY_TOP + 1.5                # vertical centre of the connector + nodes
-    d = _STEP_BADGE
-    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + _GUTTER) + sw / 2
-    line = slide.shapes.add_shape(_BOX, Inches(cxf), Inches(line_y - 0.03), Inches(cxl - cxf), Inches(0.06))
-    line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
-    for i, st in enumerate(steps):
-        x = x0 + i * (sw + _GUTTER); cx = x + sw / 2
-        _place_text(slide, x, _BODY_TOP + 0.4, sw, line_y - d / 2 - (_BODY_TOP + 0.4) - 0.1,
-                    st.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
-                    align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
-        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(line_y - d / 2), Inches(d), Inches(d))
-        c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
-        c.text_frame.word_wrap = False; c.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
-        c.text_frame.text = str(i + 1)
-        rr = c.text_frame.paragraphs[0].runs[0]
-        rr.font.size = Pt(_SZ_BODY); rr.font.bold = True; rr.font.color.rgb = _WHITE; rr.font.name = _HEAD
-        c.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
-        _place_text(slide, x, line_y + d / 2 + 0.15, sw, _BODY_BOTTOM - (line_y + d / 2 + 0.15),
-                    st.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
-
-
 def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
     """Executive summary: key points as icon-chip rows on the left, a picture (or teal panel) on the right.
     Each point gets its own icon disc (a brand icon, or a numbered chip) — the consulting look, no accent bars."""
@@ -1024,18 +993,6 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
     if not placed:
         pan = slide.shapes.add_shape(_BOX, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL2; pan.line.fill.background(); pan.shadow.inherit = False
-
-
-def _fill_quote(prs, spec: dict, dark_index: int) -> None:
-    """Pull quote: the quotation set in the title size + attribution. Clean typography, no accent bar."""
-    slide = _synth_slide(prs, dark_index, eyebrow=spec.get("title"))
-    qy, qh = _BODY_TOP + 0.5, 2.8
-    quote = spec.get("quote", "")
-    _place_text(slide, _MARGIN, qy, _CONTENT_W, qh, f"“{quote}”" if quote else "",
-                _SZ_TITLE, _WHITE, font=_HEAD, anchor=MSO_ANCHOR.TOP)
-    if spec.get("author"):
-        _place_text(slide, _MARGIN, qy + qh + 0.15, _CONTENT_W, 0.5, spec["author"],
-                    _SZ_SMALL, _LTEAL, bold=True, font=_HEAD)
 
 
 def _fill_comparison(prs, spec: dict, light_index: int) -> None:
@@ -1170,41 +1127,6 @@ def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
             _harvey_ball(slide, cx, cy, d, sc)
 
 
-def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
-    """Horizontal timeline: dated milestones on a red connector with round nodes."""
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
-    ms = (spec.get("milestones") or [])[:6]
-    n = len(ms)
-    if not n:
-        return
-    sw = min(2.3, (_CONTENT_W - (n - 1) * _GUTTER) / n)
-    total = n * sw + (n - 1) * _GUTTER
-    x0 = (13.333 - total) / 2
-    dot = 0.28
-    # Size the composition to its content and centre it in the body zone. Previously the spine was
-    # pinned at _BODY_TOP + 1.4 and the body text box ran all the way to _BODY_BOTTOM, so a few short
-    # one-line notes left the whole bottom half of the slide empty.
-    date_h, head_h = 0.35, 0.5
-    body_h = 0.2 + 0.21 * max(1, max(_est_lines(m.get("body"), sw, _SZ_SMALL) for m in ms))
-    block = date_h + head_h + dot + body_h + 0.3
-    top = _BODY_TOP + max(0.0, (_BODY_H - block) / 2)
-    line_y = top + date_h + head_h + 0.06 + dot / 2
-    cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + _GUTTER) + sw / 2
-    line = slide.shapes.add_shape(_BOX, Inches(cxf), Inches(line_y - 0.025), Inches(cxl - cxf), Inches(0.05))
-    line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
-    for i, mstone in enumerate(ms):
-        x = x0 + i * (sw + _GUTTER); cx = x + sw / 2
-        _place_text(slide, x, top, sw, date_h, mstone.get("date", ""), _SZ_SMALL, _LTEAL, bold=True,
-                    font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x, top + date_h, sw, line_y - dot / 2 - (top + date_h) - 0.05,
-                    mstone.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
-                    align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
-        c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - dot / 2), Inches(line_y - dot / 2), Inches(dot), Inches(dot))
-        c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
-        _place_text(slide, x, line_y + dot / 2 + 0.15, sw, body_h,
-                    mstone.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
-
-
 def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
     """Funnel: centred bars that narrow top-to-bottom, one per stage, heading + body."""
     slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
@@ -1229,33 +1151,6 @@ def _fill_funnel(prs, spec: dict, dark_index: int) -> None:
             p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER; p2.line_spacing = _LINE_SPACING
             r2 = p2.add_run(); r2.text = st["body"]; r2.font.size = Pt(_SZ_SMALL); r2.font.name = _BODY
             r2.font.color.rgb = RGBColor(0xE9, 0xF7, 0xF8)
-
-
-def _fill_case_study(prs, spec: dict, dark_index: int) -> None:
-    """Case study / proof point: study eyebrow + three compact panels (Design, Result, Takeaway), each with
-    an icon chip. Each panel has a top header band in its own shade of the same teal family (no red)."""
-    eyebrow = "CASE STUDY" + (f"   ·   {spec['study']}" if spec.get("study") else "")
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""), eyebrow=eyebrow)
-    blocks = [("DESIGN", spec.get("design", ""), "research"),
-              ("RESULT", spec.get("result", ""), "proven"),
-              ("TAKEAWAY", spec.get("takeaway", ""), "molecule")]
-    hdr = [_TEAL2, RGBColor(0x4A, 0x93, 0x9C), RGBColor(0x6C, 0xB2, 0xB6)]   # same family, no contrast jump
-    pw = (_CONTENT_W - 2 * _GUTTER) / 3            # three equal panels, one standard gutter
-    panh = 3.4
-    top = _BODY_TOP + (_BODY_H - panh) / 2 + 0.1   # compact panels, vertically centred in the body zone
-    dd = 0.62
-    for i, (lab, body, ic) in enumerate(blocks):
-        x = _MARGIN + i * (pw + _GUTTER)
-        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(panh))
-        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
-        # Each panel's top header band is a different shade of the SAME teal family (never red, no big jump).
-        acc = slide.shapes.add_shape(_BOX, Inches(x), Inches(top), Inches(pw), Inches(0.12))
-        acc.fill.solid(); acc.fill.fore_color.rgb = hdr[i % 3]; acc.line.fill.background(); acc.shadow.inherit = False
-        _icon_disc(slide, x + _PAD + dd / 2, top + 0.34 + dd / 2, dd, icon_path=_generic_icon_path(ic))
-        _place_text(slide, x + _PAD + dd + 0.18, top + 0.34, pw - 2 * _PAD - dd - 0.18, dd, lab,
-                    _SZ_SMALL, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
-        _place_text(slide, x + _PAD, top + dd + 0.6, pw - 2 * _PAD, panh - (dd + 0.6) - _PAD,
-                    body, _SZ_BODY, _ONTEAL)
 
 
 def _fill_closing(prs, spec: dict, dark_index: int) -> None:
@@ -2333,24 +2228,16 @@ def render_deck(plan: dict) -> bytes:
             continue
         if layout_name == "matrix":
             _fill_matrix(prs, spec, dark); continue
-        if layout_name == "journey":
-            _fill_journey(prs, spec, dark); continue
         if layout_name == "exec_summary":
             _fill_exec_summary(prs, spec, dark); continue
-        if layout_name == "quote":
-            _fill_quote(prs, spec, dark); continue
         if layout_name == "comparison":
             _fill_comparison(prs, spec, light); continue
         if layout_name == "stat":
             _fill_stat(prs, spec, dark); continue
         if layout_name == "harvey_ball":
             _fill_harvey_ball(prs, spec, light); continue
-        if layout_name == "timeline":
-            _fill_timeline(prs, spec, dark); continue
         if layout_name == "funnel":
             _fill_funnel(prs, spec, dark); continue
-        if layout_name == "case_study":
-            _fill_case_study(prs, spec, dark); continue
         if layout_name == "closing":
             _fill_closing(prs, spec, dark); continue
         if layout_name == "kpi_dashboard":

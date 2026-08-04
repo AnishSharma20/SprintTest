@@ -628,14 +628,9 @@ def main():
                             "properties": {"name": {"type": "string"},
                                            "values": {"type": "array", "items": {"type": "number"}}}}},
                         "x_axis": {"type": "string"}, "y_axis": {"type": "string"},
-                        "quote": {"type": "string"}, "author": {"type": "string"},
                         "quadrants": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
-                        "steps": {"type": "array", "items": {
-                            "type": "object", "additionalProperties": False,
-                            "properties": {"heading": {"type": "string"}, "body": {"type": "string"},
-                                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}},
                         "points": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"},
@@ -653,10 +648,6 @@ def main():
                             "type": "object", "additionalProperties": False,
                             "properties": {"label": {"type": "string"},
                                            "scores": {"type": "array", "items": {"type": "integer"}}}}},
-                        "milestones": {"type": "array", "items": {
-                            "type": "object", "additionalProperties": False,
-                            "properties": {"date": {"type": "string"}, "heading": {"type": "string"},
-                                           "body": {"type": "string"}}}},
                         "stages": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
@@ -685,8 +676,6 @@ def main():
                             "type": "object", "additionalProperties": False,
                             "properties": {"date": {"type": "string"}, "heading": {"type": "string"},
                                            "body": {"type": "string"}}}},
-                        "study": {"type": "string"}, "design": {"type": "string"},
-                        "result": {"type": "string"}, "takeaway": {"type": "string"},
                         "tagline": {"type": "string"}, "contact": {"type": "string"},
                         "items": {"type": "array"},
                         "columns": {"type": "array", "items": {

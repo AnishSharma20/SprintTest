@@ -395,31 +395,9 @@
     "picture_slots": [],
     "removable_idx": []
   },
-  "journey": {
-    "template_layout": "Blank",
-    "kind": "journey",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": []
-  },
   "exec_summary": {
     "template_layout": "Blank",
     "kind": "exec_summary",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": []
-  },
-  "quote": {
-    "template_layout": "Blank",
-    "kind": "quote",
     "backgrounds": [
       "dark"
     ],
@@ -461,31 +439,9 @@
     "picture_slots": [],
     "removable_idx": []
   },
-  "timeline": {
-    "template_layout": "Blank",
-    "kind": "timeline",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": []
-  },
   "funnel": {
     "template_layout": "Blank",
     "kind": "funnel",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": []
-  },
-  "case_study": {
-    "template_layout": "Blank",
-    "kind": "case_study",
     "backgrounds": [
       "dark"
     ],

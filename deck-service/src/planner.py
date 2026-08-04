@@ -48,7 +48,6 @@ LAYOUT_USAGE = {
     "title_only":         "Just a title over the branded background. Use rarely (a transitional beat).",
     "text":               "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points.",
     "text_with_picture":  "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`.",
-    "picture_with_title": "A large photo with a title strip — high visual impact. `asset_id` required.",
     "picture_full":       "A full-bleed photo with a compact title — a strong visual break. `asset_id` required.",
     "two_columns":        "TWO parallel points side by side; each column = `heading` + a substantive `body` of 2 to 3 sentences (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas.",
     "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 2 to 3 full sentences that fill the panel, not a single line.",
@@ -205,7 +204,7 @@ columns' headings clearly DISTINCT. Never give two columns headings that share t
 the barrier does" + "What the barrier needs" — they collapse to the same label; use "Structure" + "Upkeep").
 Put the explanation in the column body, not the heading.
 
-PHOTOS (optional, only for text_with_picture / picture_with_title / picture_full): choose an `asset_id`
+PHOTOS (optional, only for text_with_picture / picture_full): choose an `asset_id`
 whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits a
 light slide). Do NOT force a photo where it doesn't add meaning.
 {_asset_guide()}

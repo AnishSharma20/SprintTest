@@ -148,28 +148,6 @@
       0
     ]
   },
-  "picture_with_title": {
-    "template_layout": "Picture With Title 1",
-    "kind": "picture_title",
-    "backgrounds": [
-      "dark",
-      "light"
-    ],
-    "fields": {
-      "title": 0,
-      "picture": 13
-    },
-    "limits": {
-      "title": 47
-    },
-    "picture_slots": [
-      13
-    ],
-    "removable_idx": [
-      13,
-      0
-    ]
-  },
   "picture_full": {
     "template_layout": "Text With Picture 3",
     "kind": "picture_full",

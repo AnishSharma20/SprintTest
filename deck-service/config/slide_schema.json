@@ -40,7 +40,6 @@
               "title_only",
               "text",
               "text_with_picture",
-              "picture_with_title",
               "picture_full",
               "two_columns",
               "three_columns",
@@ -774,62 +773,6 @@
                 "body": {
                   "type": "string",
                   "maxLength": 244
-                },
-                "asset_id": {
-                  "enum": [
-                    "photo_capsule_single",
-                    "photo_capsules_white",
-                    "photo_capsules_glass",
-                    "photo_capsules_daily",
-                    "photo_capsules_wood",
-                    "photo_capsules_heart",
-                    "photo_breakfast",
-                    "photo_ingredients",
-                    "photo_jar_antarctic",
-                    "photo_capsules_pattern",
-                    "photo_oil_in_water",
-                    "photo_oil_texture",
-                    "photo_oil_lab",
-                    "photo_krill_closeup",
-                    "photo_krill_blue_water",
-                    "photo_krill_swarm",
-                    "photo_krill_single",
-                    "photo_krill_ice",
-                    "photo_iceberg",
-                    "photo_antarctic_ocean",
-                    "photo_antarctic_land",
-                    "photo_antarctic_bright",
-                    "photo_antarctic_sunset",
-                    "photo_lab",
-                    "photo_team",
-                    "photo_warehouse",
-                    null
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
-                  "const": "picture_with_title"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout",
-                "title",
-                "asset_id"
-              ],
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "maxLength": 47
                 },
                 "asset_id": {
                   "enum": [

@@ -446,8 +446,8 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
             _set_ph_box(stph, Inches(0.97), Inches(3.2), Inches(7.30), Inches(3.0))
             _shrink_to_fit(stph, str(title), base_pt=40, min_pt=24)
 
-    # A takeaway title can run to two lines, but some layouts (Text Slide, Picture With Title, Title
-    # Only) have a ONE-line title box, so the second line collides with the content below. When such a
+    # A takeaway title can run to two lines, but some layouts (Text Slide, Title Only) have a
+    # ONE-line title box, so the second line collides with the content below. When such a
     # layout gets a long title, push any filled content that sits too high down to clear a two-line
     # title. Set the FULL box from the layout (left/width too) so we don't drop the inherited width.
     title_idx = fields.get("title")

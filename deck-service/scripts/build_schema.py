@@ -50,7 +50,6 @@ LAYOUTS = {
     "title_only":         {"tpl": "Title Only 1",        "kind": "title_only"},
     "text":               {"tpl": "Text Slide 1",        "kind": "text"},
     "text_with_picture":  {"tpl": "Text With Picture 1", "kind": "text_picture"},
-    "picture_with_title": {"tpl": "Picture With Title 1", "kind": "picture_title"},
     "picture_full":       {"tpl": "Text With Picture 3", "kind": "picture_full"},
     "two_columns":        {"tpl": "Two Columns",         "kind": "columns", "n": 2},
     "three_columns":      {"tpl": "Three Columns",       "kind": "columns", "n": 3},

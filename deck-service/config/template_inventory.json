@@ -1,5 +1,5 @@
 {
-  "template_path": "C:\\Users\\AnishDeepSharma\\Documents\\min-forste-app\\deck-service\\brand_assets\\05. Superba Brand Identity\\Superba refresh power point template.pptx",
+  "template_path": "template.pptx",
   "slide_size_emu": {
     "width": 12192000,
     "height": 6858000
@@ -2798,83 +2798,6 @@
       ]
     },
     {
-      "name": "Picture With Title 1",
-      "master_index": 0,
-      "is_superba_master": true,
-      "placeholders": [
-        {
-          "idx": 10,
-          "type": "DATE",
-          "name": "Date Placeholder 2",
-          "left_emu": 8656320,
-          "top_emu": 215076,
-          "width_emu": 2743200,
-          "height_emu": 365125,
-          "left_in": 9.467,
-          "top_in": 0.235,
-          "width_in": 3.0,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 12,
-          "type": "SLIDE_NUMBER",
-          "name": "Slide Number Placeholder 4",
-          "left_emu": 11399520,
-          "top_emu": 215078,
-          "width_emu": 542925,
-          "height_emu": 365125,
-          "left_in": 12.467,
-          "top_in": 0.235,
-          "width_in": 0.594,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 13,
-          "type": "PICTURE",
-          "name": "Picture Placeholder 8",
-          "left_emu": 457200,
-          "top_emu": 1463040,
-          "width_emu": 11287125,
-          "height_emu": 4713051,
-          "left_in": 0.5,
-          "top_in": 1.6,
-          "width_in": 12.344,
-          "height_in": 5.154,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 0,
-          "type": "TITLE",
-          "name": "Title 1",
-          "left_emu": 457201,
-          "top_emu": 681909,
-          "width_emu": 11287124,
-          "height_emu": 535531,
-          "left_in": 0.5,
-          "top_in": 0.746,
-          "width_in": 12.344,
-          "height_in": 0.586,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 11,
-          "type": "FOOTER",
-          "name": "Footer Placeholder 4",
-          "left_emu": 2104708,
-          "top_emu": 6310310,
-          "width_emu": 4114800,
-          "height_emu": 365125,
-          "left_in": 2.302,
-          "top_in": 6.901,
-          "width_in": 4.5,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        }
-      ]
-    },
-    {
       "name": "Title Only 1",
       "master_index": 0,
       "is_superba_master": true,
@@ -5332,83 +5255,6 @@
       ]
     },
     {
-      "name": "Picture With Title 1",
-      "master_index": 1,
-      "is_superba_master": false,
-      "placeholders": [
-        {
-          "idx": 10,
-          "type": "DATE",
-          "name": "Date Placeholder 2",
-          "left_emu": 8656320,
-          "top_emu": 215076,
-          "width_emu": 2743200,
-          "height_emu": 365125,
-          "left_in": 9.467,
-          "top_in": 0.235,
-          "width_in": 3.0,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 12,
-          "type": "SLIDE_NUMBER",
-          "name": "Slide Number Placeholder 4",
-          "left_emu": 11399520,
-          "top_emu": 215078,
-          "width_emu": 542925,
-          "height_emu": 365125,
-          "left_in": 12.467,
-          "top_in": 0.235,
-          "width_in": 0.594,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 13,
-          "type": "PICTURE",
-          "name": "Picture Placeholder 8",
-          "left_emu": 457200,
-          "top_emu": 1463040,
-          "width_emu": 11287125,
-          "height_emu": 4713051,
-          "left_in": 0.5,
-          "top_in": 1.6,
-          "width_in": 12.344,
-          "height_in": 5.154,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 0,
-          "type": "TITLE",
-          "name": "Title 1",
-          "left_emu": 457201,
-          "top_emu": 681909,
-          "width_emu": 11287124,
-          "height_emu": 535531,
-          "left_in": 0.5,
-          "top_in": 0.746,
-          "width_in": 12.344,
-          "height_in": 0.586,
-          "dims_inherited_from_master": false
-        },
-        {
-          "idx": 11,
-          "type": "FOOTER",
-          "name": "Footer Placeholder 4",
-          "left_emu": 2104708,
-          "top_emu": 6320824,
-          "width_emu": 4114800,
-          "height_emu": 365125,
-          "left_in": 2.302,
-          "top_in": 6.913,
-          "width_in": 4.5,
-          "height_in": 0.399,
-          "dims_inherited_from_master": false
-        }
-      ]
-    },
-    {
       "name": "Title Only 1",
       "master_index": 1,
       "is_superba_master": false,
@@ -5686,6 +5532,7 @@
     "layout_usage": {
       "Title Only 1": 7,
       "Highlight Text": 4,
+      "Blank": 4,
       "Logo Slide 3": 3,
       "Four Columns": 3,
       "Logo Slide 1": 2,
@@ -5697,9 +5544,7 @@
       "Two Columns": 2,
       "Three Columns": 2,
       "Text With Picture 1": 2,
-      "Picture With Title 1": 2,
       "Text Slide 1": 2,
-      "Blank": 2,
       "Logo Slide 4": 2,
       "Agenda 2": 2,
       "Text With Picture 2": 2,
@@ -5719,8 +5564,8 @@
       "White": 1
     },
     "master_usage": {
-      "0": 30,
-      "1": 34
+      "0": 31,
+      "1": 33
     },
     "text_char_lengths": {
       "Logo Slide 1": {
@@ -5823,12 +5668,6 @@
           2,
           2,
           2,
-          2,
-          2
-        ]
-      },
-      "Picture With Title 1": {
-        "12": [
           2,
           2
         ]
@@ -6023,12 +5862,6 @@
           1,
           1,
           1,
-          1,
-          1
-        ]
-      },
-      "Picture With Title 1": {
-        "12": [
           1,
           1
         ]

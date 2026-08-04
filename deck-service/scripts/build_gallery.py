@@ -154,9 +154,6 @@ SYNTH = [
     {"layout": "from_to", "title": "The shift Superba enables",
      "before": {"heading": "Generic fish oil", "body": "Lower absorption, fishy reflux, thin evidence base."},
      "after": {"heading": "Superba krill", "body": "High absorption, clean intake, more than 50 human trials."}},
-    {"layout": "alt_timeline", "title": "Krill oil evidence in knee osteoarthritis since 2007",
-     "caption": "Published human trials, with the finding of each", "items": [
-        {"date": d, "heading": h, "body": b} for d, h, b in STUDIES]},
     {"layout": "roadmap", "title": "The research roadmap ahead", "phases": [
         {"date": "Q1", "heading": "Design", "body": "Finalise endpoints and protocol"},
         {"date": "Q2", "heading": "Recruit", "body": "Enrol the study cohort"},

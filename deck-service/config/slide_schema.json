@@ -72,7 +72,6 @@
               "photo_stats",
               "numbered_cards",
               "implications",
-              "alt_timeline",
               "breakdown",
               "chart_bands",
               "chart_takeaways"
@@ -3024,65 +3023,6 @@
                       "implication": {
                         "type": "string",
                         "maxLength": 130
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
-                  "const": "alt_timeline"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout",
-                "title",
-                "items"
-              ],
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "maxLength": 90
-                },
-                "caption": {
-                  "type": "string",
-                  "maxLength": 120
-                },
-                "items": {
-                  "type": "array",
-                  "minItems": 3,
-                  "maxItems": 7,
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "heading"
-                    ],
-                    "properties": {
-                      "date": {
-                        "type": "string",
-                        "maxLength": 24
-                      },
-                      "heading": {
-                        "type": "string",
-                        "maxLength": 28
-                      },
-                      "body": {
-                        "type": "string",
-                        "maxLength": 70
-                      },
-                      "tag": {
-                        "type": "string",
-                        "maxLength": 30
                       }
                     }
                   }

@@ -532,17 +532,6 @@ def main():
                            "implication": {"type": "string", "maxLength": 130}}}}},
            "trend / overview / implication rows")
 
-    _synth("alt_timeline", "alt_timeline", "dark", ["layout", "title", "items"], {
-        "title": {"type": "string", "maxLength": 90},
-        "caption": {"type": "string", "maxLength": 120},
-        "items": {"type": "array", "minItems": 3, "maxItems": 7, "items": {
-            "type": "object", "additionalProperties": False, "required": ["heading"],
-            "properties": {"date": {"type": "string", "maxLength": 24},
-                           "heading": {"type": "string", "maxLength": 28},
-                           "body": {"type": "string", "maxLength": 70},
-                           "tag": {"type": "string", "maxLength": 30}}}}},
-           "alternating timeline (cards above/below a spine)")
-
     _synth("breakdown", "breakdown", "dark", ["layout", "title", "total", "items"], {
         "title": {"type": "string", "maxLength": 90},
         "total": {"type": "string", "maxLength": 12},
@@ -609,7 +598,7 @@ def main():
                                                             "org_chart", "decision_tree", "cycle", "gantt",
                                                             "serpentine", "coverage_matrix", "photo_stats",
                                                             "numbered_cards", "implications",
-                                                            "alt_timeline", "breakdown", "chart_bands",
+                                                            "breakdown", "chart_bands",
                                                             "chart_takeaways"]},
                         "background": {"enum": ["dark", "light"],
                                        "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},

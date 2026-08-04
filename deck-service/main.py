@@ -52,6 +52,15 @@ _IDML_README = (
 )
 
 
+# Member names inside the delivered zip. Deliberately SHORT and FIXED: Windows Explorer names the
+# extraction folder after the zip, so repeating the topic in every member name put it in the path
+# twice and tipped Explorer into "the target path is too long" even well under its 260 character
+# limit. The folder already says what the document is about, and the designer saves under their own
+# name anyway.
+_IDML_MEMBER = "whitepaper.idml"
+_PREVIEW_MEMBER = "whitepaper.preview.md"
+
+
 def _mix_readme(pages: list[str], rationale: str, images: list[str],
                 photos: dict | None = None) -> str:
     """Designer note for a COMPOSED whitepaper. Images are linked, and a composed document can pull
@@ -142,7 +151,13 @@ def _slug(text: str, limit: int = 60) -> str:
     s = s.encode("ascii", "ignore").decode("ascii")
     s = re.sub(r"[^A-Za-z0-9]+", "-", s)
     s = re.sub(r"-{2,}", "-", s).strip("-")
-    return s[:limit].rstrip("-")
+    if len(s) <= limit:
+        return s
+    # Cut on a word boundary. Chopping mid-word ("...-The-Kri") looks like a corrupted download,
+    # and the stem also becomes the folder Windows extracts into, so shorter genuinely matters.
+    cut = s[:limit]
+    boundary = cut.rfind("-")
+    return (cut[:boundary] if boundary > limit // 2 else cut).rstrip("-")
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
@@ -190,16 +205,23 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     pages=[p for p in (sider or "").split(",") if p.strip()],
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
-                stem = _slug(b.get("title", "")) or base
+                stem = _slug(b.get("title", ""), 36) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                    z.writestr(stem + ".idml", b["idml"])
-                    z.writestr(stem + ".preview.md", b["markdown"])
+                    z.writestr(_IDML_MEMBER, b["idml"])
+                    z.writestr(_PREVIEW_MEMBER, b["markdown"])
                     z.writestr("OPEN_IN_INDESIGN.txt",
-                               _mix_readme(b["pages"], b["rationale"], b["images"]))
+                               _mix_readme(b["pages"], b["rationale"], b["images"],
+                                           b.get("photos")))
+                    # Any photo we substituted must travel WITH the document, or the designer opens
+                    # it to missing links for exactly the pictures we changed.
+                    for entry in (b.get("photos") or {}).get("replaced", []):
+                        photo = config.ASSETS_DIR / entry["file"]
+                        if photo.exists():
+                            z.writestr(f"Links/{entry['file']}", photo.read_bytes())
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=stem + "-indesign.zip")
+                                    filename=stem + "-whitepaper.zip")
                 return
 
             if innholdstype == "whitepaper_idml":
@@ -207,15 +229,15 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 b = src.generate_whitepaper_idml(
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
-                stem = _slug(b.get("title", "")) or base
+                stem = _slug(b.get("title", ""), 36) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                    z.writestr(stem + ".idml", b["idml"])
-                    z.writestr(stem + ".preview.md", b["markdown"])
+                    z.writestr(_IDML_MEMBER, b["idml"])
+                    z.writestr(_PREVIEW_MEMBER, b["markdown"])
                     z.writestr("OPEN_IN_INDESIGN.txt", _IDML_README)
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=stem + "-indesign.zip")
+                                    filename=stem + "-whitepaper.zip")
                 return
 
             fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog

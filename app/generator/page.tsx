@@ -171,7 +171,7 @@ function LanguagePicker({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-xl border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none hover:border-[#9FC9D9] focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+        className="flex w-full items-center justify-between rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none hover:border-[#9FC9D9] focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
       >
         <span className="flex items-center gap-2">
           <span className="text-base leading-none">{flaggFor(value)}</span>
@@ -180,7 +180,7 @@ function LanguagePicker({
         <span className="text-zinc-400">▾</span>
       </button>
       {open && (
-        <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-xl border border-[#D6E6EE] bg-white shadow-lg">
+        <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white shadow-md">
           <input
             autoFocus
             type="text"
@@ -241,7 +241,7 @@ function PickChip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+      className={`rounded-[4px] px-2.5 py-1 text-[11px] font-semibold transition-colors ${
         aktiv ? "bg-[#0A7A8A] text-white" : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
       }`}
     >
@@ -593,14 +593,14 @@ export default function ContentGenerator() {
                 onClick={() => p.available && setProdukt(p.id)}
                 disabled={!p.available}
                 aria-pressed={valgt}
-                className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                className={`relative rounded-[4px] border px-3 py-3 text-left transition-colors ${
                   valgt
                     ? "border-[#E30917] bg-[#FDECEC]"
                     : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
                 } ${!p.available ? "cursor-not-allowed opacity-60" : ""}`}
               >
                 {!p.available && (
-                  <span className="absolute right-2 top-2 rounded-full bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
+                  <span className="absolute right-2 top-2 rounded-[4px] bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
                     Soon
                   </span>
                 )}
@@ -625,19 +625,19 @@ export default function ContentGenerator() {
                 onClick={() => toggleType(t.id)}
                 disabled={!t.available}
                 aria-pressed={valgt}
-                className={`relative rounded-2xl border px-3 py-4 text-left transition-colors ${
+                className={`relative rounded-[4px] border px-3 py-4 text-left transition-colors ${
                   valgt
                     ? "border-[#E30917] bg-[#FDECEC]"
                     : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
                 } ${!t.available ? "cursor-not-allowed opacity-60" : ""}`}
               >
                 {!t.available ? (
-                  <span className="absolute right-2 top-2 rounded-full bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
+                  <span className="absolute right-2 top-2 rounded-[4px] bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
                     Soon
                   </span>
                 ) : (
                   valgt && (
-                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#E30917] text-[11px] font-bold text-white">
+                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-[4px] bg-[#E30917] text-[11px] font-bold text-white">
                       ✓
                     </span>
                   )
@@ -653,7 +653,7 @@ export default function ContentGenerator() {
         {harValgt ? (
           <>
             {/* Upload */}
-            <label className="mt-6 block cursor-pointer rounded-2xl border-2 border-dashed border-[#9FC9D9] bg-white p-8 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#E1F4F3]">
+            <label className="mt-6 block cursor-pointer rounded-[4px] border-2 border-dashed border-[#9FC9D9] bg-white p-8 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#E1F4F3]">
               <input
                 type="file"
                 accept=".docx,.txt,.md"
@@ -676,7 +676,7 @@ export default function ContentGenerator() {
                 {filer.map((f, i) => (
                   <li
                     key={i}
-                    className="flex items-center justify-between rounded-xl border border-[#D6E6EE] bg-white px-4 py-2 text-sm"
+                    className="flex items-center justify-between rounded-[4px] border border-[#D6E6EE] bg-white px-4 py-2 text-sm"
                   >
                     <span className="truncate text-[#052A4E]">📎 {f.name}</span>
                     <button
@@ -696,13 +696,13 @@ export default function ContentGenerator() {
             </p>
 
             {/* Pick from Scientific Studies */}
-            <div className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+            <div className="mt-4 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
               <div className="flex items-center justify-between">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
                   Or pick from Scientific Studies
                 </div>
                 {valgteStudier.size > 0 && (
-                  <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
+                  <span className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
                     {valgteStudier.size} selected
                   </span>
                 )}
@@ -716,7 +716,7 @@ export default function ContentGenerator() {
                     value={studieSok}
                     onChange={(e) => setStudieSok(e.target.value)}
                     placeholder="Search studies…"
-                    className="mt-3 w-full rounded-lg border border-[#D6E6EE] bg-white px-3 py-2 text-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                    className="mt-3 w-full rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-2 text-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
                   />
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <PickChip aktiv={studieKat === null} onClick={() => setStudieKat(null)}>
@@ -738,7 +738,7 @@ export default function ContentGenerator() {
                         return (
                           <label
                             key={s.pmid}
-                            className={`flex cursor-pointer items-start gap-2 rounded-lg border p-2 text-sm transition-colors ${
+                            className={`flex cursor-pointer items-start gap-2 rounded-[4px] border p-2 text-sm transition-colors ${
                               valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E3EEF2] hover:bg-[#F7FBFC]"
                             }`}
                           >
@@ -752,11 +752,11 @@ export default function ContentGenerator() {
                               <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
                               <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
                                 {verified ? (
-                                  <span className="rounded-full bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
+                                  <span className="rounded-[4px] bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
                                     Verified
                                   </span>
                                 ) : (
-                                  <span className="rounded-full bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
+                                  <span className="rounded-[4px] bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
                                     AI
                                   </span>
                                 )}
@@ -778,7 +778,7 @@ export default function ContentGenerator() {
 
             {/* Approved science claims (Phase 2) — authoritative, science-reviewed facts the
                 generators compose from and cite. Recorded per asset for retraction traceability. */}
-            <div className="mt-6 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+            <div className="mt-6 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
@@ -820,7 +820,7 @@ export default function ContentGenerator() {
                         setClaimKatFilter(new Set());
                         setKjoringer([]);
                       }}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                      className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-colors ${
                         claimKatFilter.size === 0
                           ? "bg-[#0A7A8A] text-white"
                           : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
@@ -832,7 +832,7 @@ export default function ContentGenerator() {
                       <button
                         key={id}
                         onClick={() => toggleClaimKat(id)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-colors ${
                           claimKatFilter.has(id)
                             ? "bg-[#0A7A8A] text-white"
                             : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
@@ -859,7 +859,7 @@ export default function ContentGenerator() {
                   brochures on its own. This card is purely an override for when you want to
                   decide the page set yourself. */}
               {visSideValg && sideBibliotek.length > 0 && (
-                <div className="rounded-2xl border border-[#D6E6EE] bg-[#F7FBFC] p-4">
+                <div className="rounded-[4px] border border-[#D6E6EE] bg-[#F7FBFC] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
                     📄 Whitepaper pages
                   </div>
@@ -878,14 +878,14 @@ export default function ContentGenerator() {
                           key={s.id}
                           type="button"
                           onClick={() => toggleSide(s.id)}
-                          className={`flex w-full items-start gap-2.5 rounded-xl border p-2.5 text-left transition ${
+                          className={`flex w-full items-start gap-2.5 rounded-[4px] border p-2.5 text-left transition ${
                             valgt
                               ? "border-[#0A7A8A] bg-white"
                               : "border-[#E3EEF2] bg-white/60 hover:border-[#B9D6E0]"
                           }`}
                         >
                           <span
-                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[4px] text-[11px] font-semibold ${
                               valgt ? "bg-[#0A7A8A] text-white" : "bg-[#EDF5F8] text-[#8AA6B0]"
                             }`}
                           >
@@ -896,16 +896,16 @@ export default function ContentGenerator() {
                               <span className="text-sm font-medium text-[#163536]">
                                 {s.id.replace(/_/g, " ")}
                               </span>
-                              <span className="rounded-full bg-[#EDF5F8] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#6B8B95]">
+                              <span className="rounded-[4px] bg-[#EDF5F8] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#6B8B95]">
                                 {s.role.replace(/_/g, " ")}
                               </span>
                               {!s.fill && (
-                                <span className="rounded-full bg-[#FDECEC] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#B23A3A]">
+                                <span className="rounded-[4px] bg-[#FDECEC] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#B23A3A]">
                                   kept as designed
                                 </span>
                               )}
                               {s.requires_matching_data && (
-                                <span className="rounded-full bg-[#FFF6E5] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#9A6B12]">
+                                <span className="rounded-[4px] bg-[#FFF6E5] px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#9A6B12]">
                                   needs matching trial data
                                 </span>
                               )}
@@ -935,7 +935,7 @@ export default function ContentGenerator() {
               )}
 
               {visDeckOpsjoner && (
-                <div className="rounded-2xl border border-[#D6E6EE] bg-[#F7FBFC] p-4">
+                <div className="rounded-[4px] border border-[#D6E6EE] bg-[#F7FBFC] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
                     📊 PowerPoint deck settings
                   </div>
@@ -958,7 +958,7 @@ export default function ContentGenerator() {
                             key={val}
                             type="button"
                             onClick={() => setLengde(val)}
-                            className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                            className={`rounded-[4px] border px-3 py-2 text-left transition-colors ${
                               lengde === val
                                 ? "border-[#E30917] bg-[#FDECEC]"
                                 : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
@@ -985,7 +985,7 @@ export default function ContentGenerator() {
                             key={val}
                             type="button"
                             onClick={() => setTone(val)}
-                            className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                            className={`rounded-[4px] border px-3 py-2 text-left transition-colors ${
                               tone === val
                                 ? "border-[#E30917] bg-[#FDECEC]"
                                 : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
@@ -1028,7 +1028,7 @@ export default function ContentGenerator() {
                   onChange={(e) => setKontekst(e.target.value)}
                   rows={4}
                   placeholder="Tell the AI anything specific: audience, angle, points to include, claims to avoid, terminology, structure. E.g. 'Audience is pharmacy buyers in Germany; lead with the Omega 3 Index data; don't mention competitors; keep it to the joint health story.'"
-                  className="w-full resize-y rounded-xl border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                  className="w-full resize-y rounded-[4px] border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
                 />
                 <p className="mt-1 text-xs text-zinc-500">
                   Free text. Every selected asset follows this on top of the source files (it never
@@ -1039,7 +1039,7 @@ export default function ContentGenerator() {
           </>
         ) : (
           /* Nothing selectable is chosen yet */
-          <div className="mt-6 rounded-2xl border border-dashed border-[#D6E6EE] bg-white p-8 text-center">
+          <div className="mt-6 rounded-[4px] border border-dashed border-[#D6E6EE] bg-white p-8 text-center">
             <div className="text-4xl">👆</div>
             <div className="mt-3 text-lg font-semibold text-[#052A4E]">
               Pick what you want to create
@@ -1059,7 +1059,7 @@ export default function ContentGenerator() {
             !harValgt ||
             (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0)
           }
-          className="mt-6 w-full rounded-xl bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
+          className="mt-6 w-full rounded-[4px] bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {laster
             ? "AI is working…"
@@ -1074,7 +1074,7 @@ export default function ContentGenerator() {
             {kjoringer.map((k) => {
               const meta = CONTENT_TYPES.find((t) => t.id === k.type)!;
               return (
-                <div key={k.type} className="rounded-xl border border-[#D6E6EE] bg-white p-4">
+                <div key={k.type} className="rounded-[4px] border border-[#D6E6EE] bg-white p-4">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium text-[#052A4E]">
                       {meta.icon} {meta.label}
@@ -1085,9 +1085,9 @@ export default function ContentGenerator() {
                   </div>
                   {k.status === "running" && (
                     <>
-                      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[#E1EEF3]">
+                      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-[4px] bg-[#E1EEF3]">
                         <div
-                          className="h-full rounded-full bg-[#E30917] transition-all duration-700 ease-out"
+                          className="h-full rounded-[4px] bg-[#E30917] transition-all duration-700 ease-out"
                           style={{ width: `${Math.max(3, k.progress)}%` }}
                         />
                       </div>
@@ -1112,7 +1112,7 @@ export default function ContentGenerator() {
 
         {/* Top-level validation error (e.g. nothing picked) */}
         {feil && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mt-4 rounded-[4px] border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {feil}
           </div>
         )}
@@ -1121,7 +1121,7 @@ export default function ContentGenerator() {
           const label = CONTENT_TYPES.find((t) => t.id === u.type)?.label ?? "Draft";
           const base = "superba-blog-draft";   // the blog is the only editable draft left
           return (
-            <div key={u.type} className="mt-4 rounded-2xl border border-[#D6E6EE] bg-white p-4">
+            <div key={u.type} className="mt-4 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
                   {label} draft · review & edit
@@ -1130,7 +1130,7 @@ export default function ContentGenerator() {
                   <button
                     type="button"
                     onClick={() => navigator.clipboard?.writeText(u.markdown)}
-                    className="rounded-lg border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+                    className="rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
                   >
                     Copy
                   </button>
@@ -1138,7 +1138,7 @@ export default function ContentGenerator() {
                     type="button"
                     onClick={() => lastNedWord(u.markdown, base)}
                     disabled={lagerWord}
-                    className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
+                    className="rounded-[4px] bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
                   >
                     {lagerWord ? "Creating…" : "Download Word (.docx)"}
                   </button>
@@ -1149,7 +1149,7 @@ export default function ContentGenerator() {
                 onChange={(e) =>
                   setUtkast((prev) => prev.map((x) => (x.type === u.type ? { ...x, markdown: e.target.value } : x)))
                 }
-                className="h-[28rem] w-full resize-y rounded-lg border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                className="h-[28rem] w-full resize-y rounded-[4px] border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
               />
               <p className="mt-1 text-xs text-zinc-500">
                 AI generated draft based on your sources. Edit it here, then download as Word. Review the

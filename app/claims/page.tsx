@@ -73,7 +73,7 @@ export default function ClaimsLibrary() {
               value={reviewer}
               onChange={(e) => onReviewerChange(e.target.value)}
               placeholder="Your name (recorded on actions)"
-              className="w-64 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"
+              className="w-64 rounded-[4px] border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"
             />
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function ClaimsLibrary() {
 
       <main className="mx-auto max-w-5xl px-4 py-8">
         {!configured ? (
-          <p className="rounded-xl border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-500">
+          <p className="rounded-[4px] border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-500">
             The findings library is not set up yet. Add the Supabase environment variables to enable it.
           </p>
         ) : loading ? (

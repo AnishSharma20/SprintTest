@@ -84,14 +84,14 @@ export default function MarketingClaims({
         </p>
         <button
           onClick={() => setCreating(true)}
-          className="shrink-0 rounded-lg bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white hover:bg-[#086472]"
+          className="shrink-0 rounded-[4px] bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white hover:bg-[#086472]"
         >
           ＋ New finding
         </button>
       </div>
 
       {marketing.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#C2D9E3] p-8 text-center">
+        <div className="rounded-[4px] border border-dashed border-[#C2D9E3] p-8 text-center">
           <p className="text-zinc-500">No findings yet.</p>
           <p className="mt-1 text-sm text-zinc-400">
             Create one and link it to the study evidence that backs it up.
@@ -174,12 +174,12 @@ function MarketingCard({
   }
 
   return (
-    <li className="rounded-2xl border border-[#D6E6EE] bg-white p-5 shadow-sm">
+    <li className="rounded-[4px] border border-[#D6E6EE] bg-white p-5 shadow-sm">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLE[claim.status]}`}>
+        <span className={`rounded-[4px] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLE[claim.status]}`}>
           {STATUS_LABEL[claim.status] ?? claim.status}
         </span>
-        <span className="rounded-full bg-[#E1F4F3] px-2.5 py-0.5 text-[10px] font-semibold text-[#0A7A8A]">
+        <span className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-[10px] font-semibold text-[#0A7A8A]">
           {categoryName}
         </span>
       </div>
@@ -197,14 +197,14 @@ function MarketingCard({
       {open && (
         <div className="mt-2 space-y-2">
           {backing.length === 0 ? (
-            <p className="rounded-lg bg-[#FBEED6] px-3 py-2 text-[11px] font-medium text-[#8A5A0B]">
+            <p className="rounded-[4px] bg-[#FBEED6] px-3 py-2 text-[11px] font-medium text-[#8A5A0B]">
               No evidence linked yet. A finding needs backing before it can be approved.
             </p>
           ) : (
             backing.map((b) => {
               const qte = (b.claim_quotes ?? [])[0];
               return (
-                <div key={b.id} className="rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-3">
+                <div key={b.id} className="rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-3">
                   {/* The evidence IS the verbatim quote from the study, not a restated claim. */}
                   <p className="border-l-2 border-[#C2D9E3] pl-2.5 text-[12px] italic leading-relaxed text-zinc-600">
                     “{decodeEntities(qte?.quote ?? b.text)}”
@@ -242,7 +242,7 @@ function MarketingCard({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={mode === "reject" ? "Why is this finding not usable? (required)" : "Add a comment"}
-          className="mt-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+          className="mt-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           rows={2}
         />
       )}
@@ -367,10 +367,10 @@ function NewMarketingClaimModal({
       className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-[#031B34]/60 p-4 backdrop-blur-sm sm:p-6"
       onClick={onClose}
     >
-      <div className="my-6 w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="my-6 w-full max-w-3xl overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white shadow-md" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-4">
           <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">New finding</div>
-          <button onClick={onClose} aria-label="Close" className="rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
+          <button onClick={onClose} aria-label="Close" className="rounded-[4px] p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
             <span className="text-xl leading-none">✕</span>
           </button>
         </div>
@@ -380,7 +380,7 @@ function NewMarketingClaimModal({
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="mb-3 w-full rounded-md border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mb-3 w-full rounded-[4px] border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
           >
             <option value="">Select a category…</option>
             <optgroup label="Science">
@@ -403,7 +403,7 @@ function NewMarketingClaimModal({
             onChange={(e) => setText(e.target.value)}
             rows={2}
             placeholder="e.g. Superba krill oil supports joint comfort in adults."
-            className="mb-4 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mb-4 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           />
 
           <div className="mb-1 flex items-center justify-between">
@@ -416,13 +416,13 @@ function NewMarketingClaimModal({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search findings or studies…"
-            className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mb-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           />
-          <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-2">
+          <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-2">
             {filtered.shown.map((c) => (
               <label
                 key={c.id}
-                className="flex cursor-pointer items-start gap-2 rounded-md p-2 hover:bg-white"
+                className="flex cursor-pointer items-start gap-2 rounded-[4px] p-2 hover:bg-white"
               >
                 <input
                   type="checkbox"
@@ -450,11 +450,11 @@ function NewMarketingClaimModal({
             <button
               onClick={submit}
               disabled={busy || !text.trim() || !categoryId || selected.size === 0}
-              className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+              className="rounded-[4px] bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
             >
               {busy ? "Creating…" : "Create finding"}
             </button>
-            <button onClick={onClose} className="rounded-lg border border-[#D6E6EE] bg-white px-4 py-2 text-sm font-semibold text-zinc-600 hover:bg-zinc-50">
+            <button onClick={onClose} className="rounded-[4px] border border-[#D6E6EE] bg-white px-4 py-2 text-sm font-semibold text-zinc-600 hover:bg-zinc-50">
               Cancel
             </button>
           </div>
@@ -486,7 +486,7 @@ function Btn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 ${cls}`}
+      className={`rounded-[4px] px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 ${cls}`}
     >
       {children}
     </button>

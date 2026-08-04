@@ -27,7 +27,7 @@ export default function TopNav() {
               <Link
                 key={t.href}
                 href={t.href}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-[4px] px-3 py-1.5 text-sm font-medium transition-colors ${
                   aktiv
                     ? "bg-[#3FD0C9] text-[#031B34]"
                     : "text-[#BFE3EF] hover:bg-white/10"

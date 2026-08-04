@@ -77,7 +77,7 @@ export default function ClaimsModal({
       onClick={onClose}
     >
       <div
-        className="my-6 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="my-6 w-full max-w-4xl overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4 border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-5">
@@ -92,7 +92,7 @@ export default function ClaimsModal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="shrink-0 rounded-full p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+            className="shrink-0 rounded-[4px] p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
           >
             <span className="text-xl leading-none">✕</span>
           </button>
@@ -148,7 +148,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
 
   if (!configured) {
     return (
-      <div className="rounded-xl border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
+      <div className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
         The findings library is not set up yet. Add the Supabase environment variables to enable
         finding review.
       </div>
@@ -163,7 +163,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-colors ${
                 filter === f
                   ? "bg-[#052A4E] text-white"
                   : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
@@ -176,7 +176,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
         </div>
         <button
           onClick={() => setAdding((a) => !a)}
-          className="rounded-lg bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
+          className="rounded-[4px] bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
         >
           {adding ? "Cancel" : "➕ Add evidence"}
         </button>
@@ -198,7 +198,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
       {loading ? (
         <p className="text-sm text-zinc-400">Loading findings…</p>
       ) : visible.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-[#C2D9E3] p-4 text-center text-sm text-zinc-400">
+        <p className="rounded-[4px] border border-dashed border-[#C2D9E3] p-4 text-center text-sm text-zinc-400">
           {counts.all === 0
             ? "No evidence for this study yet. Use “Add evidence” to add a finding."
             : "No evidence in this view."}
@@ -272,13 +272,13 @@ function AddClaimForm({
   }
 
   return (
-    <div className="mb-3 rounded-xl border-2 border-[#3FD0C9] bg-[#F4FBFC] p-3">
+    <div className="mb-3 rounded-[4px] border-2 border-[#3FD0C9] bg-[#F4FBFC] p-3">
       <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">Add evidence</div>
       <label className="mb-1 block text-xs font-semibold text-zinc-600">Category</label>
       <select
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
-        className="mb-2 w-full rounded-md border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
+        className="mb-2 w-full rounded-[4px] border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
       >
         <option value="">Select a category…</option>
         <optgroup label="Science">
@@ -301,7 +301,7 @@ function AddClaimForm({
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={2}
-        className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+        className="mb-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
       />
       <label className="mb-1 block text-xs font-semibold text-zinc-600">
         Supporting quote from the paper (optional, checked against the source)
@@ -311,13 +311,13 @@ function AddClaimForm({
         onChange={(e) => setQuote(e.target.value)}
         rows={2}
         placeholder="Paste the exact sentence from the study, if you have one."
-        className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+        className="mb-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
       />
       {error && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{error}</p>}
       <button
         onClick={submit}
         disabled={busy || !text.trim() || !categoryId}
-        className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+        className="rounded-[4px] bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
       >
         {busy ? "Adding…" : "Add evidence (pending review)"}
       </button>
@@ -373,12 +373,12 @@ function ClaimRow({
   }
 
   return (
-    <li className="rounded-xl border border-[#E2EDF2] bg-[#FAFDFE] p-4">
+    <li className="rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLE[claim.status]}`}>
+        <span className={`rounded-[4px] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLE[claim.status]}`}>
           {STATUS_LABEL[claim.status]}
         </span>
-        <span className="rounded-full bg-[#E1F4F3] px-2 py-0.5 text-[10px] font-semibold text-[#0A7A8A]">
+        <span className="rounded-[4px] bg-[#E1F4F3] px-2 py-0.5 text-[10px] font-semibold text-[#0A7A8A]">
           {catName}
         </span>
         <span className="text-[10px] text-zinc-400">
@@ -391,7 +391,7 @@ function ClaimRow({
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          className="w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+          className="w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           rows={3}
         />
       ) : (
@@ -431,7 +431,7 @@ function ClaimRow({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={mode === "reject" ? "Why is this finding wrong or unusable? (required)" : "Add a comment"}
-          className="mt-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+          className="mt-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           rows={2}
         />
       )}
@@ -519,7 +519,7 @@ function ActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 ${cls}`}
+      className={`rounded-[4px] px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 ${cls}`}
     >
       {children}
     </button>

@@ -9,6 +9,7 @@ import {
   recordAssetClaims,
   type ApprovedClaim,
 } from "../claims-source";
+import PageHero from "../PageHero";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -562,21 +563,11 @@ export default function ContentGenerator() {
 
   return (
     <div className="min-h-screen bg-[#F2F7F9]">
-      <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-12 pt-8">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7FD4E6]">
-            Content Generation Tool
-          </div>
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Create content from your material
-          </h1>
-          <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Upload your source files and choose what to produce. Pick one or
-            several at once, and our AI turns them into ready to use, on brand
-            content: polished PowerPoint decks and science backed blog drafts.
-          </p>
-        </div>
-      </header>
+      <PageHero eyebrow="Content Generation Tool" title="Create content from your material">
+        Upload your source files and choose what to produce. Pick one or several at once, and our AI
+        turns them into ready to use, on brand content: polished PowerPoint decks, designed
+        whitepapers and science backed blog drafts.
+      </PageHero>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
         {/* Product selector — which brand the content is for (single choice) */}

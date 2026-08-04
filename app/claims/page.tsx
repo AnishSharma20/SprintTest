@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Claim, Category } from "../lib/claims-types";
 import MarketingClaims from "../marketing-claims";
+import PageHero, { ReviewerField } from "../PageHero";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -52,32 +53,20 @@ export default function ClaimsLibrary() {
 
   return (
     <div className="min-h-screen bg-[#F2F7F9]">
-      <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-10 pt-8">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7FD4E6]">
-            Findings Library
-          </div>
-          <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-white">
-            What we can say about the product
-          </h1>
-          <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Findings in plain, benefit facing language. Each finding links to the evidence that
-            substantiates it, so you can see the exact quote, the study and the section it comes from.
-          </p>
-          <div className="mt-5 flex items-center gap-2">
-            <label htmlFor="reviewer" className="text-xs font-semibold text-[#7FD4E6]">
-              Reviewer
-            </label>
-            <input
-              id="reviewer"
-              value={reviewer}
-              onChange={(e) => onReviewerChange(e.target.value)}
-              placeholder="Your name (recorded on actions)"
-              className="w-64 rounded-[4px] border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHero
+        eyebrow="Findings Library"
+        title="What we can say about the product"
+        actions={
+          <ReviewerField
+            value={reviewer}
+            onChange={onReviewerChange}
+            placeholder="Your name (recorded on actions)"
+          />
+        }
+      >
+        Findings in plain, benefit facing language. Each finding links to the evidence that
+        substantiates it, so you can see the exact quote, the study and the section it comes from.
+      </PageHero>
 
       <main className="mx-auto max-w-5xl px-4 py-8">
         {!configured ? (

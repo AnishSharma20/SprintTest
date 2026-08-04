@@ -202,6 +202,15 @@ so a deploy cannot lock the team out; the gate switches on the moment the var ex
 `app/lib/access.ts` — importing the special `proxy.ts` from a route handler makes that route silently 404.
 Not per-user auth; fine for a client preview, not for production multi-user.
 
+> **Vercel env var gotcha (cost 20 minutes once).** A new environment variable only reaches
+> deployments created AFTER it is saved; saving it never touches the running deployment. Trigger a
+> fresh PRODUCTION build: the **row** menu on the newest deployment (far right of that row) has
+> **Redeploy**, or just push to `main`. Do NOT use the page level menu's **Create Deployment** for
+> this, because it builds a **Preview** deployment, and Production-scoped variables are absent there
+> by definition. The login route's "APP_PASSWORD is not set" message is diagnostic: it proves the
+> function serving the request has no value, so the build predates the variable or the URL is a
+> Preview one.
+
 **Env vars.** `ANTHROPIC_API_KEY` in `min-forste-app/.env.local` (server-side only); `DECK_SERVICE_URL` +
 `DECK_SERVICE_TOKEN` (Vercel→Render); `DECK_MODEL` (default `claude-sonnet-5`), `DECK_GATE_MODEL`,
 `DECK_QA_ROUNDS`, `DECK_TEMPLATE`. **Access gate:** `APP_PASSWORD` (required to switch the gate on) and

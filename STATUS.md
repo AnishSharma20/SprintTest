@@ -99,7 +99,7 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Studies = real studies only** — the PubMed query excludes non-study publication types
   (`NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])`).
 - **Synthetic (code-built) layouts** — beyond the template's own layouts, the planner can pick
-  **31** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
+  **35** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
   `key_points`, `chart` (native pptx chart: column/bar/line/stacked/100%/doughnut, data from the plan;
   a 2-bar column also gets a Think-cell-style delta callout), `matrix` (2x2), `journey`, `exec_summary`,
   `quote`, `comparison` (native table), `stat` (hero numbers), `harvey_ball` (drawn-shape rating grid,
@@ -108,7 +108,12 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   (bullet-chart rows), `cause_effect`, `org_chart`, `decision_tree`, `cycle`, `gantt` (task bars +
   milestone diamonds against a period axis), `serpentine` (S-curve flow), `coverage_matrix`
   (binary tick grid — use INSTEAD of harvey balls for yes/no), `photo_stats` (photo-topped hero
-  figures), `numbered_cards`, `implications` (trend → detail → so-what). Registered like
+  figures), `numbered_cards`, `implications` (trend → detail → so-what), `alt_timeline` (cards
+  alternating above/below a spine, category legend), `breakdown` (hub total fanning out to shares),
+  `chart_bands` (column chart + narrative phase bands) and `chart_takeaways` (bubble plot + a
+  takeaways column). NOTE: `chart_bands`/`chart_takeaways` draw their marks as SHAPES, not native
+  pptx charts — python-pptx exposes no plot-area geometry, so bands/point labels could not otherwise
+  be aligned to their categories; they are therefore not click-to-edit. Registered like
   `ingredient` in `scripts/build_schema.py` (survive config regen) → `renderer._fill_*` + a
   `render_deck` branch + a `LAYOUT_USAGE` line. Repeatable recipe for adding more from the template
   library. A full one-slide-per-layout gallery ships as `Superba_layout_galleri_ALLE.pptx`.

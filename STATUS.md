@@ -99,7 +99,7 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Studies = real studies only** — the PubMed query excludes non-study publication types
   (`NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])`).
 - **Synthetic (code-built) layouts** — beyond the template's own layouts, the planner can pick
-  **32** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
+  **31** AI-filled consulting structures (faithfully re-skinned to Superba, icons from our library):
   `key_points`, `chart` (native pptx chart: column/bar/line/stacked/100%/doughnut, data from the plan;
   a 2-bar column also gets a Think-cell-style delta callout), `matrix` (2x2), `exec_summary`,
   `comparison` (native table), `stat` (hero numbers), `harvey_ball` (drawn-shape rating grid,
@@ -111,8 +111,11 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   figures), `numbered_cards`, `implications` (trend → detail → so-what), `alt_timeline` (cards
   alternating above/below a spine, category legend), `breakdown` (hub total fanning out to shares),
   `chart_bands` (column chart + narrative phase bands) and `chart_takeaways` (bubble plot + a
-  takeaways column). REMOVED 2026-08-04 at the client's request (do not re-add): `journey`,
-  `timeline`, `case_study`, `quote`. NOTE: `chart_bands`/`chart_takeaways` draw their marks as SHAPES, not native
+  takeaways column). `serpentine` is the ONLY timeline layout and now takes an optional per-item
+  `date` (the "wavy timeline"); it caps at 4 events, so a longer dated sequence has no dedicated
+  layout. REMOVED 2026-08-04 at the client's request (do not re-add): `journey`, `timeline`,
+  `case_study`, `quote`, `alt_timeline`, and `picture_with_title` (also deleted from
+  `template.pptx` itself, so the catalog is 42 = 11 template + 31 synthetic). NOTE: `chart_bands`/`chart_takeaways` draw their marks as SHAPES, not native
   pptx charts — python-pptx exposes no plot-area geometry, so bands/point labels could not otherwise
   be aligned to their categories; they are therefore not click-to-edit. Registered like
   `ingredient` in `scripts/build_schema.py` (survive config regen) → `renderer._fill_*` + a

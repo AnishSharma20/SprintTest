@@ -192,9 +192,20 @@ is pre-filled + reviewed in a dedicated surface.
 - Adopt template2; add NEW MBB *layouts* (2×2, funnel, pillars…) — needs OOXML layout-cloning (no python-pptx
   add-layout API). Speed/parallelism.
 
+**Client demo access gate — NEW 2026-08-04.** `proxy.ts` (Next 16 renamed Middleware to **Proxy**, so the
+file is `proxy.ts`, NOT `middleware.ts`) gates the whole site behind one shared username + password, with
+`/login` + `/api/login` + `/api/logout` and a Sign out in `TopNav`. It runs in the proxy on purpose: a React
+only gate would leave **`/api/*` open, and those cost money** (every generation is an Anthropic call). API
+requests get 401, browsers get redirected to `/login`. The cookie is a SHA-256 digest of the password
+(never the password), httpOnly, Secure in production, 30 days. **Fails OPEN when `APP_PASSWORD` is unset**
+so a deploy cannot lock the team out; the gate switches on the moment the var exists. Shared helpers live in
+`app/lib/access.ts` — importing the special `proxy.ts` from a route handler makes that route silently 404.
+Not per-user auth; fine for a client preview, not for production multi-user.
+
 **Env vars.** `ANTHROPIC_API_KEY` in `min-forste-app/.env.local` (server-side only); `DECK_SERVICE_URL` +
 `DECK_SERVICE_TOKEN` (Vercel→Render); `DECK_MODEL` (default `claude-sonnet-5`), `DECK_GATE_MODEL`,
-`DECK_QA_ROUNDS`, `DECK_TEMPLATE`.
+`DECK_QA_ROUNDS`, `DECK_TEMPLATE`. **Access gate:** `APP_PASSWORD` (required to switch the gate on) and
+`APP_USER` (defaults to `superba`) — set both in Vercel AND `.env.local`.
 
 **Windows dev notes.** Use `python` (NOT `python3`). Render `.pptx`→PNG via **PowerPoint COM through
 PowerShell** (LibreOffice is absent locally, present on Render). Bash tool = git-bash; run the service with

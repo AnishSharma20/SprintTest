@@ -113,9 +113,16 @@ function flaggFor(name: string): string {
 }
 
 // Filename for a generated download. Prefer what the service sends in Content-Disposition (it is
-// derived from the source material), and always append a timestamp: the old code hardcoded ONE name
+// derived from the generated title), and always append a timestamp: the old code hardcoded ONE name
 // per content type, so every run landed as "superba-whitepaper-indesign (1).zip", "(2)", "(3)"… and
 // looked like the same file coming back every time.
+//
+// KEEP THIS SHORT. Windows Explorer names the folder it extracts a zip into after the zip itself,
+// and it refuses to extract with "the target path is too long" well before the documented 260
+// character limit. A whitepaper zip that would not open had a 69 character folder name; the same
+// file extracted fine once shortened by hand.
+const STEM_MAX = 24;
+
 function nedlastingsnavn(res: Response, type: ContentType, blob: Blob): string {
   const cd = res.headers.get("Content-Disposition") ?? "";
   const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
@@ -123,14 +130,20 @@ function nedlastingsnavn(res: Response, type: ContentType, blob: Blob): string {
   if (!name) {
     name =
       type === "whitepaper_mix"
-        ? "superba-whitepaper-indesign.zip"
+        ? "superba-whitepaper.zip"
         : blob.type.includes("zip")
           ? "content-decks.zip"
           : "content-deck.pptx";
   }
   const dot = name.lastIndexOf(".");
-  const stem = dot > 0 ? name.slice(0, dot) : name;
+  let stem = dot > 0 ? name.slice(0, dot) : name;
   const ext = dot > 0 ? name.slice(dot) : "";
+  if (stem.length > STEM_MAX) {
+    // Cut on a word boundary so it reads as a shortened title, not a truncated file.
+    const cut = stem.slice(0, STEM_MAX);
+    const dash = cut.lastIndexOf("-");
+    stem = (dash > STEM_MAX / 2 ? cut.slice(0, dash) : cut).replace(/-+$/, "");
+  }
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
   const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;

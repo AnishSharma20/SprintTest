@@ -205,7 +205,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     pages=[p for p in (sider or "").split(",") if p.strip()],
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
-                stem = _slug(b.get("title", ""), 36) or base
+                stem = _slug(b.get("title", ""), 24) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
                     z.writestr(_IDML_MEMBER, b["idml"])
@@ -221,7 +221,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                             z.writestr(f"Links/{entry['file']}", photo.read_bytes())
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=stem + "-whitepaper.zip")
+                                    filename=stem + ".zip")
                 return
 
             if innholdstype == "whitepaper_idml":
@@ -229,7 +229,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 b = src.generate_whitepaper_idml(
                     client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                     on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
-                stem = _slug(b.get("title", ""), 36) or base
+                stem = _slug(b.get("title", ""), 24) or base
                 zbuf = io.BytesIO()
                 with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
                     z.writestr(_IDML_MEMBER, b["idml"])
@@ -237,7 +237,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                     z.writestr("OPEN_IN_INDESIGN.txt", _IDML_README)
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=stem + "-whitepaper.zip")
+                                    filename=stem + ".zip")
                 return
 
             fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog

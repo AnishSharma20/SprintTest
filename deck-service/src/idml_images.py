@@ -44,16 +44,23 @@ def photo_path(name: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def photos_for_theme(theme: str) -> list[dict]:
-    """Library photos tagged with this theme, best first (most specific tag wins)."""
+    """Photos for this subject, on-theme first then generic brand imagery.
+
+    The generic tail matters: a page with three photo frames would otherwise exhaust a narrow theme
+    (there are only three sports photographs) and repeat the same picture three times.
+    """
     cat = load_photos()
     theme = (theme or "").strip().lower()
-    exact = [p for p in cat["photos"] if theme and theme in p["themes"]]
-    return exact or [p for p in cat["photos"] if "generic" in p["themes"]]
+    on_theme = [p for p in cat["photos"] if theme and theme in p["themes"]]
+    generic = [p for p in cat["photos"] if "generic" in p["themes"] and p not in on_theme]
+    return on_theme + generic
 
 
-#: A replacement must reach this effective resolution or the designer's photo is kept. The library
-#: was built for slides (~1600 px), so it simply cannot fill a full page frame at print quality —
-#: silently dropping a cover to 72 ppi would be worse than not swapping at all.
+#: A replacement must reach this effective resolution or the designer's photo is kept. Silently
+#: dropping a cover to 72 ppi would be worse than not swapping at all. The high resolution brand
+#: pool (wp_photo_*, imported by scripts/import_brand_photos.py) clears this on every frame
+#: including covers; the older slide library (photo_*, ~1600 px) only clears it on smaller frames,
+#: which is exactly the distinction this guard exists to enforce.
 MIN_PPI = 150
 
 
@@ -65,18 +72,22 @@ def achievable_ppi(slot: dict, photo: dict) -> float:
     return 72.0 * min(photo["px_w"] / fw, photo["px_h"] / fh)
 
 
-def pick_photos(theme: str, slots: list[dict], *,
-                min_ppi: float = MIN_PPI) -> tuple[dict[str, dict], list[dict]]:
+def pick_photos(theme: str, slots: list[dict], *, min_ppi: float = MIN_PPI,
+                used: set[str] | None = None) -> tuple[dict[str, dict], list[dict]]:
     """Assign a library photo to each swappable slot.
 
     A slot is left out (keeping the designed photo) when no candidate matches the theme or when the
     best candidate cannot reach `min_ppi` in that frame. Returns (assignments, skipped) so the
     caller can tell the designer WHY a photo was left alone.
+
+    Pass a shared `used` set to keep the choice varied across a WHOLE document: called per page
+    without it, the same photograph won a cover, a narrative page and a closing page, which reads as
+    carelessness. It is mutated in place.
     """
     candidates = photos_for_theme(theme)
     chosen: dict[str, dict] = {}
     skipped: list[dict] = []
-    used: set[str] = set()
+    used = used if used is not None else set()
     for slot in slots:
         want = slot.get("orientation")
         pool = [p for p in candidates if not want or want == "square" or p["orientation"] == want]

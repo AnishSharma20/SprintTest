@@ -1,5 +1,5 @@
 {
-  "note": "Photo catalogue for theme matched image swaps. Dimensions measured from the files. No sports / joint / brain imagery exists here on purpose: for those subjects the template's own photograph is kept.",
+  "note": "Photo catalogue for theme matched image swaps. Dimensions measured from the files. Two pools: wp_photo_* are high resolution brand photographs from the design team's packages (large enough for covers); photo_* are the slide library (fine for smaller frames). src/idml_images.py picks the highest resolution candidate that matches the subject and keeps the designed photo when none can fill the frame at print quality.",
   "photos": [
     {
       "file": "photo_antarctic_sunset.jpg",
@@ -10,6 +10,7 @@
         "sustainability",
         "ocean"
       ],
+      "pool": "slides",
       "bytes": 147787
     },
     {
@@ -21,6 +22,7 @@
         "consumer",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 230799
     },
     {
@@ -32,6 +34,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 34441
     },
     {
@@ -43,6 +46,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 198043
     },
     {
@@ -54,6 +58,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 150658
     },
     {
@@ -65,6 +70,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 364676
     },
     {
@@ -76,6 +82,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 117268
     },
     {
@@ -87,6 +94,7 @@
         "product",
         "supplement"
       ],
+      "pool": "slides",
       "bytes": 275919
     },
     {
@@ -98,6 +106,7 @@
         "product",
         "sourcing"
       ],
+      "pool": "slides",
       "bytes": 33856
     },
     {
@@ -109,6 +118,7 @@
         "krill",
         "science"
       ],
+      "pool": "slides",
       "bytes": 137215
     },
     {
@@ -120,6 +130,7 @@
         "krill",
         "science"
       ],
+      "pool": "slides",
       "bytes": 183406
     },
     {
@@ -131,6 +142,7 @@
         "science",
         "absorption"
       ],
+      "pool": "slides",
       "bytes": 91063
     },
     {
@@ -142,7 +154,20 @@
         "company",
         "supply"
       ],
+      "pool": "slides",
       "bytes": 94890
+    },
+    {
+      "file": "wp_photo_krill_single.jpg",
+      "px_w": 2400,
+      "px_h": 2609,
+      "orientation": "portrait",
+      "themes": [
+        "krill",
+        "science"
+      ],
+      "pool": "brand",
+      "bytes": 384451
     },
     {
       "file": "photo_antarctic_land.jpg",
@@ -154,6 +179,7 @@
         "sourcing",
         "ocean"
       ],
+      "pool": "slides",
       "bytes": 287555
     },
     {
@@ -166,6 +192,7 @@
         "supplement",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 77728
     },
     {
@@ -178,6 +205,7 @@
         "ocean",
         "sourcing"
       ],
+      "pool": "slides",
       "bytes": 135440
     },
     {
@@ -190,6 +218,7 @@
         "formulation",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 164227
     },
     {
@@ -202,6 +231,7 @@
         "sourcing",
         "sustainability"
       ],
+      "pool": "slides",
       "bytes": 470587
     },
     {
@@ -214,6 +244,7 @@
         "sourcing",
         "ocean"
       ],
+      "pool": "slides",
       "bytes": 425698
     },
     {
@@ -226,6 +257,7 @@
         "quality",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 72334
     },
     {
@@ -238,6 +270,7 @@
         "absorption",
         "formulation"
       ],
+      "pool": "slides",
       "bytes": 38837
     },
     {
@@ -250,6 +283,7 @@
         "quality",
         "formulation"
       ],
+      "pool": "slides",
       "bytes": 99601
     },
     {
@@ -262,7 +296,138 @@
         "quality",
         "sourcing"
       ],
+      "pool": "slides",
       "bytes": 175837
+    },
+    {
+      "file": "wp_photo_algae_microscopy.jpg",
+      "px_w": 3598,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "science",
+        "absorption",
+        "formulation"
+      ],
+      "pool": "brand",
+      "bytes": 811626
+    },
+    {
+      "file": "wp_photo_antarctica_from_space.jpg",
+      "px_w": 3600,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "ocean",
+        "science"
+      ],
+      "pool": "brand",
+      "bytes": 468561
+    },
+    {
+      "file": "wp_photo_athlete_shoes.jpg",
+      "px_w": 3600,
+      "px_h": 2361,
+      "orientation": "landscape",
+      "themes": [
+        "sports",
+        "performance",
+        "recovery"
+      ],
+      "pool": "brand",
+      "bytes": 1030618
+    },
+    {
+      "file": "wp_photo_capsules_poured.jpg",
+      "px_w": 3600,
+      "px_h": 1581,
+      "orientation": "landscape",
+      "themes": [
+        "product",
+        "supplement",
+        "generic"
+      ],
+      "pool": "brand",
+      "bytes": 266098
+    },
+    {
+      "file": "wp_photo_capsules_teal.jpg",
+      "px_w": 2400,
+      "px_h": 3599,
+      "orientation": "portrait",
+      "themes": [
+        "product",
+        "supplement",
+        "formulation"
+      ],
+      "pool": "brand",
+      "bytes": 562855
+    },
+    {
+      "file": "wp_photo_eye_health.jpg",
+      "px_w": 3073,
+      "px_h": 1689,
+      "orientation": "landscape",
+      "themes": [
+        "eye",
+        "clinical",
+        "science"
+      ],
+      "pool": "brand",
+      "bytes": 477751
+    },
+    {
+      "file": "wp_photo_harvest_aerial.jpg",
+      "px_w": 3002,
+      "px_h": 2000,
+      "orientation": "landscape",
+      "themes": [
+        "sourcing",
+        "sustainability",
+        "supply"
+      ],
+      "pool": "brand",
+      "bytes": 1575180
+    },
+    {
+      "file": "wp_photo_krill_biomass.jpg",
+      "px_w": 2998,
+      "px_h": 2001,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "sustainability",
+        "ocean"
+      ],
+      "pool": "brand",
+      "bytes": 903607
+    },
+    {
+      "file": "wp_photo_krill_deep_water.jpg",
+      "px_w": 3600,
+      "px_h": 2000,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "ocean",
+        "generic"
+      ],
+      "pool": "brand",
+      "bytes": 558579
+    },
+    {
+      "file": "wp_photo_krill_swarm_silver.jpg",
+      "px_w": 3600,
+      "px_h": 2125,
+      "orientation": "landscape",
+      "themes": [
+        "krill",
+        "ocean",
+        "sourcing"
+      ],
+      "pool": "brand",
+      "bytes": 1176911
     },
     {
       "file": "photo_antarctic_bright.jpg",
@@ -275,6 +440,7 @@
         "ocean",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 324970
     },
     {
@@ -288,6 +454,7 @@
         "ocean",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 214172
     },
     {
@@ -301,7 +468,92 @@
         "ocean",
         "generic"
       ],
+      "pool": "slides",
       "bytes": 54488
+    },
+    {
+      "file": "wp_photo_antarctic_panorama.jpg",
+      "px_w": 3600,
+      "px_h": 1522,
+      "orientation": "landscape",
+      "themes": [
+        "sustainability",
+        "ocean",
+        "sourcing",
+        "generic"
+      ],
+      "pool": "brand",
+      "bytes": 1061475
+    },
+    {
+      "file": "wp_photo_athlete_strength.jpg",
+      "px_w": 3600,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "sports",
+        "performance",
+        "muscle",
+        "strength"
+      ],
+      "pool": "brand",
+      "bytes": 1943527
+    },
+    {
+      "file": "wp_photo_brain_science.jpg",
+      "px_w": 3600,
+      "px_h": 1339,
+      "orientation": "landscape",
+      "themes": [
+        "brain",
+        "cognitive",
+        "science",
+        "clinical"
+      ],
+      "pool": "brand",
+      "bytes": 360876
+    },
+    {
+      "file": "wp_photo_cyclist.jpg",
+      "px_w": 3596,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "sports",
+        "performance",
+        "endurance",
+        "recovery"
+      ],
+      "pool": "brand",
+      "bytes": 1152941
+    },
+    {
+      "file": "wp_photo_traceability_monitor.jpg",
+      "px_w": 3600,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "traceability",
+        "quality",
+        "supply",
+        "science"
+      ],
+      "pool": "brand",
+      "bytes": 1279702
+    },
+    {
+      "file": "wp_photo_vessel_at_sea.jpg",
+      "px_w": 3600,
+      "px_h": 2400,
+      "orientation": "landscape",
+      "themes": [
+        "sourcing",
+        "supply",
+        "ocean",
+        "sustainability"
+      ],
+      "pool": "brand",
+      "bytes": 1532064
     }
   ]
 }

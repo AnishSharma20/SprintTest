@@ -4,12 +4,16 @@ Reads the real pixel dimensions of the photo library the deck generator already 
 (assets/photo_*.jpg) and merges in the curated THEMES below. Dimensions are measured, not
 guessed, because the swap has to recompute a Fill Frame Proportionally transform from them.
 
-Honest limitation, recorded here so it is not rediscovered later: this library was assembled for
-SLIDES. It is rich in krill, Antarctic, product and laboratory imagery but contains NO sports,
-joint, brain or eye photography, and the files are ~1600 px, which on a full bleed A4 cover works
-out around 185 ppi (fine for a digital PDF, soft for print). So there is deliberately no mapping
-for the health condition themes: for those the designers' own photograph is the better choice and
-the swap simply leaves it alone.
+Two pools are merged:
+
+  photo_*.jpg     the slide library (~1600 px). Fine for small frames; too small for a full page,
+                  so the resolution guard in src/idml_images.py keeps the designed picture there.
+  wp_photo_*.jpg  high resolution brand photographs imported from the design team's own packages
+                  by scripts/import_brand_photos.py (3600 px, ~280 ppi on a cover frame). These
+                  also cover the sports, brain and eye subjects the slide library lacks entirely.
+
+Themes for the imported pool are read straight from import_brand_photos.CURATED so the tags live
+in exactly one place.
 
     python scripts/build_idml_photos.py
 """
@@ -64,9 +68,15 @@ def main() -> None:
     except ImportError:                                        # noqa: BLE001
         raise SystemExit("Pillow is required (it is already in requirements.txt).")
 
+    from import_brand_photos import CURATED
+
+    all_themes = dict(THEMES)
+    for dest, themes in CURATED.values():
+        all_themes[dest] = themes
+
     photos = []
     missing = []
-    for name, themes in THEMES.items():
+    for name, themes in all_themes.items():
         path = ROOT / "assets" / name
         if not path.exists():
             missing.append(name)
@@ -77,6 +87,7 @@ def main() -> None:
             "file": name, "px_w": w, "px_h": h,
             "orientation": "landscape" if w > h else ("portrait" if h > w else "square"),
             "themes": themes,
+            "pool": "brand" if name.startswith("wp_photo_") else "slides",
             "bytes": path.stat().st_size,
         })
 
@@ -84,14 +95,19 @@ def main() -> None:
     photos.sort(key=lambda p: (len(p["themes"]), p["file"]))
     catalogue = {
         "note": ("Photo catalogue for theme matched image swaps. Dimensions measured from the "
-                 "files. No sports / joint / brain imagery exists here on purpose: for those "
-                 "subjects the template's own photograph is kept."),
+                 "files. Two pools: wp_photo_* are high resolution brand photographs from the "
+                 "design team's packages (large enough for covers); photo_* are the slide library "
+                 "(fine for smaller frames). src/idml_images.py picks the highest resolution "
+                 "candidate that matches the subject and keeps the designed photo when none can "
+                 "fill the frame at print quality."),
         "photos": photos,
     }
     OUT.write_text(json.dumps(catalogue, indent=2, ensure_ascii=False), encoding="utf-8")
     total = sum(p["bytes"] for p in photos)
     print(f"Wrote {OUT}")
-    print(f"  {len(photos)} photos, {total / 1e6:.1f} MB total (bundled into the delivered Links)")
+    brand = sum(1 for p in photos if p["pool"] == "brand")
+    print(f"  {len(photos)} photos ({brand} high resolution brand, {len(photos) - brand} slide "
+          f"library), {total / 1e6:.1f} MB total")
     if missing:
         print(f"  WARNING missing from assets/: {missing}")
     themes: dict[str, int] = {}

@@ -80,11 +80,12 @@ def build_selection_schema() -> dict:
             },
             "photo_theme": {
                 "type": "string", "enum": sorted(photo_themes()) + ["keep_designed"],
-                "description": ("Subject for the PHOTOGRAPHS. Pick the theme that matches the "
-                                "source, or \"keep_designed\" to keep the brochures' own pictures. "
-                                "There is no imagery for sports, joint, brain or eye topics, so "
-                                "choose keep_designed for those: the designers' photograph is "
-                                "better than a mismatched substitute."),
+                "description": ("Subject for the PHOTOGRAPHS. Pick the theme that best matches the "
+                                "source so the pictures support the story (for example sports or "
+                                "strength for performance research, sustainability or sourcing for "
+                                "supply chain topics, brain or eye for those health areas, product "
+                                "for formulation topics). Use \"keep_designed\" only when no theme "
+                                "fits and the brochures' own pictures should stay."),
             },
             "rationale": {"type": "string", "maxLength": 600,
                           "description": "One or two sentences: why this page set fits the source."},
@@ -208,13 +209,14 @@ def compose_and_fill(page_ids: list[str], plan: dict, *,
     changed: dict[str, bytes] = {}
 
     photo_report: dict = {"theme": photo_theme, "replaced": [], "kept": []}
+    used_photos: set[str] = set()          # shared so one photo never repeats across pages
     if photo_theme and photo_theme != "keep_designed":
         for pid in page_ids:
             page = lib[pid]
             slots = page.get("photo_slots") or []
             if not slots:
                 continue
-            picks, skipped = idml_images.pick_photos(photo_theme, slots)
+            picks, skipped = idml_images.pick_photos(photo_theme, slots, used=used_photos)
             # ids inside the composed package carry the source's namespace prefix
             picks = {comp.story_id(page["template"], img): ph for img, ph in picks.items()}
             member = f"Spreads/Spread_{comp.story_id(page['template'], page['spread'])}.xml"

@@ -23,7 +23,9 @@ export async function POST(req: Request) {
       { status: 503 }
     );
   }
-  const expectedUser = process.env.APP_USER ?? "superba";
+  // Kept deliberately neutral: the real address is configured per environment via APP_USER, so no
+  // email address is committed to the repository.
+  const expectedUser = process.env.APP_USER ?? "demo";
 
   let user = "";
   let password = "";
@@ -36,9 +38,10 @@ export async function POST(req: Request) {
   }
 
   // Deliberately one message for both fields: naming which half was wrong just helps guessing.
+  // The email compare is case insensitive, since nobody types their address the same way twice.
   if (!sameSecret(user.trim().toLowerCase(), expectedUser.toLowerCase()) ||
       !sameSecret(password, expectedPassword)) {
-    return Response.json({ feil: "Wrong username or password." }, { status: 401 });
+    return Response.json({ feil: "Wrong email or password." }, { status: 401 });
   }
 
   const res = Response.json({ ok: true });

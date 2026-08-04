@@ -56,12 +56,14 @@ export default function Login() {
           <form onSubmit={submit} className="mt-6 space-y-3">
             <div>
               <label htmlFor="user" className="mb-1 block text-xs font-semibold text-[#7FD4E6]">
-                Username
+                Email
               </label>
               <input
                 id="user"
+                type="email"
                 autoFocus
                 autoComplete="username"
+                placeholder="name@company.com"
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
                 className="w-full rounded-[4px] border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"

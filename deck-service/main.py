@@ -75,19 +75,32 @@ def _mix_readme(pages: list[str], rationale: str, images: list[str],
         "(the benefit grid, the ingredient and portfolio spread) are placed unchanged because their\n"
         "icons and figures are brand facts.\n\n"
         "TO OPEN\n"
-        "  1. Open the .idml in Adobe InDesign (File > Open).\n"
-        "  2. Images are LINKED, and because pages come from more than one brochure this document\n"
-        "     can need images from several of the original packages (Sport Performance,\n"
-        "     Sustainability, Superba Brochure). Relink via Window > Links > Relink to Folder,\n"
-        "     pointing at each package's Links folder in turn. Until then the pages show low\n"
-        "     resolution previews.\n"
+        "  1. Keep the Links folder next to the .idml, then open the .idml in InDesign\n"
+        "     (File > Open). Every image this document uses is in that folder and the links point\n"
+        "     at it, so the pictures come with the document.\n"
+        "  2. If InDesign still reports missing links: an .idml opens as an UNTITLED document, so\n"
+        "     save it once (File > Save As, into this same folder), then Window > Links > panel\n"
+        "     menu > Relink to Folder and choose Links. That resolves all of them in one go.\n"
         "  3. Fonts: Manrope, Exo 2, Montserrat.\n"
         "  4. Review every page, then export to PDF.\n\n"
         "AI GENERATED DRAFT. Review all content, claims and figures before any use.\n\n"
-        + _photo_note(photos) +
-        f"Linked images this document expects ({len(images)}):\n" +
-        "".join(f"  {n}\n" for n in images)
+        + _photo_note(photos) + _links_note(photos)
     )
+
+
+def _links_note(photos: dict | None) -> str:
+    """What is in the Links folder, and the few assets we genuinely cannot supply."""
+    if not photos:
+        return ""
+    bundled = photos.get("bundle") or []
+    unresolved = photos.get("unresolved") or []
+    out = f"IMAGES INCLUDED IN Links ({len(bundled)}):\n" + "".join(f"  {n}\n" for n in bundled)
+    if unresolved:
+        out += (f"\nNOT INCLUDED ({len(unresolved)}). These are missing from the source package the\n"
+                "design team supplied, so we have no file to send. They will show as missing links;\n"
+                "please drop the originals into Links, or delete the frames:\n"
+                + "".join(f"  {n}\n" for n in unresolved))
+    return out
 
 
 def _photo_note(photos: dict | None) -> str:
@@ -213,12 +226,14 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                     z.writestr("OPEN_IN_INDESIGN.txt",
                                _mix_readme(b["pages"], b["rationale"], b["images"],
                                            b.get("photos")))
-                    # Any photo we substituted must travel WITH the document, or the designer opens
-                    # it to missing links for exactly the pictures we changed.
-                    for entry in (b.get("photos") or {}).get("replaced", []):
-                        photo = config.ASSETS_DIR / entry["file"]
-                        if photo.exists():
-                            z.writestr(f"Links/{entry['file']}", photo.read_bytes())
+                    # EVERY image the document links travels with it, not just the photos we
+                    # swapped. Shipping only the swapped ones left the recipient with 11 of 16
+                    # frames empty, and the links still pointed at a designer's own machine.
+                    from src.idml_images import shipped_asset
+                    for name in (b.get("photos") or {}).get("bundle", []):
+                        asset = shipped_asset(name)
+                        if asset:
+                            z.writestr(f"Links/{name}", asset.read_bytes())
                 JOBS[job_id].update(status="done", progress=100, step="Done",
                                     result=zbuf.getvalue(), media_type="application/zip",
                                     filename=stem + ".zip")

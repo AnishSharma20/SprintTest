@@ -249,6 +249,22 @@ def compose_and_fill(page_ids: list[str], plan: dict, *,
             texts = idml._slot_texts(slot, values.get(name))               # noqa: SLF001
             fill(story, texts or [""] * len(caps), caps if texts else [10] * len(caps))
 
+    # Point every image link at the Links folder we ship next to the document. The templates carry
+    # absolute paths from the designer's machine, so without this the recipient sees empty frames.
+    bundle: set[str] = set()
+    unresolved: set[str] = set()
+    for member in zin.namelist():
+        if not member.startswith("Spreads/"):
+            continue
+        xml = (changed.get(member) or zin.read(member)).decode("utf-8")
+        xml, files, missing = idml_images.localise_links(xml)
+        if files or missing:
+            changed[member] = xml.encode("utf-8")
+        bundle |= files
+        unresolved |= missing
+    photo_report["bundle"] = sorted(bundle)
+    photo_report["unresolved"] = sorted(unresolved)
+
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zout:
         names = zin.namelist()

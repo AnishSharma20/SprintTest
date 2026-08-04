@@ -22,6 +22,7 @@ from __future__ import annotations
 import functools
 import json
 import re
+import urllib.parse
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -37,6 +38,72 @@ def load_photos() -> dict:
 
 def photo_path(name: str) -> Path:
     return (config.ASSETS_DIR / name).resolve()
+
+
+# ---------------------------------------------------------------------------
+# Making a delivered document self contained
+# ---------------------------------------------------------------------------
+
+LINKS_MANIFEST = config.CONFIG_DIR / "idml_links.json"
+#: Folder name inside the delivered zip that holds the images.
+LINKS_DIR = "Links"
+
+
+@functools.lru_cache(maxsize=None)
+def link_manifest() -> dict[str, str]:
+    """Original link filename -> the filename we ship (PSDs were converted, so names change)."""
+    try:
+        return json.loads(LINKS_MANIFEST.read_text(encoding="utf-8")).get("files", {})
+    except FileNotFoundError:
+        return {}
+
+
+def shipped_asset(name: str) -> Path | None:
+    """Locate a shippable image: the imported page assets first, then the photo library."""
+    for candidate in (config.ASSETS_DIR / "wp_links" / name, config.ASSETS_DIR / name):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+_FORMAT_BY_EXT = {".png": "$ID/PNG", ".jpg": "$ID/JPEG", ".jpeg": "$ID/JPEG"}
+
+
+def localise_links(xml: str) -> tuple[str, set[str], set[str]]:
+    """Repoint every image link at the Links folder we ship beside the document.
+
+    The templates carry absolute paths from the designer's own machine
+    (file:/Users/.../Desktop/...), which resolve nowhere else, so a recipient opened the document
+    to empty frames. Rewriting them to a RELATIVE `file:Links/name` makes the package portable.
+
+    Returns (xml, files_to_bundle, unresolved) — `unresolved` are links we have no file for, which
+    stay as they are so InDesign still reports them rather than silently dropping them.
+    """
+    manifest = link_manifest()
+    bundle: set[str] = set()
+    unresolved: set[str] = set()
+
+    def rewrite(match: re.Match) -> str:
+        uri = match.group(1)
+        original = urllib.parse.unquote(uri.rsplit("/", 1)[-1])
+        shipped = manifest.get(original, original)
+        if shipped_asset(shipped) is None:
+            unresolved.add(original)
+            return match.group(0)
+        bundle.add(shipped)
+        quoted = urllib.parse.quote(shipped)
+        return f'LinkResourceURI="file:{LINKS_DIR}/{quoted}"'
+
+    xml = re.sub(r'LinkResourceURI="([^"]+)"', rewrite, xml)
+
+    # Keep the declared format honest where the extension changed (PSD -> PNG/JPEG).
+    for original, shipped in manifest.items():
+        if original == shipped:
+            continue
+        fmt = _FORMAT_BY_EXT.get(Path(shipped).suffix.lower())
+        if fmt and urllib.parse.quote(shipped) in xml:
+            xml = xml.replace(f'LinkResourceFormat="$ID/Photoshop"', f'LinkResourceFormat="{fmt}"')
+    return xml, bundle, unresolved
 
 
 # ---------------------------------------------------------------------------

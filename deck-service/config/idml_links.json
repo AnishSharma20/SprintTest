@@ -1,0 +1,43 @@
+{
+  "note": "Original link filename -> filename shipped in assets/wp_links/. Rasters are downsampled to 300 ppi of the frame they fill; PSDs become PNG to keep transparency, which is why some names change.",
+  "missing_from_source": [
+    "Flexitech(R)_Horizontal_FullColor.eps",
+    "One_krill_in_water (1).jpg",
+    "SoftGel Transparent.psd"
+  ],
+  "files": {
+    "AdobeStock_121166552.jpeg": "AdobeStock_121166552.jpg",
+    "AdobeStock_486365700 (1).jpeg": "AdobeStock_486365700 (1).jpg",
+    "Aker_Omega3_ (40).png": "Aker_Omega3_ (40).png",
+    "Area 48 Updated (0-00-02-20)_1.jpg": "Area 48 Updated (0-00-02-20)_1.jpg",
+    "Brabant_Island_pano_cred Aker BioMarine.jpg": "Brabant_Island_pano_cred Aker BioMarine.jpg",
+    "Cell copy.jpg": "Cell copy.jpg",
+    "E_SDG_PRINT-02.jpg": "E_SDG_PRINT-02.jpg",
+    "E_SDG_PRINT-03.jpg": "E_SDG_PRINT-03.jpg",
+    "E_SDG_PRINT-12.jpg": "E_SDG_PRINT-12.jpg",
+    "E_SDG_PRINT-14.jpg": "E_SDG_PRINT-14.jpg",
+    "Friend of the Sea-Full color.ai": "Friend of the Sea-Full color.ai",
+    "Krill produkt ny vit-39-Redigera_NY.png": "Krill produkt ny vit-39-Redigera_NY.png",
+    "Krill produkt ny vit-8-Redigera.jpg": "Krill produkt ny vit-8-Redigera.jpg",
+    "Krill_Visuals_5_cred Aker BioMarine copy.jpg": "Krill_Visuals_5_cred Aker BioMarine copy.jpg",
+    "MSC_horizontal_blue_neg_PMS.eps": "MSC_horizontal_blue_neg_PMS.eps",
+    "Phospholipid.psd": "Phospholipid.png",
+    "SUPERBA_BOOST┬«_POS_PORT.svg": "SUPERBA_BOOST┬«_POS_PORT.svg",
+    "SUPERBA_KRILL_DRUM_M21_NY.png": "SUPERBA_KRILL_DRUM_M21_NY.png",
+    "SUPERBA_KRILL_®_LANDSCAPE_SUPERBA_KRILL_POS_LANDSCAPE_®.eps": "SUPERBA_KRILL_®_LANDSCAPE_SUPERBA_KRILL_POS_LANDSCAPE_®.eps",
+    "SUPERBAΓäóBOOST_POS.svg": "SUPERBAΓäóBOOST_POS.svg",
+    "Sci_Ill_SC_02_C_v2_3.psd": "Sci_Ill_SC_02_C_v2_3.jpg",
+    "Screenshot 2024-12-02 at 10.17.17.png": "Screenshot 2024-12-02 at 10.17.17.png",
+    "Single Capsule On White.psd": "Single Capsule On White.png",
+    "Superba_01.jpg": "Superba_01.jpg",
+    "Superba_07 EXTENDED.jpg": "Superba_07 EXTENDED.jpg",
+    "USV_Trondheim-09.jpg": "USV_Trondheim-09.jpg",
+    "USV_Trondheim-31.jpg": "USV_Trondheim-31.jpg",
+    "eco-harvesting (1).ai": "eco-harvesting (1).ai",
+    "eco-harvesting.png": "eco-harvesting.png",
+    "logo-black.066aa69f.svg": "logo-black.066aa69f.svg",
+    "msc logo (1).ai": "msc logo (1).ai",
+    "sfp_padded.ai": "sfp_padded.ai",
+    "victor-freitas-WvDYdXDzkhs-unsplash.jpg": "victor-freitas-WvDYdXDzkhs-unsplash.jpg"
+  }
+}

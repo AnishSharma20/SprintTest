@@ -1176,20 +1176,28 @@ def _fill_timeline(prs, spec: dict, dark_index: int) -> None:
     sw = min(2.3, (_CONTENT_W - (n - 1) * _GUTTER) / n)
     total = n * sw + (n - 1) * _GUTTER
     x0 = (13.333 - total) / 2
-    line_y = _BODY_TOP + 1.4
     dot = 0.28
+    # Size the composition to its content and centre it in the body zone. Previously the spine was
+    # pinned at _BODY_TOP + 1.4 and the body text box ran all the way to _BODY_BOTTOM, so a few short
+    # one-line notes left the whole bottom half of the slide empty.
+    date_h, head_h = 0.35, 0.5
+    body_h = 0.2 + 0.21 * max(1, max(_est_lines(m.get("body"), sw, _SZ_SMALL) for m in ms))
+    block = date_h + head_h + dot + body_h + 0.3
+    top = _BODY_TOP + max(0.0, (_BODY_H - block) / 2)
+    line_y = top + date_h + head_h + 0.06 + dot / 2
     cxf, cxl = x0 + sw / 2, x0 + (n - 1) * (sw + _GUTTER) + sw / 2
     line = slide.shapes.add_shape(_BOX, Inches(cxf), Inches(line_y - 0.025), Inches(cxl - cxf), Inches(0.05))
     line.fill.solid(); line.fill.fore_color.rgb = _RED; line.line.fill.background(); line.shadow.inherit = False
     for i, mstone in enumerate(ms):
         x = x0 + i * (sw + _GUTTER); cx = x + sw / 2
-        _place_text(slide, x, _BODY_TOP, sw, 0.35, mstone.get("date", ""), _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
-        _place_text(slide, x, _BODY_TOP + 0.38, sw, line_y - dot / 2 - (_BODY_TOP + 0.38) - 0.05,
+        _place_text(slide, x, top, sw, date_h, mstone.get("date", ""), _SZ_SMALL, _LTEAL, bold=True,
+                    font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, top + date_h, sw, line_y - dot / 2 - (top + date_h) - 0.05,
                     mstone.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD,
                     align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
         c = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - dot / 2), Inches(line_y - dot / 2), Inches(dot), Inches(dot))
         c.fill.solid(); c.fill.fore_color.rgb = _RED; c.line.color.rgb = _WHITE; c.line.width = Pt(1.5); c.shadow.inherit = False
-        _place_text(slide, x, line_y + dot / 2 + 0.15, sw, _BODY_BOTTOM - (line_y + dot / 2 + 0.15),
+        _place_text(slide, x, line_y + dot / 2 + 0.15, sw, body_h,
                     mstone.get("body", ""), _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
 
 

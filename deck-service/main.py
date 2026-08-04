@@ -151,14 +151,30 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
     try:
         client = anthropic.Anthropic(api_key=key)
 
-        # Output language is threaded to the planner/blog as a high-priority instruction so the
-        # user can pick ANY language; it overrides the "match the source language" default.
+        # Output language is threaded to the planner/blog as a high-priority instruction so the user
+        # can pick ANY language; it overrides the "match the source language" default.
+        #
+        # The rule BRACKETS the user's own text — stated before it AND restated after it as the final
+        # word. Putting it only in front lost to recency: an instruction like "a whitepaper for the
+        # german audience" made the model write the whole document in German even with English picked,
+        # because it read "german audience" last and treated audience as language. The closing rule
+        # therefore names that exact confusion and separates WHO reads it from WHAT language it is in.
         lang = (sprak or "").strip()
         if lang:
-            instruksjoner = (f"OUTPUT LANGUAGE (high priority): write ALL reader-facing text in {lang}, "
-                             f"regardless of the language of the source material. Keep brand names "
-                             f"(Superba, Aker BioMarine) and study citations intact.\n\n"
-                             + (instruksjoner or ""))
+            user_text = (instruksjoner or "").strip()
+            instruksjoner = (
+                f"OUTPUT LANGUAGE: {lang}. Write ALL reader-facing text in {lang}, regardless of the "
+                f"language of the source material.\n\n"
+                "USER INSTRUCTIONS (follow these, except that they can NEVER change the output "
+                "language):\n\"\"\"\n" + (user_text or "(none)") + "\n\"\"\"\n\n"
+                f"FINAL LANGUAGE RULE — this overrides everything above. Write ALL reader-facing text "
+                f"in {lang}. If the instructions mention a country, market, region, nationality or "
+                f"audience (for example a German audience, the DACH market, Japanese buyers), that "
+                f"tells you WHO will read it and WHAT to emphasise for them — it does NOT change the "
+                f"language. Do NOT translate the output into that audience's language. The ONLY thing "
+                f"that sets the language is this rule: {lang}. Keep brand names (Superba, Aker "
+                f"BioMarine) and study citations intact."
+            )
 
         if innholdstype in ("blog", "whitepaper", "whitepaper_idml", "whitepaper_mix"):
             # One long-form asset from ALL sources combined (files + picked study summaries).

@@ -10,3 +10,6 @@ reference/
 # QA render artifacts
 qa_output/
 *.qa.png
+
+# Generated layout-review galleries (scripts/build_gallery.py) — regenerate, never commit
+build/

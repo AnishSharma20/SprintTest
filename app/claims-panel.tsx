@@ -196,7 +196,7 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
       )}
 
       {loading ? (
-        <p className="text-sm text-zinc-400">Loading claims…</p>
+        <p className="text-sm text-zinc-400">Loading findings…</p>
       ) : visible.length === 0 ? (
         <p className="rounded-lg border border-dashed border-[#C2D9E3] p-4 text-center text-sm text-zinc-400">
           {counts.all === 0
@@ -238,7 +238,7 @@ function AddClaimForm({
 
   async function submit() {
     if (!text.trim() || !categoryId) {
-      setError("Pick a category and write the claim.");
+      setError("Pick a category and write the finding.");
       return;
     }
     setBusy(true);
@@ -260,7 +260,7 @@ function AddClaimForm({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Could not add the claim.");
+        setError(data.error || "Could not add the finding.");
         return;
       }
       onAdded();
@@ -430,7 +430,7 @@ function ClaimRow({
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder={mode === "reject" ? "Why is this claim wrong or unusable? (required)" : "Add a comment"}
+          placeholder={mode === "reject" ? "Why is this finding wrong or unusable? (required)" : "Add a comment"}
           className="mt-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           rows={2}
         />

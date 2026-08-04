@@ -190,7 +190,7 @@ function MarketingCard({
         onClick={() => setOpen((o) => !o)}
         className="mt-3 text-xs font-semibold text-[#0A7A8A] hover:underline"
       >
-        {open ? "Hide evidence ▲" : `Backed by ${backing.length} claim${backing.length === 1 ? "" : "s"}`}
+        {open ? "Hide evidence ▲" : `Backed by ${backing.length} finding${backing.length === 1 ? "" : "s"}`}
         {backing.length > 0 ? ` · ${approvedBacking} approved` : ""}
       </button>
 
@@ -330,7 +330,7 @@ function NewMarketingClaimModal({
       return;
     }
     if (selected.size === 0) {
-      setError("Link at least one science claim as evidence.");
+      setError("Link at least one finding as evidence.");
       return;
     }
     setBusy(true);
@@ -415,7 +415,7 @@ function NewMarketingClaimModal({
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search science claims or studies…"
+            placeholder="Search findings or studies…"
             className="mb-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           />
           <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-lg border border-[#E2EDF2] bg-[#FAFDFE] p-2">

@@ -504,7 +504,7 @@ export default function ContentGenerator() {
       return;
     }
     if (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0) {
-      setFeil("Add at least one source file, pick a study, or include approved claims to base the content on.");
+      setFeil("Add at least one source file, pick a study, or include approved findings to base the content on.");
       return;
     }
     setLaster(true);
@@ -774,7 +774,7 @@ export default function ContentGenerator() {
                   <p className="mt-1 max-w-lg text-xs text-zinc-500">
                     {claimsConfigured
                       ? "Facts reviewed and approved by the science team. Included as an authoritative source the AI prefers and cites."
-                      : "The claims library is not set up yet, so there are no approved claims to include."}
+                      : "The findings library is not set up yet, so there are no approved findings to include."}
                   </p>
                 </div>
                 {claimsConfigured && approvedClaims.length > 0 && (

@@ -55,13 +55,13 @@ export default function ClaimsLibrary() {
       <header className="bg-gradient-to-br from-[#031B34] via-[#052A4E] to-[#06456B] px-4 pb-10 pt-8">
         <div className="mx-auto max-w-5xl">
           <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7FD4E6]">
-            Claims Library
+            Findings Library
           </div>
           <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-white">
             What we can say about the product
           </h1>
           <p className="mt-3 max-w-2xl text-[#BFE3EF]">
-            Marketing claims in plain, benefit facing language. Each claim links to the evidence that
+            Findings in plain, benefit facing language. Each finding links to the evidence that
             substantiates it, so you can see the exact quote, the study and the section it comes from.
           </p>
           <div className="mt-5 flex items-center gap-2">
@@ -82,10 +82,10 @@ export default function ClaimsLibrary() {
       <main className="mx-auto max-w-5xl px-4 py-8">
         {!configured ? (
           <p className="rounded-xl border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-500">
-            The claims library is not set up yet. Add the Supabase environment variables to enable it.
+            The findings library is not set up yet. Add the Supabase environment variables to enable it.
           </p>
         ) : loading ? (
-          <p className="text-zinc-400">Loading claims…</p>
+          <p className="text-zinc-400">Loading findings…</p>
         ) : (
           <MarketingClaims
             claims={claims}

@@ -6,7 +6,7 @@ import AkbmLogo from "./AkbmLogo";
 
 const TABS = [
   { href: "/", label: "Scientific Studies" },
-  { href: "/claims", label: "Claims Library" },
+  { href: "/claims", label: "Findings Library" },
   { href: "/generator", label: "Content Generator" },
 ];
 

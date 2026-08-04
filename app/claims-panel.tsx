@@ -149,8 +149,8 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
   if (!configured) {
     return (
       <div className="rounded-xl border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
-        The claims library is not set up yet. Add the Supabase environment variables to enable
-        claim review.
+        The findings library is not set up yet. Add the Supabase environment variables to enable
+        finding review.
       </div>
     );
   }

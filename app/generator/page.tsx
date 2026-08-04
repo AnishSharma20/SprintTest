@@ -769,7 +769,7 @@ export default function ContentGenerator() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
-                    ✓ Approved science claims
+                    ✓ Approved findings
                   </div>
                   <p className="mt-1 max-w-lg text-xs text-zinc-500">
                     {claimsConfigured
@@ -795,7 +795,7 @@ export default function ContentGenerator() {
 
               {claimsConfigured && approvedClaims.length === 0 && (
                 <p className="mt-2 text-xs text-zinc-400">
-                  No approved claims yet. Approve some in the Research tab, then they show up here.
+                  No approved findings yet. Approve some in the Research tab, then they show up here.
                 </p>
               )}
 
@@ -830,7 +830,7 @@ export default function ContentGenerator() {
                     ))}
                   </div>
                   <p className="text-xs font-semibold text-[#0A7A8A]">
-                    {inkluderteClaims.length} claim{inkluderteClaims.length === 1 ? "" : "s"} will be fed to
+                    {inkluderteClaims.length} finding{inkluderteClaims.length === 1 ? "" : "s"} will be fed to
                     the AI as authoritative source and cited in the output.
                   </p>
                 </div>
@@ -1019,7 +1019,7 @@ export default function ContentGenerator() {
                 />
                 <p className="mt-1 text-xs text-zinc-500">
                   Free text. Every selected asset follows this on top of the source files (it never
-                  overrides brand styling or the accuracy rules for claims).
+                  overrides brand styling or the accuracy rules for findings).
                 </p>
               </div>
             </div>
@@ -1140,7 +1140,7 @@ export default function ContentGenerator() {
               />
               <p className="mt-1 text-xs text-zinc-500">
                 AI generated draft based on your sources. Edit it here, then download as Word. Review the
-                science and claims before publishing.
+                science and findings before publishing.
               </p>
             </div>
           );

@@ -79,22 +79,22 @@ export default function MarketingClaims({
     <div>
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <p className="max-w-2xl text-sm text-zinc-500">
-          What marketing can say about the product. Each claim is written in plain, benefit facing
+          What marketing can say about the product. Each finding is written in plain, benefit facing
           language and linked to the science that substantiates it, so it stays defensible.
         </p>
         <button
           onClick={() => setCreating(true)}
           className="shrink-0 rounded-lg bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white hover:bg-[#086472]"
         >
-          ＋ New marketing claim
+          ＋ New finding
         </button>
       </div>
 
       {marketing.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[#C2D9E3] p-8 text-center">
-          <p className="text-zinc-500">No marketing claims yet.</p>
+          <p className="text-zinc-500">No findings yet.</p>
           <p className="mt-1 text-sm text-zinc-400">
-            Create one and link it to the science claims that back it up.
+            Create one and link it to the study evidence that backs it up.
           </p>
         </div>
       ) : (
@@ -198,7 +198,7 @@ function MarketingCard({
         <div className="mt-2 space-y-2">
           {backing.length === 0 ? (
             <p className="rounded-lg bg-[#FBEED6] px-3 py-2 text-[11px] font-medium text-[#8A5A0B]">
-              No evidence linked yet. A marketing claim needs backing before it can be approved.
+              No evidence linked yet. A finding needs backing before it can be approved.
             </p>
           ) : (
             backing.map((b) => {
@@ -241,7 +241,7 @@ function MarketingCard({
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder={mode === "reject" ? "Why is this claim not usable? (required)" : "Add a comment"}
+          placeholder={mode === "reject" ? "Why is this finding not usable? (required)" : "Add a comment"}
           className="mt-2 w-full rounded-md border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           rows={2}
         />
@@ -326,7 +326,7 @@ function NewMarketingClaimModal({
 
   async function submit() {
     if (!text.trim() || !categoryId) {
-      setError("Pick a category and write the claim.");
+      setError("Pick a category and write the finding.");
       return;
     }
     if (selected.size === 0) {
@@ -350,7 +350,7 @@ function NewMarketingClaimModal({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Could not create the claim.");
+        setError(data.error || "Could not create the finding.");
         return;
       }
       onCreated();
@@ -369,7 +369,7 @@ function NewMarketingClaimModal({
     >
       <div className="my-6 w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-4">
-          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">New marketing claim</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A7A8A]">New finding</div>
           <button onClick={onClose} aria-label="Close" className="rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
             <span className="text-xl leading-none">✕</span>
           </button>
@@ -396,7 +396,7 @@ function NewMarketingClaimModal({
           </select>
 
           <label className="mb-1 block text-xs font-semibold text-zinc-600">
-            Marketing claim (what we can say about the product)
+            Finding (what we can say about the product)
           </label>
           <textarea
             value={text}
@@ -408,7 +408,7 @@ function NewMarketingClaimModal({
 
           <div className="mb-1 flex items-center justify-between">
             <label className="text-xs font-semibold text-zinc-600">
-              Evidence — link the science claims that back this up
+              Evidence — link the study evidence that backs this up
             </label>
             <span className="text-[11px] font-semibold text-[#0A7A8A]">{selected.size} selected</span>
           </div>
@@ -452,7 +452,7 @@ function NewMarketingClaimModal({
               disabled={busy || !text.trim() || !categoryId || selected.size === 0}
               className="rounded-lg bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
             >
-              {busy ? "Creating…" : "Create marketing claim"}
+              {busy ? "Creating…" : "Create finding"}
             </button>
             <button onClick={onClose} className="rounded-lg border border-[#D6E6EE] bg-white px-4 py-2 text-sm font-semibold text-zinc-600 hover:bg-zinc-50">
               Cancel

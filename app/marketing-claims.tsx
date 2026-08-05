@@ -41,6 +41,8 @@ export default function MarketingClaims({
   onChanged: () => Promise<void>;
 }) {
   const [creating, setCreating] = useState(false);
+  const [q, setQ] = useState("");
+  const [valgtKategori, setValgtKategori] = useState<string | null>(null);
 
   const byId = useMemo(() => {
     const m: Record<string, LibClaim> = {};
@@ -57,6 +59,26 @@ export default function MarketingClaims({
     () => claims.filter((c) => c.claim_type === "marketing" && c.status !== "superseded"),
     [claims]
   );
+
+  // Category filter chips, same pattern as the Research Wiki: named by count, most-used first.
+  const kategorier = useMemo(() => {
+    const m = new Map<string, number>();
+    marketing.forEach((c) => {
+      const navn = catName[c.category_id] ?? c.category_id;
+      m.set(navn, (m.get(navn) ?? 0) + 1);
+    });
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [marketing, catName]);
+
+  const filteredMarketing = useMemo(() => {
+    const needle = q.toLowerCase().trim();
+    return marketing.filter((c) => {
+      const navn = catName[c.category_id] ?? c.category_id;
+      const treffSok = !needle || c.text.toLowerCase().includes(needle);
+      const treffKat = !valgtKategori || navn === valgtKategori;
+      return treffSok && treffKat;
+    });
+  }, [marketing, catName, q, valgtKategori]);
   const scienceClaims = useMemo(
     () => claims.filter((c) => c.claim_type === "science" && c.status !== "superseded"),
     [claims]
@@ -90,6 +112,36 @@ export default function MarketingClaims({
         </button>
       </div>
 
+      {marketing.length > 0 && (
+        <>
+          <div className="relative mb-4">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
+            <input
+              type="text"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search findings…"
+              className="w-full rounded-[4px] border border-[#D6E6EE] bg-white py-3 pl-11 pr-4 text-sm shadow-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+            />
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-2">
+            <FilterKnapp aktiv={valgtKategori === null} onClick={() => setValgtKategori(null)}>
+              All ({marketing.length})
+            </FilterKnapp>
+            {kategorier.map(([navn, antall]) => (
+              <FilterKnapp key={navn} aktiv={valgtKategori === navn} onClick={() => setValgtKategori(navn)}>
+                {navn} ({antall})
+              </FilterKnapp>
+            ))}
+          </div>
+
+          <p className="mb-3 text-sm text-zinc-500">
+            Showing {filteredMarketing.length} of {marketing.length} findings
+          </p>
+        </>
+      )}
+
       {marketing.length === 0 ? (
         <div className="rounded-[4px] border border-dashed border-[#C2D9E3] p-8 text-center">
           <p className="text-zinc-500">No findings yet.</p>
@@ -97,9 +149,13 @@ export default function MarketingClaims({
             Create one and link it to the study evidence that backs it up.
           </p>
         </div>
+      ) : filteredMarketing.length === 0 ? (
+        <p className="rounded-[4px] border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-400">
+          No findings match your search.
+        </p>
       ) : (
         <ul className="space-y-3">
-          {marketing.map((m) => (
+          {filteredMarketing.map((m) => (
             <MarketingCard
               key={m.id}
               claim={m}
@@ -462,6 +518,29 @@ function NewMarketingClaimModal({
       </div>
     </div>,
     document.body
+  );
+}
+
+function FilterKnapp({
+  aktiv,
+  onClick,
+  children,
+}: {
+  aktiv: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-[4px] px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+        aktiv
+          ? "bg-[#0A7A8A] text-white shadow-sm"
+          : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 

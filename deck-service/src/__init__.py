@@ -9,8 +9,7 @@ inherited from the template's slide layouts.
 """
 from __future__ import annotations
 
-__all__ = ["generate", "generate_blog", "generate_whitepaper", "generate_whitepaper_idml",
-           "generate_whitepaper_composed", "idml_page_library", "markdown_to_docx"]
+__all__ = ["generate", "generate_blog", "generate_whitepaper_composed", "idml_page_library"]
 
 
 def generate(*args, **kwargs):
@@ -26,18 +25,6 @@ def generate_blog(*args, **kwargs):
     return _generate_blog(*args, **kwargs)
 
 
-def generate_whitepaper(*args, **kwargs):
-    """Lazy entrypoint for the whitepaper generator (Markdown/Word draft)."""
-    from .whitepaper import generate_whitepaper as _generate_whitepaper
-    return _generate_whitepaper(*args, **kwargs)
-
-
-def generate_whitepaper_idml(*args, **kwargs):
-    """Lazy entrypoint for the InDesign (.idml) whitepaper generator."""
-    from .whitepaper import generate_whitepaper_idml as _generate_whitepaper_idml
-    return _generate_whitepaper_idml(*args, **kwargs)
-
-
 def generate_whitepaper_composed(*args, **kwargs):
     """Lazy entrypoint — InDesign whitepaper assembled from pages across several brochures."""
     from .whitepaper import generate_whitepaper_composed as _generate_whitepaper_composed
@@ -48,9 +35,3 @@ def idml_page_library():
     """The page library summary the UI needs for its manual page override."""
     from .idml_library import library_summary
     return library_summary()
-
-
-def markdown_to_docx(*args, **kwargs):
-    """Lazy entrypoint — convert a Markdown blog draft to a Word (.docx) byte string."""
-    from .blog import markdown_to_docx as _markdown_to_docx
-    return _markdown_to_docx(*args, **kwargs)

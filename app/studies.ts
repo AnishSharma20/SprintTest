@@ -24,15 +24,25 @@ type Esummary = {
   articleids?: { idtype: string; value: string }[];
 };
 
-// Categorise a study based on keywords in its title.
+// Categorise a study based on keywords in its title, mapping to PPTX benefit categories.
 export function kategori(tittel: string): string {
   const t = tittel.toLowerCase();
-  if (/(heart|cardio|lipid|cholesterol|triglycerid|blood pressure|vascular)/.test(t)) return "Heart & lipids";
-  if (/(brain|cognit|memory|neuro|mood|depress|mental)/.test(t)) return "Brain & cognition";
-  if (/(inflamm|arthritis|joint|pain|rheumat)/.test(t)) return "Inflammation & joints";
-  if (/(metabol|liver|glucose|diabet|obes|weight|gut|microbiom|fatty liver)/.test(t)) return "Metabolism & gut";
-  if (/(emulsion|oxidation|extraction|encapsul|stability|phospholipid|chemistry)/.test(t)) return "Chemistry & extraction";
-  return "Other";
+  if (/(heart|cardio|lipid|cholesterol|triglycerid|blood pressure|vascular)/.test(t)) return "Heart Support";
+  if (/(liver|hepatic|fatty liver|liver function)/.test(t)) return "Liver Support";
+  if (/(joint|arthritis|osteoarthritis|knee|inflamm.*joint|rheumat)/.test(t)) return "Joint Support";
+  if (/(brain|cognit|memory|neuro|mood|depress|mental|cognitive)/.test(t)) return "Brain & Dry Eye Support";
+  if (/(eye|vision|ocular|dry eye|visual)/.test(t)) return "Brain & Dry Eye Support";
+  if (/(muscle|strength|performance|athletic|sport|recovery|endurance)/.test(t)) return "Sports Performance Support";
+  if (/(weight|obes|metabol|glucose|diabet)/.test(t)) return "Weight Loss Support";
+  if (/(skin|derma|collagen|elasticity|hydration)/.test(t)) return "Skin Support";
+  if (/(pms|menstrual|premenstrual|hormonal|cycle)/.test(t)) return "PMS Support";
+  if (/(immune|immunity|infection|antibody|immun)/.test(t)) return "Wellness & Immune Support";
+  if (/(age|aging|senescence|longevity)/.test(t)) return "Healthy Aging Support";
+  if (/(gut|microbiom|digestion|microb|intestinal)/.test(t)) return "Weight Loss Support";
+  if (/(phospholipid|absorption|bioavail|mechanism)/.test(t)) return "Mechanism of Action";
+  if (/(emulsion|oxidation|extraction|encapsul|stability|chemistry)/.test(t)) return "Bioavailability & Absorption";
+  if (/(safety|dosage|tolerabil|adverse|side effect)/.test(t)) return "Safety & Dosage";
+  return "Other Science";
 }
 
 function curatedToStudie(c: CuratedStudy): Studie {

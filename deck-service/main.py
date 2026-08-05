@@ -35,23 +35,6 @@ app = FastAPI(title="Superba Deck Generator")
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
-_IDML_README = (
-    "Superba whitepaper, InDesign (.idml)\n"
-    "=====================================\n\n"
-    "This .idml is the AKBM whitepaper template with its text replaced by AI generated,\n"
-    "source grounded content. All design (fonts, gradients, images, the benefits grid and\n"
-    "legal text) is inherited from the original document and was NOT altered.\n\n"
-    "To use:\n"
-    "  1. Open the .idml in Adobe InDesign (File > Open). It becomes a normal .indd.\n"
-    "  2. Links/fonts: if prompted, point InDesign at the original package's Links and\n"
-    "     Document fonts folders (the same ones the design team supplied).\n"
-    "  3. Review EVERY page. This is an AI draft: check all claims, figures and study\n"
-    "     details against the source, and fix any text that runs long in a frame (overset,\n"
-    "     shown by a red + on the frame) before exporting to PDF.\n\n"
-    "The .preview.md file in this zip is the same content as plain text for quick review.\n"
-)
-
-
 # Member names inside the delivered zip. Deliberately SHORT and FIXED: Windows Explorer names the
 # extraction folder after the zip, so repeating the topic in every member name put it in the path
 # twice and tipped Explorer into "the target path is too long" even well under its 260 character
@@ -204,7 +187,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 f"BioMarine) and study citations intact."
             )
 
-        if innholdstype in ("blog", "whitepaper", "whitepaper_idml", "whitepaper_mix"):
+        if innholdstype in ("blog", "whitepaper_mix"):
             # One long-form asset from ALL sources combined (files + picked study summaries).
             parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
             source = "\n\n".join(parts)
@@ -239,25 +222,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                     filename=stem + ".zip")
                 return
 
-            if innholdstype == "whitepaper_idml":
-                # Fill the real Superba InDesign template -> a designed .idml the design team opens.
-                b = src.generate_whitepaper_idml(
-                    client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
-                    on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
-                stem = _slug(b.get("title", ""), 24) or base
-                zbuf = io.BytesIO()
-                with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                    z.writestr(_IDML_MEMBER, b["idml"])
-                    z.writestr(_PREVIEW_MEMBER, b["markdown"])
-                    z.writestr("OPEN_IN_INDESIGN.txt", _IDML_README)
-                JOBS[job_id].update(status="done", progress=100, step="Done",
-                                    result=zbuf.getvalue(), media_type="application/zip",
-                                    filename=stem + ".zip")
-                return
-
-            fn = src.generate_whitepaper if innholdstype == "whitepaper" else src.generate_blog
-            b = fn(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
-                   on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
+            b = src.generate_blog(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
+                                  on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
             stem = _slug(b.get("title", "")) or base
             JOBS[job_id].update(status="done", progress=100, step="Done",
                                 result=b["markdown"].encode("utf-8"),

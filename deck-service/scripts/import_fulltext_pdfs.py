@@ -38,6 +38,9 @@ import fitz  # PyMuPDF, already a dependency
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTDIR = ROOT / "assets" / "fulltext"
+# The study view reads the supplied-paper list from inside app/ (same convention as
+# ai-summaries.json) so the Next build never reaches outside it.
+APP_LIST = ROOT.parent / "app" / "fulltext-studies.json"
 EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 COMMON = "tool=akbm-fulltext&email=anish.sharma@sprint.no"
 DOI_RE = re.compile(r"10\.\d{4,9}/\S{4,}")
@@ -130,7 +133,23 @@ def resolve(stem: str, head: str) -> tuple[str | None, str | None, dict]:
     return None, None, {"doi": doi}
 
 
+def write_app_list(index: dict) -> None:
+    """app/fulltext-studies.json — the PMIDs AKBM supplied as PDFs. The study view is built from
+    THIS list (plus the curated trials), not from a PubMed affiliation search."""
+    slim = {p: {"pdf": v.get("pdf"), "title": v.get("title", ""), "year": v.get("year", ""),
+                "first_author": v.get("first_author", ""), "chars": v.get("chars", 0)}
+            for p, v in sorted(index.items())}
+    APP_LIST.parent.mkdir(parents=True, exist_ok=True)
+    APP_LIST.write_text(json.dumps(slim, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"  wrote {APP_LIST.name} ({len(slim)} supplied papers)")
+
+
 def main() -> None:
+    # --from-index regenerates the app list from the existing index.json, no PDFs or network needed.
+    if "--from-index" in sys.argv:
+        idx = json.loads((OUTDIR / "index.json").read_text(encoding="utf-8"))
+        write_app_list(idx)
+        return
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     write = "--write" in sys.argv
     if not args:
@@ -171,6 +190,7 @@ def main() -> None:
     if write:
         OUTDIR.mkdir(parents=True, exist_ok=True)
         (OUTDIR / "index.json").write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
+        write_app_list(index)
 
     print(f"\n  matched     : {len(matched)}/{len(pdfs)}")
     print(f"  image-only  : {len(scanned)}  {scanned}")

@@ -6,8 +6,12 @@
 import { type Studie } from "./wiki";
 import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Summary } from "./studies-data";
 import aiSummariesRaw from "./ai-summaries.json";
+import fulltextStudiesRaw from "./fulltext-studies.json";
 
 const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
+// The papers AKBM supplied as PDFs — the study list is built from these.
+const FULLTEXT_STUDIES = fulltextStudiesRaw as Record<string,
+  { pdf: string; title: string; year: string; first_author: string; chars: number }>;
 const EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const FELLES = "tool=llm-wiki&email=anish.sharma@sprint.no";
 
@@ -42,21 +46,15 @@ function curatedToStudie(c: CuratedStudy): Studie {
 }
 
 export async function hentStudier(): Promise<Studie[]> {
-  // 1) Søk: studier der Aker BioMarine står som affiliation (Aker sitt eget felt).
-  //    Vi ekskluderer publikasjonstyper som ikke er studier (rettelser/errata, ledere,
-  //    innlegg og kommentarer) — de dukker opp i affiliation-søket, men er ikke forskning.
-  const sok = await fetch(
-    `${EUTILS}/esearch.fcgi?db=pubmed&${FELLES}&retmode=json&retmax=60&sort=date&term=${encodeURIComponent(
-      '"Aker BioMarine"[Affiliation] NOT (Published Erratum[pt] OR Editorial[pt] OR Letter[pt] OR Comment[pt])'
-    )}`,
-    { next: { revalidate: 86400 } }
-  );
-
-  // Always include the 4 verified curated studies, even if PubMed is unavailable or they aren't
-  // Aker-affiliated. (Curated first so the key trials never disappear on a PubMed hiccup.)
+  // 1) The list is AKBM's OWN library: the papers they supplied as PDFs (app/fulltext-studies.json,
+  //    written by deck-service/scripts/import_fulltext_pdfs.py) plus the curated key trials.
+  //    It used to be a live '"Aker BioMarine"[Affiliation]' PubMed search, which pulled in ~45 papers
+  //    AKBM never sent us and missed the third-party ones they did (competitor trials,
+  //    meta-analyses). Add a PDF to get a study in the list; there is no other source.
   const alleKurerte = CURATED_STUDIES.map(curatedToStudie);
-  if (!sok.ok) return alleKurerte;
-  const ider: string[] = (await sok.json()).esearchresult?.idlist ?? [];
+  const ider: string[] = Array.from(
+    new Set([...Object.keys(FULLTEXT_STUDIES), ...CURATED_STUDIES.map((c) => c.pmid)])
+  );
   if (ider.length === 0) return alleKurerte;
 
   // 2) Sammendrag: hent tittel, tidsskrift, dato og forfattere for hver ID.
@@ -64,7 +62,7 @@ export async function hentStudier(): Promise<Studie[]> {
     `${EUTILS}/esummary.fcgi?db=pubmed&${FELLES}&retmode=json&id=${ider.join(",")}`,
     { next: { revalidate: 86400 } }
   );
-  if (!sum.ok) return alleKurerte;
+  if (!sum.ok) return alleKurerte;   // PubMed down -> at least show the verified key trials
   const res = (await sum.json()).result;
 
   const curatedByPmid = new Map(CURATED_STUDIES.map((c) => [c.pmid, c]));
@@ -91,6 +89,8 @@ export async function hentStudier(): Promise<Studie[]> {
         verified: kurert ? true : ai ? false : undefined,
         quality: kurert ? kurert.quality : null,
         akerNote: kurert ? kurert.akerNote : null,
+        // Do we have the paper itself (AKBM PDF), or only the PubMed abstract?
+        harFulltekst: !!FULLTEXT_STUDIES[id],
       };
     })
     // Never show the fictional / not-real study (SUPERBA-OA / Andersen).

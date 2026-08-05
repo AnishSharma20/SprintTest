@@ -23,6 +23,9 @@ export type Studie = {
   verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
   quality?: Quality | null;
   akerNote?: string | null;
+  // true = AKBM supplied the paper as a PDF, so summaries/findings come from the FULL TEXT.
+  // false = we only have the PubMed abstract for it.
+  harFulltekst?: boolean;
 };
 
 const QUALITY_DEF =

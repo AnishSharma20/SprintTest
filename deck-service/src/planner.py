@@ -253,7 +253,10 @@ RULES (column layouts):
 - PREFER branded benefit icons when every column is a distinct health benefit. If even one column is not a
   benefit but the set still deserves icons, use `icon_generic` on ALL columns instead (there are generic
   heart / brain / joint / muscle / eye keywords to cover any benefit columns in that same generic set).
-- Each icon is distinct — never repeat one on a slide.
+- PREFER a DIFFERENT icon per item when the items are genuinely different topics — but when every item is a
+  sub-facet of ONE single benefit or theme (e.g. three cognitive test types from one study, all "cognitive"),
+  REPEAT that one icon across every item rather than leaving icons off the slide. A repeated icon still
+  passes the all-or-nothing/one-source rule; a slide with no icon at all is the worse outcome here.
 - Set slide-level `benefit` on a highlight / section / text_with_picture slide about ONE benefit (e.g. a skin
   statement → benefit:"skin"); the icon is placed automatically.
 - Nutrients / ingredients / composition → use the `ingredient` layout, never icons. If in doubt, leave off.

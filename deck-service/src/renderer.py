@@ -712,12 +712,14 @@ def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
 
 
 def _consistent_icons(objs):
-    """All-or-nothing, one-source, distinct brand icons for a list of objects carrying icon/icon_generic.
+    """All-or-nothing, one-source brand icons for a list of objects carrying icon/icon_generic.
     Returns a list of icon paths (one per object) or None if the set can't be cleanly covered — so a
-    layout shows a full icon set or none, never a half-empty/mixed ring (the tell-tale AI look)."""
+    layout shows a full icon set or none, never a half-empty/mixed ring (the tell-tale AI look).
+    Repeats ARE allowed (e.g. three sub-measures of ONE benefit sharing that benefit's icon) — the
+    planner is asked to prefer distinct icons across genuinely different topics, but a slide whose
+    items are all facets of one theme should still get its icon rather than none at all."""
     def _c(paths):
-        s = [str(p) for p in paths]
-        return paths if paths and all(paths) and len(set(s)) == len(s) else None
+        return paths if paths and all(paths) else None
     return (_c([_icon_path(o.get("icon")) for o in objs])
             or _c([_generic_icon_path(o.get("icon_generic")) for o in objs]))
 
@@ -845,7 +847,12 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
         from pptx.enum.chart import XL_LEGEND_POSITION
         chart.legend.position = XL_LEGEND_POSITION.BOTTOM
         chart.legend.include_in_layout = False
-    if is_round:  # one series, many wedges — colour the POINTS
+    is_bar = spec.get("chart_type", "column") in ("column", "bar")
+    if is_round or (is_bar and len(series) == 1):
+        # One series, many bars/wedges sharing a single colour reads as a flat, low-contrast block
+        # (this is also what a theme-driven "vary colours" default can silently collapse to on some
+        # renderers even when a series-level fill IS set) — colour each POINT explicitly instead, the
+        # most specific level of formatting, so every bar/wedge gets its own unambiguous brand colour.
         for i, pt in enumerate(chart.plots[0].series[0].points):
             try:
                 pt.format.fill.solid(); pt.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
@@ -858,6 +865,31 @@ def _fill_chart(prs, spec: dict, dark_index: int) -> None:
                 plot_series.format.fill.fore_color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
             except Exception:  # noqa: BLE001 — line charts style the line
                 plot_series.format.line.color.rgb = _CHART_COLORS[i % len(_CHART_COLORS)]
+    try:
+        chart.plots[0].vary_by_categories = is_round or (is_bar and len(series) == 1)
+    except Exception:  # noqa: BLE001 — not exposed on every chart type
+        pass
+
+    # Gridlines/axis chrome default to whatever the renderer's own theme resolves, which on some
+    # renderers comes out near-white — indistinguishable from a white/light bar and from the white
+    # axis text. Style them explicitly: a muted line for the grid (present but recessive), a bright
+    # one for the axis itself, so brand-coloured bars are what actually draws the eye.
+    if not is_round:
+        try:
+            chart.value_axis.has_major_gridlines = True
+            gl = chart.value_axis.major_gridlines.format.line
+            gl.color.rgb = _TEAL2
+            gl.width = Pt(0.5)
+        except Exception:  # noqa: BLE001
+            pass
+        for axis in (chart.category_axis, chart.value_axis):
+            try:
+                axis.format.line.color.rgb = _WHITE
+                axis.tick_labels.font.color.rgb = _WHITE
+                axis.tick_labels.font.size = Pt(_SZ_SMALL)
+                axis.tick_labels.font.name = _BODY
+            except Exception:  # noqa: BLE001
+                pass
 
     # Axis titles — mandatory for charts with axes (doughnut has none). The category axis takes the
     # dimension (x_axis), the value axis takes what is measured + units (y_axis); on a bar chart these

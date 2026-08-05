@@ -150,12 +150,15 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
         errors = validate.validate_plan(plan)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
-            # overages. Title/heading/body placeholders auto-fit, so a few chars over is
-            # cosmetically absorbed at render — don't deny a non-technical user their deck.
-            hard = [e for e in errors if "shorten it by at least" not in e]
+            # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
+            # auto-fit, so a few chars over is cosmetically absorbed at render, and a deck that
+            # still under-uses layouts/photos after one revision is still a valid deck — don't
+            # deny a non-technical user their deck over either.
+            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:")
+            hard = [e for e in errors if not any(s in e for s in soft)]
             if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))
-            print("[warn] minor text overflows remain after retry; auto-fit will absorb them:\n- "
+            print("[warn] minor overflows/coverage nudges remain after retry; shipping anyway:\n- "
                   + "\n- ".join(errors), file=sys.stderr)
 
     _p(70, "Rendering slides on the Superba template")

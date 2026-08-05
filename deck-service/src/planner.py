@@ -134,6 +134,10 @@ def _asset_guide() -> str:
 
 def build_system(length: str, tone: str, instructions: str = "") -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
+    # Same formulas as validate._coverage_warnings, so the initial prompt asks for exactly what
+    # the post-hoc check enforces — the retry should rarely need to fire over these two.
+    synth_min = max(3, target // 2)
+    photo_min = max(2, target // 4)
     benefits = ", ".join(config.manifest()["benefits"])
     generic = ", ".join(config.manifest().get("generic_icons", []))
     instr_block = ""
@@ -189,8 +193,16 @@ layout whenever the content has that shape:
 - 3 or more OPTIONS rated on several qualitative criteria -> `harvey_ball` (0 to 4 balls);
 - a narrowing process -> `funnel`;  a one-slide overview -> `exec_summary`;
 - a single pivotal claim -> `highlight`.
-Aim for VARIETY across the deck — don't fall back to plain `text`/`section` when a structural layout fits.
-But NEVER force a layout: use one only when the content genuinely has that shape. Respect the [bracketed] limits.
+GO BEYOND THE FAMILIAR FEW (REQUIRED, not aspirational): the catalog has 31 code-built layouts, not just
+`text`/`two_columns`/`key_points` — reach for the fuller set — `pillars`, `numbered_cards`, `icon_grid`,
+`cause_effect`, `cycle`, `roadmap`, `gantt`, `org_chart`, `decision_tree`, `breakdown`, `coverage_matrix`,
+`from_to`, `implications`, `metric_bars`, `chart_bands`, `chart_takeaways`, `team`, `takeaways`,
+`kpi_dashboard` — before settling for a plain column slide. This {target}-slide deck MUST use AT LEAST {synth_min}
+DIFFERENT layouts across its content slides (everything except the cover, agenda, section
+dividers, highlight beats and closing) — repeating the same 2 to 3 favourites throughout is a rejected plan,
+not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
+when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
+[bracketed] limits.
 {_layout_guide()}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
@@ -203,9 +215,15 @@ columns' headings clearly DISTINCT. Never give two columns headings that share t
 the barrier does" + "What the barrier needs" — they collapse to the same label; use "Structure" + "Upkeep").
 Put the explanation in the column body, not the heading.
 
-PHOTOS (optional, only for text_with_picture / picture_full): choose an `asset_id`
-whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits a
-light slide). Do NOT force a photo where it doesn't add meaning.
+PHOTOS (REQUIRED, not aspirational): we have a real, high-quality photo library (krill in the wild, Antarctic
+ocean/ice, product close-ups, lab and sourcing shots, the team) — USE IT. This {target}-slide deck MUST set
+`asset_id` on AT LEAST {photo_min} slides total, not just the odd one: `text_with_picture` and `picture_full`
+(asset_id required by their schema) are built for it, and `exec_summary` / `photo_stats` also take an optional
+`asset_id` — set one there rather than leaving it off by default. A deck with zero or one photo is under-using
+the library; a cover, a mid-deck breather, and a closing beat are all good spots to place one. Choose an
+`asset_id` whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits
+a light slide). Only skip a photo on a given slide when truly nothing in the library fits that specific
+point — the {photo_min}-slide minimum still applies across the rest of the deck.
 {_asset_guide()}
 
 BACKGROUND & RHYTHM: most slides default to the dark deep-sea master; set `background`:"light" on some
@@ -296,11 +314,27 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
-    fix = ("Your previous plan FAILED validation. Change ONLY the fields named in the errors below "
-           "(shorten the text, or move detail into speaker_notes); keep every other field byte-for-byte "
-           "identical. Do not touch slides or fields that aren't listed. Re-emit the COMPLETE plan via "
-           "emit_plan.\n\nVALIDATION ERRORS:\n- " + "\n- ".join(errors)
-           + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
+    # Two different kinds of feedback need two different repair instructions. Schema errors name
+    # an exact field to shorten — a narrow, surgical fix. VARIETY:/PHOTOS: are deck-wide coverage
+    # counts with no named field, and fixing them REQUIRES picking which slides to change layout
+    # on or add asset_id to — the opposite of "touch only what's named". Telling the model to do
+    # both under one "change ONLY the named fields, keep everything else byte-for-byte identical"
+    # rule would block the very freedom the coverage fix needs.
+    schema_errors = [e for e in errors if not (e.startswith("VARIETY:") or e.startswith("PHOTOS:"))]
+    coverage_errors = [e for e in errors if e.startswith("VARIETY:") or e.startswith("PHOTOS:")]
+
+    parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
+    if schema_errors:
+        parts.append("SCHEMA ERRORS — change ONLY the fields named below (shorten the text, or move detail "
+                      "into speaker_notes); keep every other field byte-for-byte identical; do not touch "
+                      "slides or fields that aren't listed:\n- " + "\n- ".join(schema_errors))
+    if coverage_errors:
+        parts.append("COVERAGE FEEDBACK — these are deck-wide, not a single field. You MAY change the "
+                      "`layout` of some content slides to a better-fitting structural layout, and/or add "
+                      "`asset_id` to slides that don't have one, to satisfy the counts below. Keep the "
+                      "underlying CONTENT and MESSAGE of each slide the same, just recast its layout or add "
+                      "a photo — do not add new slides or remove existing ones:\n- " + "\n- ".join(coverage_errors))
+    fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
 

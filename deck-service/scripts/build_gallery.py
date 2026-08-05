@@ -239,9 +239,13 @@ def build(name: str, slides: list[dict], cover: dict) -> None:
         while len(chunk) < 3:
             chunk = chunk + [cover]
         errs = validate.validate_plan({"deck_title": name, "language": "en", "slides": chunk})
-        if errs:
+        # This gallery deliberately lists each layout ONCE as a design reference, so the
+        # VARIETY:/PHOTOS: coverage nudges (meant for a real generated deck) always fire here
+        # and aren't a real problem — only fail the smoke test on genuine schema violations.
+        hard = [e for e in errs if not (e.startswith("VARIETY:") or e.startswith("PHOTOS:"))]
+        if hard:
             print(f"  VALIDATION ERRORS in {name} chunk at {i}:")
-            for e in errs[:12]:
+            for e in hard[:12]:
                 print("   -", e)
             sys.exit(1)
     data = renderer.render_deck({"deck_title": name, "language": "en", "slides": full})

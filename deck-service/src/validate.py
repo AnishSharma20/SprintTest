@@ -89,10 +89,11 @@ def validate_plan(plan: dict) -> list[str]:
         if layout in catalog and bg and bg not in catalog[layout]["backgrounds"]:
             errors.append(f"slides/{i-1}/background: '{bg}' not available for layout '{layout}'")
 
-    if not errors:
-        # Only nudge on variety/photos once the plan is otherwise clean — a plan with real
-        # schema violations gets ONE retry already, and stacking unrelated feedback onto that
-        # same retry risks the model fixing overflow at the cost of dropping content instead.
-        errors.extend(_coverage_warnings(plan))
+    # Always include the coverage nudges, even alongside real schema errors — revise_plan()
+    # gives VARIETY:/PHOTOS: their own separate instruction block from schema fixes, so the one
+    # retry a plan gets can act on both at once. Gating this behind "only when otherwise clean"
+    # meant a plan with even one trivial residual overflow (which ships anyway) never got its
+    # coverage checked at all, silently shipping under the photo/variety minimums.
+    errors.extend(_coverage_warnings(plan))
 
     return errors[:25]

@@ -111,6 +111,27 @@ export const CURATED_STUDIES: CuratedStudy[] = [
         "Early proof-of-concept only. Heterogeneous sample (CVD + RA + OA mixed), short (30 days); allocation concealment, ITT analysis, sample-size justification and dropout reporting were not reported. Quality score 25% (Low), reflecting limited methodological transparency of early-era trials.",
     },
   },
+  {
+    pmid: "12777162",
+    doi: "",
+    title:
+      "Evaluation of the Effects of Neptune Krill Oil™ on the Management of Premenstrual Syndrome and Dysmenorrhea",
+    journal: "Altern Med Rev",
+    year: "2003",
+    authors: "Sampalis F, Bunea R, Pelland MF, et al.",
+    akerNote: "Neptune Krill Oil (NKO™) — a competitor product, NOT Aker BioMarine; lead author was Vice President of Research & Development at the manufacturer (Neptune Technologies & Bioressources Inc.), a significant conflict of interest",
+    quality: { score: 50, label: "Moderate" },
+    summary: {
+      background:
+        "The first (and to date only) RCT evaluating krill oil specifically for premenstrual syndrome (PMS) and dysmenorrhea. Motivated by evidence that omega-3 fatty acids counter the omega-6 driven inflammatory prostaglandin and leukotriene pathway implicated in menstrual pain and PMS, and by krill oil's phospholipid-bound omega-3 form.",
+      design:
+        "70 women of reproductive age meeting DSM-III-R diagnostic criteria for PMS, randomised double-blind to Neptune Krill Oil (2 g/day for month 1, then 2 g/day cyclically 8 days before through 2 days into menstruation) or omega-3 fish oil (18% EPA, 12% DHA, same dosing) for 3 months (3 cycles). NO placebo arm; an active-comparator design only. Primary outcome: an ACOG-based PMS self-assessment questionnaire (0 to 10 scale) at baseline, 45 and 90 days; also analgesic consumption for dysmenorrhea. Powered for a 20% between-group difference at 90% power.",
+      findings:
+        "All 70 patients completed the trial (zero dropouts). The krill oil group improved significantly across every measured symptom (breast tenderness, feeling overwhelmed, stress, irritability, depression, joint pain, weight gain, abdominal pain, swelling, bloating) at both 45 and 90 days (p<0.001), while the fish oil group only reached significance for weight gain, abdominal pain and swelling. Krill oil was significantly more effective than fish oil for emotional symptoms (p<0.01), breast tenderness (p<0.01) and joint pain (p<0.04). Analgesic use for dysmenorrhea fell 50% in the krill oil group by 90 days, a significantly greater reduction than in the fish oil group (p<0.03 between groups). No serious adverse events; krill oil caused no gastrointestinal reflux, versus 64% of the fish oil group reporting unpleasant reflux.",
+      limitations:
+        "No placebo arm: the trial only compares krill oil against fish oil, so it cannot rule out a shared placebo response for these highly subjective, cyclical symptoms. Allocation concealment mechanism not described beyond a random number list. The lead author was Vice President of Research & Development at the product's manufacturer, a substantial conflict of interest for an early-era (2003) trial. Small (n=70) and short (3 cycles). Quality score 50% (Moderate): reasonably transparent for its era (explicit power calculation, zero dropouts, double-blind) but undermined by the missing placebo arm and the severe sponsor and author conflict of interest.",
+    },
+  },
 ];
 
 // Fictional / not-real study to EXCLUDE from display (SUPERBA-OA / Andersen 2026 in the whitepaper).

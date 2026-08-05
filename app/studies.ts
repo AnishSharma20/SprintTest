@@ -93,6 +93,7 @@ const ARCHIVE_CATEGORIES: Record<string, string[]> = {
   "42144109": ["Wellness & Immune Support"], // Loukil 2026 (was: absorption only)
   "17353582": ["Wellness & Immune Support", "Joint Support"], // Deutsch 2007
   "38776073": ["Joint Support"], // KARAOKE 2024 results (Laslett); not in the archive
+  "12777162": ["PMS Support"], // Sampalis 2003, the archive's only PMS study
 };
 
 // Fallback for a study not yet added to ARCHIVE_CATEGORIES (e.g. a brand new PDF AKBM sends before

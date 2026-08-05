@@ -1,0 +1,1002 @@
+Original Research Article
+Krill oil increases plasma omega-3 fatty acids more than fish oil in healthy 
+adults: a double-blind randomized controlled trial
+Insaf Loukil 1,2,3, Annick Vachon 1,2,3, Artuela Çaku 4, Melanie Plourde 1,2,3,*
+1 Departement de medecine/service de geriatrie, Faculte de medecine et des sciences de la sante, Universite de Sherbrooke, Sherbrooke, QC, Canada; 
+2 Centre de Recherche sur le Vieillissement, CIUSSS de l’Estrie-CHUS, Sherbrooke, QC, Canada; 3 Institut sur la nutrition et les aliments fonctionnels, 
+Universite Laval, QC, Canada; 4 Departement de biochimie et de genomique fonctionnelle, Faculte de medecine et des sciences de la sante, Universite 
+de Sherbrooke, Sherbrooke, QC, Canada
+A B S T R A C T
+Background: Omega-3 fatty acids (ω-3 FAs), particularly EPA and DHA, are recognized for their health beneﬁts ts. However, their circulating levels after 
+supplementation may be modulated by several factors, including sex, carriage of the apolipoprotein E ε4 (APOE4) allele, and the chemical form of the 
+supplement. Krill oil delivers ω-3 FAs primarily as phospholipids, whereas ﬁsh oil provides them as triglycerides.
+Objectives: This study aimed to compare EPA and DHA concentrations after supplementation with krill oil and ﬁsh oil and assess whether sex and 
+APOE4 genotype modify responses to supplementation.
+Methods: This double-blind, randomized clinical trial included 72 healthy adults (53 females, 19 males) matched for age and BMI. Participants received 
+1.1 g/d ω-3 FAs through either krill oil (n = 36) or ﬁsh oil (n = 36) for 12 wk. Plasma FAs were measured at baseline and at weeks 1, 2, 4, and 12 by 
+GC–ﬂame ionization detection. Differences in plasma ω-3 FAs concentrations by treatment, sex, and APOE4 status were analyzed.
+Results: Time-by-treatment interactions were signiﬁca cant for plasma delta over baseline concentrations of EPA (P = 0.0001) and DHA (P = 0.005), with 
+krill oil resulting in ~1.5-fold higher Δ EPA and Δ DHA compared with ﬁsh oil. The time-by-sex interaction was signiﬁca cant only for EPA (P = 0.026), 
+with females having a 1.5-fold greater increase than males at 12 wk. After supplementation with either krill oil or ﬁsh oil, APOE4 carriers had 3-fold and 
+1.6-fold higher EPA and DHA, respectively, compared with baseline; however, these increases were not signiﬁca cantly different from those found in 
+noncarriers.
+Conclusions: Krill oil increased plasma ω-3 FAs more than ﬁsh oil, regardless of APOE4 genotype. Individuals with higher ω-3 FA requirements may 
+achieve adequate enrichment with lower doses of krill oil compared with ﬁsh oil supplementation.
+This trial was registered at clinicaltrials.gov as NCT04279743.
+Keywords: EPA, DHA, supplementation, Krill oil, phospholipids, RCT, Alzheimer’s, APOE4
+Introduction
+Omega-3 fatty acids (ω-3 FAs) are widely recognized for their 
+health beneﬁts ts, particularly for cardiovascular [1,2], metabolic [3,4], 
+brain structure [5], and function [6–8]. Among them, EPA and DHA 
+have been associated with a reduced risk of cognitive decline and 
+late-onset Alzheimer’s disease (LOAD), deﬁne ned by clinical onset after 
+65 y of age [9–11]. However, a recent review by our group found that 
+only 44% of randomized controlled trials (RCTs) reported cognitive 
+beneﬁts ts after ω-3 FAs supplementation [12]. These inconsistencies 
+may partly be explained by the presence of the apolipoprotein E ε4 
+(APOE4) allele, the main genetic risk factor for LOAD. Our team 
+previously reported a gene-by-diet interaction, where APOE4 carriers 
+had a lower increase in ω-3 FAs compared with noncarriers after 
+supplementation [13]. Moreover, sex might modulate the response to 
+ω-3 FAs supplementation, with females having higher increases in 
+EPA and DHA than males after supplementation [14].
+The chemical form of ω-3 FAs can also modulate the response to 
+supplementation in plasma [15–18] and tissues [19,20]. A recent re­
+view emphasized that different sources and esteriﬁca cation forms of EPA 
+Abbreviations: ANOVA, analysis of variance; APOE4, apolipoprotein E ε4; DPA, docosapentaenoic acid; FFA, free fatty acid; FFQ, Food Frequency Questionnaire; FID, ﬂame 
+ionization detector; LOAD, late-onset Alzheimer’s disease; LPC, lysophosphatidylcholine; ω-3 FA, omega-3 fatty acid; PC, phosphatidylcholine; PL, phospholipids; RCT, ran­
+domized controlled trial; TG, triglycerides.
+* Corresponding author.
+E-mail address: melanie.plourde2@usherbrooke.ca (M. Plourde). 
+journal homepage: https://ajcn.nutrition.org/
+https://doi.org/10.1016/j.ajcnut.2026.101346
+Received 31 October 2025; Received in revised form 4 May 2026; Accepted 8 May 2026; Available online 16 May 2026 
+0002-9165/© 2026 The Author(s). Published by Elsevier Inc. on behalf of American Society for Nutrition. This is an open access article under the CC BY-NC-ND license (http:// 
+creativecommons.org/licenses/by-nc-nd/4.0/).
+The American Journal of Clinical Nutrition 124 (2026) 101346
+
+and DHA can lead to distinct biomarker responses, including total 
+plasma lipids and the ω-3 index [21]. Consistently, a study comparing 
+ﬁsh-oil–derived ω-3 FAs provided as triglycerides (TG) and ethyl 
+esters, with krill oil in which EPA and DHA are primarily esteriﬁed ed in 
+phospholipids (PL), reported the highest incorporation of ω-3 FAs into 
+plasma PL with krill oil [18]. Although krill oil is often associated with 
+higher EPA and DHA concentrations, ﬁndings from human trials 
+remain inconsistent. Most studies were limited by short supplemen­
+tation periods [18,22,23], small sample sizes with sex bias [18,24,25], 
+unequal capsule numbers [26,27], or unmatched EPA and DHA doses 
+[25,28]. Only 1 double-blind RCT using matched EPA and DHA doses 
+reported higher plasma ω-3 FAs with krill oil. However, the ﬁsh-oil 
+supplement contained higher ω-6 FAs levels, potentially biasing the 
+comparison between treatments [17].
+The provision of PL-ω-3 FAs is of particular interest due to its 
+potential to enhance transport of DHA to the brain by facilitating 
+transport across the blood-brain barrier [29]. Therefore, we sought 
+to compare similar doses of EPA and DHA differing only by their 
+esteriﬁca cation form: TG (ﬁsh sh oil) compared with PL (krill oil) while 
+accounting for sex and APOE4 genotype. We hypothesized that 
+krill oil increases plasma EPA and DHA more than ﬁsh oil and 
+that plasma ω-3 FAs concentrations are modulated by APOE4 
+genotype and sex. The primary outcome was the change from 
+baseline in EPA and DHA concentrations after 12 wk of supple­
+mentation with krill oil and ﬁsh oil. The secondary outcomes were 
+plasma EPA and DHA in APOE4 carriers compared with non­
+carriers and in males compared with females with ﬁsh and krill 
+supplements.
+Methods
+Participants and study design
+This study was a double-blind, RCT registered on clinicaltrials.gov
+(NCT04279743) on 21 February, 2020. All participants provided 
+written informed consent, and the study was approved by the Human 
+Ethics Research Committee of the Health and Social Sciences Cen­
+ter—Sherbrooke University Geriatrics Institute (IRSC2020-3570). 
+Healthy males and females aged 30 to 65 y were recruited from the 
+general population and were matched for age and BMI. This age range 
+was selected because the study was designed as a metabolic investi­
+gation aimed at informing preventive strategies for LOAD. We, 
+therefore, focused on healthy adults, before the emergence of age- 
+related neurodegenerative or metabolic changes, to characterize ω-3 
+fatty acid metabolism under physiologically stable conditions. 
+Exclusion criteria included current smoking, consumption of oily ﬁsh 
+more than twice per week, use of ω-3 FAs supplements, or lipid- 
+lowering medications. Individuals were also excluded if they pre­
+sented with malnutrition (assessed via serum albumin, BMI <18.5 kg/ 
+m2, etc.), diabetes mellitus, or uncontrolled thyroid, renal, hepatic, or 
+endocrine disorders. Additional exclusions applied to participants with 
+chronic inﬂam ammatory or immune conditions (deﬁne ned as C-reactive 
+protein >10 mg/L or abnormal white blood cell counts), a history of 
+cancer, recent major surgery or cardiac events, or those who were 
+pregnant, lactating, or perimenopausal. Participants were also 
+excluded if they had a diagnosis of dementia or self-reported any 
+neurodegenerative disorder. No formal cognitive assessment was 
+conducted as part of the eligibility criteria. Participants were also 
+excluded if they had a history of severe substance abuse, major psy­
+chiatric disorders (e.g., major depression), or if they were currently or 
+previously engaged in intensive physical training.
+Participant recruitment and follow-up visits were conducted be­
+tween April 2022 and November 2024. Among the 305 individuals 
+screened for eligibility, 205 were excluded based on exclusion criteria 
+(n = 127), genotyping (n = 52), or blood test results (n = 26). Of the 
+100 randomly assigned participants, 24 participants declined before 
+starting the supplementation, leaving 38 randomly assigned partici­
+pants in each supplement group. There were 2 dropouts from each 
+supplement group. Reasons for dropout included difﬁcu culty swallowing 
+capsules (n = 2), digestive discomfort (n = 1), and inability to attend 
+study visits (n = 1).
+The supplements used in this study were obtained from 2 different 
+production batches for both krill oil and ﬁsh oil. Detailed information 
+regarding manufacturing lots, reception dates, declared shelf life, and 
+EPA and DHA concentrations is provided in Supplementary Table 1. 
+Fish oil capsules were obtained from Neptune Wellness Solutions, and 
+krill oil capsules (SuperbaBoost) were provided by Aker BioMarine 
+Antarctic AS. Participants consumed 4 capsules of 1000 mg daily for 
+12 wk, 2 with breakfast and 2 with dinner. The 4 capsules provided a 
+total of ~1100 mg of ω-3 FAs daily. Speciﬁca cally, the krill oil group 
+received 706 mg EPA and 393 mg DHA, whereas the ﬁsh oil group 
+received 738 mg EPA and 462 mg DHA per day. The detailed fatty 
+acid composition of each supplement, as analyzed by our laboratory, is 
+provided in Table 1. Between-lot variability was calculated as the 
+absolute percentage difference relative to the mean concentration of 
+the fatty acid in the 2 production batches:
+% variability = |Concentration in lot1 −
+Concentration in lot2 | / 
+[(Concentration in lot1 + Concentration in lot2)/2] × 100. The per­
+centage of variability between the 2 lots is provided in Table 1. EPA 
+and DHA concentrations showed <15% variability between produc­
+tion batches for both supplements.
+Krill oil provided ω-3 FAs predominantly esteriﬁed ed in PL, with PL 
+accounting for 57% of total lipids, of which 90% were in the form of 
+TABLE 1 
+Fatty acid composition in milligrams per gram of capsule
+Fatty acid
+Krill capsules
+Fish capsules
+% Variability
+Krill
+Fish
+C12:0
+1.16 ± 0.01
+1.00 ± 0.03
+4.40
+35.53
+C13:0
+0.38 ± 0.59
+ND
+51.37
+ND
+C14:0
+60.70 ± 0.36
+75.24 ± 0.57
+13.99
+15.98
+C14:1
+1.03 ± 0.02
+0.29 ± 0.41
+7.66
+200
+C15:0
+2.49 ± 0.03
+5.15 ± 0.03
+8.78
+10.34
+C15:1
+ND
+0.49 ± 0.30
+ND
+50.93
+C16:0
+173.35 ± 0.97
+172.96 ± 2.47
+2.69
+10.75
+C16:1 t
+1.08 ± 0.07
+3.77 ± 0.09
+1.46
+9.01
+C16:1
+27.70 ± 0.17
+68.12 ± 35.15
+1.32
+50.47
+C17:0
+ND
+5.59 ± 0.18
+ND
+2.97
+C17:1
+1.02 ± 0.01
+1.44 ± 0.08
+4.60
+27.63
+C18:0
+4.46 ± 0.04
+19.20 ± 0.24
+148.05
+186.22
+C18:1 ω-9
+70.73 ± 0.35
+115.13 ± 1.59
+0.42
+6.92
+C18:1 ω-7
+47.70 ± 0.36
+31.79 ± 0.46
+7.66
+3.33
+C18:2 t
+1.77 ± 0.14
+0.43 ± 0.00
+18.99
+200
+C18:2 ω-6
+12.03 ± 0.04
+10.87 ± 0.08
+41.90
+30.90
+C18:3 ω-6
+0.95 ± 0.52
+2.58 ± 0.04
+50.88
+1.02
+C18:3 ω-3
+24.27 ± 0.09
+7.93 ± 0.06
+22.63
+4.32
+C20:0
+ND
+2.98 ± 0.06
+ND
+77.07
+C20:1
+3.85 ± 0.03
+12.92 ± 0.19
+10.61
+35.94
+C20:4 ω-6
+1.50 ± 0.06
+9.50 ± 0.12
+200
+31.05
+C20:5 ω-3
+176.57 ± 1.14
+184.56 ± 2.22
+3.15
+4.74
+C22:5 ω-6
+ND
+1.71 ± 0.02
+ND
+200
+C22:5 ω-3
+4.01 ± 0.15
+19.78 ± 0.24
+19.41
+5.83
+C22:6 ω-3
+98.20 ± 0.48
+115.45 ± 1.16
+15.68
+0.79
+Abbreviation: ND, not detected; ω, omega.
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+2 
+
+phosphatidylcholine (PC) (Supplementary Table 1). The remaining 
+lipid fraction may be in other esteriﬁed ed forms, such as TG or free fatty 
+acids (FFAs), which were not further characterized by manufacturers. 
+Each krill oil capsule delivered 70 mg choline, corresponding to a 
+daily intake of 280 mg choline. In contrast, ω-3 FAs from ﬁsh oil were 
+primarily esteriﬁed ed in TG.
+At baseline visit, body height and weight were measured at the 
+metabolic unit of the research center on aging in Sherbrooke, using a 
+calibrated scale, and BMI was calculated as weight (kg)/height (m2). 
+Blood samples were collected in EDTA-coated tubes at baseline and 
+then at 1, 2, 4, and 12 wk of supplementation (Supplementary 
+Figure 1). Blood was then centrifuged at 2300 × g for 15 min at 4◦C 
+and afterward, plasma was aliquoted and stored at −80◦C 7]. Plasma 
+samples from each participant’s visits were then allocated a random 
+number to maintain the blinding from the treatment and time point 
+during the analysis. Blood biochemistry was performed at baseline and 
+included measurements of fasting glucose, total cholesterol, TG, HDL 
+cholesterol, and LDL cholesterol.
+APOE genotyping
+At the screening visit, 5 mL of venous blood was collected from 
+each participant into EDTA-coated tubes and stored at −80◦C (Sup­
+plementary Figure 1). Genotyping was conducted at the RNomics 
+Platform of the University of Sherbrooke. Genomic DNA was 
+extracted from thawed whole blood using the QIAamp DNA Extrac­
+tion Kit (Qiagen), following the manufacturer’s instructions, as 
+described by Maltais et al. [30]. Participants were classiﬁed ed into 2 
+genetic groups based on the presence of the APOE4 allele. Only 
+participants with the APOE3/APOE3 genotype (APOE4 noncarriers) 
+and APOE3/APOE4 genotype (APOE4 carriers) were included in the 
+study. The research team remained blind to participants’ APOE ge­
+notypes throughout the recruitment and sample processing phases.
+Randomization and blinding
+All research staff were blinded to both treatment allocations until 
+the end of study recruitment. The ﬁle linking participant names and 
+personal information to their randomization numbers was deleted once 
+recruitment was completed.
+The random allocation sequence (krill oil and ﬁsh oil) was gener­
+ated using a computer-based random number generator by the prin­
+cipal investigator, who was not involved in participant enrolment. 
+Participant recruitment and enrolment were conducted by a research 
+nurse and a PhD student who were blinded to both the allocation 
+sequence and genotypes. Randomization was stratiﬁed ed by sex and 
+APOE genotype, and participants were matched for age and BMI to 
+ensure balanced distribution between treatment groups.
+The principal investigator had access to the randomization codes 
+and genotype information, but did not have access to any ﬁle con­
+taining participants’ personal identiﬁer ers. Supplement capsules were 
+provided in identical, coded containers labeled as “treatment 1” and 
+“treatment 2,” and participants remained blinded to their treatment 
+assignment throughout the study.
+Plasma lipid extraction
+42 μg of TG heptadecanoic acid (C17:0) was added to 100 μL 
+plasma samples as an internal standard. Total lipids were extracted 
+using a chloroform: methanol mixture (2:1, v/v) as previously 
+described [31]. The lipid extracts were saponiﬁed ed by incubation with 3 
+mL of potassium hydroxide in methanol Potassium hydroxyde in 
+methanol (KOH-MeOH) (56 g/L) at 90◦C for 60 min. The 
+saponiﬁca cation mixture was then acidiﬁed ed using 0.3 mL of 12 M hy­
+drochloric acid. FFAs were methylated with 3 mL of 12% boron tri­
+ﬂuoride in methanol Boron trifuoride in methanol (BF3-MeOH) 
+(Thermo Scientiﬁc c Chemicals) at 90◦C for 30 min. The resulting 
+methyl esters were reconstituted in 500 μL of hexane and transferred 
+into GC vials.
+Fatty acids methyl esters were analyzed using GC (model 6890; 
+Agilent Technologies) equipped with a BPX-70 fused silica capillary 
+column (50 m; SGE). Detection was carried out with a ﬂame ionization 
+detector (FID), following the parameters described in Chevalier et al. 
+[16]. Plasma fatty acids methyl esters were analyzed as single de­
+terminations. Prior validation of the method in our laboratory has 
+shown reproducibility with an SD <6% for plasma fatty acids. The 
+chromatogram analysis was performed using the OpenLab CDS 
+ChemStation software. Quantiﬁca cation was based on the internal 
+standard and calibration curves constructed using relative response 
+factors derived from a certiﬁed ed fatty acid methyl esters standard 
+mixture (Nu Chek Prep GLC-569B). The GC-FID used in this study 
+had a limit of detection of 0.21 to 0.54 μg/mL and corresponding limits 
+of quantiﬁca cation of ~0.63 to 1.63 μg/mL. Fatty acids with concen­
+trations below the limit of detection (LOD) were considered not 
+detected and are reported as “ND.”
+Food frequency questionnaire
+Dietary intake of ω-3 FAs was assessed at the baseline visit using a 
+validated Canadian food frequency questionnaire (FFQ) speciﬁca cally 
+designed to capture foods naturally rich in or enriched with ω-3 FAs 
+[32]. The questionnaire was adapted to include locally available food 
+brands and names in Quebec, Canada. The FFQ was translated into 
+French by 2 certiﬁed ed translators. To ensure the accuracy and consis­
+tency of the translated content, a back-translation into English was 
+subsequently performed by a third certiﬁed ed translator. This process 
+veriﬁed ed the ﬁdelity of the French version to the original English FFQ 
+(the 2 FFQs in French and English can be found in the Supplementary 
+File). Dietary intake of EPA and DHA was then determined from FFQs 
+with the use of The Food Processor SQL Edition dietary analysis 
+software (version 11.15.1, 2025, ESHA Research).
+Participants were instructed to maintain their usual daily routines, 
+including eating habits and physical activity levels, throughout the 
+study period. They were also asked to limit their intake of fatty ﬁsh to 
+no >2 servings per week and to moderate alcohol consumption. Each 
+participant was provided with a logbook to record their consumption 
+of marine-based foods during the intervention.
+Physical activity assessment
+Physical activity was assessed using ActiGraph GT3X acceler­
+ometers. At baseline, participants were instructed to wear the device 
+over their dominant hip (i.e., right hip for right-handed individuals and 
+left hip for left-handed individuals) during waking hours for 7 
+consecutive days, excluding water-based activities. The accelerome­
+ters captured habitual physical activity during the ﬁrst week of sup­
+plementation. Data were recorded in 10-s epochs and analyzed using 
+ActiLife software (ActiGraph LLC), applying the Freedson Adult 
+(1998) count cut-points for activity classiﬁca cation as follows: sedentary 
+(0–99 
+counts/min), 
+light 
+(100–1951 
+counts/min), 
+moderate 
+(1952–5724 counts/min), vigorous (5725–9498 counts/min), and very 
+vigorous (≥9499 counts/min). A valid day was deﬁne ned as ≤10 h of 
+wear time, and participants were included in the analysis if they 
+recorded a minimum of 4 valid days [33]. Data from 66 participants 
+(33 per group of supplementations) met these inclusion criteria, 
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+3 
+
+whereas 7 participants were excluded due to noncompliance with wear 
+instructions or failure to achieve the minimum wear-time 
+requirements.
+Statistical analysis
+The sample size was calculated using the change in ω-3 FAs after 4 wk 
+supplementation with krill oil as compared with ﬁsh oil from the study by 
+Ramprasath et al. [17]. The calculated effect size (Cohen’s d = 0.686) was 
+used to determine the sample size required to achieve 80% statistical 
+power and a signiﬁca cance level (α) of 0.05. A minimum of 33 participants 
+per group was required to meet these statistical criteria. This sample size 
+estimation was based on the primary comparison between supplements.
+Anthropometric characteristics were assessed using unpaired t-tests for 
+normally distributed data or Mann–Whitney U tests for nonnormally 
+distributed data. On the basis of pill count, adherence to the supplementation 
+was calculated for each participant as a percentage. Adherence was compared 
+between groups using an unpaired t-test. For the primary outcome, a 2-way 
+analysis of variance (ANOVA) was performed to evaluate the main effects 
+of treatment (krill oil as compared with ﬁsh oil) and time (baseline, 1, 2, 4, and 
+12 wk of supplementation), as well as their interaction on the change from 
+baseline (Δ) in EPA and DHA. For secondary outcomes, a 3-way ANOVA 
+was conducted to evaluate the effects of treatment, time, and additional 
+factors (sex and APOE4 status), including their interactions, on plasma 
+ΔEPA and ΔDHA concentrations. EPA and DHA Δ concentrations were 
+used to calculate the AUC to assess total plasma exposure to the supplements.
+Missing data were not imputed, and analyses were conducted on 
+available data only. Statistical signiﬁca cance was set at P < 0.05. All sta­
+tistical analyses were performed using GraphPad Prism version 9.3.1 for 
+Windows (GraphPad Software). We used the CONSORT reporting 
+guideline [34] to draft this manuscript, and the CONSORT reporting 
+checklist [34] when editing, included in supplementary data.
+Results
+Study population
+A total of 72 participants completed the trial, with 36 individuals in 
+each intervention group (ﬁsh sh oil and krill oil) (Figure 1). Each group 
+included 10 APOE4 carriers and 26 noncarriers, with a comparable sex 
+distribution (26 females and 10 males in the ﬁsh oil group; 27 females and 
+9 males in the krill oil group) (Figure 1). The overall study population 
+consisted of 53 females and 19 males, with a median age of 59 y (41, 63) 
+and a median BMI of 25.72 kg/m2 (22.79, 28.59). Baseline characteris­
+tics of participants are presented in Table 2. All blood biochemistry data, 
+including glucose and lipid parameters, were within the clinical normal 
+range. Participants had an average of 31 min of moderate-to-vigorous 
+physical activity per day. Possible side effects were assessed at each 
+study visit by asking participants about any adverse symptoms or 
+discomfort related to supplement use. No side effects were reported by 
+participants in either supplementation group. At baseline, participants 
+reported a median dietary intake of total EPA+DHA of 210 mg/d (102, 
+332.5), with no signiﬁca cant differences in EPA, DHA, or total EPA+DHA 
+intake between the 2 supplementation groups (Table 2).
+Compliance with ω-3 FAs supplementation
+On the basis of the capsule count, median (Q1, Q3) compliance 
+to ﬁsh oil was 96% (90%, 99%) and 97% (91%, 99%) for those 
+receiving the krill oil. There was no signiﬁca cant difference in 
+compliance between the 2 groups (P = 0.314). Minimum compli­
+ance was 62 % (n = 1) in the ﬁsh oil group and 79% (n = 1) in the 
+krill oil group. Plasma ω-3 FAs concentrations after 12 wk of 
+supplementation were ≥1.2-fold higher than baseline, such that no 
+participant was excluded from the dataset.
+FIGURE 1. Participants recruitment flowchart. APOE4, apolipoprotein E ε4.
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+4 
+
+Plasma concentrations of EPA and DHA in plasma
+To evaluate the increase in EPA and DHA levels during supplementa­
+tion, baseline plasma concentrations were subtracted from those measured 
+at subsequent visits. The resulting values are referred to as ΔEPA and 
+ΔDHA, representing the net change in plasma levels of these fatty acids 
+over time. There was a signiﬁca cant time × supplement interaction for both 
+plasma ΔEPA (Figure 2A) and ΔDHA (Figure 2B) (P < 0.05), with higher 
+plasma concentrations in participants supplemented with krill oil compared 
+with ﬁsh oil. The ΔEPA and ΔDHA followed different patterns, with 
+plasma ΔEPA increasing sharply within the ﬁrst week of supplementation, 
+after rising more gradually between weeks 1 and 12. At week 12, the ΔEPA 
+was signiﬁca cantly higher in the krill oil group (ΔEPA = 6.88 ± 0.39 mg/dL) 
+compared with the ﬁsh oil group (ΔEPA = 4.90 ± 0.40 mg/dL). For DHA, 
+Δconcentrations increased between baseline and 4 wk and then reached a 
+plateau between 4 and 12 wk (ΔDHA = 4.22 ± 0.31 mg/dL) for krill oil, 
+whereas for ﬁsh oil, plasma concentrations increased between baseline and 
+2 wk and then reached a plateau between 2 and 12 wk of supplementation 
+(ΔDHA = 2.84 ± 0.34mg/dL). Overall, supplementation with krill oil 
+resulted in a 1.4-fold higher ΔEPA and a 1.5-fold higher ΔDHA compared 
+with ﬁsh oil supplementation at 12 wk. The total plasma fatty acids proﬁle le at 
+baseline and 12 wk by supplement is reported in Supplementary Table 2.
+Plasma concentrations of EPA and DHA by sex
+There was a signiﬁca cant time × sex interaction for plasma ΔEPA 
+(Figure 3A, P = 0.026), suggesting sex differences in the increases of 
+ΔEPA concentrations over time. Females had signiﬁca cantly higher in­
+creases in plasma ΔEPA concentrations than males, regardless of 
+supplement type (krill, ﬁsh) (Figure 3A, P sex < 0.001). In contrast, no 
+signiﬁca cant time × sex interaction was found for plasma ΔDHA con­
+centrations (Figure 3B), suggesting similar DHA increases over time 
+in both sexes. Krill oil–supplemented females had 1.42- and 1.62-fold 
+higher plasma ΔEPA than females in ﬁsh oil and men in krill oil, 
+respectively, at 12 wk of supplementation. However, females in the 
+Krill-oil group had 1.53- and 1.37-fold higher ΔDHA than females in 
+the ﬁsh oil group and males in the krill oil group, respectively, at 12 wk 
+(Figure 3B). Absolute concentrations of EPA and DHA at baseline and 
+at 12 wk of supplementation in men and females are reported in 
+Supplementary Figure 2A, B. Total plasma fatty acids proﬁle le at 
+baseline and 12 wk by sex are reported in Supplementary Table 3.
+Plasma concentrations of EPA and DHA by APOE 
+genotype
+There were no signiﬁca cant genotype × time or genotype × sup­
+plement interactions for plasma ΔEPA and ΔDHA (Figure 4A, B), 
+indicating that the effect of supplementation over time was similar 
+TABLE 2 
+Clinical characteristics of participants at baseline
+Total
+Fish group 
+(n = 36)
+Krill group 
+(n = 36)
+Age (y)
+59 (41, 63)
+58.5 (41.5, 63)
+59 (41, 63)
+Females, n (%)
+53 (73.6)
+26 (72.2)
+27 (75)
+Ethnicity, n (%)
+Others
+3 (4.2)
+2 (5.6)
+1 (2.8)
+APOE4 carriers, n 
+(%)
+20 (27.7)
+10 (27.7)
+10 (27.7)
+BMI (kg/m2)
+25.72 (22.79, 
+28.59)
+26.21 (22.75, 
+28.8)
+25.3 (22.77, 
+28.1)
+Glucose (mmol/L)
+5.38 ± 0.56
+5.39 ± 0.54
+5.38 ± 0.58
+Triglycerides (mmol/ 
+L)
+0.92 (0.65, 
+1.26)
+0.93 (0.64, 
+1.26)
+0.81 (0.69, 
+1.31)
+Total cholesterol 
+(mmol/L)
+5.14 ± 1.08
+5.07 ± 1.14
+5.21 ± 1.03
+HDL cholesterol 
+(mmol/L)
+1.64 (1.25, 
+1.87)
+1.5 (1.23, 1.75)
+1.73 (1.37, 
+1.91)
+LDL cholesterol 
+(mmol/L)
+2.95 (2.51, 3.6)
+2.97 (2.51, 3.6)
+2.95 (2.48, 
+3.61)
+MVPA /d (min)
+30.98 ± 20.55
+29.48 ± 21.63
+32.48 ± 19.97
+Dietary ω-3 FAs
+EPA (mg/d)
+70 (40, 120)
+60 (30, 120)
+80 (50, 100)
+DHA (mg/d)
+140 (60, 220)
+125 (60, 235)
+150 (70,190)
+EPA þ DHA (mg/ 
+d)
+210 (102, 
+332.5)
+190 (85, 357)
+230 (120, 290)
+Results are means ± SD when data were normally distributed and median 
+(Q1, Q3) when not normally distributed. Means between groups were 
+compared using an unpaired t-test when normally distributed, and medians 
+were compared using a Mann–Whitney nonparametric test when data were 
+not normally distributed. 
+Abbreviations: APOE4, apolipoprotein E ε4; FA, fatty acid; HDL-C, MVPA, 
+moderate-to-vigorous physical activity; ω-3 FA, omega-3 fatty acid.
+FIGURE 2. Plasma delta concentrations from baseline of (A) EPA and (B) DHA with Krill-oil supplement (blue) and Fish-oil supplement (black). Values are 
+means ± SEM. Missing data were as follows: in week 4 (fish oil, n = 2); week 12 (fish oil, n = 1; krill oil, n = 1).
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+5 
+
+regardless of APOE genotype. However, plasma ΔEPA and ΔDHA 
+concentrations increased signiﬁca cantly over time (P < 0.001), with krill 
+oil leading to greater increases than ﬁsh oil (P < 0.001). Therefore, 
+both APOE4 carriers and noncarriers (APOE3) had similar increases 
+in ΔEPA and ΔDHA over time, with higher increases in ΔEPA and 
+ΔDHA with krill oil as compared with APOE4 carriers and noncarriers 
+supplemented with ﬁsh oil. Absolute plasma concentrations at baseline 
+and at 12 wk by APOE genotype are reported in Supplementary 
+Figure 2C, D, and total plasma fatty acids proﬁle le at baseline and 12 wk 
+by APOE4 carriers and noncarriers are reported in Supplementary 
+Table 4. APOE4 carriers had 3-fold higher EPA and 1.60-fold higher 
+DHA at 12 wk as compared with baseline (P < 0.001); however, this 
+was not statistically different from APOE4 noncarriers (Supplemen­
+tary Figure 2C, D).
+Discussion
+The present study tested the hypothesis that krill oil (PL ω-3 FAs) 
+increases plasma EPA and DHA more than ﬁsh oil (TG ω-3 FAs). To 
+address this, we evaluated whether a 12-wk supplementation with a 
+matched dose of ω-3 FAs from krill oil would lead to higher increases 
+in plasma EPA and DHA compared with ﬁsh oil in healthy males and 
+females. We found that krill oil supplementation led to ~1.5-fold 
+higher increases in both ΔEPA and ΔDHA compared with ﬁsh oil. 
+This suggests that for a similar dose of ω-3 FAs, the PL form results in 
+higher circulating ω-3 FAs levels compared with TG form. Our results 
+are consistent with the study by Ramprasath et al. [17], where krill oil 
+resulted in 1.45-fold higher increases in ΔEPA +DHA than ﬁsh oil 
+after 4 wk of supplementation. However, Yurko-Mauro et al. [35] 
+FIGURE 3. Plasma delta concentrations from baseline of (A) EPA and (B) DHA with Krill-oil supplement (orange; females, blue; males) and Fish-oil 
+supplement (red; females, green; males). Missing data were as follows: at week 4 (females, fish oil, n = 1; males, fish oil, n = 1) and at week 12 (fe-
+males, krill oil, n = 1; males, fish oil, n = 1).
+FIGURE 4. Plasma delta concentrations from baseline of (A) EPA and (B) DHA with Krill-oil supplement (black; APOE4 carriers, blue; APOE4 noncarriers) 
+and fish-oil supplement (red; APOE4 carriers, green APOE4 noncarriers). Values are means ± SEM. Missing data were as follows: at week 4 (APOE4 carriers, 
+n = 2, fish oil) and at week 12 (APOE3 carriers, krill oil, n = 1; fish oil, n = 1). APOE4, apolipoprotein E ε4.
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+6 
+
+found no difference at a similar dose (1.3 g/d EPA + DHA). The 
+variability of krill oil composition might account for these differences. 
+Commercial products contain 19% to 80% PLs [36,37]. In a study by 
+Yurko-Mauro [35], capsules had 44% PLs without subclass speciﬁ­
+cation, whereas ours contained 57% PL, mostly in PC form. The lack 
+of detailed compositional reporting makes cross-trial comparisons 
+difﬁcu cult. In addition to EPA and DHA, other plasma FAs were 
+examined to determine whether the interventions changed the plasma 
+fatty acid composition. At baseline, total plasma fatty acid proﬁle les did 
+not differ between the krill oil and ﬁsh oil groups, conﬁrm rming that 
+randomization was effective with respect to overall fatty acid status. 
+Furthermore, aside from EPA and DHA, no signiﬁca cant differences 
+were detected between supplements when comparing changes from 
+baseline to 12 wk, except for C18:1 ω-7 and C22:5 ω-3 (Supple­
+mentary Table 2). C22:5 ω-3 corresponds to docosapentaenoic acid 
+(ω-3 DPA), an intermediate ω-3 FA within the EPA and DHA meta­
+bolic pathway. In humans, the conversion of EPA to DHA is quanti­
+tatively limited, and circulating DPA largely reﬂec ects EPA availability. 
+The greater increase in DPA with krill oil is consistent with higher EPA 
+concentrations. The higher plasma EPA and DHA found with krill oil 
+supplementation are plausibly related to the chemical form of the ω-3 
+FAs, with ﬁsh oil providing them mainly as TG, whereas krill oil 
+provides them mainly as PL-bound ω-3 FAs. The higher plasma EPA 
+and DHA concentrations found with krill oil in this study are probably 
+not related to higher absorption of EPA and DHA from krill oil sup­
+plements. The greater plasma ω-3 enrichment observed with krill oil 
+may reﬂec ect differences in the digestive and postabsorptive handling of 
+PL-bound compared with TG-bound fatty acids. Previous human 
+studies using double-labeled PC have shown prolonged retention of 
+PL-derived fatty acids and choline in plasma lipoproteins and eryth­
+rocytes, indicating distinct kinetics compared with TG-derived fatty 
+acids [38]. Mechanistically, PC undergoes partial intestinal hydrolysis 
+to lysophosphatidylcholine (LPC), which can be absorbed intact, 
+reacylated, and incorporated into circulating lipoprotein PL [39]. This 
+pathway may favor incorporation into slower-turnover lipid pools, 
+contributing to higher and more sustained circulating ω-3 levels. 
+Together, these human data provide a plausible biological basis for the 
+enhanced plasma ω-3 response observed with krill oil supplementa­
+tion. Moreover, Sung et al. [24] found that, after a single dose intake, 
+krill oil ω-3 FAs were predominantly incorporated into plasma PLs 
+species, including PC, LPC, and phosphatidylethanolamine, whereas 
+those from ﬁsh were mainly distributed within neutral lipids as TG and 
+diglycerides. Indeed, after ingestion, dietary PLs are hydrolyzed by 
+pancreatic phospholipase A2 into FFA and lysophospholipids (e.g., 
+LPC), which are absorbed by enterocytes, re-esteriﬁed ed, and secreted in 
+chylomicrons [40]. Once in plasma, chylomicrons exchange PL-bound 
+ω-3 FAs with HDL, whereas ≤20% of PLs may be absorbed intact, and 
+a fraction of LPC can reach the liver via the portal vein, potentially 
+inﬂue uencing hepatic redistribution of ω-3 FAs to peripheral tissues [41]. 
+These different transport and incorporation pathways for PL ω-3 FAs 
+contrast with the predominantly chylomicron-mediated transport of 
+TG ω-3 FAs. This can, in part, explain the results found in this study. In 
+addition, krill oil supplementation led to an increase in HDL-C con­
+centrations after 12 wk (0.149 mmol/L, corresponding to an ~7.7% 
+rise), whereas ﬁsh oil did not modify HDL-C levels (data not shown). 
+This observation is relevant because HDL particles constitute a major 
+circulating pool of PL and play a central role in lipid transport. An 
+expansion of the HDL compartment may therefore have contributed to 
+the greater enrichment of DHA within plasma PL in the Krill-oil 
+group.
+It is often argued that the higher postsupplementation concentra­
+tions of EPA and DHA after krill oil supplementation are mainly due to 
+the PL form of ω-3 FAs. However, this explanation alone may not fully 
+account for the observed differences relative to ﬁsh oil. Another 
+biochemical feature of krill oil is its choline content. In a previous 
+study on pregnant females [42], DHA supplementation was combined 
+with different choline doses. Higher choline doses were found to in­
+crease plasma PC-DHA and erythrocyte total DHA by 35% and 10%, 
+respectively. In this study, choline supplementation also signiﬁca cantly 
+increased total plasma DHA concentrations. These ﬁndings indicate 
+that higher choline availability facilitates DHA esteriﬁca cation and 
+mobilization within plasma PL. Moreover, as a precursor of acetyl­
+choline, choline may also support cognitive function, although this 
+was not examined in the present study [43–45].
+In this trial, krill oil resulted in higher ΔEPA and ΔDHA in plasma. 
+However, it is important to differentiate between differences that are 
+statistically signiﬁca cant and physiologically or clinically meaningful. 
+Higher circulating ω-3 FAs concentrations may translate into 
+improved clinical outcomes or also reﬂec ect reduced uptake by periph­
+eral tissues. In fact, plasma enrichment in ω-3 FAs after supplemen­
+tation is widely used in intervention studies, given its accessibility and 
+responsiveness to the intake changes [46]. However, it represents only 
+part of the picture, as circulating levels can ﬂuctuate with diet, fasting 
+state, and lipoprotein metabolism. Still, higher plasma EPA and DHA 
+have been associated with lower risk of cognitive decline and car­
+diovascular disease [47,48]. In fact, animal studies have shown that 
+when rats were orally gavaged with 3H-labeled DHA esteriﬁed ed either 
+to PC or to TG, the amount of radioactivity recovered in the cortical 
+PL was 6 times higher with PC-DHA than in the esteriﬁed ed TG-DHA 
+group. This suggests that increasing plasma ω-3 FAs in PL form 
+may increase their delivery to the brain [49]. Together, these ﬁndings 
+support the idea that circulating ω-3 FAs, despite their variability, can 
+serve as a surrogate measure of their availability to target tissues. 
+Another measure that is more reﬂec ective of EPA and DHA incorpora­
+tion in tissues is the erythrocyte levels of EPA and DHA. 
+Erythrocyte-EPA and DHA levels are a complementary and more 
+stable measure, as they reﬂec ect long-term incorporation into cell 
+membranes and correlate strongly with both plasma DHA and internal 
+organ DHA status [46]. Therefore, it is important to analyze both 
+plasma and erythrocyte fatty acids to obtain a more comprehensive 
+picture of ω-3 FAs status and tissue incorporation. In this study, 
+erythrocytes were also collected for future analyses that will explore 
+tissue incorporation, reinforcing the ﬁndings of this study.
+Results from this study also demonstrated that females had greater 
+increases of ΔEPA in plasma than males; however, ΔDHA were not 
+sex dependent. This aligns with previous ﬁndings from our group 
+where females had higher EPA levels in the plasma PL after ω-3 FAs 
+supplementation, whereas plasma DHA increases were not inﬂue uenced 
+by sex [14]. Notably, among females, those receiving krill oil had more 
+pronounced ΔEPA than those on ﬁsh oil. In males, EPA responses 
+were consistently lower regardless of the supplement type. These 
+ﬁndings highlight that sex-speciﬁc c physiology and supplement 
+formulation both play critical roles in modulating ω-3 FAs concen­
+trations in plasma.
+In this study, no signiﬁca cant effect of APOE4 genotype was found. 
+However, most APOE4 carriers were females (8 females, 2 males per 
+group), which may have limited the detection of genotype-dependent 
+differences. Previous work from our laboratory reported greater 
+plasma EPA increases in APOE4 carriers, with DHA being less 
+affected [14]. Other studies also describe altered ω-3 FA transport and 
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+7 
+
+metabolism in APOE4 carriers [13,50,51]. Taken together, although 
+the present results did not reveal clear genotype effects, the limited 
+sample size and sex imbalance among APOE4 carriers likely con­
+strained our statistical power. Future analyses stratifying by both sex 
+and APOE4 status will be essential to clarify the interplay between 
+these factors in modulating ω-3 FAs concentrations after 
+supplementation.
+The present trial has several methodological strengths. A major 
+strength is that the 2 supplements provided comparable doses of EPA 
+and DHA. This allowed plasma ω-3 FAs comparison enrichment be­
+tween the 2 supplements, differing only by the chemical form of the 
+ω-3 FAs. Also, the inclusion of both males and females enabled the 
+examination of sex-speciﬁc c responses, which are usually overlooked 
+in other studies comparing ﬁsh and krill supplementation. In this trial, 
+the dietary EPA and DHA were also estimated using an FFQ. Dietary 
+intake of ω-3 FAs was low and not statistically different between both 
+supplements’ groups. However, certain limitations must be acknowl­
+edged. First, the number of participants (n = 72) was lower than the 
+original recruitment target (n = 160), which may have limited the 
+detection of smaller effects, particularly in secondary outcomes such 
+as APOE4 genotype. In addition, this limited the study’s power to 
+detect 3-way ANOVA interactions between sex, supplementation, and 
+genotype. The study was designed to achieve 80% statistical power (β 
+= 0.20) for the primary outcomes (plasma EPA and DHA concen­
+trations). However, it was not speciﬁca cally powered to detect 3-way 
+interactions between sex, supplementation, and APOE4 genotype. 
+As a result, 3-way ANOVA is exploratory and should be interpreted 
+with caution. Although we aimed to recruit an equal number of males 
+and females for this study, the ﬁnal sample was imbalanced. This 
+discrepancy is largely due to lower participation rates among males in 
+clinical trials at our site, a trend we have consistently observed. 
+Moreover, although participants were free of a diagnosed dementia or 
+self-reported neurodegenerative disorder, the inclusion criteria did not 
+exclude individuals with undiagnosed prodromal cognitive conditions 
+such as amnestic or nonamnestic mild cognitive impairment. As a 
+result, some participants may have been in the early stages of neuro­
+degenerative processes, which may limit the interpretability and 
+generalizability of the ﬁndings to strictly cognitively healthy pop­
+ulations. The present report focuses on plasma total fatty acids, which 
+reﬂec ect short-term intake of lipids. However, erythrocytes were kept for 
+complementary analysis. Finally, in this study, participants were 
+healthy adults aged 30 to 65 y, free of major metabolic, inﬂam ammatory, 
+or cognitive disorders. As such, the results are most applicable to 
+generally healthy middle-aged adults. Extrapolation to older pop­
+ulations, individuals with chronic diseases, or those with cognitive 
+impairment should not be made. Future studies targeting these speciﬁc c 
+populations will be necessary to determine whether these ﬁndings 
+extend beyond the present cohort.
+In conclusion, in this trial, krill oil resulted in higher ΔEPA and 
+ΔDHA in plasma, indicating that the circulating levels of ω-3 FAs after 
+supplementation are dependent on the chemical form of the supple­
+ments. These results mean that for a similar dose of ω-3 FAs, krill oil 
+increases more EPA and DHA concentrations in males and females.
+Acknowledgments
+We would like to thank all the participants who contributed their 
+time and effort to this study.
+Author contributions
+The authors’ responsibilities were as follows – MP: designed 
+research and primary responsible for ﬁnal content; IL: conducted 
+research and performed statistical analysis; AC: provided support with 
+follow-up visits; IL, AV: analyzed data; IL, MP: wrote the paper; and 
+all authors: read and approved the ﬁnal manuscript.
+Declaration of generative AI and AI-assisted techologies 
+in the writing process
+During the preparation of this work, the author(s) used Microsoft 
+Copilot in order to syntax, orthograph and overall readability of the 
+paper. After using this tool/service, the author(s) reviewed and edited 
+the content as needed and take(s) full responsibility for the content of 
+the publication.
+Conﬂic ict of interest
+The authors report no conﬂic icts of interest.
+Funding
+This work was funded by the Canadian Institutes of Health 
+Research (201909PJ). The study funder had no role in the design, 
+execution, or interpretation of the research.
+Data availability
+Data described in the manuscript, code book, and analytic code will 
+be made available upon reasonable request to the corresponding 
+author, pending approval for noncommercial academic use.
+Appendix A. Supplementary data
+Supplementary data to this article can be found online at https://doi. 
+org/10.1016/j.ajcnut.2026.101346.
+References
+[1] S.U. Khan, A.N. Lone, M.S. Khan, S.S. Virani, R.S. Blumenthal, K. Nasir, 
+Effect of omega-3 fatty acids on cardiovascular outcomes: a systematic review 
+and meta-analysis, EClinicalMedicine. 38 (2021) 100997.
+[2] E. Sokoła-Wysoczanska, T. Wysoczanski, J. Wagner, K. Czy_z, R. Bodkowski, 
+S. Lochynski, Polyunsaturated fatty acids and their potential therapeutic role in 
+cardiovascular system disorders-a review, Nutrients. 10 (10) (2018) 1561.
+[3] D. Amos, C. Cook, N. Santanam, Omega 3 rich diet modulates energy 
+metabolism via GPR120-Nrf2 crosstalk in a novel antioxidant mouse model, 
+Biochim. Biophys. Acta. Mol. Cell Biol. Lipids. 1864 (4) (2019) 466–488.
+[4] P. Mone, F. Varzideh, U. Kansakar, C. Infante, A. Lombardi, A. de Donato, 
+Omega-3 fatty acids coordinate glucose and lipid metabolism in diabetic 
+patients, Lipids Health Dis. 21 (1) (2022) 31.
+[5] A.V. Witte, L. Kerti, H.M. Hermannst€adter, J.B. Fiebach, S.J. Schreiber, J. 
+P. Schuchardt, Long-chain omega-3 fatty acids improve brain function and 
+structure in older adults, Cereb. Cortex 24 (11) (2014) 3059–3068.
+[6] S. Kalmijn, M.P.J. van Boxtel, M. Ocke, W.M.M. Verschuren, D. Kromhout, 
+L.J. Launer, Dietary intake of fatty acids and ﬁsh in relation to cognitive 
+performance at middle age, Neurology 62 (2) (2004) 275–280.
+[7] B.M. van Gelder, M. Tijhuis, S. Kalmijn, D. Kromhout, Fish consumption, n-3 
+fatty acids, and subsequent 5-y cognitive decline in elderly men: the Zutphen 
+elderly study, Am. J. Clin. Nutr. 85 (4) (2007) 1142–1147.
+[8] K. Yurko-Mauro, D.D. Alexander, M.E. Van Elswyk, Docosahexaenoic acid 
+and adult memory: a systematic review and meta-analysis, PLOS ONE 10 (3) 
+(2015) e0120391.
+[9] M.A. Husain, B. Laurent, M. Plourde, APOE and Alzheimer’s disease: From lipid 
+transport to physiopathology and therapeutics, Front. Neurosci. 15 (2021) 630502.
+[10] L.B. Lopez, D. Kritz-Silverstein, E. Barrett-Connor, High dietary and plasma 
+levels of the omega-3 fatty acid docosahexaenoic acid are associated with 
+decreased dementia risk, J. Nutr. Health Aging 15 (1) (2011) 25–31.
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+8 
+
+[11] M.C. Morris, D.A. Evans, J.L. Bienias, C.C. Tangney, D.A. Bennett, R. 
+S. Wilson, Consumption of ﬁsh and n-3 fatty acids and risk of incident 
+Alzheimer disease, Arch. Neurol. 60 (7) (2003) 940–946.
+[12] B. Andriambelo, M. Stiffel, K. Roke, M. Plourde, New perspectives on 
+randomized controlled trials with omega-3 fatty acid supplements and 
+cognition: a scoping review, Ageing Res. Rev. 85 (2023) 101835.
+[13] M. Plourde, M.C. Vohl, M. Vandal, P. Couture, S. Lemieux, S.C. Cunnane, 
+Plasma n-3 fatty acid response to an n-3 fatty acid supplement is modulated by 
+apoE ϵ4, Br. J. Nutr. 102 (8) (2009) 1121–1124.
+[14] I. Loukil, E.C. Aguilera, A. Vachon, P. Leveille, M. Plourde, Sex, body mass 
+index, and APOE4 increase plasma phospholipid–eicosapentaenoic acid response 
+during an ω-3 fatty acid supplementation, J. Nutr. 154 (2024) 1561–1570.
+[15] B. Beckermann, M. Beneke, I. Seitz, Comparative bioavailability of eicosa- 
+pentaenoic acid and docasahexaenoic acid from triglycerides, free fatty acids 
+and ethyl esters in volunteers, Arzneimittelforschung 40 (6) (1990) 700–704.
+[16] L. Chevalier, A. Vachon, M. Plourde, Pharmacokinetics of supplemental 
+omega-3 fatty acids esteriﬁed ed in monoglycerides, ethyl esters, or triglycerides 
+in adults in a randomized crossover trial, J. Nutr. 151 (5) (2021) 1111–1118.
+[17] V.R. Ramprasath, I. Eyal, S. Zchut, P.J.H. Jones, Enhanced increase of omega- 
+3 index in healthy individuals with response to 4-week n-3 fatty acid 
+supplementation from krill oil versus ﬁsh oil, Lipids Health Dis 12 (2013) 178.
+[18] J.P. Schuchardt, I. Schneider, H. Meyer, J. Neubronner, C. von Schacky, A. Hahn, 
+Incorporation of EPA and DHA into plasma phospholipids in response to different 
+omega-3 fatty acid formulations, Lipids Health Dis 10 (2011) 145.
+[19] L. Cou€edelo, S. Lennon, H. Abrous, I. Chamekh, C. Bouju, H. Griffon, In vivo 
+absorption and lymphatic bioavailability of DHA from microalgal oil, 
+Nutrients 16 (7) (2024) 1014.
+[20] S. Ghasemifard, K. Hermon, G.M. Turchini, A.J. Sinclair, Metabolic fate 
+(absorption, β-oxidation and deposition) of long-chain n-3 fatty acids is 
+affected by sex and oil source, Br. J. Nutr. 114 (5) (2015) 684–692.
+[21] S. Alijani, A. Hahn, W.S. Harris, J.P. Schuchardt, Bioavailability of EPA and 
+DHA in humans – a comprehensive review, Prog. Lipid Res. 97 (2025) 101318.
+[22] L.L. Guarneiri, M.L. Wilcox, K.C. Maki, Comparison of phospholipid- 
+enhanced ﬁsh oil versus krill oil on plasma EPA and DHA, Nutrition 114 
+(2023) 112090.
+[23] C. Schoen, L. Johnsen, A. Micka, M. Wilhelm, Y. Ding, Enhanced absorption 
+of omega-3 fatty acids from a novel krill oil-derived phospholipid formulation, 
+PharmaNutrition 30 (2024) 100417.
+[24] H.H. Sung, A.J. Sinclair, K. Huynh, A.T. Smith, N.A. Mellett, P.J. Meikle, 
+Differential plasma postprandial lipidomic responses to krill oil and ﬁsh oil, 
+Nutrition 65 (2019) 191–201.
+[25] H.H. Sung, A.J. Sinclair, P.A. Lewandowski, X.Q. Su, Postprandial long-chain 
+n-3 PUFA response to krill oil and ﬁsh oil consumption, Asia Pac, J. Clin. 
+Nutr. 27 (1) (2018) 148–157.
+[26] S.M. Ulven, B. Kirkhus, A. Lamglait, S. Basu, E. Elind, T. Haider, Metabolic 
+effects of krill oil are similar to ﬁsh oil at lower EPA/DHA dose, Lipids 46 (1) 
+(2011) 37–46.
+[27] F. Vossk€otter, M. Burhop, A. Hahn, J.P. Schuchardt, Equal bioavailability of 
+omega-3 PUFA from Calanus, ﬁsh and krill oil, Lipids 58 (3) (2023) 
+129–138.
+[28] K.C. Maki, M.S. Reeves, M. Farmer, M. Griinari, K. Berge, H. Vik, Krill oil 
+supplementation increases plasma EPA and DHA, Nutr. Res. 29 (9) (2009) 
+609–615.
+[29] P.C.R. Yalagala, D. Sugasini, S.B. Zaldua, L.M. Tai, P.V. Subbaiah, Lipase 
+treatment of dietary krill oil enables enrichment of brain EPA and DHA, Mol. 
+Nutr. Food Res. 64 (12) (2020) e2000059.
+[30] M. Maltais, D. Lorrain, P. Leveille, I. Viens, A. Vachon, A. Houeto, Omega-3 
+supplementation and cognitive performance throughout adulthood, PLEFA 
+178 (2022) 102415.
+[31] J. Folch, M. Lees, G.H. Sloane Stanley, A simple method for the isolation and 
+puriﬁca cation of total lipids, J. Biol. Chem. 226 (1) (1957) 497–509.
+[32] A.C. Patterson, R.C. Hogg, D.M. Kishi, K.D. Stark, Validation of a Canadian 
+FFQ for EPA and DHA, J. Acad. Nutr. Diet. 112 (7) (2012) 1005–1014.
+[33] S.L. Wong, R. Colley, S.C. Gorber, M. Tremblay, Actical accelerometer 
+sedentary activity thresholds for adults, J. Phys. Act. Health. 8 (4) (2011) 
+587–594.
+[34] S. Hopewell, A.W. Chan, G.S. Collins, A. Hrobjartsson, D. Moher, K. 
+F. Schulz, CONSORT 2025 statement: updated guideline for reporting 
+randomised trials, BMJ 389 (2025) e081123.
+[35] K. Yurko-Mauro, J. Kralovec, E. Bailey-Hall, V. Smeberg, J.G. Stark, 
+N. Salem, Similar EPA and DHA plasma levels with ﬁsh oil or krill oil, Lipids 
+Health Dis 14 (2015) 99.
+[36] P. Araujo, H. Zhu, J.F. Breivik, J.I. Hjelle, Y. Zeng, Determination of 
+triacylglycerols in krill oil, Lipids 49 (2) (2014) 163–172.
+[37] F. Shahidi, A. Abad, Why is Antarctic krill oil on the spotlight? Food Prod, 
+Process Nutr. 6 (1) (2024) 88.
+[38] C. Galli, C.R. Sirtori, C. Mosconi, L. Medini, G. Gianfranceschi, 
+V. Vaccarino, et al., Prolonged retention of doubly labeled 
+phosphatidylcholine in human plasma and erythrocytes after oral 
+administration, Lipids 27 (12) (1992) 1005–1012.
+[39] A. Nilsson, R.D. Duan, Pancreatic and mucosal enzymes in choline 
+phospholipid digestion, Am. J. Physiol. Gastrointest. Liver Physiol. 316 (4) 
+(2019) G425–G445.
+[40] D. Küllenberg, L.A. Taylor, M. Schneider, U. Massing, Health effects of 
+dietary phospholipids, Lipids Health Dis 11 (2012) 3.
+[41] O. Zierenberg, S.M. Grundy, Intestinal absorption of 
+polyenephosphatidylcholine in man, J. Lipid Res. 23 (8) (1982) 1136–1142.
+[42] K.C. Klatt, M.Q. McDougall, O.V. Malysheva, S. Taesuwan, A.P. Loinard- 
+Gonzalez, J.E. Nevins, Prenatal choline supplementation improves maternal 
+DHA status, Am. J. Clin. Nutr. 116 (3) (2022) 820–832.
+[43] U. Kansakar, V. Trimarco, P. Mone, F. Varzideh, A. Lombardi, G. Santulli, 
+Choline supplements: an update, Front. Endocrinol. 14 (2023) 1148166.
+[44] C.M. Kerksick, Acute Alpha-GPC supplementation enhances cognitive 
+performance, Nutrients 16 (23) (2024) 4240.
+[45] J. Li, Y. Jian, R. Liu, X. Zhao, J. Mao, W. Wei, Choline and ﬁsh oil improve 
+memory of mice by increasing brain DHA, Foods 12 (9) (2023) 1799.
+[46] C.N. Kuratko, N. Salem, Biomarkers of DHA status, PLEFA 81 (2009) 111–118.
+[47] E.J. Schaefer, V. Bongard, A.S. Beiser, S. Lamon-Fava, S.J. Robins, R. Au, 
+Plasma phosphatidylcholine DHA and dementia risk, Arch. Neurol. 63 (11) 
+(2006) 1545–1550.
+[48] A. Thomas, M. Baillet, C. Proust-Lima, C. Feart, A. Foubert-Samier, 
+C. Helmer, Blood omega-3 fatty acids, brain atrophy and dementia risk, 
+Alzheimers Dement (2020), https://doi.org/10.1002/alz.12195.
+[49] R. Chouinard-Watkins, R.J.S. Lacombe, A.H. Metherel, M. Masoodi, R. 
+P. Bazinet, DHA esteriﬁed ed to phospholipids targets the brain more efﬁci ciently, 
+Mol. Nutr. Food Res. 63 (9) (2019) e1801224.
+[50] R. Chouinard-Watkins, V. Conway, A.M. Minihane, K.G. Jackson, J. 
+A. Lovegrove, M. Plourde, Interaction between BMI and APOE genotype on 
+plasma PUFA response, Am. J. Clin. Nutr. 102 (2) (2015) 505–513.
+[51] H.N. Yassine, V. Rawat, W.J. Mack, J.F. Quinn, K. Yurko-Mauro, E. Bailey- 
+Hall, Effect of APOE genotype on delivery of DHA to CSF in Alzheimer’s 
+disease, Alzheimers Res Ther 8 (1) (2016) 25.
+I. Loukil et al. 
+The American Journal of Clinical Nutrition 124 (2026) 101346
+9 

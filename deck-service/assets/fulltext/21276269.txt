@@ -1,0 +1,653 @@
+RESEARCH
+Open Access
+Krill oil significantly decreases 2-arachidonoylglycerol
+plasma levels in obese subjects
+Sebastiano Banni1,2*, Gianfranca Carta1,2, Elisabetta Murru1,2, Lina Cordeddu1,2, Elena Giordano1,2,
+Anna Rita Sirigu1,2, Kjetil Berge3, Hogne Vik3, Kevin C Maki4, Vincenzo Di Marzo5, Mikko Griinari6
+Abstract
+We have previously shown that krill oil (KO), more efficiently than fish oil, was able to downregulate the
+endocannabinoid system in different tissues of obese zucker rats.
+We therefore aimed at investigating whether an intake of 2 g/d of either KO or menhaden oil (MO), which
+provides 309 mg/d of EPA/DHA 2:1 and 390 mg/d of EPA/DHA 1:1 respectively, or olive oil (OO) for four weeks, is
+able to modify plasma endocannabinoids in overweight and obese subjects.
+The results confirmed data in the literature describing increased levels of endocannabinoids in overweight and
+obese with respect to normo-weight subjects. KO, but not MO or OO, was able to significantly decrease 2-
+arachidonoylglycerol (2-AG), although only in obese subjects. In addition, the decrease of 2-AG was correlated to
+the plasma n-6/n-3 phospholipid long chain polyunsaturated fatty acid (LCPUFA) ratio. These data show for the
+first time in humans that relatively low doses of LCPUFA n-3 as KO can significantly decrease plasma 2-AG levels in
+obese subjects in relation to decrease of plasma phospholipid n-6/n-3 LCPUFA ratio. This effect is not linked to
+changes of metabolic syndrome parameters but is most likely due to a decrease of 2-AG biosynthesis caused by
+the replacement of 2-AG ultimate precursor, arachidonic acid, with n-3 PUFAs, as previously described in obese
+Zucker rats.
+Introduction
+The endocannabinoid system is deeply involved in the
+regulation of the homeostasis of body composition by
+regulating food intake and energy expenditure. An over-
+active endocannabinoid system was suggested to contri-
+bute to increased fat mass and to several features of
+metabolic syndrome [1]. In fact, an increase of ananda-
+mide (AEA) and 2-arachidonoylglycerol (2-AG) in over-
+weight and obese subjects has been described [2-4].
+A therapeutic approach aimed at re-establishing a
+physiological tone of the endocannabinoid system
+mainly relies on using antagonists of the one of their
+targets that is mostly responsible for their metabolic
+effects, i.e. the cannabinoid CB1 receptor [5]. However,
+it has been shown that the use of these antagonists in
+obese individuals is accompanied by psychiatric side
+effects such as increased incidence of depression and
+anxiety [5,6].
+Endocannabinoids are ultimately derived from arachi-
+donic acid incorporated in the sn-1 or sn-2 position of
+phospholipids, and their biosynthesis was shown to be
+affected by dietary fatty acids and in particular by EPA
+and DHA [7].
+Recently [8], we have shown that in Zucker rats, an
+animal model of obesity, both krill oil (KO) and fish oil
+similarly increased EPA and DHA plasma levels, with
+KO being more effective than fish oil in improving
+some parameters of metabolic syndrome such as fatty
+liver and fatty heart. This might most probably be
+related to the stronger inhibitory effect of KO on endo-
+cannabinoid levels in these tissues and, particularly, in
+the visceral adipose tissue. In addition, we have recently
+reported that administration of 2 g/d of KO or menha-
+den oil (MO) for four weeks, significantly increased EPA
+and DHA levels in plasma in normal, overweight and
+obese subjects [9]. This KO dose provided 216 mg/d
+EPA and 90 mg/d DHA, while MO provided 212 mg/d
+EPA and 178 mg/d DHA. The International Society for
+the Study of Fatty Acids and Lipids (ISSFAL) reported
+as a recommendation [10] for cardiovascular health a
+* Correspondence: banni@unica.it
+1Dipartimento Biologia Sperimentale, Università di Cagliari, Cittadella
+Universitaria, 09042 Monserrato (CA), Italy
+Full list of author information is available at the end of the article
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+© 2011 Banni et al; licensee BioMed Central Ltd. This is an Open Access article distributed under the terms of the Creative Commons
+Attribution License (http://creativecommons.org/licenses/by/2.0), which permits unrestricted use, distribution, and reproduction in
+any medium, provided the original work is properly cited.
+
+minimum intake of combined EPA and DHA of
+500 mg/day, based on several studies showing a signifi-
+cant reduction of cardiovascular risk with this dose or
+higher. In addition, the effect of n-3 long chain polyun-
+saturated fatty acids (LCPUFA) on metabolic syndrome
+parameters has been shown to be effective at much
+higher doses [11].
+To our knowledge, the effect of dietary n-3 fatty acids
+on AEA and 2-AG concentrations in human plasma has
+never been investigated. This issue is not trivial, since it
+is well established that plasma 2-AG levels in obese
+individuals strongly correlate with several parameters of
+the metabolic syndrome, including visceral adipose tis-
+sue, high triglyceride levels, low HDL-cholesterol levels
+and indices of insulin resistance. Therefore, in this study
+we aimed at verifying whether or not four-week dietary
+intake of KO, FO or olive oil (OO), is able to modify
+endocannabinoid levels in the plasma of normo-weight,
+overweight and obese subjects.
+Materials and methods
+Study design
+This was a 4-week, randomized, double-blind, controlled,
+parallel clinical trial conducted at 2 clinical research sites
+in the United States (Provident Clinical Research, Bloo-
+mington, IN, and Meridien Research, St. Petersburg, FL).
+The study included 3 visits: 2 screening/baseline visits
+(weeks -1 and 0) and 1 end-of-treatment visit (week 4).
+An independent institutional review board, Quorum
+Review, Inc. (Seattle, Wash), approved the protocol
+before initiation of the study, and written informed con-
+sent was obtained from all subjects before protocol-speci-
+fic procedures were performed.
+Subjects
+63 subjects generally healthy men and women, 35 to
+64 years of age, with waist circumference of 102 cm or
+greater (men) or 88 cm or greater (women) were
+included (see Table 1 for demographic and anthropo-
+metric characteristics). Pregnant (or those planning to
+become pregnant during the study period) and lactat-
+ing women were excluded. Volunteers who consumed
+fish more than 3 times in the month before screening
+were not eligible for enrollment and consumption of
+fish and seafood products was prohibited during the
+study. Individuals with a self-reported history of dia-
+betes, inflammatory bowel disease, pancreatitis, and
+gallbladder or biliary disease in the 12 months before
+the screening visit were excluded from the study. In
+addition, those with a history of cancer (except for
+nonmelanoma skin cancer) in the 2 years before
+screening or any major trauma or surgical event within
+3 months before screening were not enrolled. Volun-
+teers were also excluded if they had serum triglycerides
+(TG) ≥500 mg/dL, total cholesterol (TC) ≥300 mg/dL,
+or uncontrolled hypertension (systolic blood pressure
+≥160 mm Hg or diastolic blood pressure ≥100 mm
+Hg) at screening. The use of lipid-altering medications
+or supplements, non-study-related omega-3 fatty acid
+supplements (eg, flaxseed, fish, or algal oils) or omega-
+3 fatty acid-enriched or fortified foods, and anticoagu-
+lants was prohibited within 2 weeks of screening and
+throughout the study.
+Study procedures
+At baseline, eligible subjects were randomly assigned to
+1 of 3 groups: 2 g/d of either KO (Superba krill oil,
+Aker BioMarine ASA, Oslo, Norway), MO (Omega-
+Pure, Houston, Tex), or olive oil (control). Subjects were
+instructed to consume four 500 mg capsules per day,
+preferably 2 capsules with each of 2 meals, for 4 weeks.
+Four capsules of the KO supplement provided 216 mg/d
+EPA and 90 mg/d DHA, and the MO supplement pro-
+vided 212 mg/d EPA and 178 mg/d DHA. Stratification
+of the subjects has been carried out by BMI values: nor-
+moweight BMI <25; overweight 25 < BMI <30; obese
+30 < BMI <35.
+Further details of the study are described in [9].
+Lipid analyses
+Total lipids were extracted from plasma using chloro-
+form/methanol 2:1 (v/v) [12]. Separation of phospholi-
+pids (PL) from total lipids was performed as previously
+reported [13]. Aliquots were mildly saponified as pre-
+viously described [14] in order to obtain free fatty acids
+for HPLC analysis. Separation of fatty acids was carried
+out with an Agilent 1100 HPLC system (Agilent, Palo
+Alto, Calif., USA) equipped with a diode array detector
+as previously reported [15]. N-arachidonoylethanolamine
+(anandamide, AEA) and 2-arachidonoylglycerol (2-AG)
+were measured as previously described [16].
+Table 1 Baseline demographic and anthropometric
+characteristics of subjects by treatment group
+OO
+MO
+KO
+(n = 19)
+(n = 23)
+(n = 21)
+Male, n
+3
+4
+3
+Female, n
+16
+19
+18
+Normoweight, n, male/female
+1/3
+1/3
+1/6
+Overweight, n, male/female
+1/6
+2/5
+1/4
+Obese, n, male/female
+1/7
+1/11
+1/8
+Age, year, mean ± SEM
+47.4 ± 8.5
+49.6 ± 8.7
+49.4 ± 8.5
+Body mass index, kg/m2,
+mean ± SEM
+30.6 ± 1.3
+31.6 ± 0.9
+30.1 ± 1.0
+Stratification of the subjects has been carried out by BMI values: normoweight
+BMI <25; overweight 25 < BMI <30; obese 30 < BMI <35.
+There were no significant differences between groups for any variable.
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+Page 2 of 6
+
+Statistical analyses
+One way ANOVA with the Bonferroni test for post-hoc
+analyses was applied to evaluate statistical differences
+between groups. Whereas t-student test for paired sam-
+ples was applied to detect significant differences
+between before and after treatment.
+Results
+No changes in BMI, waist circumference, glycemia and
+insulinemia were detected after any of the treatments
+(data not shown).
+At baseline, plasma AEA levels were significantly
+higher in obese subjects, whereas plasma 2-AG levels
+were significantly higher only in overweight subjects
+(figure 1). Four week dietary intake of KO was able to
+significantly decrease 2-AG, but not AEA, only in the
+obese subjects, although a non-statistically significant
+trend towards a decrease was observed also in over-
+weight subjects (figure 2). By contrast, MO or OO treat-
+ments did not modify endocannabinoid levels in either
+overweight or obese individuals (figure 2). A significant
+correlation between 2-AG levels and the plasma phos-
+pholipids n-6/n-3 LCPUFA ratio [(20:4n6+22:5n6
++20:3n-6+22:4n-6)/(20:5n-3+22:6n-3)] was observed only
+in obese subjects whose diet was supplemented with KO
+(figure 3). No other correlation was found between
+endocannabinoids and single plasma phospholipid fatty
+acids, or in normo and overweight patients. In addition,
+due to the relatively low number of male subjects
+recruited, it was not possible to make any statistical ana-
+lysis on gender differences in terms of treatment effects
+(data not shown).
+Discussion
+In this pilot study we have confirmed data in the litera-
+ture showing that overweight and obese subjects exhibit
+increased plasma levels of the endocannabinoids, AEA
+and 2-AG [2-4]. In our cohort of subjects, however,
+plasma 2-AG levels were increased significantly only in
+overweight individuals, whereas AEA levels were
+increased significantly only in obese subjects. This find-
+ing agrees with previous results suggesting that
+increased plasma AEA levels are associated with high
+BMI [17], whereas increased plasma 2-AG levels are
+associated with high visceral adipose tissue and not
+necessarily with high BMI [3,18,19]. It is possible that
+the cohort of obese subjects of the present study might
+have been characterized by a higher proportion of sub-
+cutaneous adipose tissue than in other cohorts pre-
+viously investigated. As we did not acquire data on the
+adipose distribution in the obese subjects of a present
+study, this remains only a speculative hypothesis, to be
+specifically addressed in future studies. In addition, fat
+distribution in overweight premenopausal women may
+be different from that in postmenopausal women and in
+men for a given level of waist circumference. Thus, the
+small number of subjects in the present study and the
+heterogeneous nature of the sample (i.e., men as well as
+pre- and postmenopausal women) do not permit a
+meaningful assessment of the correlation of 2-AG levels
+with visceral fat distribution.
+The novel finding of the present study is that KO,
+more efficiently than MO, was able to reduce endocan-
+nabinoid levels in the plasma despite the fact that the
+effects of the two dietary treatments on EPA and DHA
+plasma concentrations were comparable and even
+slightly lower in the KO group than in the MO group
+[9]. Comparable results were obtained in the visceral
+adipose tissue, liver and heart of obese Zucker rats [8].
+However, in this previous study, 2-AG concentrations
+were decreased significantly by KO, and to a smaller
+extent by fish oil, only in the visceral adipose tissue.
+One possible explanation for the different effects of KO
+and fish oil might be, as previously suggested [8], the
+more efficient incorporation of n-3 LCPUFAs into visc-
+eral adipose tissue phospholipids, and subsequent
+decrease in arachidonic acid incorporation associated
+with KO supplementation, hence leading to impaired
+endocannabinoid biosynthesis.
+Thus, it is tempting to suggest that plasma 2-AG
+mainly derives from this tissue, possibly because of its
+relatively high concentrations in this adipose depot. This
+hypothesis is in agreement with the strong correlations
+previously described between the amount of visceral adi-
+pose tissue and plasma 2-AG levels in overweight and
+obese subjects [18,19]. By contrast, in the subcutaneous
+adipose tissue of obese animals [20] and obese subjects
+with type 2 diabetes [2], 2-AG levels seem to be rather
+decreased, indicating that the 2-AG levels in the plasma
+cannot be predicted from those in the subcutaneous fat,
+and vice versa.
+0
+2
+4
+6
+8
+norm
+OW
+OB
+nM
+AEA at baseline
+b
+a,b
+a
+0
+20
+40
+60
+80
+100
+120
+140
+norm
+OW
+OB
+nM
+2-AG at baseline
+b
+a,b
+a
+Figure 1 Baseline Endocannabinoid plasma levels (nM),
+anandamide (AEA) left panel; 2-arachidonoylglycerol (2-AG)
+right panel, in normoweight subjects (norm) (n = 15),
+overweight (OW) subjects (n = 19) and obese subjects (OB)
+(n = 29). Error bars depict S.E.M. Different letters denote significant
+differences (p < 0.05).
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+Page 3 of 6
+
+0
+2
+4
+6
+8
+10
+norm
+OW
+OB
+nM
+AEA KO
+pre
+post
+A
+0
+2
+4
+6
+8
+10
+norm
+OW
+OB
+nM
+AEA MO
+pre
+post
+C
+0
+2
+4
+6
+8
+10
+norm
+OW
+OB
+nM
+AEA OO
+pre
+post
+E
+0
+50
+100
+150
+200
+norm
+OW
+OB
+nM
+2-AG KO
+pre
+post
+B
+0
+50
+100
+150
+200
+norm
+OW
+OB
+nM
+2-AG MO
+pre
+post
+D
+0
+20
+40
+60
+80
+100
+120
+140
+norm
+OW
+OB
+nM
+2-AG OO
+pre
+post
+F
+*
+Figure 2 Endocannabinoid plasma levels (nM) before (pre) and after (post) treatment with different oils. norm = normoweight subjects;
+OW = overweight subjects; OB = obese subjects. A and B anandamide (AEA) and arachidonoylglycerol (2-AG) respectively with Krill oil (KO)
+treatment (n = 7, n = 5, n = 9 in norm, OW and OB respectively); C and D AEA and 2 AG respectively with menhaden oil (MO) treatment (n = 4,
+n = 7, n = 12 in norm, OW and OB respectively); E and F AEA and 2 AG respectively with olive oil (OO) treatment (n = 4, n = 7, n = 8 in norm,
+OW and OB respectively). Error bars depict S.E.M. * denotes statistical difference (p < 0.05).
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+Page 4 of 6
+
+The positive correlation between 2-AG and the plasma
+phospholipid n-6/n-3 LCPUFA ratio, and not with the
+absolute plasma phospholipid concentrations of n-3 or
+n-6 LCPUFA, suggests that at least 2-AG levels are
+strongly influenced by fatty acid metabolism involving
+the balance between n-6 and n-3 LCPUFA. Interestingly,
+it has been demonstrated that the n-6/n-3 LCPUFA
+ratio, rather than absolute values of n-6 and n-3 PUFA,
+is correlated to cardiovascular disease [21], which is also
+directly associated with many of the metabolic disorders
+that positively correlate with plasma 2-AG levels
+[3,18,19]. Thus, it is tempting to hypothesize that KO
+ameliorates cardiovascular disorders in overweight and
+obese subjects, at least in part, by re-establishing a phy-
+siological endocannabinoid tone at CB1 receptors, via
+decrease of the n-6/n-3 phospholipid LCPUFA ratio
+and, hence, reduction of the ultimate biosynthetic pre-
+cursors of 2-AG, the up-regulation of which is instead
+associated with visceral obesity, dyslipidemia, insulin
+resistance and atherogenic inflammation [5]. Since AEA
+is derived from AA esterified on the sn-1 position, and
+2-AG from that esterified on the sn-2 position in the
+phospholipids, and since a reduction of the n-6/n-3
+LCPUFA ratio would mostly affect the latter, this
+hypothesis, which is also based on the results from our
+previous study in Zucker rats, would also explain why
+KO only affected 2-AG and not AEA levels in the
+plasma. However, in the present study no significant dif-
+ferences in lipid metabolism, body weight or metabolic
+syndrome parameters were detected among the 3 groups
+of dietary treatments [9]. Therefore, the hypothesis that
+KO-induced reduction of plasma 2-AG levels may result
+in an amelioration of the metabolic dysfunctions asso-
+ciated with overweight and obesity will require further
+investigation. Even though a recent report [22] showed
+that plasma phospholipid n-3 PUFA was inversely asso-
+ciated with the metabolic syndrome, the lack of changes
+in metabolic syndrome parameters in the subjects that
+were administered with KO may suggest that four weeks
+of such treatment, and of the consequent KO-induced
+inhibition of 2-AG levels, is not sufficient to exert any
+beneficial metabolic effects. Indeed, even the direct
+antagonism of CB1 with rimonabant (20 mg/day) in
+obese subjects starts reducing body weight and amelior-
+ating dyslipidemia and insulin resistance only after
+2-3 months from the beginning of treatment [5]. More-
+over, the lack of effect on triglyceride levels after treat-
+ment might be related to the fact that the participants
+in the study were normo-lipidemic. The lipid-lowering
+property of omega-3 fatty acids such as EPA and DHA
+is more pronounced in subjects with elevated triglycer-
+ides [23,24].
+Future studies will have to investigate whether longer
+dietary interventions and higher dietary levels of KO,
+apart from still down-regulating the endocannabinoid
+system, also improve the metabolic syndrome, thus pos-
+sibly representing an alternative to CB1 antagonists/
+inverse agonists for the treatment of this disorder.
+Acknowledgements
+The Authors thank Aker Biomarine ASA, Oslo, Norway, for supporting in part
+the study.
+Author details
+1Dipartimento Biologia Sperimentale, Università di Cagliari, Cittadella
+Universitaria, 09042 Monserrato (CA), Italy. 2Nutrisearch s.r.l., Edificio 5 A1
+Parco scientifico e tecnologico Polaris,09010 Pula, Italy. 3Aker Biomarine ASA,
+Fjordallèen 16, NO-0115 Oslo, Norway. 4Provident Clinical Research, 489 Taft
+Avenue, Glen Ellyn, Illinois 60137, USA. 5Endocannabinoid Research Group,
+Institute of Biomolecular Chemistry, Consiglio Nazionale delle Ricerche, Via
+Campi Flegrei 34, Comprensorio Olivetti, 80078 Pozzuoli (NA), Italy. 6Clanet
+Ltd., Kultarinnantie 1 b, Espoo, 02660, Finland.
+Authors’ contributions
+SB, MG conceived of the study, participated in its design and supervision
+and drafted the manuscript with the contribution of all Authors; VD
+contributed to the interpretation of the data and supervised the analytical
+procedures; KB, HV evaluated the products used for the treatments and
+contributed to the study design; KCM supervised subject recruitment,
+qualification and treatment, blood sampling and clinical analyses; EG, EM, LC,
+GC, AS performed all analyses of plasma phospholipid fatty acid profile and
+plasma endocannabinoids, collected all data and made statistical analyses.
+All authors read, revised and approved the final manuscript.
+Competing interests
+M.G., was a consultant for Aker Biomarine ASA, Oslo, Norway at the time of
+study. K.B. and H.V., are employed by Aker Biomarine ASA, Oslo, Norway. K.C.
+M. has received research funding and consulting fees from Aker Biomarine
+ASA, Oslo Norway. All other authors declare that they have no competing
+interests.
+Received: 7 October 2010 Accepted: 30 January 2011
+Published: 30 January 2011
+References
+1.
+Matias I, Petrosino S, Racioppi A, Capasso R, Izzo AA, Di Marzo V:
+Dysregulation of peripheral endocannabinoid levels in hyperglycemia
+and obesity: Effect of high fat diets. Mol Cell Endocrinol 2008, 286:S66-78.
+2.
+Annuzzi G, Piscitelli F, Di Marino L, Patti L, Giacco R, Costabile G, Bozzetto L,
+Riccardi G, Verde R, Petrosino S, Rivellese AA, Di Marzo V: Differential
+R² = 0.5383
+0
+1
+2
+3
+4
+5
+6
+7
+0
+50
+100
+150
+plasma n-6/n-3
+2-AG (nM)
+Figure 3 Correlation between plasma phospholipid long chain
+PUFA n-6 (20:4+22:5+20:3+22:4)/long chain PUFA n-3 (20:5+22:6)
+ratio and 2-arachidonoylglycerol (2-AG). R2 = 0.55, p < 0.05.
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+Page 5 of 6
+
+alterations of the concentrations of endocannabinoids and related lipids
+in the subcutaneous adipose tissue of obese diabetic patients. Lipids
+Health Dis 2010, 9:43.
+3.
+Di Marzo V, Cote M, Matias I, Lemieux I, Arsenault BJ, Cartier A, Piscitelli F,
+Petrosino S, Almeras N, Despres JP: Changes in plasma endocannabinoid
+levels in viscerally obese men following a 1 year lifestyle modification
+programme and waist circumference reduction: associations with
+changes in metabolic risk factors. Diabetologia 2009, 52:213-217.
+4.
+Sipe JC, Scott TM, Murray S, Harismendy O, Simon GM, Cravatt BF, Waalen J:
+Biomarkers of endocannabinoid system activation in severe obesity.
+PLoS One 2010, 5:e8792.
+5.
+Di Marzo V, Despres JP: CB1 antagonists for obesity–what lessons have
+we learned from rimonabant? Nat Rev Endocrinol 2009, 5:633-638.
+6.
+Moreira FA, Grieb M, Lutz B: Central side-effects of therapies based on
+CB1 cannabinoid receptor agonists and antagonists: focus on anxiety
+and depression. Best Pract Res Clin Endocrinol Metab 2009, 23:133-144.
+7.
+Banni S, Di Marzo V: Effect of dietary fat on endocannabinoids and
+related mediators: consequences on energy homeostasis, inflammation
+and mood. Mol Nutr Food Res 2010, 54:82-92.
+8.
+Batetta B, Griinari M, Carta G, Murru E, Ligresti A, Cordeddu L, Giordano E,
+Sanna F, Bisogno T, Uda S, Collu M, Bruheim I, Di Marzo V, Banni S:
+Endocannabinoids may mediate the ability of (n-3) fatty acids to reduce
+ectopic fat and inflammatory mediators in obese Zucker rats. J Nutr
+2009, 139:1495-1501.
+9.
+Maki KC, Reeves MS, Farmer M, Griinari M, Berge K, Vik H, Hubacher R,
+Rains TM: Krill oil supplementation increases plasma concentrations of
+eicosapentaenoic and docosahexaenoic acids in overweight and obese
+men and women. Nutr Res 2009, 29:609-615.
+10.
+International Society for the Study of Fatty Acids and Lipids: [http://www.
+issfal.org.uk/images/stories/pdfs/PUFAIntakeReccomdFinalReport.pdf].
+11.
+Carpentier YA, Portois L, Malaisse WJ: n-3 fatty acids and the metabolic
+syndrome. Am J Clin Nutr 2006, 83:1499S-1504S.
+12.
+Folch J, Lees M, Sloane Stanley GH: A simple method for the isolation and
+purification of total lipides from animal tissues. J Biol Chem 1957,
+226:497-509.
+13.
+Banni S, Carta G, Angioni E, Murru E, Scanu P, Melis MP, Bauman DE,
+Fischer SM, Ip C: Distribution of conjugated linoleic acid and metabolites
+in different lipid fractions in the rat liver. J Lipid Res 2001, 42:1056-1061.
+14.
+Banni S, Carta G, Contini MS, Angioni E, Deiana M, Dessi MA, Melis MP,
+Corongiu FP: Characterization of Conjugated Diene Fatty Acids in Milk,
+Dairy Products, and Lamb Tissues. J Nutr Biochem 1996, 7:150-155.
+15.
+Melis MP, Angioni E, Carta G, Murru E, Scanu P, Spada S, Banni S:
+Characterization of conjugated linoleic acid and its metabolites by RP-
+HPLC with diode array detector. Eur J Lipid Sci Technol 2001, 103:617-621.
+16.
+Di Marzo V, Goparaju SK, Wang L, Liu J, Batkai S, Jarai Z, Fezza F, Miura GI,
+Palmiter RD, Sugiura T, Kunos G: Leptin-regulated endocannabinoids are
+involved in maintaining food intake. Nature 2001, 410:822-825.
+17.
+Engeli S, Bohnke J, Feldpausch M, Gorzelniak K, Janke J, Batkai S, Pacher P,
+Harvey-White J, Luft FC, Sharma AM, Jordan J: Activation of the peripheral
+endocannabinoid system in human obesity. Diabetes 2005, 54:2838-2843.
+18.
+Bluher M, Engeli S, Kloting N, Berndt J, Fasshauer M, Batkai S, Pacher P,
+Schon MR, Jordan J, Stumvoll M: Dysregulation of the peripheral and
+adipose tissue endocannabinoid system in human abdominal obesity.
+Diabetes 2006, 55:3053-3060.
+19.
+Cote M, Matias I, Lemieux I, Petrosino S, Almeras N, Despres JP, Di Marzo V:
+Circulating endocannabinoid levels, abdominal adiposity and related
+cardiometabolic risk factors in obese men. Int J Obes (Lond) 2007,
+31:692-699.
+20.
+Izzo AA, Piscitelli F, Capasso R, Aviello G, Romano B, Borrelli F, Petrosino S,
+Di Marzo V: Peripheral endocannabinoid dysregulation in obesity:
+relation to intestinal motility and energy processing induced by food
+deprivation and re-feeding. Br J Pharmacol 2009, 158:451-461.
+21.
+Griffin BA: How relevant is the ratio of dietary n-6 to n-3 polyunsaturated
+fatty acids to cardiovascular disease risk? Evidence from the OPTILIP
+study. Curr Opin Lipidol 2008, 19:57-62.
+22.
+Huang T, Bhulaidok S, Cai Z, Xu T, Xu F, Wahlqvist ML, Li D: Plasma
+phospholipids n-3 polyunsaturated fatty acid is associated with
+metabolic syndrome. Mol Nutr Food Res 54:1628-1635.
+23.
+Harris WS: Fish oils and plasma lipid and lipoprotein metabolism in
+humans: a critical review. J Lipid Res 1989, 30:785-807.
+24.
+Harris WS: n-3 fatty acids and serum lipoproteins: human studies. Am J
+Clin Nutr 1997, 65:1645S-1654S.
+doi:10.1186/1743-7075-8-7
+Cite this article as: Banni et al.: Krill oil significantly decreases 2-
+arachidonoylglycerol plasma levels in obese subjects. Nutrition & Metabolism
+2011 8:7.
+Submit your next manuscript to BioMed Central
+and take full advantage of: 
+• Convenient online submission
+• Thorough peer review
+• No space constraints or color ﬁgure charges
+• Immediate publication on acceptance
+• Inclusion in PubMed, CAS, Scopus and Google Scholar
+• Research which is freely available for redistribution
+Submit your manuscript at 
+www.biomedcentral.com/submit
+Banni et al. Nutrition & Metabolism 2011, 8:7
+http://www.nutritionandmetabolism.com/content/8/1/7
+Page 6 of 6

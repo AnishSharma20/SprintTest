@@ -1,0 +1,1204 @@
+© 2013 Konagai et al. This work is published by Dove Medical Press Ltd, and licensed under Creative Commons Attribution – Non Commercial (unported, v3.0) 
+License. The full terms of the License are available at http://creativecommons.org/licenses/by-nc/3.0/. Non-commercial uses of the work are permitted without any further 
+permission from Dove Medical Press Ltd, provided the work is properly attributed. Permissions beyond the scope of the License are administered by Dove Medical Press Ltd. Information on how to 
+request permission may be found at: http://www.dovepress.com/permissions.php
+Clinical Interventions in Aging 2013:8 1247–1257
+Clinical Interventions in Aging
+Dovepress
+submit your manuscript | www.dovepress.com
+Dovepress 
+1247
+O r i g i n a l R e s e a r c h
+open access to scientific and medical research
+Open Access Full Text Article
+http://dx.doi.org/10.2147/CIA.S50349
+Effects of krill oil containing n-3 polyunsaturated 
+fatty acids in phospholipid form on human 
+brain function: a randomized controlled trial 
+in healthy elderly volunteers
+Chizuru Konagai1,2
+Kenichi Yanagimoto3
+Kohsuke Hayamizu3
+Li Han3
+Tomoko Tsuji3
+Yoshihiko Koga2
+1Department of Food and Nutrition, 
+Japan Women’s University, Bunkyo-ku, 
+Tokyo, Japan; 2Department of 
+Neuropsychiatry, Kyorin University 
+School of Medicine, Mitaka, Tokyo, 
+Japan; 3Human Life Science R&D 
+Center, Nippon Suisan Kaisha Ltd, 
+Chiyoda-ku, Tokyo, Japan
+Correspondence: Chizuru Konagai
+Department of Food and Nutrition, Japan 
+Women’s University, 2-8-1 Mejirodai, 
+Bunkyo-ku, Tokyo 112-8681, Japan
+Tel +813 5981 3427
+Fax +813 5981 3427
+Email konagai@fc.jwu.ac.jp
+Background: Krill oil, rich in n-3 (omega-3) polyunsaturated fatty acids (PUFAs) incorporated in 
+phosphatidylcholine, has been reported to have many effects on physiological function. However, 
+there are few studies using psychophysiological methods published that describe the effects of krill 
+oil on brain function. We investigated the influence of ingestion of krill oil on cognitive function 
+in elderly subjects by using near-infrared spectroscopy and electroencephalography.
+Methods: A randomized, double-blind, parallel-group comparative study design was adopted. 
+Forty-five healthy elderly males aged 61–72 years were assigned to receive 12 weeks of ­treatment 
+with: medium-chain triglycerides as placebo; krill oil, which is rich in n-3 PUFAs ­incorporated 
+in phosphatidylcholine; or sardine oil, which is abundant in n-3 PUFAs incorporated in 
+­triglycerides. Changes in oxyhemoglobin concentrations in the cerebral cortex during memory 
+and calculation tasks were measured. The P300 component of event-related potentials was also 
+measured during a working memory task.
+Results: During the working memory task, changes in oxyhemoglobin concentrations in the 
+krill oil and sardine oil groups were significantly greater than those in the medium-chain trig­
+lyceride group at week 12. The differential value for P300 latency in the krill oil group was 
+significantly lower than that in the medium-chain triglyceride group at week 12. With regard 
+to the calculation task, changes in oxyhemoglobin concentrations in the krill oil group were 
+significantly greater than those in the medium-chain triglyceride group at week 12.
+Conclusion: This study provides evidence that n-3 PUFAs activate cognitive function in the 
+elderly. This is especially the case with krill oil, in which the majority of n-3 PUFAs are incor­
+porated into phosphatidylcholine, causing it to be more effective than sardine oil, in which n-3 
+PUFAs are present as triglycerides.
+Keywords: eicosapentaenoic acid, docosahexaenoic acid, phosphatidylcholine, event-related 
+potential, near-infrared spectroscopy, dorsolateral prefrontal cortex
+Introduction
+Researchers in a variety of areas have demonstrated that n-3 (omega-3) polyunsaturated 
+fatty acids (PUFAs), including eicosapentaenoic acid (EPA; 20:5n-3) and docosa­
+hexaenoic acid (DHA; 22:6n-3), have considerable effects on physiological function. 
+Animal and human studies1–4 in addition to epidemiological surveys5–7 have also shown 
+that n-3 PUFAs effectively enhance and improve learning capability as well as memory 
+and cognitive function. Moreover, intake of EPA and DHA is reported to reduce the risk 
+of developing Alzheimer’s disease.8 However, most studies in humans have assessed 
+the effects of n-3 PUFAs based on the results of psychological tests and cognitive 
+Clinical Interventions in Aging downloaded from https://www.dovepress.com/
+For personal use only.
+Number of times this article has been viewed
+This article was published in the following Dove Press journal: 
+Clinical Interventions in Aging
+18 September 2013
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1248
+Konagai et al
+tasks. There are very few studies employing physiological 
+methods that target elderly participants, although there are 
+some studies targeting young adults or children.9–13
+Fish oil contains abundant amounts of n-3 PUFAs, most 
+of which is stored as triglycerides. Sardine oil is one of the 
+most popular fish oils, and is abundant in n-3 PUFAs incorpo­
+rated in triglycerides. In some cases, n-3 PUFAs are stored as 
+phospholipids. Krill is the common name given to the order 
+Euphausiacea of shrimp-like plankton. Krill oil is rich in 
+n-3 PUFAs incorporated in phosphatidylcholine. Vakhapova 
+et al14 and Richter et al15 demonstrated that phosphatidylser­
+ine containing n-3 PUFAs was effective for improvement of 
+memory in the elderly. However, the differences in effects on 
+cognitive function between these two forms of storage (ie, 
+phospholipid and triglyceride), have not been clarified.
+Among the neuroimaging methods available, near-­infrared 
+spectroscopy and event-related potentials are most suitable 
+for measuring changes in brain function longitudinally and 
+noninvasively. Moreover, the devices required are easy to 
+operate and the cost is low compared with other neurophysi­
+ological methods. When brain activity is activated locally, the 
+supply of oxygen to that area increases accordingly. Oxygen 
+binds with hemoglobin and is transported in the form of 
+oxyhemoglobin. Therefore, by measuring blood oxyhemo­
+globin concentrations using near-infrared spectroscopy, it is 
+possible to identify the level of activation of regional cerebral 
+function resulting from the execution of tasks. Near-infrared 
+spectroscopy emits near-infrared light from above the scalp. 
+Analyzing near-infrared light at several wavelengths detected 
+after it has been absorbed by oxyhemoglobin while passing 
+through the tissues of the cerebral cortex makes it possible to 
+measure the relative changes in oxyhemoglobin concentra­
+tion as a marker of neural activity in the cerebral cortex.16 
+Event-related potentials, obtained by analyzing electroen­
+cephalograms (EEGs), represent information processing in 
+the brain electrophysiologically, and are elicited especially 
+while executing cognitive tasks. Among the event-related 
+potential components, P300 is considered to reflect cognitive 
+processes, such as making decisions and controlling behav­
+iors and activities.17 Because near-infrared spectroscopy has 
+a relatively high spatial resolution, it is useful for localizing 
+activated areas. The event-related potential, in contrast, has 
+the advantage of high temporal resolution.
+In this study, two types of continuous performance 
+tasks were used during measurement of changes in oxy­
+hemoglobin concentration and event-related potentials, 
+ie, the working memory task and the calculation task. The 
+amount of working memory mobilized to perform each task 
+is ­considerably different. The former needs mobilization of 
+much working memory. On the contrary, the latter demands 
+little working memory. Working memory is a function that 
+serves as the basis of cognitive activity.
+Prior to conducting a study with a large sample size, we 
+performed a preliminary examination to clarify the effects of 
+long-term ingestion of krill oil and sardine oil on cognitive 
+function in elderly males using the two neurophysiological 
+methods described previously. Further, we investigated dif­
+ferences in effects of n-3 PUFAs on cognitive function in 
+relation to the different chemical forms of storage. Only 
+male subjects were recruited to participate in this study, 
+because cerebral blood volume changes during cognitive 
+activation have been found to be gender-dependent.18 Dif­
+ferences in event-related potentials have also been reported 
+to be gender-dependent.19
+Materials and methods
+Subjects
+Healthy male subjects in their 60s and 70s who had retired 
+from employment in the Japanese business sector were 
+recruited for this study; all participants were paid volunteers. 
+Eligibility for participation was as follows: right-handedness, 
+not requiring prescription medication, no history of mental 
+disorders or cerebrovascular disease, absence of serious liver, 
+kidney, heart, respiratory, endocrine, or metabolic diseases, 
+and absence of food allergies to fish or crustaceans. The 
+participants were clinically confirmed by a psychiatrist to 
+have no cognitive impairment.
+We provided written and oral explanations in advance 
+about the purpose of our study in accordance with the 
+­Declaration of Helsinki. All the participants gave their written 
+informed consent to participate in the study protocol, which 
+was approved by the ethics committee of Kyorin University 
+School of Medicine.
+The participants were measured for their height, body 
+weight, and blood pressure, and then underwent a blood test 
+(white blood cell count, red blood cell count, hemoglobin, and 
+hematocrit), a serum chemistry test (aspartate aminotrans­
+ferase, alanine aminotransferase, gamma-glutamyl transpep­
+tidase, creatinine, total cholesterol, high-density lipoprotein 
+cholesterol, low-density lipoprotein cholesterol, triglycer­
+ides, blood glucose, glycosylated hemoglobin, and uric acid) 
+and urinalysis (occult blood, urinary protein, urinary glucose, 
+and urobilinogen). Forty-five men of mean age (± standard 
+deviation) 67.1 ± 3.4 years with no markedly abnormal find­
+ings for these parameters were randomly divided into three 
+treatment groups (n = 15 per group). The participants were 
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1249
+Effects of n-3 PUFAs in krill oil on brain function
+instructed to avoid excessive consumption of alcohol and 
+food, to limit strenuous exercise, and to refrain from taking 
+supplements that contained PUFAs during the study.
+Experimental supplement
+Three types of experimental supplement were used: krill oil 
+as a typical oil rich in PUFAs incorporated in phosphatidyl­
+choline, sardine oil as a typical fish oil, and medium-chain 
+triglycerides as placebo. Each supplement was prepared by 
+Nippon Suisan Kaisha Ltd. Table 1 shows the composition of 
+the main ingredients in the supplements. They were supplied 
+in soft gelatin capsules containing 0.25 g oil per capsule. 
+There was no difference in color, size, form, smell, or taste 
+between the three types of capsules. Subjects were asked to 
+take four capsules twice a day after breakfast and dinner for 
+12 weeks (eight capsules daily), from the day following the 
+initial measurements to the day of the final measurements. 
+The participants were instructed to complete a self-recorded 
+checklist to document their supplement intake during the 
+study period.
+Experimental design
+A randomized, double-blind, parallel-group, comparative 
+study design was adopted. A computer-generated random 
+allocation sequence was used for participant randomization. 
+This was performed by a person who was not involved with 
+other aspects of the study. Information about assignment was 
+not revealed to the researchers until the key was opened. The 
+participants were not informed about which treatment was 
+included in their capsules. Before the participants started 
+treatment, and at week 6 and week 12, we simultaneously 
+recorded changes in oxyhemoglobin concentration and an 
+EEG during performance of the working memory task, and 
+measured changes in oxyhemoglobin concentration dur­
+ing the calculation task. Near-infrared spectroscopy and 
+EEG recordings were performed in an electrically shielded 
+chamber in the laboratory of the neuropsychiatry division 
+at Kyorin University. The following were also performed: 
+a survey of food intake frequency, measurements of body 
+weight and blood pressure, a blood test, a serum chemistry 
+test, ­measurements of plasma fatty acids (dihomo-gamma-
+linolenic acid, arachidonic acid, EPA, and DHA), and 
+­urinalysis. Subjects showing any abnormal physical symp­
+toms or findings on blood or urine testing during treatment 
+were withdrawn from the study.
+Food frequency method
+The Food Frequency Questionnaire Based on Food Groups 
+(FFQg, version 3.0, Kenpakusha, Tokyo, Japan) was used 
+to evaluate intake of nutrients during the study period. 
+The FFQg was developed for use in Japan and is based 
+on 29 food groups and 10 types of cooking methods, 
+and is used for estimating energy and nutrient intake per 
+week for the previous month.20 From the FFQg, the mean 
+dietary energy intake was calculated according to the fifth 
+revised and enlarged edition of the Standard Tables of 
+Food Composition in Japan.21 The participants’ responses 
+were obtained by interview. We calculated the intake of 
+energy and of individual nutrients per day (protein, fats, 
+carbohydrates, sodium, potassium, calcium, magnesium, 
+Table 1 Composition of each supplement (per daily dose)
+Nutrients
+MCTs
+KO
+SO
+Components
+  Water (g)
+,0.02
+Trace
+0
+  Total lipids (g)
+1.98
+1.98
+1.98
+  Tocopherol (mg)
+0
+14
+20
+Lipid class
+  Phospholipids in total lipids (g)
+0
+0.90
+0
+Fatty acid composition of total lipids
+  8:0 (mg)
+1,497
+13
+0
+  10:0 (mg)
+287
+7
+0
+  12:0 (mg)
+5
+5
+0
+  14:0 (mg)
+0
+155
+84
+  14:1 (mg)
+0
+4
+0
+  15:0 (mg)
+0
+7
+3
+  16:0 (mg)
+0
+280
+106
+  16:1 (mg)
+0
+87
+148
+  16:2 (mg)
+0
+9
+27
+  16:3 (mg)
+0
+3
+44
+  16:4 (mg)
+0
+11
+77
+  17:0 (mg)
+0
+35
+5
+  17:1 (mg)
+0
+4
+0
+  18:0 (mg)
+0
+19
+9
+  18:1 (mg)
+13
+249
+154
+  18:2n-6 (mg)
+4
+25
+22
+  18:3n-3 (mg)
+0
+13
+14
+  18:4n-3 (mg)
+0
+34
+82
+  20:1 (mg)
+0
+11
+3
+  20:2n-6 (mg)
+0
+0
+2
+  20:3n-6 (mg)
+0
+0
+3
+  20:4n-6 (mg)
+0
+3
+20
+  20:4n-3 (mg)
+0
+4
+17
+  20:5n-3 (EPA) (mg)
+0
+193
+491
+  21:5n-3 (mg)
+0
+5
+19
+  22:0 (mg)
+0
+0
+3
+  22:1 (mg)
+0
+12
+0
+  22:5n-6 (mg)
+0
+0
+5
+  22:5n-3 (mg)
+0
+5
+46
+  22:6n-3 (DHA) (mg)
+0
+92
+251
+  Unidentifiable (mg)
+0
+70
+54
+Note: Subjects took four capsules (0.25 g oil/capsule) twice a day after breakfast 
+and dinner. 
+Abbreviations: MCTs, medium-chain triglycerides; KO, krill oil; SO, sardine oil; 
+EPA, eicosapentaenoic acid; DHA, docosahexaenoic acid.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1250
+Konagai et al
+phosphorus, iron, zinc, copper, manganese, dietary fiber, 
+retinol equivalent, vitamin D, alpha-tocopherol, vitamin K, 
+vitamin B1, vitamin B2, niacin, vitamin B6, vitamin B12, 
+folic acid, pantothenic acid, vitamin C, saturated fatty 
+acids, monounsaturated fatty acids, PUFAs, n-3 PUFAs, 
+n-6 PUFAs, and cholesterol).
+Tasks
+Working memory task
+A continuous performance task using the 2-back paradigm 
+was carried out. Numerals from 1 to 9 randomly appeared 
+successively on a computer screen placed 150 cm in front 
+of the participant for 500 msec each, with an interstimulus 
+interval of 2,250 msec. The participants were instructed to 
+push a button with their right thumb when the numeral “3” 
+was displayed only if they recalled that the numeral 2-back 
+was even, and to do nothing when the numeral 2-back was 
+odd. Two hundred numerals were presented in total, with the 
+target “3” numeral being shown at a rate of 10% (20 trials). 
+For 14 seconds before starting to show the stimulus, the 
+numeral “0” was shown on the display monitor for the same 
+duration and interval as the stimulus, and the participants 
+were instructed to watch the numeral carefully. The task 
+lasted 450 seconds.
+Calculation task
+A calculation task was conducted using the Uchida-Kraepelin 
+test paper. The participants were asked to add two adja­
+cent numerals and write down only the last numeral of the 
+two-digit number that was obtained. The participants were 
+instructed to make the calculation as quickly and accurately 
+as possible. The task lasted 300 seconds.
+Measurement and data analysis
+Changes in oxyhemoglobin concentration
+Changes in oxyhemoglobin concentration while participants 
+performed the tasks were measured using near-infrared spec­
+troscopy (Optical Topography System ETG-4000, Hitachi 
+Medical Co, Tokyo, Japan). We used a two-sided 3 × 3 probe 
+holder, and placed the emitter probes and detector probes at 
+sites where we could measure changes in oxyhemoglobin 
+concentration in each participant’s bilateral dorsolateral 
+prefrontal cortex. That is, the front row inner optodes were 
+positioned symmetrically 0.5 cm outside of Fp1 or Fp2 accord­
+ing to the International EEG 10-20 system, and changes in 
+each participant’s oxyhemoglobin concentration were mea­
+sured from a total of 24 channels (Figure 1). Mean changes 
+in oxyhemoglobin concentration were calculated against 
+the mean concentration during a 10-second period for the 
+prestimulus baseline.
+Electroencephalography
+While the participants performed the working memory task, 
+we simultaneously measured changes in oxyhemoglobin con­
+centration and event-related potentials. Ag/AgCl electrodes 
+were located at Cz (vertex) and Pz (midline parietal site) 
+according to the International EEG 10-20 system. The EEG 
+was recorded and filtered from 0.1 Hz to 100 Hz, using linked 
+electrodes at the earlobes as the reference. The EEG was 
+recorded for 450 seconds while the participants performed 
+the working memory task. The EEG was averaged off-line 
+for a period of 1,000 msec, beginning 100 msec prior to 
+the stimulus onset. The baseline was corrected to the mean 
+value of the voltage during a period of 100 msec prestimulus. 
+From ten to 20 trials without artifacts due to eye blinking or 
+body movement were averaged to obtain the event-related 
+potential waveform. The peak latency and amplitude of the 
+P300 component of the event-related potential waveform at 
+Cz and Pz were measured. The differential values of P300 
+latency and amplitude at week 6 and week 12 compared with 
+those at week 0 were calculated for both sites. P300 is the 
+positive potential that appears approximately 300 msec after 
+a stimulus is presented.
+Statistical analysis
+Statistical Package for the Social Sciences version 16.0 
+software (SPSS Inc., Chicago, IL, USA) was used for sta­
+tistical processing. Two-way repeated-measures analysis 
+of variance with the Bonferroni post hoc test was carried 
+out on the following near-infrared spectroscopic and other 
+data: change in oxyhemoglobin concentration, body weight, 
+body mass index, blood pressure, blood test values, serum 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+14
+17
+13
+16
+19
+15
+22
+18
+21
+24
+23
+20
+Fp2
+Fp1
+Figure 1 Channel positions for near-infrared spectroscopy. Changes in oxyhemoglobin 
+concentration were measured at 24 sites in the bilateral frontal areas of the brain. 
+Filled (black) circles and open (white) circles show the emitter and detector probes, 
+respectively. The numbers show the location of the measured channels.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1251
+Effects of n-3 PUFAs in krill oil on brain function
+chemistry test values, urinalysis, nutritional intake based on 
+food frequency method, and plasma fatty acid concentration. 
+For P300 latency and amplitude, the Kruskal–Wallis test was 
+used to analyze the differential values measured at week 6 
+and week 12 compared with those at week 0. The Mann–
+Whitney U-test with Bonferroni correction was then used 
+to determine any differences between the treatments. The 
+statistical significance level was set at P , 0.05.
+Results
+Participants
+A flow chart for study participation is shown in Figure 2. 
+As mentioned earlier, 45 males who met the inclusion cri­
+teria agreed to participate in this study. They were randomly 
+assigned to three treatment groups. Age, height, body weight, 
+body mass index, smoking status, and alcohol consumption 
+were compared by one-way analysis of variance or the chi-
+square test. No significant differences were found in any of the 
+items except for height (F[2,42] = 4.379, P = 0.019 by one-way 
+analysis of variance) between the three groups (Table 2).
+Three of the 45 participants dropped out during the study 
+period. Data for 15 participants in the medium-chain triglyc­
+eride group, 13 in the krill oil group, and 14 in the sardine 
+oil group were used for analysis. The reasons for dropping 
+out were epigastric pain (two participants) and dermatitis 
+(one participant). These cases were judged not to be directly 
+related to ingestion of supplements.
+Supplement intake rate
+According to the self-recording checklist, mean ­supplement 
+intake for the experimental period (excluding dropout 
+­participants) was 98.2% ± 2.4% in the medium-chain trig­
+lyceride group (n = 15), 98.7% ± 1.6% in the krill oil group 
+(n = 13), and 98.5% ± 1.7% in the sardine oil group (n = 14). 
+No ­significant difference in intake was found between the 
+three groups (F[2,39] = 0.181, P = 0.835 by one-way analysis 
+of variance).
+Food frequency questionnaire, 
+vital signs, and blood and urine tests
+No significant differences between the treatments or inges­
+tion periods were found with regard to any of the nutrients 
+measured by the food frequency method, such as amounts 
+of major components ingested or dietary fatty acids and 
+cholesterol. No harmful events due to the treatments were 
+observed in any of the treatment groups during the study. 
+None of the groups showed any significant variations in body 
+weight, body mass index, or blood pressure during the study 
+period. Moreover, no changes attributable to ingestion of the 
+supplements were observed in blood tests, serum chemistry 
+tests, or urinalysis.
+Plasma fatty acids
+With regard to the concentration of PUFAs in plasma 
+(Table  3), significant interactions were found between 
+the treatments and ingestion periods in terms of dihomo-
+gamma-linolenic acid concentration (F[4,78]  =  3.516, 
+P = 0.011 by two-way repeated-measures analysis of vari­
+ance) and EPA concentration (F[4,78] = 5.141, P = 0.001 
+by two-way repeated-measures analysis of variance). 
+Further analysis using Bonferroni post hoc testing showed 
+that the EPA concentration in the sardine oil group was 
+higher than that in the medium-chain triglyceride group at 
+week 12 (P = 0.045).
+Assessed for eligibility (n = 652)
+Excluded (n = 600)
+Not meeting inclusion criteria
+(n = 193)
+Declined to participate (n = 394)
+Other reasons (n = 13) 
+Analyzed (n = 15)
+Analyzed (n = 14)
+Randomized (n = 45)
+Analyzed (n = 13)
+MCTs (placebo) 2g/d
+ (n = 15)
+SO 2g/d
+(n = 15)
+KO 2g/d
+(n = 15)
+Excluded  
+Epigastric pain
+(n = 2)
+Excluded
+Dermatitis   
+(n = 1)
+Medical examination (n = 52) 
+Excluded (n = 7)
+Medical reasons (n = 7)
+Enrollment
+Allocation 
+Analysis follow-up
+Figure 2 Flow chart of participation throughout the study. 
+Abbreviations: MCTs, medium-chain triglycerides; KO, krill oil; SO, sardine oil.
+Table 2 Baseline characteristics of the participants
+MCT 
+(n = 15)
+KO 
+(n = 15)
+SO 
+(n = 15)
+P-value
+Age (years)
+67.3 ± 3.4
+67.1 ± 3.7
+67.0 ± 3.3
+0.962
+Height (cm)
+167.0 ± 3.9
+163.5 ± 5.8
+168.6 ± 4.5
+0.019
+Body weight (kg)
+66.2 ± 10.7
+64.9 ± 8.3
+63.0 ± 5.9
+0.604
+BMI (kg/m2)
+23.7 ± 3.5
+22.8 ± 2.6
+23.6 ± 2.2
+0.666
+Current smoker
+1 (7)
+2 (13)
+4 (27)
+0.306
+Alcohol consumer
+11 (73)
+13 (87)
+12 (80)
+0.659
+Notes: Mean ± standard deviation or n (%). P-values derived by one-way analysis of 
+variance or chi-square test. 
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil; BMI, 
+body mass index.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1252
+Konagai et al
+Working memory task
+Changes in oxyhemoglobin concentration
+Figure 3 shows a comparison of changes in oxyhemoglobin 
+concentration at 225.0 seconds after the start of executing the 
+task. With regard to changes in oxyhemoglobin concentration 
+in response to performance of the working memory task, the 
+results of two-way repeated-measures analysis of variance 
+showed a significant interaction in channel 10 (F[4,78] = 4.331, 
+P = 0.003 by two-way repeated-measures analysis of variance). 
+Compared with the medium-chain triglyceride group, the 
+­sardine oil group (P = 0.043) and the krill oil group (P = 0.004) 
+showed significantly greater changes in oxyhemoglobin con­
+centrations at week 12 (Figure 4).
+Event-related potentials
+Figure 5 shows the changes in P300 latency and amplitude 
+at Cz and Pz. There were slight differences in the differential 
+values for P300 latency between the treatments at week 6 
+Table 3 Polyunsaturated fatty acids in plasma
+Week 0
+Week 6
+Week 12
+P-value
+MCT
+KO
+SO
+MCT
+KO
+SO
+MCT
+KO
+SO
+DGLA 
+(μg/mL)
+25.3 ± 2.5
+21.1 ± 2.6
+27.3 ± 2.1
+25.4 ± 2.1
+19.5 ± 1.8
+23.4 ± 1.8
+25.8 ± 2.4
+19.9 ± 2.1
+20.0 ± 2.0
+0.011
+AA 
+(μg/mL)
+156 ± 8
+130 ± 5
+143 ± 8
+158 ± 8
+136 ± 6
+152 ± 7
+159 ± 10
+128 ± 7
+141 ± 7
+0.700
+EPA 
+(μg/mL)
+110 ± 10
+122 ± 20
+99 ± 10
+113 ± 12
+155 ± 21
+155 ± 14
+108 ± 12a
+125 ± 18a,b
+157 ± 12b
+0.001
+DHA 
+(μg/mL)
+192 ± 14
+191 ± 19
+191 ± 16
+196 ± 14
+196 ± 17
+205 ± 15
+177 ± 13
+179 ± 19
+187 ± 15
+0.944
+Notes: Mean ± standard error. MCT, n = 15; KO, n = 13; SO, n = 14. P-values show significant probability of interaction between treatments and ingestion periods derived 
+by two-way repeated-measures analysis of variance. Numerical values within the same period given different superscript letters (a and b) show significant differences between 
+treatments (P , 0.05 by Bonferroni post hoc test). 
+Abbreviations: DGLA, dihomo-gamma-linolenic acid (20:3n-6); AA, arachidonic acid (20:4n-6); EPA, eicosapentaenoic acid (20:5n-3); DHA, docosahexaenoic acid (22:6n-3); 
+MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+MCT (n = 15)
+KO (n = 13)
+SO (n = 14)
+Week 0
+Week 6
+Week 12
+−0.55
+0.55
+[mM × mm]
+Figure 3 Topographic maps of changes in oxyhemoglobin concentration at 225.0 seconds during working memory task. 
+Note: MCT, n = 15; KO, n = 13; SO, n = 14. 
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1253
+Effects of n-3 PUFAs in krill oil on brain function
+(Cz, χ2 = 4.981, df = 2, P = 0.083; Pz, χ2 = 5.130, df = 2, 
+P = 0.077, Kruskal–Wallis test). At week 12 of the inges­
+tion period, there were differences between the groups (Cz, 
+χ2 = 6.118, df = 2, P = 0.047; Pz, χ2 = 5.754, df = 2, P = 0.056, 
+Kruskal–Wallis test), and a significant difference was 
+observed between the krill oil and medium-chain triglyceride 
+groups (Cz, P = 0.027 and Pz, P = 0.030, Mann–Whitney 
+U-test with Bonferroni correction). Both sites showed no 
+significant difference between treatments for differential 
+values in P300 amplitude at either week 6 or week 12.
+Calculation task
+Figure  6  shows the mean changes in oxyhemoglobin 
+concentration at 150.0 seconds after starting the task. For 
+changes in oxyhemoglobin concentration in response to 
+execution of the calculation task, the results of two-way 
+repeated-measures analysis of variance showed a slight 
+interaction between the treatments and ingestion periods at 
+Week 0
+Week 6
+Week 12
+oxy-Hb [mM × mm]
+MCT
+KO
+SO
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30
+0.35
+0.40
+**
+*
+Figure 4 Comparison of changes in oxyhemoglobin (oxy-Hb) concentrations at 
+channel 10 during working memory task. 
+Notes: Values are expressed as the group mean ± standard error. MCT, n = 15; 
+KO, n = 13; SO, n = 14. Values were significantly different from the MCT group. 
+*P , 0.05, **P , 0.01 by Bonferroni post hoc test. 
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+−2.0 
+−1.0 
+0.0 
+1.0 
+2.0 
+0
+6
+12
+Δ amplitude (microV)
+Week
+−40
+−30
+−20
+−10
+0
+10
+20
+30
+0
+6
+12
+Week
+*
+−40
+−30
+−20
+−10
+0
+10
+20
+30
+0
+6
+12
+Δ latency (msec)
+Δ latency (msec)
+Week
+*
+A
+B
+D
+−2.0 
+−1.0 
+0.0 
+1.0 
+2.0 
+0
+6
+12
+Δ amplitude (microV)
+Week
+C
+MCT
+SO
+KO
+Figure 5 Comparison of differential values in P300 latencies and amplitudes during the working memory task. (A) Latency at Cz, (B) latency at Pz, (C) amplitude at Cz, and 
+(D) amplitude at Pz. 
+Notes: Values are expressed as the group mean ± standard error. MCT, n = 15; KO, n = 13; SO, n = 14. Values were significantly different from the MCT group: *P , 0.05 
+by Mann–Whitney U-test with Bonferroni correction. No significant difference in P300 amplitude was observed between the treatments at week 6 or week 12.
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1254
+Konagai et al
+channel 15 (F[4,78] = 2.236, P = 0.073 by two-way repeated-
+measures analysis of variance). The krill oil group showed 
+significantly greater changes in oxyhemoglobin concentration 
+compared with the medium-chain triglyceride group at week 
+12 (P = 0.006, Figure 7).
+Discussion
+The results of the working memory tasks show that the 
+groups taking krill oil or sardine oil for 12 weeks had greater 
+changes in oxyhemoglobin concentration in channel 10 than 
+the group taking medium-chain triglycerides. With regard to 
+the effect of n-3 PUFAs, Jackson et al have already demon­
+strated in their pilot study using near-infrared spectroscopy 
+that supplementation with DHA-rich fish oil, in comparison 
+with placebo, resulted in significantly increased oxyhemo­
+globin concentrations in the prefrontal areas in healthy young 
+adults.13 As the function of the cerebral cortex declines with 
+age, a smaller increase is observed in oxyhemoglobin con­
+centrations resulting from execution of cognitive tasks.18,22 
+Near-infrared spectroscopy probes including channel 10 were 
+placed to measure the function of the dorsolateral prefrontal 
+cortex in the present study. The dorsolateral prefrontal cortex 
+performs a variety of functions. Among these, mobilization 
+of working memory is one of the important functions of the 
+dorsolateral prefrontal cortex.23–25 Aging reduces regional 
+cerebral blood flow, which causes deterioration of cerebral 
+function.26 Aging has also been shown to reduce the level 
+of dorsolateral prefrontal cortex activity during execution of 
+working memory tasks.27 The results of this study suggest that 
+long-term ingestion of krill oil and sardine oil promotes work­
+ing memory function by activating the dorsolateral prefrontal 
+MCT (n = 15)
+KO (n = 13)
+SO (n = 14)
+Week 0
+Week 6
+Week 12
+−1.00
+1.00
+[mM × mm]
+Figure 6 Topographic maps of changes in oxyhemoglobin concentration at 150.0 seconds during the calculation task. 
+Note: MCT, n = 15; KO, n = 13; SO, n = 14. 
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+0.00
+0.20
+0.40
+0.60
+0.80
+1.00
+Week 0
+Week 6
+Week 12
+oxy-Hb [mM × mm]
+MCT
+KO
+SO
+**
+Figure 7 Comparison of changes in oxyhemoglobin (oxy-Hb) concentration at 
+channel 15 during the calculation task. 
+Notes: Values are expressed as the group mean ± standard error. MCT, n = 15; 
+KO, n = 13; SO, n = 14. Values were significantly different from the MCT group: 
+**P , 0.01 by Bonferroni post hoc tests. 
+Abbreviations: MCT, medium-chain triglyceride; KO, krill oil; SO, sardine oil.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1255
+Effects of n-3 PUFAs in krill oil on brain function
+cortex in elderly people, and thus prevents deterioration in 
+cognitive activity.
+Very few studies have been published using the event-
+related potential to identify the effects of EPA and DHA. 
+Fontani et al compared event-related potential measurements 
+while subjects executed the Go/No-Go paradigm before 
+and after taking fish oil for 35 days, and reported improve­
+ment in attentional functions after ingestion of n-3 PUFAs.9 
+Regarding P300, which was measured simultaneously with 
+near-infrared spectroscopy recording, we observed no differ­
+ences in amplitude between our treatment groups, although 
+the group that took krill oil for 12 weeks showed a signifi­
+cant decrease in latency compared with the medium-chain 
+triglyceride group. P300 latency is thought to reflect the rate 
+of information processing, while amplitude is thought to 
+reflect the amount of mobilization of processing resources.28 
+Continuous ingestion of krill oil was thus shown to expedite 
+the information processing rate. P300 latency is known to be 
+prolonged with aging,29,30 ie, ingestion of krill oil is likely to 
+ameliorate the reduction of cerebral function associated with 
+aging, or to maintain such function.
+During the calculation tasks, the krill oil group showed 
+significantly greater changes in oxyhemoglobin concentra­
+tions in the left frontal area (channel 15) as compared with 
+changes seen in the medium-chain triglyceride group. The left 
+hemisphere of the brain is generally regarded to be dominant 
+with respect to performing calculations. Our results suggest 
+that intake of krill oil enhances the function of the cerebral 
+hemisphere relating to calculation. A considerable decrease 
+in oxyhemoglobin concentration changes at week 12 was 
+observed for both tasks in the medium-chain triglyceride 
+group. Although the reason for these results is unclear, there 
+is a possibility that the practice effect was emphasized only 
+in the medium-chain triglyceride condition.
+Physiological measurement by near-infrared spectroscopy 
+and EEG analyses demonstrated that krill oil and sardine 
+oil have the effect of activating the function of the cerebral 
+cortex. No difference was found between the three groups in 
+terms of food-derived fatty acid intake volume. Therefore, 
+the effects obtained in the krill oil and sardine oil groups are 
+considered to result from ingestion of the supplements.
+Both krill oil and sardine oil were shown to promote activ­
+ity of the dorsolateral prefrontal cortex in terms of the working 
+memory task. Given that these supplements contain EPA and 
+DHA, which are not contained in medium-chain t­riglycerides, 
+these fatty acids were assumed to have influenced the activity 
+of the dorsolateral prefrontal cortex. However, sardine oil, 
+which contains the largest amounts of these fatty acids, was 
+not shown to possess any ­activation effects regarding the 
+calculation task, and only krill oil, containing lesser amounts 
+of these fatty acids, was shown to have an effect. The fatty 
+acids contained in fish oil are usually stored as triglycerides. 
+Krill oil, in contrast, has a far higher percentage of phospho­
+lipids, in particular phosphatidylcholine, than other foods.31–34 
+Most of the n-3 PUFAs contained in krill oil are thought to 
+be incorporated in phosphatidylcholine. In this study, krill 
+oil had a lower EPA and DHA content than sardine oil. 
+Plasma EPA concentrations in the sardine oil group were 
+significantly higher than in the medium-chain triglyceride 
+group at week 12. On the other hand, there was no significant 
+difference in plasma EPA concentration between the krill oil 
+and medium-chain triglyceride groups. Nevertheless, krill oil 
+demonstrated effects that were equivalent to or better than 
+those of sardine oil. This led us to assume that the difference 
+in their chemical form of incorporation was the reason for the 
+different effects between the two oils rather than any differ­
+ence in their fatty acid content.
+Vaisman et al reported that ingestion of phospholipid-con­
+jugated EPA and DHA increased the scores for a continuous 
+performance task compared with scores obtained when the 
+fatty acids in the ingested oil were stored as triglycerides. This 
+finding indicates that n-3 PUFAs incorporated in phosphati­
+dylcholine act on brain function more efficiently than those 
+incorporated in triglycerides.35 Brossard et al36 and Lemaitre-
+Delaunay et al37 reported that lysophosphatidylcholine, which 
+is derived from phosphatidylcholine by phospholipase A2, is 
+the preferred physiological carrier of DHA. Thies et al found 
+that PUFAs bound to lysophospholipids at the sn-2 position 
+are preferentially incorporated into the brain.38 PUFAs are 
+most often bound to the sn-2 position in phospholipids.39 
+The n-3 PUFAs bound to phosphatidylcholine in krill oil 
+may thus be taken up by the brain tissues more readily than 
+the n-3 PUFAs of sardine oil, most likely bringing about the 
+observed difference in their effects. However, the relation­
+ship between brain function and fatty acid composition in 
+brain tissue has not been clarified, so further studies need to 
+be carried out.
+The major limitations of the present study are its small 
+sample size and inclusion of male subjects only. However, its 
+results suggest that n-3 PUFAs activate cognitive function of 
+the brain in the elderly. The differences in the effects obtained 
+by krill oil and sardine oil seem to be related to differences 
+with regard to incorporation of fatty acids into lipids. It is 
+concluded that fatty acids present as phosphatidylcholine 
+have the potential to bring about more beneficial effects on 
+cognitive function. Further studies using large sample sizes 
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+1256
+Konagai et al
+and including female subjects are needed to confirm the 
+results of this study.
+Acknowledgment
+We thank the volunteers who participated in this study.
+Disclosure
+This study was funded by Nippon Suisan Kaisha Ltd. KY, KH, 
+LH, and TT are employees of Nippon Suisan Kaisha Ltd. All 
+authors declare that there are no other conflicts of interest in 
+this work.
+References
+	 1.	 Dullemeijer C, Durga J, Brouwer IA, et al. n 3 fatty acid proportions 
+in plasma and cognitive performance in older adults. Am J Clin Nutr. 
+2007;86:1479–1485.
+	 2.	 Kannass KN, Colombo J, Carlson SE. Maternal DHA levels and toddler 
+free-play attention. Dev Neuropsychol. 2009;34:159–174.
+	 3.	 Muldoon MF, Ryan CM, Sheu L, Yao JK, Conklin SM, Manuck 
+SB. Serum phospholipid docosahexaenonic acid is associated with 
+cognitive functioning during middle adulthood. J Nutr. 2010;140:
+848–853.
+	 4.	 Bauer I, Crewther DP, Pipingas A, Rowsell R, Cockerell R, Crewther SG. 
+Omega-3 fatty acids modify human cortical visual processing: a 
+­double-blind, crossover study. PLoS One. 2011;6:e28214.
+	 5.	 Kalmijn S, van Boxtel MP, Ocké M, Verschuren WM, Kromhout D, 
+Launer LJ. Dietary intake of fatty acids and fish in relation to cognitive 
+performance at middle age. Neurology. 2004;62:275–280.
+	 6.	 van Gelder BM, Tijhuis M, Kalmijn S, Kromhout D. Fish consumption, 
+n-3 fatty acids, and subsequent 5-y cognitive decline in elderly men: 
+the Zutphen Elderly Study. Am J Clin Nutr. 2007;85:1142–1147.
+	 7.	 González S, Huerta JM, Fernández S, Patterson AM, Lasheras C. The 
+relationship between dietary lipids and cognitive performance in an 
+elderly population. Int J Food Sci Nutr. 2010;61:217–225.
+	 8.	 Jicha GA, Markesbery WR. Omega-3 fatty acids: potential role in the man­
+agement of early Alzheimer’s disease. Clin Interv Aging. 2010;5: 45–61.
+	 9.	 Fontani G, Corradeschi F, Felici A, Alfatti F, Migliorini S, Lodi L. Cognitive 
+and physiological effects of omega-3 polyunsaturated fatty acid supple­
+mentation in healthy subjects. Eur J Clin Invest. 2005;35: 691–699.
+	10.	 Sumich A, Matsudaira T, Gow RV, et al. Resting state electroencepha­
+lographic correlates with red cell long-chain fatty acids, memory per­
+formance and age in adolescent boys with attention deficit hyperactivity 
+disorder. Neuropharmacology. 2009;57:708–714.
+	11.	 McNamara RK, Able J, Jandacek R, et al. Docosahexaenoic acid supple­
+mentation increases prefrontal cortex activation during sustained attention 
+in healthy boys: a placebo-controlled, dose-ranging, functional magnetic 
+resonance imaging study. Am J Clin Nutr. 2010;91:1060–1067.
+	12.	 Boucher O, Burden MJ, Muckle G, et al. Neurophysiologic and neurobehav­
+ioral evidence of beneficial effects of prenatal omega-3 fatty acid intake on 
+memory function at school age. Am J Clin Nutr. 2011;93: 1025–1037.
+	13.	 Jackson PA, Reay JL, Scholey AB, Kennedy DO. DHA-rich oil modu­
+lates the cerebral haemodynamic response to cognitive tasks in healthy 
+young adults: a near IR spectroscopy pilot study. Br J Nutr. 2012;107: 
+1093–1098.
+	14.	 Vakhapova V, Cohen T, Richter Y, Herzog Y, Korczyn AD. 
+­Phosphatidylserine containing omega-3 fatty acids may improve 
+memory abilities in non-demented elderly with memory complaints: 
+a double-blind placebo-controlled trial. Dement Geriatr Cogn Disord. 
+2010;29:467–474.
+	15.	 Richter Y, Herzog Y, Cohen T, Steinhart Y. The effect of phosphatidyl­
+serine-containing omega-3 fatty acids on memory abilities in subjects 
+with subjective memory complaints: a pilot study. Clin Interv Aging. 
+2010;5:313–316.
+	16.	 Huppert TJ, Diamond SG, Franceschini MA, Boas DA. HomER: 
+a review of time-series analysis methods for near-infrared spectroscopy 
+of the brain. Appl Opt. 2009;48:D280–D288.
+	17.	 Sutton S, Ruchkin DS. The late positive complex: advances and new 
+problems. Ann N Y Acad Sci. 1984;425:1–23.
+	18.	 Kameyama M, Fukuda M, Uehara T, Mikuni M. Sex and age 
+­dependencies of cerebral blood volume changes during ­cognitive 
+­activation: a multichannel near-infrared spectroscopy study. 
+­Neuroimage. 2004;22:1715–1721.
+	19.	 Daltrozzo J, Wioland N, Kotchoubey B. Sex differences in two event-
+related potentials components related to semantic priming. Arch Sex 
+Behav. 2007;36:555–568.
+	20.	 Takahashi K, Yoshimura Y, Kaimoto T, Kunii D, Komatsu T, 
+Yamamoto S. Validation of a food frequency questionnaire based on food 
+groups for estimating individual nutrient intake. Jpn J Nutr. 2001;59:
+221–232.
+	21.	 The Council for Science and Technology, Ministry of Education, Sports, 
+Science and Technology, Japan. Standard Tables of Food Composition in 
+Japan. 5th revised and enlarged edition. Tokyo, Japan: National Printing 
+Bureau; 2005.
+	22.	 Hock C, Müller-Spahn F, Schuh-Hofer S, Hofmann M, Dirnagl U, 
+Villringer A. Age dependency of changes in cerebral hemoglobin 
+­oxygenation during brain activation: a near-infrared spectroscopy study. 
+J Cereb Blood Flow Metab. 1995;15:1103–1108.
+	23.	 Owen AM. The functional organization of working memory processes 
+within human lateral frontal cortex: the contribution of functional 
+neuroimaging. Eur J Neurosci. 1997;9:1329–1339.
+	24.	 Ungerleider LG, Courtney SM, Haxby JV. A neural system for human 
+visual working memory. Proc Natl Acad Sci U S A. 1998;95:883–890.
+	25.	 Smith EE, Jonides J. Storage and executive processes in the frontal 
+lobes. Science. 1999;283:1657–1661.
+	26.	 Martin AJ, Friston KJ, Colebatch JG, Frackowiak RS. Decreases in 
+regional cerebral blood flow with normal aging. J Cereb Blood Flow 
+Metab. 1991;11:684–689.
+	27.	 Esposito G, Kirkby BS, Van Horn JD, Ellmore TM, Berman KF. 
+­Context-dependent, neural system-specific neurophysiological 
+­concomitants of ageing: mapping PET correlates during cognitive 
+activation. Brain. 1999;122:963–979.
+	28.	 Sutton S, Braren M, Zubin J, John ER. Evoked-potential correlates of 
+stimulus uncertainty. Science. 1965;150:1187–1188.
+	29.	 Goodin DS, Squires KC, Henderson BH, Starr A. Age-related ­variations 
+in evoked potentials to auditory stimuli in normal human subjects. 
+Electroencephalogr Clin Neurophysiol. 1978;44:447–458.
+	30.	 Pfefferbaum A, Ford JM, Kraemer HC. Clinical utility of long latency 
+‘cognitive’ event-related potentials (P3): the cons. Electroencephalogr 
+Clin Neurophysiol. 1990;76:6–12.
+	31.	 Bottino NR. Lipid composition of two species of Antarctic krill: 
+Euphausia superba and E. crystallorophias. Comp Biochem Physiol. 
+1975;50B:479–484.
+	32.	 Weihrauch JL, Posati LP, Anderson BA, Exler J. Lipid conversion 
+factors for calculating fatty acid contents of foods. J Am Oil Chem Soc. 
+1977;54:36–40.
+	33.	 Kidd PM. Omega-3 DHA and EPA for cognition, behavior, and mood: 
+clinical findings and structural-functional synergies with cell membrane 
+phospholipids. Altern Med Rev. 2007;12:207–227.
+	34.	 Tou JC, Jaczynski J, Chen YC. Krill for human consumption: nutritional 
+value and potential health benefits. Nutr Rev. 2007;65:63–77.
+	35.	 Vaisman N, Kaysar N, Zaruk-Adasha Y, et al. Correlation between 
+changes in blood fatty acid composition and visual sustained attention 
+performance in children with inattention: effect of dietary n-3 fatty 
+acids containing phospholipids. Am J Clin Nutr. 2008;87:1170–1180.
+	36.	 Brossard N, Croset M, Normand S, et al. Human plasma albumin 
+transports [13C]docosahexaenoic acid in two lipid forms to blood cells. 
+J Lipid Res. 1997;38:1571–1582.
+	37.	 Lemaitre-Delaunay D, Pachiaudi C, Laville M, Pousin J, Armstrong M, 
+Lagarde M. Blood compartmental metabolism of docosahexaenoic acid 
+(DHA) in humans after ingestion of a single dose of ((13)C)DHA in 
+phosphatidylcholine. J Lipid Res. 1990;40:1867–1874.
+Powered by TCPDF (www.tcpdf.org)
+
+Clinical Interventions in Aging
+Publish your work in this journal
+Submit your manuscript here: http://www.dovepress.com/clinical-interventions-in-aging-journal
+Clinical Interventions in Aging is an international, peer-reviewed journal 
+focusing on evidence-based reports on the value or lack thereof of treat­
+ments intended to prevent or delay the onset of maladaptive correlates 
+of aging in human beings. This journal is indexed on PubMed Central, 
+MedLine, the American Chemical Society’s ‘Chemical Abstracts 
+­Service’ (CAS), Scopus and the Elsevier Bibliographic databases. The 
+manuscript management system is completely online and includes a 
+very quick and fair peer-review system, which is all easy to use. Visit 
+http://www.dovepress.com/testimonials.php to read real quotes from 
+published authors.
+Clinical Interventions in Aging 2013:8
+submit your manuscript | www.dovepress.com
+Dovepress 
+Dovepress
+Dovepress
+1257
+Effects of n-3 PUFAs in krill oil on brain function
+	38.	 Thies F, Pillon C, Moliere P, Lagarde M, Lecerf J. Preferential 
+­incorporation of sn-2 lysoPC DHA over unesterified DHA in the young 
+rat brain. Am J Physiol. 1994;267:R1273–R1279.
+	39.	 Yamashita A, Sugiura T, Waku K. Acyltransferases and transacylases 
+involved in fatty acid remodeling of phospholipids and metabolism of 
+bioactive lipids in mammalian cells. J Biochem. 1997;122:1–16.
+Powered by TCPDF (www.tcpdf.org)

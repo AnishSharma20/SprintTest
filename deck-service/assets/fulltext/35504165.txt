@@ -1,0 +1,1170 @@
+Randomized Control Trials
+The effect of krill oil supplementation on skeletal muscle function and
+size in older adults: A randomised controlled trial
+Saleh AA. Alkhedhairi a, Faris F. Aba Alkhayl a, b, Ahmad D. Ismail a, c, A. Rozendaal a,
+M. German a, B. MacLean d, L. Johnston a, A.A. Miller a, A.M. Hunter e, L.J. Macgregor e,
+E. Combet a, T.J. Quinn a, S.R. Gray a, *
+a Institute of Cardiovascular and Medical Sciences, University of Glasgow, Glasgow, United Kingdom
+b Department of Medical Laboratories, College of Applied Medical Sciences, Qassim University, Saudi Arabia
+c Faculty of Sports Science & Recreation, Universiti Teknologi MARA, Perlis Branch, Arau, Malaysia
+d School of Human Sciences, University of Western Australia, Perth, Australia
+e Department of Sport Science, Nottingham Trent University, Nottingham, United Kingdom
+a r t i c l e
+i n f o
+Article history:
+Received 17 February 2022
+Accepted 8 April 2022
+Keywords:
+Sarcopenia
+Omega-3
+Ageing
+Nutrition
+Strength
+s u m m a r y
+Background & aims: The aim of this study was to determine the effect of krill oil supplementation, on
+muscle function and size in healthy older adults.
+Methods: Men and women, aged above 65 years, with a BMI less than 35kg/m2, who participated in less
+than 1h per week of structured self-reported exercise, were enrolled in the study (NCT04048096) be-
+tween March 2018 and March 2020. Participants were randomised to either control or krill oil supple-
+ments (4g/day) for 6 months in this double blind randomised controlled trial. At baseline, 6 weeks and 6
+months, knee extensor maximal torque was measured as the primary outcome of the study. Secondary
+outcomes measured were grip strength, vastus lateralis muscle thickness, short performance physical
+battery test, body fat, muscle mass, blood lipids, glucose, insulin, and C-Reactive Protein, neuromuscular
+(M-Wave, RMS and voluntary activation), and erythrocyte fatty acid composition.
+Results: A total of 102 men and women were enrolled in the study. Ninety-four participants (krill group
+(26 women and 23 men) and placebo group (27 women and 18 men)) completed the study (mean (SD):
+age 71.2 (5.1) years and weight 71.8 (12.3) kg). Six months supplementation with krill oil resulted in, an
+increase in knee extensor maximal torque, grip strength and vastus lateralis muscle thickness, relative to
+control (p<0.05). The 6-month treatment effects were 9.3% (95%CI: 2.8, 15.8%), 10.9% (95%CI: 8.3, 13.6%)
+and 3.5% (95%CI: 2.1, 4.9%) respectively. Increases in erythrocyte fatty acid proﬁle were seen with krill oil
+for EPA 214% (95%CI: 166, 262%), DHA 36% (95%CI: 24, 48%) and the omega-3 index 61% (95%CI: 49, 73%),
+relative to control (p < 0.05). Krill oil resulted in an increased, relative to control (p < 0.05), M-Wave of
+17% (95%CI: 12.7, 38.1%) but there was no effect of krill oil on RMS, voluntary activation, or on any other
+secondary outcomes such as performance of the short performance physical battery test or quality of life.
+Conclusion: Krill oil supplementation for 6 months results in statistically and clinically signiﬁcant in-
+creases in muscle function and size in healthy older adults.
+ClinicalTrials.gov Identiﬁer: NCT04048096.
+© 2022 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license
+(http://creativecommons.org/licenses/by/4.0/).
+1. Introduction
+The age-related loss of muscle mass and function, sarcopenia,
+has several deleterious effects, such as a reduction in the quality of
+life and increased incidence of falls, often leading to hospitalisation
+[1]. Moreover, recent estimates indicate that the excess cost of
+muscle weakness in the UK is £2.5 billion/year [2], whereas in the
+USA in 2000 it was estimated to be around $18.5 billion/year [3].
+The prevalence of sarcopenia is unclear, but has been calculated to
+be between 4.6 and 7.9% [4]. Much of the variation in reported
+prevalence of sarcopenia is due to the deﬁnition employed. Whilst
+there is no universally agreed deﬁnition the criteria set out by the
+* Corresponding author. Institute of Cardiovascular and Medical Sciences, BHF
+Glasgow Cardiovascular Research Centre, University of Glasgow, Glasgow G12 8TA,
+United Kingdom.
+E-mail address: stuart.gray@glasgow.ac.uk (S.R. Gray).
+Contents lists available at ScienceDirect
+Clinical Nutrition
+journal homepage: http://www.elsevier.com/locate/clnu
+https://doi.org/10.1016/j.clnu.2022.04.007
+0261-5614/© 2022 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+Clinical Nutrition 41 (2022) 1228e1235
+
+European Working Group on Sarcopenia in Older People is the most
+widely used [5]. This group deﬁned probable sarcopenia as low
+muscle
+strength,
+conﬁrmed
+sarcopenia
+as
+low
+muscle
+strength þ low muscle quantity/quality and severe sarcopenia as
+low muscle strength þ low muscle quantity/quality and low
+physical performance. With the percentage of older people (>65 y)
+predicted to rise from 17% in 2010 to 23% in 2035 in the UK, it is
+crucial to develop therapies to increase muscle mass and function
+in older adults. Even though resistance exercise improves muscle
+mass and function, even in nonagenarian women [6], it is less
+effective than in young people, the so-called “anabolic resistance”
+[7], and participation rates are low [8]. Alterations in nutrition,
+including protein and fatty acid intake, have been suggested to
+potentially be of therapeutic use for muscle function and health in
+older people [9].
+Epidemiological data has shown that the consumption of fatty
+ﬁsh is positively associated with muscle function in older pop-
+ulations [10,11], indicating a potential role for long-chain n-3 poly-
+unsaturated fatty acids (LCn-3 PUFA) in increasing muscle mass and
+function in older people. These ﬁndings were supported by cell
+culture and animal work [12,13]. Furthermore, human research has
+demonstrated that 8 weeks of LCn-3 PUFA supplementation (4 g/
+day)
+increased
+muscle
+protein
+synthesis
+(MPS)
+during
+a
+hyperaminoacidaemic-hyperinsulinaemic clamp [14] and recently
+that 6 months of LCn-3 PUFA supplementation (4 g/day) resulted in
+an 3.6% increase in muscle volume and a 2.3 kg increase in grip
+strength [15], both in older adults (>60 years). This requires
+conﬁrmation in a larger and independent cohort. Most previous
+studies in this area have used ﬁsh oils as the source of LCn-3 PUFA,
+but Antarctic krill is also a rich source of these fatty acids. Fish oil
+supplements contain the majority of their LCn-3 PUFA in either
+triacylglycerol or ethyl ester form, while, on the other hand, krill oil
+has more than 40% of its LCn-3 PUFAs in phospholipid form [16]. On
+top of this, krill oil contains choline and asaxanthin which may also
+be important for muscle health [17,18]. In previous supplementation
+studies, similar increases in plasma eicosapentaenoic acid (EPA) and
+docosahexaenoic acid (DHA) levels were seen with krill- and ﬁsh oil,
+despite lower doses of EPA and DHA in the krill oil supplements [19].
+Furthermore, greater increases in the omega-3 index were seen with
+krill oil supplementation, compared to ﬁsh oil supplementation,
+when EPA and DHA in the supplements were matched [20].
+The aim of the current study, therefore, was to determine the
+effect of krill oil supplementation, on muscle function and size in
+healthy older adults. The primary outcome was the change in knee
+extensor muscle strength from baseline to 6 months. Secondary
+outcomes were the change in grip strength, muscle thickness, short
+performance physical battery test, blood lipids, fasting glucose, c-
+reactive protein, and erythrocyte fatty acid proﬁles. All other out-
+comes were exploratory. Our primary hypothesis was that krill oil
+supplementation would increase muscle function, based on the
+change in our primary outcome of knee extensor muscle strength
+over the 6-month trial period.
+2. Materials and methods
+2.1. Trial design
+The current study was a double blind randomised controlled
+trial with participants randomly assigned, following baseline
+assessment, to either control or krill oil groups for the 6-month
+intervention period. Blinding efﬁcacy was not assessed in the cur-
+rent study. Allocation was carried out in a 1:1 ratio with random-
+isation carried out, by an independent colleague using online
+software
+(sealedenvelope.com).
+The
+trial
+was
+registered
+at
+clintrials.gov (NCT04048096). Follow-up study visits took place at 6
+weeks and 6 months. Participants were also asked to avoid exercise
+for 48 h before each study visit, which occurred after an overnight
+fast at the same time of day.
+2.2. Participants
+Participants were recruited from the Glasgow area between
+March 2018 and March 2020 via posters and newspaper/magazine
+adverts in the community. Inclusion criteria were BMI less than
+35kg/m2, an age above 65 years, and participation in less than 1 h
+per week of structured self-reported exercise (deﬁned as planned,
+structured,
+repetitive
+and
+intentional
+movement).
+Exclusion
+criteria were diabetes mellitus, severe cardiovascular disease,
+seizure disorders, uncontrolled hypertension (>150/90 mmHg at
+baseline measurement), active cancer or cancer that has been in
+remission <5 years, ambulatory impairments which would limit
+ability to perform assessments of muscle function, dementia, taking
+medication known to affect muscle (e.g. steroids), having an
+implanted electronic device (e.g. pacemaker/deﬁbrillator/insulin
+pump), being on anticoagulant therapy, taking any nutritional
+supplements, having allergies to seafood or regular consumption of
+more than 2 portions of oily ﬁsh per week. The study was approved
+by the University of Glasgow Medical, Veterinary, Life Sciences
+College Research Ethics Committee [Reference 200170067] and was
+carried out in accordance with the ethical standards laid down in
+the 1964 Declaration of Helsinki. Written informed consent was
+obtained after explaining the aims, risks, and potential discomfort
+associated with the study. The study was conducted in accordance
+with the Declaration of Helsinki.
+2.3. Interventions
+The supplementation period was 6 months, with participants
+instructed to maintain their normal dietary (other than the supple-
+ments) and physical activity habits. The control oil group consumed
+4 g/day of mixed vegetable oil (a mixture of olive oil (extravirgin, cold
+pressed), maize oil (reﬁned), palm kernel oil (reﬁned) and medium
+chain triglycerides, in the ratio 4:4:3:2). The total LCn-3PUFA content
+of the control supplement was 4 mg/g, with <1 mg/g EPA and DHA.
+The fattyacid composition of this mixture was made in order to give a
+fatty acids ratio similar to the fatty acids in a normal, European diet.
+The krill oil group consumed 4 g/day krill oil (SuperbaBoost™). The
+total LCn-3PUFA content of the krill oil supplement was 322 mg/g,
+with 193 mg/g EPA and 96 mg/g DHA with each 1 g capsule also
+containing 79 mg choline. Participants were asked to take 2 capsules
+with lunch and 2 with dinner. The control and krill capsules were
+identical in look and taste, and both were provided by Aker Bio-
+marine Antarctic AS (Lysaker, Norway). The manufacturer had no role
+in the design, conduct or analysis of the study.
+2.4. Outcomes
+The primary outcome was the change in knee extensor muscle
+strength from baseline to 6 months. Secondary outcomes were the
+change in grip strength, muscle thickness, short performance
+physical battery test, blood lipids, fasting glucose, c-reactive pro-
+tein, and erythrocyte fatty acid proﬁles. All other outcomes were
+exploratory. Measurements were made by the lead researcher (SA),
+who was blinded to group allocation, at baseline, 6 weeks and 6
+months (study completion), unless otherwise stated.
+2.5. Knee extensor muscle strength
+We measured muscle strength of the knee-extensor muscles of
+the right leg during an isometric maximal voluntary contraction
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1229
+
+(MVC) with participants secured in a dynamometer, with a knee
+angle of 90 and force recorded via a load cell (Biometrics Ltd,
+Newport, UK). A minimum of three contractions (up to 10s, with
+3 min rest between contractions) were carried out and the highest
+value was used in the subsequent analysis.
+2.6. Grip strength
+Grip strength was measured three times in each hand, using a
+Jamar dynamometer, with the participant seated and the arm
+supported, and the elbow ﬂexed at 90. The highest value was used
+in subsequent analysis.
+2.7. Muscle thickness
+Muscle thickness of the right vastus lateralis muscle was
+measured using an ultrasound imaging device, as detailed previ-
+ously [21].
+2.8. Short performance physical battery test [22]
+Participants were asked to maintain a side-by-side, semi-tan-
+dem and tandem stances for 10s. Chair-stands were performed
+with participants rising from a chair with their arms across their
+chest 5 times; this was repeated 3 times and the quickest time is
+used for analysis. Following this, three separate 4-m walks were
+performed, with the fastest time recorded for analysis.
+2.9. Body fat and muscle mass
+Bioelectrical impedance was used to measure body fat and for
+the calculation of muscle mass, using previously published equa-
+tions [23].
+2.10. Blood sample collection and analysis
+At baseline and 6 months blood samples were collected from an
+antecubital vein and at 6 weeks a ﬁngerprick blood sample was
+collected. For fatty acid analysis (baseline, 6 weeks and 6 months) a
+drop of blood was collected on ﬁlter paper that was pre-treated
+with a cocktail solution (Fatty Acid Preservative Solution, FAPS™)
+and allowed to dry at room temperature for 15 min before storage
+at 80 C. Following completion of the study the dried blood spots
+(DBS) were shipped to OmegaQuant Analytics, LLC (Sioux Falls,
+USA) for fatty acid analysis. One punch of the DBS was transferred
+to a screw-cap glass vial followed by addition of BTM (methanol
+containing 14% boron triﬂuoride, toluene, methanol; 35:30:35 v/v/
+v) (SigmaeAldrich, St. Louis, MO). The vial was brieﬂy vortexed and
+heated in a hot bath at 100 C for 45 min. After cooling, hexane
+(EMD Chemicals, USA) and HPLC grade water was added, the tubes
+were recapped, vortexed and centrifuged help to separate layers.
+An aliquot of the hexane layer was transferred to a gas chroma-
+tography (GC) vial and the extract analysed using a GC-2030 Gas
+Chromatograph (Shimadzu Corporation, Columbia, MD) equipped
+with a SP-2560, 100-m fused silica capillary column (0.25 mm in-
+ternal diameter, 0.2 um ﬁlm thickness; Supelco, Bellefonte, PA).
+Fatty acids were identiﬁed by comparison with a standard
+mixture of fatty acids characteristic of RBC (GLC OQ-A, NuCheck
+Prep, Elysian, MN) which was also used to construct individual fatty
+acid calibration curves. The following 24 fatty acids (by class) were
+identiﬁed: saturated (14:0, 16:0, 18:0, 20:0, 22:0 24:0); cis mono-
+unsaturated (16:1, 18:1, 20:1, 24:1); trans (16:1, 18:1*, 18:2* - see
+below for more details); cis n-6 polyunsaturated (18:2, 18:3, 20:2,
+20:3, 20:4, 22:4, 22:5); cis n-3 polyunsaturated (18:3, 20:5, 22:5,
+22:6). Fatty acid composition was expressed as a percent of total
+identiﬁed fatty acids. The omega-3 index is deﬁned as the sum of
+20:5n-3 (EPA) and 22:6n-3 (DHA) adjusted by a regression equation
+(r ¼ 0.97) to predict the omega-3 index in the RBC.
+*The chromatographic conditions used in this study were suf-
+ﬁcient to isolate the C16:1 trans isomers and the C18:2 D 9t-12c, 9t-
+12t, and 9c-12t isomers; the latter is reported as C18:2n6t. How-
+ever, each individual C18:1 trans molecular species (i.e., C18:1 D 6
+thru D 13) could not be separated but appeared as two blended
+peaks that eluted just before oleic acid. The areas of these two
+peaks were summed and referred to a C18:1 trans.
+At baseline and 6 months, samples were analysed for glucose,
+insulin, lipids, and C-reactive protein. Total and HDL-cholesterol,
+triglycerides, C-reactive protein, and glucose were measured on a
+c311 analyser and insulin on an e411 analyser (Roche diagnostics,
+Burgess Hill, UK) and LDL was calculated using the Friedwald
+equation. All assays were calibrated and quality controlled using
+the manufacturers reagents.
+2.11. Neuromuscular function
+During the measurement of knee extensor muscle strength a
+surface EMG (sEMG) electrode was positioned on the vastus later-
+alis muscle, in accordance with SENIAM guidelines [24], and
+recorded during each contraction; position was recorded for
+replication in future visits. sEMG signals were root mean square
+(RMS) processed, with average RMS calculated over a 500 ms
+period, 250 ms each side of peak force. During the isometric MVC
+the rate of torque development was also calculated as described
+previously [21]. With participants remaining seated in the dyna-
+mometer, an electrode was placed on the vastus lateralis muscle
+attached to a constant current variable voltage stimulator. Stimu-
+lation of the muscle was performed using an electrical stimulator
+(DS7A, Digitimer Ltd., Hertforshire, United Kingdom). Single stim-
+uli, square wave pulse of 1 ms duration, were delivered to the
+muscle while participants maintained a 20% MVC, and the intensity
+of stimulation was increased until a plateau in twitch amplitude
+and M-wave occurred. Supramaximal stimulation was delivered by
+increasing the ﬁnal stimulator output intensity by a further 30%.
+The sEMG electrode remained in place as resting twitch peak force
+was recorded and M-wave peak-to-peak amplitude calculated.
+Supramaximal stimulation was then applied on top of the MVC
+procedure to allow calculation of voluntary activation.
+2.12. Quality of life
+The EuroQol e EQ-5D-5L questionnaire was completed by par-
+ticipants at baseline, 6 weeks and 6 months.
+2.13. Nutritional intake
+Habitual diet was characterised using an online software
+(myfood24.org) for multi-pass 2-day dietary recalls at baseline and
+the end of the intervention, with an average of the 2 days reported
+at each time point.
+2.14. Sample size
+The sample size was based upon the primary outcome of knee
+extensor maximal strength. There is no established minimally
+clinically important difference (MCID) for knee extensor strength,
+but this has been estimated to be between 4 and 6% [25]. With an
+SD of 9% (based on data from our own lab) we required a sample
+size of 50 participants per group (80% power at P < 0.05) and aimed
+to recruit 120 to account for dropouts.
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1230
+
+2.15. Statistical analysis
+Statistical analysis was performed blinded to treatment alloca-
+tion using Graphpad Prism and R. All data were tested for normality
+and skewness before selecting the appropriate test. Baseline data
+was compared between groups via unpaired t-tests. A 2-way
+ANOVA with repeated measures was performed to determine the
+effects of time, supplement and time*supplement interactions on
+the outcome variables. Where a signiﬁcant interaction effect was
+observed in the ANOVA, a post-hoc t-test with Bonferroni correc-
+tion was applied to locate differences between groups. p < 0.05 was
+considered statistically signiﬁcant. Analysis was performed as
+intention to treat.
+3. Results
+3.1. Participant characteristics
+A total of 102 men and women were enrolled in the study
+(NCT04048096) between March 2018 and March 2020 (Fig. 1 e
+participant ﬂow diagram). After randomisation, 4 participants
+withdrew from the study. In March 2020 the UK was placed under a
+national lockdown due to COVID-19 with 4 participants ﬁnal study
+visits, therefore, cancelled. Due to uncertainty around the duration
+of the lockdown and the pandemic, and time constraints on the
+researchers, the decision was taken to stop the trial at this point,
+although full recruitment had not been achieved. With the 8 par-
+ticipants lost to follow-up 94 participants (krill group (26 women
+and 23 men) and placebo group (27 women and 18 men))
+completed the study. Participant characteristics and dietary intake
+data are presented in Table 1. There were no time, group or inter-
+action effects seen for any of the outcome variables measured.
+3.2. Knee extensor muscle strength
+Muscle strength, thickness and neuromuscular function data are
+presented in Fig. 2 and Table 2. A time*group interaction
+(p ¼ 0.0049), but not group (p ¼ 0.0646) or time (p ¼ 0.6504), effect
+for knee extensor maximal torque was noted, with post-hoc tests
+identifying that maximal torque was higher in the krill oil, relative
+to the control, group at 6 months. The change in maximal torque
+over the 6-month intervention period was 2.2 ± 14.1% in the
+control group and 7.1 ± 17.2% in the krill oil group, giving a 6-month
+intervention effect of 9.3% (95%CI: 2.8,15.8%).
+3.3. Grip strength
+The ANOVA revealed group (p ¼ 0.030), time (p < 0.0001) and
+interaction effects (p < 0.0001) for grip strength data, with post-
+hoc tests identifying that grip strength was higher (p < 0.05) in
+the krill oil, relative to the control group at 6 months. The change in
+grip strength over the 6-month intervention period was 2.1 ± 6.2%
+in the control group and 8.8 ± 7.2% in the krill oil group, giving a 6-
+month intervention effect of 10.9% (95%CI: 8.3,13.6%).
+3.4. Muscle thickness
+Muscle thickness data are presented in Fig. 2. The ANOVA
+revealed an interaction (p ¼ 0.0124), but not group (p ¼ 0.5457) or
+time (p ¼ 0.2863), effect for muscle thickness data. The change in
+Fig. 1. Flow diagram illustrating the participant progress through the phases of the study.
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1231
+
+muscle thickness data over the 6-month intervention period was
+0.05 ± 1.1% in the control group and 3.5 ± 4.5% in the krill oil
+group, giving a 6-month intervention effect of 3.5% (95%CI:
+2.1,4.9%).
+3.5. Short performance physical battery test
+The short performance physical battery test data are presented
+in Table 2. All participants were able to complete the full balance
+tests, therefore these data are not presented here. There were no
+time, group or interaction effects (all p > 0.05) for the 4 m walk and
+chair rise tests.
+3.6. Blood results
+Data from blood samples are presented in Tables 3 and 4. There
+were no group, time or interaction effects found in the ANOVA for
+insulin, C-reactive protein, or triglycerides (all p > 0.05). However,
+the ANOVA did reveal time, but no group or interaction, effects for
+glucose, total cholesterol, LDL cholesterol, and HDL cholesterol
+(p < 0.05) with data lower at 6 months, compared to baseline. The
+analysis of the fatty acid data revealed group*time interaction ef-
+fects (all p < 0.0001) for EPA, DHA and the omega-3 index, with
+post-hoc tests revealing that all were higher (p < 0.05) at 6 weeks
+and 6 months in the krill, compared to the control, group. Six-
+month intervention effects were 214% (95%CI: 166, 262%) for EPA,
+36% (95%CI: 24, 48%) for DHA and 61% (95%CI: 49, 73%) for the
+omega-3 index. An interaction effect (p < 0.0001) was also
+observed for arachidonic acid with post-hoc comparisons ﬁnding
+no differences between groups at any speciﬁc time point. A six-
+month intervention effect of e 13% (95%CI: 16, 10%) for arach-
+idonic acid was found. No other differences were found for other
+fatty acids measured.
+3.7. Neuromuscular function
+Effects of time (p ¼ 0.0084)), but not group (p ¼ 0.1286) or
+interaction (p ¼ 0.2123), were found for voluntary activation and
+RMS during the MVC. No group, time or interaction effects were
+seen for the rate of torque development data (all p > 0.05). A
+time*group interaction (p < 0.001), but not group (p ¼ 0.6425) or
+time (p ¼ 0.2464), effect for M-wave was noted, with post-hoc tests
+identifying that the M-wave amplitude was higher in the krill oil,
+relative to the control, group at 6 months. The change in M-wave
+over the 6-month intervention period was 8.1 ± 23.6% in the
+control group and 17.4 ± 37.6% in the krill oil group, giving a 6-
+month intervention effect of 25.4% (95%CI: 12.7,38.1%).
+3.8. Quality of life
+No group, time or interaction effects (all p > 0.05) were noted for
+the EQ5-5DL VAS or index (Table 1).
+4. Discussion
+This double blind randomised controlled trial, has shown that 6
+months of supplementation with 4 g/day of krill oil signiﬁcantly
+increases knee extensor strength, grip strength and skeletal muscle
+thickness in healthy older men and women. This is in line with the
+previous work of Smith and colleagues [15] who, in a smaller cohort
+of older men and women, found increases in muscle volume and
+function after 6 months of ﬁsh oil supplementation (4 g/day).
+Together, these data show that LCn-3 PUFA supplementation may
+be efﬁcacious as a therapy for the maintenance of skeletal muscle
+mass and function, thereby attenuate the age-related declines seen
+during the process of sarcopenia.
+The current study is the ﬁrst study to demonstrate a beneﬁcial
+effect of krill oil supplementation on muscle size and strength in
+older adults. The magnitude of effects we observed can be
+compared to those previously reported in a smaller cohort [15]
+where 6 months of ﬁsh oil supplementation resulted in a treat-
+ment effect on grip strength of 2.3 kg, with the current study
+ﬁnding a treatment effect of 3.4 kg with krill oil. The increase in
+muscle thickness of 3.5% reported in the current study is similar to
+the 3.6% in muscle volume reported by Smith and colleagues [15].
+Although the methods employed to measure muscle size were
+very different, which correlate at baseline but not following
+resistance exercise training [26], so making direct comparisons is
+not straightforward. Furthermore, whilst we found increases in
+muscle thickness, we did not ﬁnd increases in bioelectrical
+impedance derived measures of muscle mass, likely due to relative
+lack of accuracy of the latter.
+Whilst without a direct comparison between LCn-3 PUFA
+sources (ﬁsh vs krill) we cannot establish if krill oil is more effective
+than ﬁsh oil our data tentatively indicates krill may have superior
+effects, although both clearly have important physiological effects.
+There is some further evidence that may help explain this. For
+example, there is some indication that the exogenous choline and
+astaxanthin (found in krill but not ﬁsh oil) supplementation may
+have beneﬁcial effects for skeletal muscle metabolism and health
+Table 1
+Participant characteristics, quality of life and dietary intake data in control and krill oil groups at baseline, 6 weeks and 6 months.
+Control
+Krill
+Baseline
+6 weeks
+6 months
+Baseline
+6 weeks
+6 months
+Age (years)
+70.9 (5.2)
+e
+e
+71.3 (4.9)
+e
+e
+Height (cm)
+164.5 (10)
+e
+e
+169.1 (8.5)
+e
+e
+Weight (kg)
+71.1 (14.2)
+71.4 (14.2)
+70.9 (14.0)
+72.5 (10.4)
+72.9 (10.5)
+72.7 (10.8)
+Systolic BP (mmHg)
+131.7 (13.7)
+127.3 (14.6)
+129.4 (14.2)
+135.4 (11.9)
+131.8 (12.4)
+132.7 (12.7)
+Diastolic BP (mmHg)
+78.4 (9.2)
+75.3 (10.5)
+76.5 (8.5)
+78.6 (7.8)
+75.2 (7.7)
+77.1 (7.9)
+Body fat (%)
+30.85 (8.09)
+30.92 (7.90)
+31.41 (8.05)
+30.05 (7.55)
+29.75 (7.20)
+29.98 (7.47)
+Muscle mass (kg)
+26.66 (6.54)
+26.84 (5.59)
+25.87 (5.24)
+27.50 (5.33)
+28.10 (5.13)
+27.71 (5.31)
+EQ5-5DL VAS
+89.0 (9.6)
+87.4 (9.0)
+85.6 (11.9)
+86.4 (10.6)
+87.9 (8.8)
+85.7 (9.9)
+EQ5-5DL index score
+0.89 (0.1)
+0.90 (0.1)
+0.89 (0.1)
+0.88 (0.1)
+0.88 (0.1)
+0.87 (0.1)
+Energy Intake (kJ)
+7269.8 (3370.4)
+e
+6742.9 (2065.9)
+6926.7 (2204.7)
+e
+6932.5 (2605.1)
+Protein Intake (% of total energy)
+17.3 (3.0)
+e
+16.7 (2.9)
+16.9 (3.1)
+e
+16.3 (3.4)
+Fat Intake (% of total energy)
+36.1 (6.2)
+e
+37.1 (5.2)
+36.2 (5.3)
+e
+37.4 (7.5)
+Carbohydrate Intake (% of total energy)
+46.9 (7.0)
+e
+46.3 (5.9)
+46.5 (7.2)
+e
+45.6 (7.9)
+Polyunsaturated fatty acid intake (% of total energy)
+8.1 (6.4)
+e
+7.4 (5.8)
+7.6 (6.3)
+e
+5.8 (5.1)
+Data are mean (SD).
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1232
+
+[17,18]. The precise role of these different nutrients of krill oil in the
+beneﬁcial effect we have observed remains to be established and a
+compartive trial needed.
+Whilst there is no agreed MCID in grip strength, the magnitude
+of effect that we have observed is similar to the difference in grip
+strength seen over a ~10 year age difference (65 vs 55 years of age)
+[27] and we would argue that such a difference is relevant. Simi-
+larly, the difference in knee extensor maximal isometric torque we
+have observed is greater than the previously reported as the MCID
+[25]. However, it is worth pointing out that while we found dif-
+ferences in these lab based measurements of muscle function, we
+did not ﬁnd an effect of krill oil on our measurements of functional
+abilities, as measured by the short performance physical battery
+test [22]. The chosen scale is less responsive to change and so we
+were not powered to detect differences. In the current study we
+recruited relatively healthy older people and all participants ach-
+ieved the maximum or near maximum score at all timepoints. It is
+therefore likely that the room for improvement was small and a
+ceiling effect for these tests was present. This suggestion is
+Fig. 2. Knee extensor maximal torque, grip strength and vastus lateralis muscle thickness at baseline, 6 weeks and 6 months and corresponding 6-month treatment effects in
+control and krill oil groups. Data are mean (SD) for baseline 6 week and 6-month data and mean (95%CI) for 6-month treatment effects. * denotes a signiﬁcant difference from
+control at 6 months (p < 0.05).
+Table 2
+Short performance physical battery test, muscle strength, thickness and neuromuscular function data in control and krill oil groups at baseline, 6 weeks and 6 months.
+Control
+Krill
+Baseline
+6 weeks
+6 months
+Baseline
+6 weeks
+6 months
+4-m walk time (s)
+4.2 (0.4)
+4.2 (0.4)
+4.2 (0.4)
+4.2 (0.6)
+4.2 (0.5)
+4.2 (0.6)
+Chair rise time (s)
+11.9 (1.2)
+11.9 (1.1)
+11.8 (1.1)
+11.9 (1.2)
+12.0 (1.2)
+11.9 (1.2)
+Voluntary activation (%)
+77.8 (8.1)
+78.6 (7.1)
+79.8 (6.8)
+75.9 (9.3)
+78.5 (9.4)
+81.0 (10.1)
+RTD50 (N ms-1)
+346.6 (444.0)
+320.9 (309.0)
+272.7 (280.0)
+293.0 (258.3)
+321.1 (268.9)
+327.2 (268.8)
+RTD100 (N ms-1)
+205.3 (236.5)
+212.7 (196.0)
+186.6 (160.1)
+184.0 (161.9)
+201.4 (138.8)
+216.3 (154.3)
+RTD200 (N ms-1)
+182.3 (172.5)
+186.4 (145.0)
+168.2 (133.1)
+182.0 (118.0)
+190.5 (116.3)
+198.9 (120.0)
+RTD300 (N ms-1)
+162.7 (129.1)
+167.1 (110.2)
+153.2 (107.2)
+168.1 (89.4)
+173.0 (95.5)
+181.5 (94.4)
+RMS (uV)
+93.8 (66.4)
+95.9 (56.5)
+86.7 (50.7)
+106.2 (77.1)
+122.5 (87.6)
+109.7 (83.8)
+M-wave (mV)
+20.1 (5.1)
+18.5 (4.6)
+17.9 (4.3)
+18.5 (4.8)
+18.5 (5.0)
+20.6 (5.4) *
+Data are mean (SD). * denotes a signiﬁcant interaction effect in the ANOVA (p < 0.05).
+Table 3
+Plasma metabolic analyses in control and krill oil groups at baseline and 6 months.
+Control
+Krill
+Baseline
+6 months
+Baseline
+6 months
+Insulin (mU/mL)
+10.1 (7.6)
+10.3 (7.2)
+10.0 (6.0)
+10.0 (6.0)
+Glucose (mmol/L)
+5.5 (1.1)
+5.0 (0.9)
+5.4 (0.5)
+5.0 (0.8)
+Total Cholesterol (mmol/L)
+4.6 (1.0)
+4.0 (1.0)
+4.7 (1.1)
+4.4 (1.0)
+HDL (mmol/L)
+1.3 (0.3)
+1.2 (0.3)
+1.4 (0.3)
+1.2 (0.3)
+LDL (mmol/L)
+2.8 (0.9)
+2.3 (0.9)
+2.8 (0.9)
+2.7 (0.9)
+Triglycerides (mmol/L)
+1.2 (0.7)
+1.2 (0.6)
+1.2 (0.7)
+1.0 (0.6)
+C-Reactive Protein (mg/L)
+1.4 (1.6)
+2.1 (4.6)
+2.1 (3.5)
+2.1 (3.8)
+Data are mean (SD).
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1233
+
+supported by the recent ﬁndings of the DO-HEALTH study [28],
+where it was found that 1 year of LCn-3 PUFA (1 g/day) supple-
+mentation had no effect on short performance physical battery test
+scores in older people (n ¼ 2175), but similarly to the current study
+the baseline scores were ~11 out of 12 and the sample also had high
+levels of physical activity. Measures of grip or knee-extensor
+strength were not reported, as yet, in the DO-HEALTH study.
+Further work should look at the effects of LCn-3 PUFA on
+muscle mass, function, and functional abilities in people with
+low(er) physical function at baseline [5,29]. Elaborating on the
+functional status of our participants none of them would meet the
+criteria for probable sarcopenia, conﬁrmed sarcopenia or severe
+sarcopenia [5]. This does not, however, detract from the impor-
+tance of the current ﬁndings in our participant group which
+demonstrates that krill oil may be useful in preventing people
+from
+developing
+sarcopenia
+and/or
+crossing
+the
+so-called
+disability threshold during ageing [30]. The development and
+evaluation of such a prevention programme is, therefore, in our
+opinion warranted. This could have profound beneﬁts to the in-
+dividual and society as sarcopenia/muscle weakness is associated
+with a reduction in the quality of life, an increase in the incidence
+of falls and hospitalisation 1, increases mortality risk and has large
+economic costs 2,3. Whilst we know that resistance exercise is the
+most efﬁcacious method to increase muscle mass and function, we
+know that it is challenging to increase population level partici-
+pation. Increasing LCn-3 PUFA intake, whether through an in-
+crease in krill oil, ﬁsh oil or fatty ﬁsh consumption, which is low in
+many populations, may represent an effective public health
+strategy for prevention of the development of sarcopenia. Large
+scale preventative trials in at-risk groups are needed to investigate
+this further.
+Further studies are also required to understand the mecha-
+nisms through which krill oil are acting on muscle. The early
+hypothesis was that increased LCn-3 PUFA intake would have an
+anti-inﬂammatory effect [31], which would attenuate the nega-
+tive effects of age-associated chronic low-grade inﬂammation,
+which contributes to the loss of both muscle mass and strength
+[32]. However, studies which have found beneﬁts of LCn-3 PUFA
+on muscle, have done so in the absence of any change in circu-
+lating markers of inﬂammation [33,34], with the current study
+ﬁnding no effect of krill oil supplementation on C-Reactive Pro-
+tein. However, effects of LCn-3 PUFA on inﬂammation at the level
+of muscle may still be present and could contribute to the
+beneﬁcial effects of LCn-3 PUFA rich supplements on both muscle
+mass and strength. Other potential mechanisms which may in-
+crease muscle strength include effects of LCn-3 PUFA on neuro-
+muscular function [35]; in this study we found increases in M-
+Wave (muscle excitability) in the krill oil vs. placebo group likely
+due to: i) presence of choline which has been shown to increase
+acetylcholine synthesis which enhances neuromuscular junction
+excitability [36] and ii) observed increased muscle thickness is
+likely to be from enlarged ﬁbre diameter which enhances elec-
+trical conducting properties along the ﬁbre nerve [37]. Further
+potential mechanisms include the extracellular matrix [38],
+mitochondria [39], and cross-bridge kinetics [40]. With krill oil in
+particular
+there
+is
+also
+the
+potential
+beneﬁcial
+effect,
+as
+mentioned previously, of choline and astaxanthin [17,18]. The
+mechanisms through which LCn-3 PUFA increase muscle mass
+likely rely on the changes in muscle protein metabolism, increase
+in MPS [14] mentioned in the introduction, which may be due to
+increases in nutritive blood ﬂow [41], although the more mo-
+lecular mechanisms which drive these changes in muscle protein
+metabolism remain to be elucidated.
+In summary, in this double-blind randomised-controlled trial of
+relatively large size and long duration, we have demonstrated that
+krill oil supplementation results in increases in muscle function,
+excitability, and size, although functional abilities were not
+affected, in healthy older adults. This indicates that LCn-3 PUFA
+could be an effective preventive strategy to counter the age-related
+decline in muscle mass and function. Further work is needed to
+determine, if LCn-3 PUFA can be an effective treatment in people
+with sarcopenia and/or frailty.
+Table 4
+Fatty acid composition in control and krill oil groups at baseline, 6 weeks and 6 months.
+Control
+Krill
+Baseline
+6 weeks
+6 months
+Baseline
+6 weeks
+6 months
+Myristic Acid (%)
+0.8 (0.3)
+1.0 (0.5)
+0.9 (0.4)
+0.8 (0.4)
+0.9 (0.5)
+0.8 (0.2)
+Palmitic Acid (%)
+21.6 (3.6)
+21.9 (3.7)
+21.9 (3.6)
+22.4 (1.7)
+22.0 (3.6)
+22.4 (1.4)
+Palmitelaidic Acid (%)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+Palmitoleic Acid (%)
+1.5 (0.6)
+1.5 (0.7)
+1.5 (0.6)
+1.6 (0.7)
+1.5 (0.7)
+1.6 (0.7)
+Stearic Acid (%)
+10.2 (1.8)
+10.0 (1.8)
+10.1 (1.8)
+10.5 (1.0)
+10.0 (1.7)
+10.2 (0.8)
+Elaidic Acid (%)
+0.4 (0.1)
+0.4 (0.2)
+0.4 (0.1)
+0.4 (0.1)
+0.4 (0.1)
+0.4 (0.1)
+Oleic Acid (%)
+20.3 (3.7)
+20.9 (3.8)
+20.8 (3.9)
+20.6 (2.2)
+19.4 (3.6)
+20.1 (2.3)
+Linoelaidic Acid (%)
+0.3 (0.1)
+0.3 (0.1)
+0.3 (0.1)
+0.3 (0.1)
+0.4 (0.1)
+0.3 (0.1)
+Linoleic Acid (%)
+20.6 (4.4)
+20.4 (4.2)
+20.2 (4.5)
+20.6 (3.5)
+19.1 (4.2)
+20.3 (2.8)
+Arachidic Acid (%)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.01)
+0.2 (0.1)
+0.2 (0.1)
+gamma-Linolenic Acid (%)
+0.3 (0.2)
+0.3 (0.2)
+0.3 (0.1)
+0.4 (0.1)
+0.3 (0.1)
+0.3 (0.1)
+Eicosenoic Acid (%)
+0.3 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+alpha-Linolenic Acid (%)
+0.5 (0.2)
+0.5 (0.2)
+0.5 (0.2)
+0.5 (0.1)
+0.5 (0.2)
+0.5 (0.1)
+Eicosadienoic Acid (%)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+0.2 (0.1)
+Behenic Acid (%)
+0.4 (0.1)
+0.5 (0.1)
+0.5 (0.1)
+0.5 (0.1)
+0.5 (0.2)
+0.5 (0.1)
+Dihomo-g-linolenic Acid (%)
+1.6 (0.4)
+1.5 (0.4)
+1.6 (0.4)
+1.5 (0.3)
+1.2 (0.3)
+1.3 (0.3)
+Arachidonic Acid (%)
+9.0 (1.9)
+8.6 (1.8)
+9.2 (1.9)
+9.6 (1.5)
+8.6 (1.7)
+8.5 (1.3)*
+Lignoceric Acid (%)
+0.9 (0.3)
+0.9 (0.3)
+0.8 (0.3)
+1.0 (0.3)
+0.9 (0.3)
+0.8 (0.3)
+Eicosapentaenoic Acid (%)
+1.3 (0.7)
+1.1 (0.5)
+1.1 (0.4)
+1.2 (0.6)
+3.2 (1.2)
+3.2 (1.1)*
+Nervonic Acid (%)
+1.2 (0.4)
+1.2 (0.3)
+1.2 (0.4)
+1.3 (0.3)
+1.3 (0.4)
+1.2 (0.4)
+Docosatetraenoic Acid (%)
+0.9 (0.3)
+0.9 (0.3)
+0.9 (0.3)
+1.0 (0.3)
+0.8 (0.3)
+0.7 (0.2)
+Docosapentaenoic Acid - n6 (%)
+0.3 (0.1)
+0.3 (0.1)
+0.3 (0.9)
+0.4 (0.9)
+0.3 (0.1)
+0.2 (0.1)
+Docosapentaenoic Acid - n3 (%)
+1.3 (0.3)
+1.3 (0.3)
+1.3 (0.3)
+1.4 (0.2)
+1.7 (0.4)
+1.8 (0.3)
+Docosahexaenoic Acid (%)
+3.5 (1.0)
+3.4 (1.1)
+3.5 (1.0)
+3.4 (1.0)
+4.2 (1.2)
+4.4 (0.9)*
+Omega-3 Index (%)
+6.7 (1.9)
+6.4 (1.8)
+6.5 (1.6)
+6.5 (1.7)
+9.7 (2.6)
+10.0 (2.1)*
+Data are mean (SD). * denotes a signiﬁcant interaction effect in the ANOVA (p < 0.05).
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1234
+
+Funding statement
+SA was funded by a studentship from the Government of Saudi
+Arabia.
+Conﬂict of interest
+The authors declare no conﬂicts of interest.
+Acknowledgements
+We would like to acknowledge Emma Dunning and Elaine Butler
+for the processing and analysis of the blood samples. The authors of
+this manuscript certify that they comply with the ethical guidelines
+for authorship and publishing in the Journal of Cachexia, Sarcope-
+nia and Muscle [42].
+Appendix A. Supplementary data
+Supplementary data to this article can be found online at
+https://doi.org/10.1016/j.clnu.2022.04.007.
+References
+[1] O'Loughlin JL, Robitaille Y, Boivin JF, Suissa S. Incidence of and risk factors for
+falls and injurious falls among the community-dwelling elderly. Am J Epi-
+demiol 1993;137:342e54.
+[2] Pinedo-Villanueva
+R,
+Westbury
+LD,
+Syddall
+HE,
+Sanchez-Santos
+MT,
+Dennison EM, Robinson SM, et al. Health care costs associated with muscle
+weakness: a UK population-based estimate. Calcif Tissue Int 2018;104:
+137e44.
+[3] Janssen I, Shepard DS, Katzmarzyk PT, Roubenoff R. The healthcare costs of
+sarcopenia in the United States. J Am Geriatr Soc 2004;52:80e5.
+[4] Patel HP, Syddall HE, Jameson K, Robinson S, Denison H, Roberts HC, et al.
+Prevalence of sarcopenia in community-dwelling older people in the UK using
+the European working group on sarcopenia in older people (EWGSOP) deﬁ-
+nition: ﬁndings from the hertfordshire cohort study (HCS). Age Ageing 2013.
+http://ageing.oxfordjournals.org/content/early/2013/02/04/ageing.afs197.
+abstract.
+[5] Cruz-Jentoft AJ, Bahat G, Bauer J, Boirie Y, Bruyere O, Cederholm T, et al.
+Sarcopenia: revised European consensus on deﬁnition and diagnosis. Age
+Ageing 2018;48:16e31.
+[6] Fiatarone MA, Marks EC, Ryan ND, Meredith CN, Lipsitz LA, Evans WJ. High-
+intensity strength training in nonagenarians. Effects on skeletal muscle. JAMA,
+J Am Med Assoc 1990;263:3029e34.
+[7] Greig CA, Gray C, Rankin D, Young A, Mann V, Noble B, et al. Blunting of
+adaptive responses to resistance exercise training in women over 75y. Exp
+Gerontol 2011;46:884e90.
+[8] Strain T, Fitzsimons C, Kelly P, Mutrie N. The forgotten guidelines: cross-
+sectional analysis of participation in muscle strengthening and balance &
+co-ordination activities by adults and older adults in Scotland. BMC Publ
+Health 2016;16:1108.
+[9] Agostini F, Bernetti A, Di Giacomo G, Viva MG, Paoloni M, Mangone M, et al.
+Rehabilitative good practices in the treatment of sarcopenia: a narrative re-
+view. Am J Phys Med Rehabil 2021;100:280e7.
+[10] Robinson SM, Jameson KA, Batelaan SF, Martin HJ, Syddall HE, Dennison EM,
+et al. Diet and its relationship with grip strength in community-dwelling older
+men and women: the hertfordshire cohort study. J Am Geriatr Soc 2008;56:
+84e90.
+[11] Gedmantaite A, Celis-Morales CA, Ho F, Pell JP, Ratkevicius A, Gray SR. Asso-
+ciations between diet and handgrip strength: a cross-sectional study from UK
+Biobank. Mech Ageing Dev 2020:111269.
+[12] Kamolrat T, Gray SR. The effect of eicosapentaenoic and docosahexaenoic acid
+on protein synthesis and breakdown in murine C2C12 myotubes. Biochem
+Biophys Res Commun 2013;432:593e8.
+[13] Kamolrat T, Gray SR, Carole TM. Fish oil positively regulates anabolic signal-
+ling alongside an increase in whole-body gluconeogenesis in ageing skeletal
+muscle. Eur J Nutr 2013;52:647e57.
+[14] Smith GI, Atherton P, Reeds DN, Mohammed BS, Rankin D, Rennie MJ, et al.
+Dietary omega-3 fatty acid supplementation increases the rate of muscle
+protein synthesis in older adults: a randomized controlled trial. Am J Clin Nutr
+2010;93:402e12.
+[15] Smith GI, Julliand S, Reeds DN, Sinacore DR, Klein S, Mittendorfer B. Fish
+oilederived ne3 PUFA therapy increases muscle mass and function in healthy
+older adults. Am J Clin Nutr 2015. https://doi.org/10.3945/ajcn.114.105833.
+[16] Tou JC, Jaczynski J, Chen Y-C. Krill for human consumption: nutritional value
+and potential health beneﬁts. Nutr Rev 2007;65:63e77.
+[17] Moretti A, Paoletta M, Liguori S, Bertone M, Toro G, Iolascon G. Choline: an
+essential nutrient for skeletal muscle. Nutrients 2020;12:2144.
+[18] Liu SZ, Ali AS, Campbell MD, Kilroy K, Shankland EG, Roshanravan B, et al.
+Building strength, endurance, and mobility using an astaxanthin formulation
+with functional training in elderly. J Cachexia Sarcopenia Muscle 2018;9:
+826e33.
+[19] Ulven SM, Kirkhus B, Lamglait A, Basu S, Elind E, Haider T, et al. Metabolic
+effects of krill oil are essentially similar to those of ﬁsh oil but at lower dose of
+EPA and DHA, in healthy volunteers. Lipids 2011;46:37e46.
+[20] Ramprasath V, Eyal I, Zchut S, Jones P. Enhanced increase of omega-3 index in
+healthy individuals with response to 4-week n-3 fatty acid supplementation
+from krill oil versus ﬁsh oil. Lipids Health Dis 2013;12:178.
+[21] Ismail AD, Alkhayl FFA, Wilson J, Johnston L, Gill JMR, Gray SR. The effect of
+short-duration resistance training on insulin sensitivity and muscle adapta-
+tions in overweight men. Exp Physiol 2019;104:540e5.
+[22] Guralnik JM, Simonsick EM, Ferrucci L, Glynn RJ, Berkman LF, Blazer DG, et al.
+A short physical performance battery assessing lower extremity function:
+association with self-reported disability and prediction of mortality and
+nursing home admission. J Gerontol 1994;49:M85e94.
+[23] Janssen I, Heymsﬁeld SB, Baumgartner RN, Ross R. Estimation of skeletal
+muscle mass by bioelectrical impedance analysis. J Appl Physiol 2000;89:
+465e71.
+[24] Hermens HJ, Freriks B, Disselhorst-Klug C, Rau G. Development of recom-
+mendations
+for
+SEMG
+sensors
+and
+sensor
+placement
+procedures.
+J Electromyogr Kinesiol Off J Int Soc Electrophysiol Kinesiol 2000;10:361e74.
+[25] Ruhdorfer A, Wirth W, Eckstein F. Relationship between isometric thigh
+muscle strength and minimum clinically important differences in knee
+function in osteoarthritis: data from the osteoarthritis initiative. Arthritis Care
+Res 2015;67:509e18.
+[26] Franchi MV, Longo S, Mallinson J, Quinlan JI, Taylor T, Greenhaff PL, et al.
+Muscle thickness correlates to muscle cross-sectional area in the assessment
+of strength training-induced hypertrophy. Scand J Med Sci Sports 2018;28:
+846e53.
+[27] Dodds RM, Syddall HE, Cooper R, Benzeval M, Deary IJ, Dennison EM, et al.
+Grip strength across the life course: normative data from twelve British
+studies. PLoS One 2014;9:1e15.
+[28] Bischoff-Ferrari HA, Vellas B, Rizzoli R, Kressig RW, Da Silva JAP, Blauth M,
+et al. Effect of vitamin D supplementation, omega-3 fatty acid supplementa-
+tion, or a strength-training exercise program on clinical outcomes in older
+adults: the DO-HEALTH randomized clinical trial. JAMA, J Am Med Assoc
+2020;324:1855e68.
+[29] Fried LP, Tangen CM, Walston J, Newman AB, Hirsch C, Gottdiener J, et al.
+Frailty in older adults: evidence for a phenotype. Journals Gerontol Ser A Biol
+Sci Med Sci 2001;56:M146e57.
+[30] Kalache A, Barreto SM, Keller I. Global ageing: the demographic revolution in
+all cultures and societies. In: Johnson ML, editor. The Cambridge Handbook of
+Age and Ageing. Cambridge: Cambridge University Press; 2005. p. 30e46.
+[31] Calder PC. Omega-3 fatty acids and inﬂammatory processes. Nutrients 2010;2:
+355e74.
+[32] Dalle S, Rossmeislova L, Koppo K. The role of inﬂammation in age-related
+sarcopenia. Front Physiol 2017;8:1045.
+[33] Boit M Da, Sibson R, Sivasubramaniam S, Meakin JR, Greig CA, Aspden RM,
+et al. Sex differences in the effect of ﬁsh oil supplementation on the adaptive
+response to resistance exercise training in older people : a randomized, 105;
+2017. p. 151e8.
+[34] Smith GI, Julliand S, Reeds DN, Sinacore DR, Klein S, Mittendorfer B. Fish oil-
+derived n-3 PUFA therapy increases muscle mass and function in healthy
+older adults. Am J Clin Nutr 2015;102:115e22.
+[35] Rodacki CLN, Rodacki ALF, Pereira G, Naliwaiko K, Coelho I, Pequito D, et al.
+Fish-oil supplementation enhances the effects of strength training in elderly
+women. Am J Clin Nutr 2012;95:428e36.
+[36] Wurtman RJ, Cansev M, Sakamoto T, Ulus I. Nutritional modiﬁers of aging
+brain function: use of uridine and other phosphatide precursors to increase
+formation of brain synapses. Nutr Rev 2010;68(Suppl 2):S88e101.
+[37] Blijham PJ, ter Laak HJ, Schelhaas HJ, van Engelen BGM, Stegeman DF,
+Zwarts MJ. Relation between muscle ﬁber conduction velocity and ﬁber size in
+neuromuscular disorders. J Appl Physiol 2006;100:1837e41.
+[38] Yoshino J, Smith GI, Kelly SC, Julliand S, Reeds DN, Mittendorfer B. Effect of
+dietary n-3 PUFA supplementation on the muscle transcriptome in older
+adults. Phys Rep 2016;4.
+[39] Herbst EAF, Paglialunga S, Gerling C, Whitﬁeld J, Mukai K, Chabowski A, et al.
+Omega-3 supplementation alters mitochondrial membrane composition and
+respiration kinetics in human skeletal muscle. J Physiol 2014. https://doi.org/
+10.1113/jphysiol.2013.267336.
+[40] Vargiu R, Littarru GP, Fraschini M, Perinu A, Tiano L, Capra A, et al.
+Enhancement of shortening velocity, power, and acto-myosin crossbridge
+(CB) kinetics following long-term treatment with propionyl-L-carnitine, co-
+enzyme Q10, and omega-3 fatty acids in BIO TO-2 cardiomyopathic Syrian
+hamsters papillary muscle. Biofactors 2010;36:229e39.
+[41] Walser B, Giordano R, Stebbins C. Supplementation with omega-3 poly-
+unsaturated fatty acids augments brachial artery dilation and blood ﬂow
+during forearm contraction. Eur J Appl Physiol 2006;97:347e54.
+[42] von Haehling S, Morley JE, Coats AJS, Anker SD. Ethical guidelines for pub-
+lishing in the journal of cachexia, sarcopenia and muscle: update 2017.
+J Cachexia Sarcopenia Muscle 2017;8:1081e3.
+S.AA. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail et al.
+Clinical Nutrition 41 (2022) 1228e1235
+1235

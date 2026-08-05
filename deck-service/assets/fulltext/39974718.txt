@@ -1,0 +1,1390 @@
+Comparison of Omega-3 polyunsaturated fatty acids bioavailability in fish
+oil and krill oil: Network Meta-analyses
+Thi-Phuong-Thao Pham a,b,1, Thi-Van Hoang b,c,1, Phuc-Thao-Nguyen Cao d,1,
+Thi-Thuy-Duong Le e, Van-Thao-Nguyen Ho e, Thi-Mai-Hoa Vu f, Thi-Hoai-Thu Le g,
+Huynh-Thien-Xuan Pham e, Thanh-Thien Tran h, Okti Ratna Mafruhah i, Thi-Thuy-Linh Pham c,j,
+Min-Tsang Hsieh b,k,l,*, Hai-Anh Ha c,**
+a K24YDH3, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+b School of Pharmacy, China Medical University, Taichung 406040, Taiwan
+c Faculty of Pharmacy, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+d K25YDH4, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+e K26YDH2, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+f K25YDH1, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+g K25YDH3, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+h K27YDH1, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam
+i Department of Pharmacy, Universitas Islam Indonesia, Daerah Istimewa, Yogyakarta 55584, Indonesia
+j Chungbuk National University College of Pharmacy, Osong, Cheongju 28160, Republic of Korea
+k Drug Development Center, China Medical University, Taichung 406040, Taiwan
+l Chinese Medicinal Research and Development Center, China Medical University Hospital, Taichung 40447, Taiwan
+A R T I C L E I N F O
+Keywords:
+Bioavailability
+Omega-3
+Fish oil
+Krill oil
+Polyunsaturated fatty acids
+A B S T R A C T
+Background and Aims: Fish oil and krill oil are primary sources of Omega-3 polyunsaturated fatty acids
+(PUFAs), differing in their molecular forms and bioavailability. Understanding these differences can optimize
+their therapeutic use. This study aims to compare the bioavailability of Omega-3 PUFAs in fish oil and krill oil
+using a network meta-analysis approach. By evaluating various molecular forms and dosages, the study seeks to
+identify the most effective Omega-3 sources and dosing regimens to maximize health benefits.
+Methods: The study adhered to the explanation of the PRISMA network meta-analysis 2015 (registered
+PROSPERO ID: CRD42024532536). The risk of bias was evaluated using the PEDro scale. This network meta-
+analysis incorporated data from studies published between 2003 and 2023, sourced from five databases:
+ClinicalTrials.gov, PubMed, Cochrane CENTRAL, the International Clinical Trials Registry Platform-World Health
+Organization, and Embase. Statistical analysis was conducted using advanced models in R software to ensure a
+rigorous evaluation of bioavailability.
+Results: Out of 26 high-quality studies, findings reveal superior bioavailability of krill oil compared to fish oil.
+Specifically, fish oil above 3000 mg, in re-esterified triacylglycerol or ethyl ester formulations (100–2900 mg),
+and krill oil (100–1900 mg) significantly enhanced the Omega-3 index. At lower dosages (under 2000 mg), krill
+Abbreviations: AUC, Area under the curve; Cmax, Maximum concentration; DHA, Docosahexaenoic acid; EMB, Emulsion type B; EMN, Emulsion type N; EMS,
+Emulsion type S; EPA, Eicosapentaenoic acid; FO, Fish oil without specific molecular form information; FO-EE, Fish oil ethyl ester; FO-EM, Fish oil emulsion; FO-
+rTAG, Fish oil re-esterified triacylglycerol; FO-TG, Fish oil triglycerides; ICTRP-WHO, International Clinical Trials Registry Platform - World Health Organization;
+KO, Krill oil without specific molecular form information; KO-HPL, Krill oil high phospholipid; KO-LPL, Krill oil low phospholipid; KO-PL/FFA, Krill oil phos-
+pholipid/free fatty acid; MFO-PS, Fish oil microencapsulated powder (sugar - milk protein: encapsulating agent); MFO-PSRS, Fish oil microencapsulated powder
+(resistant starch - milk protein: encapsulating agent); NMA, Network meta-analysis; O3i, Omega-3 index; PUFAs, Polyunsaturated fatty acids; Tmax, Time to
+maximum concentration; < 2, Doses (DHA + EPA) 100–1900 mg per day; < 3, Doses (DHA + EPA) 2000–2900 mg per day; > 3, Doses (DHA + EPA) above 3000 mg
+per day..
+* Corresponding author at: School of Pharmacy, China Medical University, Taichung 406040, Taiwan.
+** Corresponding author at: Faculty of Pharmacy, College of Medicine and Pharmacy, Duy Tan University, Da Nang 550000, Viet Nam.
+E-mail addresses: t21917@mail.cmu.edu.tw (M.-T. Hsieh), hahaianh@dtu.edu.vn (H.-A. Ha).
+1 T.P.T. Pham, T.V. Hoang and P.T.N. Cao as co-first authors.
+Contents lists available at ScienceDirect
+Food Chemistry: X
+journal homepage: www.sciencedirect.com/journal/food-chemistry-x
+https://doi.org/10.1016/j.fochx.2024.101880
+Received 3 July 2024; Received in revised form 17 September 2024; Accepted 4 October 2024
+Food Chemistry: X 24 (2024) 101880 
+Available online 5 October 2024 
+2590-1575/© 2024 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY-NC license ( http://creativecommons.org/licenses/by- 
+nc/4.0/ ). 
+
+oil shows superior Omega-3 absorption compared to fish oil. Using fish oil ethyl ester at doses between 2000 and
+2900 mg may be the most effective for reducing Tmax. However, this finding should be interpreted with caution
+due to high heterogeneity and limited statistical significance. The highest AUC values were observed in krill oil
+phospholipid/free fatty acid formulation. Emulsion forms of fish oil are more effective in increasing Cmax than
+other formulations. These results were supported by robust statistical evidence (Egger’s test, p > 0.05), high-
+lighting the effectiveness of specific formulations and doses in optimizing Omega-3 absorption.
+Conclusion: The research highlights the importance of understanding the bioavailability of Omega-3 PUFAs
+from fish oil and krill oil. The findings suggest that low-dose krill oil and fish oil emulsions (under 2000 mg) are
+effective and potentially safer alternatives to high-dose fish oil, potentially minimizing the risk of adverse effects.
+1. Introduction
+Omega-3 polyunsaturated fatty acids (PUFAs), specifically eicosa-
+pentaenoic acid (EPA) and docosahexaenoic acid (DHA), are known for
+their substantial health benefits, including mitigating cardiovascular
+risk and enhancing mental health and developmental outcomes (Shahidi
+& Ambigaipalan, 2018; Van Dael, 2021). Recent research has expanded
+the understanding of the extensive health advantages provided by these
+essential nutrients (Calder, 2017; Elagizi et al., 2021).
+Marine foods, such as fish and krill, are the primary natural sources
+of Omega-3 PUFAs. Products derived from these sources, such as fish oil
+(FO) and krill oil (KO) represent primary natural sources of long-chain
+omega-3 PUFAs, whereas vegetable oils contain larger amounts of
+alpha-linolenic acid, an 18‑carbon precursor (Calder & Yaqoob, 2009;
+Wang et al., 2019; Xie et al., 2019). Both FO and KO contain EPA and
+DHA in various molecular forms, which influence their bioavailability
+and health effects (Pham, Hoang, et al., 2024; Sung et al., 2020). FO
+formulations typically consist of triglycerides (FO-TG), re-esterified
+triacylglycerols (FO-rTAG), ethyl esters (FO-EE) (Vossk¨otter et al.,
+2023), emulsions (FO-EM), and microencapsulated powders (MFO-PS,
+MFO-PSRS) (Colletti et al., 2021). In contrast, KO contains EPA and DHA
+primarily in phospholipid form, including high-phospholipid (KO-HPL)
+and low-phospholipid (KO-LPL) formulations, as well as phospholipid/
+free fatty acid combinations (KO-PL/FFA) (Kroupova et al., 2020; Sha-
+hidi & Abad, 2024).
+Both oils are recognized for their health-promoting properties.
+Clinical studies on FO began in the late 1970s, notably with Danish re-
+searchers Bang and Dyerberg (Liao et al., 2022), who investigated the
+low incidence of cardiovascular disease among Greenland Inuit pop-
+ulations consuming a diet rich in marine oils. Their research highlighted
+the potential health benefits of Omega-3 fatty acids found in fish oil
+(Liao et al., 2022). The first clinical study on KO commenced far later
+than FO in 2003, marking the onset of research into its effects on human
+health,
+particularly
+cardiovascular
+health,
+inflammation,
+and
+cholesterol-related issues (R. K. Berge et al., 2015; Pham, Hoang, et al.,
+2024; Xie et al., 2019).
+Despite the recognized benefits, there is a significant gap in
+comprehensive research comparing the bioavailability of FO and KO.
+Health practitioners lack a clear understanding of which source or
+formulation of Omega-3 PUFAs is most effective for absorption at
+various dosage levels.
+Several sample types can be used to assess Omega-3 levels in the
+blood, including whole plasma, whole blood, platelets, leukocytes, and
+specific plasma lipid classes such as phospholipids, cholesteryl esters,
+triglycerides, and free fatty acids (J. P. Schuchardt et al., 2022). The
+Omega-3 index (O3i), defined as the EPA + DHA content of red blood
+cells (RBCs) as a percentage of total identified fatty acids, is the
+preferred biomarker for assessing long-term Omega-3 PUFA status in
+clinical practice and research (Vossk¨otter et al., 2023). Other metrics,
+such as Cmax (maximum concentration), Tmax (time to maximum
+concentration), and AUC (area under the curve), are commonly used in
+pharmacokinetic studies to evaluate the bioavailability of drugs and
+biological compounds (Atkinson, 2012). These metrics reflect the effi-
+ciency with which the body absorbs Omega-3 from FO and KO sources
+(Djuricic & Calder, 2023; Watanabe & Tatsuno, 2021).
+This study aims to bridge this critical research gap by comparing the
+bioavailability of Omega-3 across various molecular forms, formula-
+tions, and dosages of fish and krill oils using four measures of
+bioavailability: O3i, AUC, Tmax, and Cmax. By exploring bioavail-
+ability, this study seeks to refine dietary recommendations and improve
+product formulations. The insights derived are anticipated to spur
+further research into personalized nutritional strategies, potentially
+revolutionizing dietary approaches to health maintenance and disease
+prevention (Tseng et al., 2024).
+2. Material and methods
+2.1. Protocol and registration
+The NMA adhered to the PRISMA for network meta-analysis 2015
+checklist (Hutton et al., 2015), followed guidelines from the “Doing
+Meta-Analysis with R" guide (Ebert et al., 2021) as described previously
+(Pham, Le, et al., 2024), and was registered with PROSPERO under ID:
+CRD42024532536.
+2.2. Eligibility criteria
+• Inclusion criteria:
+- Studies have characteristics that include (following the PICOS
+criteria):
+▪P - Participants: Any participants, all subjects regardless of race
+or gender.
+▪I - Interventions: Interventions consist of fish oil, krill oil.
+▪C - Comparations: placebo (soybean oil, sunflower oil, corn oil,
+olive oil, flaxseed oil or vegetable oil mixture) or comparison
+between different molecular forms, formulations, and dosages.
+▪O - Outcomes: The O3i is measured in red blood cells (RBCs),
+whereas the AUC, Tmax, and Cmax outcomes are assessed in
+plasma.
+▪S - Study design: Randomized controlled trials (RCTs) or multi-
+arm trials.
+- Studies are documented in English-language articles.
+• Exclusion criteria:
+- Unfinished studies.
+- Without full-text articles.
+- Studies with withdrawn registrations.
+- Insufficient information on analyzed variables (O3i, Tmax, AUC, or
+Cmax).
+- Interventions with Omega-3 PUFAs but not supplemented in the
+form of fish oil or krill oil.
+2.3. Search strategy
+This research strategy involves examining the bioavailability of
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+2 
+
+clinical studies on both FO and KO, published between January 2003
+and December 2023.
+Identified keywords: “Fish Oil”, “Krill Oil”,
+“Polyunsaturated fatty acid”, “Bioavailability”, and “Omega-3”. All
+synonyms were found in the MeSH database, and a search algorithm was
+executed using OR and AND. Searches were performed across five da-
+tabases: ClinicalTrials.gov, PubMed, Cochrane CENTRAL, International
+Clinical Trials Registry Platform (ICTRP), and Embase. The specified
+criteria were adhered to, based on the PICOS questionnaire, to identify
+relevant studies (details in Supplementary Tables S1 and S2).
+2.4. Study selection (screening), data collection and data items
+The screening process employs the Covidence semi-automatic
+screening system, assessing titles, abstracts, and full texts.
+The collected data was exported to MS Excel (2016), including
+continuous variables represented as Mean ± Standard Deviation, and
+the number of participants in each group for outcomes such as AUC, O3i,
+Tmax, and Cmax.
+Data items: The basic characteristics of the included studies were
+collected, including the country of origin, interventions, daily dose of
+DHA + EPA per intervention (categorized as low doses: 100 mg to 1900
+mg, medium doses: 2000 mg to 2900 mg, high doses: above 3000 mg),
+health characteristics of the participants, dosing regimen (single or
+multiple doses), and outcomes measured in each study.
+Reasons for separating the dosage include:
+- Data analysis: studies on KO and FO often use varying dosages to
+evaluate their effects. These dosage ranges were selected based on
+the actual distribution of doses used in available studies.
+- Rational grouping: categorizing dosages into specific ranges facili-
+tates the comparison of efficacy and safety across different study
+groups and helps identify if there is an optimal dosage threshold in
+correspondence with clinical recommendations:
+þ Low dosage (100–1900 mg): Typically used in recommendations
+for general health maintenance and cardiovascular prevention.
+þ Medium dosage (2000–2900 mg): Suitable for recommendations
+for treating high triglycerides and other inflammatory issues.
+þ High dosage (above 3000 mg): Often used in studies to test
+maximum efficacy, though caution is advised due to potential side ef-
+fects such as digestive issues, bleeding, or immune system impacts.
+2.5. Risk of bias within individual studies
+Using the PEDro scale with 11 questions corresponding to 10 points:
+“Poor” with a score of 0–3, “Moderate” with a score of 4–5, “Good” with
+a score of 6–8 and “Excellent” with a score of 9–10 to evaluate the
+quality of selected articles.
+Processes: Study selection, data collection, and study quality
+assessment were performed independently by five team members (T.P.T.
+Pham, T.V. Hoang, P.T.N. Cao, T.T.D. Le and V.T.N. Ho). Differences
+were resolved through discussion and consensus.
+2.6. Summary measures - planned methods of analysis
+The study was conducted on R and R Studio software (version
+2023.12.0 + 369), performing regular network meta-analysis using the
+netmeta package (Ebert, 2021).
+Main summary measures:
+- Heterogeneity assessment: Total heterogeneity (Q-total) and degrees of
+freedom (df) were calculated, along with I2, tau2, and tau values to
+assess the variability in effect estimates that could not be attributed
+solely to sampling error.
+- Publication bias assessment: To assess publication bias, funnel plots
+and Egger’s test were used. Funnel plots compare study effect sizes to
+their standard errors, with symmetrical plots suggesting no bias and
+asymmetry indicating possible underreporting of smaller studies
+with non-significant results. Egger’s test statistically assesses funnel
+plot symmetry, where non-significant p-values (p > 0.05) indicate a
+low likelihood of bias. Publication bias assessment involved calcu-
+lating the Z-score and P-value from the meta-analysis results, with
+further testing using the Egger’s test (t) and Standard Error (SE)
+analysis to identify asymmetries.
+- Treatment rankings are evaluated by using SUCRA score, according to
+the method by Crippa and Orsini (Crippa & Orsini, 2016) for
+continuous variable (detail in Supplementary Fig. S1 & Table S3).
+- Additional analyses: If the geometry of the network is not well-
+defined, sensitivity or subgroup analyses will be conducted and
+presented.
+3. Results
+3.1. Study selection
+After initial screening, 1385 studies were identified from five data-
+bases. The Covidence tool eliminated duplicates (n = 53), non-RCT ar-
+ticles (n = 1065), and those not meeting criteria (n = 34). Among the
+remaining 233 studies, 141 were excluded. After full-text screening of
+92 studies, 60 were excluded for various reasons such as inaccessibility
+or withdrawal. Six studies lacked sufficient data, leaving 26 studies for
+the network meta-analysis (NMA) (Fig. 1).
+3.2. Study characteristics
+The basic characteristics and references of the studies are summa-
+rized in Supplementary Table S4. Outcome variables included the O3i
+(22 studies), AUC (5 studies), Tmax (4 studies), and Cmax (5 studies)
+(Fig. 2a). Molecular forms of KO included phospholipids (75 %), PL/FFA
+forms (9 %), HPL (8 %), and LPL (8 %) (Fig. 2b). FO were mostly cap-
+sules without specific molecular form information (48 %), followed by
+EE (16 %), TG (8 %), rTAG (16 %), EM (8 %), and FO-PL (4 %) (Fig. 2c).
+Control groups mostly consisted of oils without pharmacological effects,
+such as corn oil, olive oil, sunflower oil, and placebo capsules (Sup-
+plementary Table S4). In non-specific dosing regimens, fourteen
+studies employed a once-daily dosing schedule, while twelve studies
+used a dosing regimen of 2–3 times per day (Fig. 2d). Studies were
+conducted across 8 countries, with the USA contributing the most (8
+studies), followed by Australia (6 studies), Germany (5 studies), and
+Canada (3 studies) (Fig. 2e).
+3.3. Risk of bias within studies
+Nine studies (34 %) were assessed as having excellent quality, 15
+studies (58 %) as good quality, and 2 studies (8 %) as moderate quality
+(Fig. 3b). Most studies met criteria for eligible participants, statistical
+comparison methods, and score/variability measures. Two studies had
+moderate quality due to lack of information on intention-to-treat anal-
+ysis, allocation concealment, or blinding (Fig. 3a and details in Sup-
+plementary Table S5).
+3.4. The network-graph results
+The O3i network model included 14 interventions and 59 pairwise
+comparisons (Fig. 4a). FO formulations had various doses from low to
+high, while krill oil used lower doses (100–1900 mg). Heterogeneity
+between studies was high (tau2 = 1.7890, I2 = 97.1 %, Q total =
+1255.57, p < 0.0001, Table 1). For Tmax (Fig. 4b), data from four
+studies (only two of them were suitable for NMA) included 21 com-
+parisons across five interventions, indicating high heterogeneity (tau2 =
+111.7406, I2 = 94.8 % [92.9 %; 96.3 %], p > 0.05, Table 1). The NMA of
+AUC (Fig. 4c & 5d) incorporated data from five studies, 62 comparisons
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+3 
+
+across 12 interventions, showing no significant differences (tau2 = 0, I2
+= 0 %, p > 0.05, Table 1). For Cmax (Fig. 4e & 5f), five studies provided
+data for 42 comparisons across 10 interventions, divided into two sub-
+groups. The first subgroup (Sub 1) showed low heterogeneity (tau2 = 0,
+I2 = 0 % [0.0 %; 60.2 %]), while the second subgroup (Sub 2) revealed
+high heterogeneity (I2 = 78.5 %) (Table 1).
+The meta-analysis results in Table 2 provide a comprehensive
+comparison of various treatments for different outcomes:
+O3i: Most FO interventions led to a higher O3i compared to placebo
+(p < 0.05). However, FO-EE at doses above 3000 mg did not signifi-
+cantly improve O3i (MD = 1.9, CI 95 % = [−0.49; 4.30], z = 1.56, p =
+0.1198). KO capsules under 2000 mg per day effectively increased O3i,
+while KO-HPL and KO-LPL at doses below 2 g did not show significant
+improvement (KO-HPL: MD = 1.61, CI 95 % = [−1.13; 4.35], z = 1.15, p
+= 0.2487; KO-LPL: MD = −0.22, CI 95 % = [−2.96; 2.52], z = −0.16, p
+= 0.8751).
+Tmax: FO-EE at doses above 3000 mg significantly decreased Tmax
+compared to KO-PL/FFA at doses below 2 g (MD = −8.47; 95 % CI =
+[−17.09; 0.16], z = −1.92, p = 0.0543). Other forms of FO (EE, rTAG,
+and TG) did not significantly decrease Tmax more than KO-PL/FFA at
+the same dose, and all of results lacked statistical significance (p > 0.05).
+AUC: All interventions were compared at doses under 2000 mg. In
+Sub 1, no interventions showed statistically significant differences. In
+Sub 2, KO-PL/FFA significantly increased AUC compared to FO-rTAG
+(MD = −14.26, 95 % CI = [−24.88; −3.63], z = −2.63, p = 0.0085)
+and FO-EE (MD = −18.63, 95 % CI = [−29.49; −7.77], z = −3.36, p =
+0.0008).
+Cmax: Emulsion forms of FO (Types M and N) significantly increased
+Cmax compared to FO capsules (p < 0.05). Other FO forms (MFO-PS and
+FO - EMB) showed slight effectiveness without statistical significance (p
+> 0.05) in Sub 1. In Sub 2, KO-PL/FFA slightly increased Cmax
+compared to FO-rTAG, FO-EE, and FO-TG, but these results were not
+statistically significant (p > 0.05).
+3.5. Treatment ranking (SUCRA score)
+The treatment ranking results were estimated using the SUCRA score
+(Table 3). The most effective interventions will be showed:
+O3i: The most effective interventions for increasing the O3i were FO
+> 3 (SUCRA = 14.71 %), FO-rTAG <2 (SUCRA = 16.20 %), and FO-EE
+< 2 (SUCRA = 18.40 %). Most FO formulations were more effective in
+increasing the O3i compared to KO formulations.
+AUC: The interventions fish oil in emulsion forms (types N and B)
+yielded superior results compared to other interventions, with SUCRA
+Fig. 1. Flow diagram illustrating the study selection process, from identification to inclusion in the meta-analysis, detailing numbers at each stage.
+Notes: RCT: Randomized Controlled Trial; ICTRP-WHO: International Clinical Trials Registry Platform- World Health Organization, NMA: Network meta-analysis.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+4 
+
+scores of 16.92 % and 22.72 %, respectively (results in Sub 1). Within
+the dose range of 100–1900 mg, KO-PL/FFA < 2 (SUCRA = 11.40 %)
+was the most effective in increasing the AUC compared to other mo-
+lecular forms of fish oil (including FO-TG, FO-EE, and FO-rTAG) (result
+in Sub 2).
+Cmax: Emulsion FO forms were more effective in increasing Cmax
+compared to other fish oil formulations, with FO-EMS having the highest
+score (SUCRA = 2.3 %) in Sub 1. In Sub 2, KO-PL/FFA (SUCRA = 10.73
+%) was the most effective in increasing Cmax compared to FO-EE, FO-
+rTAG, and FO-TG at doses under 2000 mg.
+Tmax: FO-EE at doses ranging from 2000 to 2900 mg had the highest
+score for decreasing Tmax, with a SUCRA score of 95.22 %. Other for-
+mulations of FO-EE, FO-rTAG, and FO-TG were less effective compared
+to KO-PL/FFA at doses under 2000 mg. KO-PL/FFA ranked second in
+effectiveness, with a SUCRA score of 55.90 %.
+3.6. Publication bias
+Publication bias was assessed using a funnel plot with Egger’s test
+(Fig. 5). Our analyses showed no significant publication bias (p > 0.05),
+as funnel plots were symmetrical and Egger’s tests were non-significant.
+This suggests our findings are robust, though future research should
+consider trim-and-fill analysis for further validation.
+4. Discussion
+This research provides a comprehensive overview of direct and in-
+direct comparisons, focusing on four key indicators: O3i, AUC, Cmax,
+and Tmax.
+Fig. 2. Basic characteristics of the included studies.
+Notes: KO: krill oil capsule without specific molecular form information; PL/FFA: krill oil phospholipid/free fatty acid; PL: phospholipid; HPL: high phospholipid;
+LPL: low phospholipid; FO: fish oil capsule without specific molecular form information; rTAG: re-esterified triacylglycerol; MFO: fish oil microencapsulated; EE:
+ethyl ester; EM: emulsion; TG: triglycerides.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+5 
+
+4.1. Omega-3 index
+Our analysis indicates that high-dose FO interventions generally in-
+crease the O3i more effectively than lower-dose FO and KO formula-
+tions. Specifically, FO with a combined DHA + EPA content of 4400 mg
+per day is highly effective for boosting the O3i in red blood cells. FO-
+rTAG or FO-EE at doses ranging from 100 to 2900 mg also signifi-
+cantly improve the O3i (Fig. 4a, Table 2). When comparing FO and KO
+at the same dosage (100–1900 mg), KO tends to increase the O3i more
+effectively, even at lower doses. Studies such as Vossk¨otter et al. (2023)
+with 286 mg/day (Vossk¨otter F et al., 2023), Laidlaw et al. (2014) with
+240 mg/day (Laidlaw et al., 2014), and Berge et al. (2014) with 1156
+mg/day (K. Berge et al., 2014) demonstrate effectiveness of KO (K. Berge
+et al., 2014). Conversely, FO interventions typically use a minimum
+daily dose of 600 mg, with the highest reported at 1800 mg, suggesting
+that low-dose KO is more effective than higher-dose FO.
+High-dose
+FO
+supplementation
+is
+not
+necessarily
+a
+direct
+replacement for KO, as shown in SIDE analysis (Supplementary
+Table S9). Analyzing Q’ Cochrane statistics to assess inconsistencies
+between study designs (Supplementary Table S8) revealed significant
+inconsistencies when comparing KO < 2, FO < 2, and FO < 3 with the
+placebo group (p < 0.0001). After separating these groups, the incon-
+sistency decreased significantly (Q = 965.61 to 6.32, p = 0.0035),
+though heterogeneity remained.
+Beyond cardiovascular benefits, Omega-3 PUFAs positively impact
+brain health, ophthalmology, bone and joint health, and certain skin
+conditions (Bernhard et al., 2024; Bhargava et al., 2023; Christen et al.,
+2022; Gaengler et al., 2024; Huang et al., 2023; Lin et al., 2024;
+Stonehouse et al., 2022). Harris et al. (2017) found that raising the O3i
+to 4 % – 8 % can reduce the risk of death in individuals with coronary
+artery disease by approximately 30 % (Harris et al., 2017). Thus,
+increasing the O3i may significantly impact various health-related
+issues.
+Fig. 3. Risk of bias assessment of the included studies.
+(a) Proportion of 11 criteria in individual studies (b) Quality percentage in studies.
+Notes: Summarizing the risk of bias within included studies according to the PEDro scale, including individual criteria assessments.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+6 
+
+4.2. Time to maximum concentration - Tmax
+The findings suggest that FO-EE at dosages between 2000 and 2900
+mg may be the most effective for reducing Tmax, indicating a faster
+absorption rate (Fig. 4b, Table 3). Nutrition practitioners should
+consider this evidence when recommending Omega-3 supplements for
+rapid plasma fatty acid elevation. However, due to significant hetero-
+geneity and limited statistical significance in some outcomes, these
+recommendations should be approached with caution. Analyzing Q’
+Cochrane statistics (Supplementary Table S21) showed inconsistencies
+mainly from comparing KO – PL/FFA < 2 with FO – EE > 3 (p < 0.0001),
+but the Q statistic value between study designs was zero, indicating no
+heterogeneity between studies. Other forms of FO, such as FO-rTAG and
+FO-TG, showed lower efficacy compared to KO in the PL/FFA formu-
+lation at doses below 2000 mg.
+4.3. Area under the curve - AUC
+KO in the PL/FFA form significantly increases plasma fatty acid
+concentrations, as indicated by a higher AUC index compared to FO
+molecular forms such as TG, EE, and rTAG within the same dose range of
+100–1900 mg (Fig. 4c, Table 2). This conclusion is supported by SIDE
+analysis (Supplementary Table S13), which provides direct evidence
+for the efficacy of KO-PL/FFA.
+Despite a comparable dose range, KO in the PL/FFA formulation
+generally requires a lower dose than equivalent FO forms to achieve
+Fig. 4. Net graph estimates the effect of intervention oils on (a) O3i, (b) Tmax, (c, d) AUC, and (e, f) Cmax (random effect model).
+Notes: The buttons correspond to different treatments. Edges represent observed treatment comparisons, with varying thickness indicating the frequency of each
+comparison in the network.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+7 
+
+similar bioavailability. This enhanced bioavailability is due to the
+presence of free fatty acids and phospholipids, which promote superior
+absorption and utilization of Omega-3 fatty acids (K¨ohler et al., 2015).
+This finding highlights the efficiency of the KO-PL/FFA form in maxi-
+mizing bioavailability even at lower doses.
+4.4. Maximum concentration - Cmax
+Emulsion forms of FO are more effective in increasing the Cmax of
+Omega-3 fatty acids in plasma compared to traditional FO capsules. This
+suggests emulsion formulations should be prioritized in nutritional
+practices where peak plasma concentrations of Omega-3 are essential,
+particularly for rapid therapeutic purposes. Additionally, KO-PL/FFA
+may be an effective alternative to FO, especially at lower doses,
+benefiting those who experience adverse effects from higher FO doses.
+The strength of the Cmax results lies in the inclusion of multiple
+interventions and comparisons, enhancing the robustness of the find-
+ings. The low heterogeneity in Sub 1 adds confidence to the efficacy of
+emulsion FO forms (Fig. 4e and Table 1), indicating consistent
+bioavailability across studies. Conversely, the high heterogeneity in Sub
+2 (Table 1) suggests significant variability among the included studies,
+affecting the reliability of these results. This variability indicates unac-
+counted factors influencing Cmax outcomes. The lack of statistical sig-
+nificance in several comparisons highlights the need for further research
+to validate these findings.
+4.5. Comparative analysis with existing literature
+Our findings regarding the superior bioavailability of phospholipid-
+bound omega-3 in KO are consistent with previous research (Ulven &
+Holven, 2015). The molecular structure of FO consists predominantly of
+triglyceride, while KO contains Omega-3 fatty acids mainly in the form
+of phospholipids (Kim et al., 2020). These phospholipids in KO are more
+easily
+absorbed
+due
+to
+their
+amphiphilic
+properties,
+enhancing
+bioavailability compared to the triglyceride form in FO, which requires
+more processing in the body (Cook et al., 2016). The difference in ab-
+sorption efficiency between these molecular structures explains why KO
+formulations, despite lower EPA and DHA content, can exhibit higher
+bioavailability than FO (K¨ohler et al., 2015; Schuchardt et al., 2011).
+Our study extends these insights by employing a network meta-analysis
+that synthesizes data across multiple dosages and formulations,
+revealing that KO’s phospholipid form consistently outperforms other
+forms, particularly at lower dosages.
+Furthermore, while a recent study reported similar bioavailability
+among KO, FO, and calanus oil(Vossk¨otter et al., 2023), our results
+indicate that KO provides superior absorption, particularly when
+administered in phospholipid form at lower doses. This highlights the
+importance of molecular structure and dosage in optimizing Omega-3
+bioavailability, aligning with ealier findings (Elagizi et al., 2021),
+which emphasized the cardiovascular benefits of Omega-3 , thereby
+supporting the clinical utility of KO in rapidly elevating plasma Omega-3
+levels.
+4.6. The influence of chemical structure and molecular form on
+bioavailability
+The difference in bioavailability between FO and KO can be pri-
+marily attributed to the chemical structure of the Omega-3 fatty acids
+they contain (Schuchardt et al., 2011; Yurko-Mauro et al., 2015). In this
+study, we analyzed clinical data from various molecular forms of FO and
+KO, including FO-TG, FO-EE, FO-rTAG, and FO-EM, as well as KO-HPL,
+KO-LPL, and KO-PL/FFA formulations. Our findings demonstrate that
+KO formulations, particularly those rich in phospholipids, offer superior
+absorption and bioavailability compared to the triglyceride-based FO
+forms. Phospholipids in KO facilitate more efficient absorption across
+cell membranes than the triglyceride and ethyl ester forms in FO (K¨ohler
+et al., 2015; Schuchardt et al., 2011).
+While emulsified forms of FO (FO-EMB, FO-EMN, FO-EMS) can
+improve bioavailability, they still require additional processing to match
+the efficiency of phospholipid-bound omega-3
+in KO. This structural
+distinction explains the higher bioavailability of KO, even at lower EPA
+and DHA concentrations, as shown in our study (see Table 2, Fig. 4c).
+Phospholipids possess amphiphilic properties, allowing them to
+dissolve more readily in the aqueous environment of the body, leading
+to better absorption and metabolism of Omega-3 fatty acids (Ahmmed
+Table 1
+The results of exploration for inconsistency of the Omega-3 index, Tmax, AUC,
+and Cmax outcomes.
+Omega-3 Index
+Quantifying heterogeneity / inconsistency
+tau2 = 1.7890
+tau = 1.3375
+I2 ¼ 97.1 % [96.6 %; 97.6 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs)
+Q
+d.f.
+p - value
+Total
+1255.57
+36
+< 0.0001
+Within designs
+965.61
+32
+< 0.0001
+Between designs
+289.96
+4
+< 0.0001
+AUC – Sub 1
+Quantifying heterogeneity / inconsistency:
+tau2 = 0
+tau = 0
+I2 ¼ 0 % [0.0 %; 48.0 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs):
+Q
+d.f.
+p-value
+Total
+4.44
+19
+0.9998
+Within designs
+4.44
+19
+0.9998
+Between designs
+0.00
+0
+–
+Cmax – Sub 1
+Quantifying heterogeneity / inconsistency
+tau2 = 0
+tau = 0
+I2 ¼ 0 % [0.0 %; 60.2 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs)
+Q
+d.f.
+p-value
+Total
+5.72
+10
+0.8380
+Within designs
+5.72
+10
+0.8380
+Between designs
+0.00
+0
+–
+Tmax
+Quantifying heterogeneity / inconsistency
+tau2 = 111.7406
+tau = 10.5707
+I2 = 94.8 % [92.9 %; 96.3 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs):
+Q
+d.f.
+p-value
+Total
+270.85
+14
+< 0.0001
+Within designs
+270.85
+14
+< 0.0001
+Between designs
+0.00
+0
+-
+AUC – Sub 2
+Quantifying heterogeneity / inconsistency:
+tau2 = 0
+tau = 0
+I2 ¼ 0 % [0.0 %; 74.6 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs):
+Q
+d.f.
+p-value
+Total
+3.83
+5
+0.5741
+Within designs
+3.83
+5
+0.5741
+Between designs
+0.00
+0
+–
+Cmax – Sub 2
+Quantifying heterogeneity / inconsistency
+tau2 = 0.0919
+tau = 0.3032
+I2 ¼ 78.5 % [60.9 %; 88.2 %]
+Tests of heterogeneity (within designs) and inconsistency (between designs):
+Q
+d.f.
+p-value
+Total
+41.92
+9
+< 0.0001
+Within designs
+41.92
+9
+< 0.0001
+Between designs
+0.00
+0
+–
+Notes: * Statistically significant results highlighted in bold; “-”: no data; “d.f”.:
+degrees of freedom.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+8 
+
+et al., 2023; Burri et al., 2012; K¨ohler et al., 2015). This enhanced ab-
+sorption may explain why KO can elevate blood Omega-3 levels more
+effectively than FO, even when administered at lower doses (Kim et al.,
+2020; Yurko-Mauro et al., 2015; Schuchardt et al., 2011).
+4.7. Clinical applications, implications for nutritional practice
+A thorough understanding of the bioavailability differences between
+FO and KO is essential for both clinical practice and the development of
+effective nutritional supplements. Phospholipids in KO facilitate better
+integration into cell membranes, leading to faster and more efficient
+Omega-3 delivery to tissues, particularly in situations requiring rapid
+therapeutic effects, such as in the management of cardiovascular dis-
+eases or chronic inflammatory conditions (Elagizi et al., 2021; K. Berge
+et al., 2014; Maki et al., 2009). On the other hand, FO’s triglyceride
+form, while absorbed more slowly, is effective for maintaining stable,
+long-term Omega-3 levels (Harris & Von Schacky, 2004; Vonschacky &
+Harris, 2007). This nuanced understanding is critical for optimizing the
+efficacy of Omega-3 supplements. By comparing the various molecular
+forms and dosages, our study helps to identify the most effective stra-
+tegies for maximizing health benefits, particularly in cardiovascular
+health, inflammation reduction, and cholesterol management. Such
+insights allow clinicians to tailor supplementation strategies to indi-
+vidual needs, improving both efficacy and safety.
+Furthermore, while health organizations recommend a daily intake
+of 250 mg to 3000 mg of combined EPA and DHA for adults, the mo-
+lecular form in which these fatty acids are delivered significantly im-
+pacts their effectiveness and safety (Kang et al., 2023). Consuming large
+doses of FO can lead to several side effects, including gastrointestinal
+discomfort, diarrhea, and an increased risk of bleeding due to the anti-
+coagulant properties of Omega-3 fatty acids (Lange et al., 2019; V. Kim
+et al., 2016; Detopoulou & Papamikos, 2014). Similar side effects have
+been observed with high doses of KO, although its lower dosage efficacy
+may reduce these risks (Van Der Wurff et al., 2019). High doses of FO,
+particularly above 3000 mg per day, have been associated with adverse
+events (Lange et al., 2019), which highlights the importance of consid-
+ering both the molecular form and dosage when prescribing Omega-3
+supplements. KO, although similar in composition, may offer a
+reduced risk profile due to its higher bioavailability, allowing for
+effective outcomes at lower doses (Colletti et al., 2021). However, our
+findings suggest that lower doses of KO or FO in emulsion forms can
+achieve similar, if not superior, therapeutic outcomes with fewer side
+effects. This evidence highlights the importance of selecting the appro-
+priate form and dosage of Omega-3 , contributing to the development of
+Fig. 5. Funnel plot showing the results of the publication bias analysis for the O3i (a), Tmax (b), AUC (c, d), and Cmax (e, f), by Egger’s test. Notes: The standard
+error (SE) of the intervention estimate is displayed on the vertical axis, while the mean difference of the specific comparison effect is on the horizontal axis. The edges of the
+triangle represent the 95 % confidence interval (CI) of the studies. The more the studies are concentrated towards the top and within the 95 % CI, the higher the reliability.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+9 
+
+Table 2
+The network meta-analysis results for Omega-3 index, Tmax, Area Under the Curve levels, and Cmax outcomes
+Omega-3 Index
+k
+m
+n
+22
+59
+14
+Comparison: other treatments vs ‘Placebo’
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO - EE < 2
+3.9472
+[2.4451; 5.4493]
+5.15
+< 0.0001
+FO - EE > 3
+1.9029
+[−
+0.4947; 4.3005]
+1.56
+0.1198
+FO - rTAG < 2
+4.0440
+[2.8252; 5.2628]
+6.50
+< 0.0001
+FO - rTAG < 3
+4.1700
+[0.8498; 7.4902]
+2.46
+0.0138
+FO < 2
+2.6158
+[1.7869; 3.4447]
+6.19
+< 0.0001
+FO < 3
+2.1041
+[0.7061; 3.5021]
+2.95
+0.0032
+FO > 3
+4.5000
+[1.6574; 7.3426]
+3.10
+0.0019
+KO - HPL < 2
+1.6100
+[−
+1.1259; 4.3459]
+1.15
+0.2487
+KO - LPL < 2
+- 0.2200
+[−
+2.9629; 2.5229]
+- 0.16
+0.8751
+KO - PL < 2
+0.8919
+[−
+1.4902; 3.2740]
+0.73
+0.4631
+KO < 2
+1.6439
+[1.0015; 2.2864]
+5.02
+< 0.0001
+MFO - PS < 2
+2.6633
+[0.5625; 4.7641]
+2.48
+0.0130
+MFO - PSRS < 2
+3.0212
+[0.9618; 5.0807]
+2.88
+0.0040
+‘Placebo’
+-
+-
+-
+-
+Tmax
+k
+m
+n
+2
+21
+5
+Comparison: other treatments vs ‘KO-PL/FFA < 2’):
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO-EE < 2
+3.0251
+[−9.8464;15.8966]
+0.46
+0.6451
+FO-EE > 3
+−8.4671
+[−17.0903;0.1560]
+−1.92
+0.0543
+FO-rTAG<2
+2.5996
+[−9.8167;15.0159]
+0.41
+0.6815
+FO-TG < 2
+5.0794
+[−5.3702;15.5290]
+0.95
+0.3407
+AUC – Sub 1
+k
+m
+n
+4
+45
+6
+Comparison: other treatments vs ‘FO < 2’
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO-EMB < 2
+1.5453
+[−0.9005; 3.9912]
+1.24
+0.2156
+FO-EMN < 2
+1.6677
+[−0.4173; 3.7528]
+1.57
+0.1169
+FO-EMS < 2
+0.3950
+[−1.7959; 2.5859]
+0.35
+0.7238
+MFO-PS < 2
+−0.0334
+[−2.3535; 2.2867]
+−0.03
+0.9775
+MFO-PSRS <2
+−0.9476
+[−3.5157; 1.6204]
+−0.72
+0.4695
+AUC – Sub 2
+k
+m
+n
+3
+11
+4
+Comparison: other treatments vs ‘KO-PL/FFA < 2’
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO-EE < 2
+¡18.6285
+[¡29.4905; ¡7.7665]
+¡3.36
+0.0008
+FO-rTAG < 2
+¡14.2551
+[¡24.8765; ¡3.6336]
+¡2.63
+0.0085
+FO-TG < 2
+−6.5811
+[−42.7140; 29.5518]
+−0.36
+0.7211
+Cmax - Sub 1
+k
+m
+n
+3
+27
+6
+Comparison: other treatments vs ‘FO < 2’
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO - EMB < 2
+0.0596
+[−0.0595; 0.1787]
+0.98
+0.3267
+FO - EMN < 2
+0.1902
+[0.0800; 0.3003]
+3.38
+0.0007
+FO - EMS < 2
+0.2901
+[0.1366; 0.4436]
+3.70
+0.0002
+MFO-PS < 2
+0.0228
+[−0.0319; 0.0775]
+0.82
+0.4140
+(continued on next page)
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+10 
+
+more effective and personalized nutritional supplements that enhance
+clinical outcomes.
+4.8. Strengths and limitations
+This study possesses several strengths. To the best of the authors’
+knowledge, this is the first NMA assessing the bioavailability of Omega-3
+PUFAs in both KO and FO, specifically comparing molecular forms,
+formulations, and dosages. The inclusion of numerous studies offers a
+comprehensive overview of PUFA bioavailability from these sources.
+The absence of publication bias, as indicated by the analyses, supports
+the reliability of these results (Fig. 5). These findings are valuable for
+informing nutritional practice and guiding future research.
+Regarding limitations, high heterogeneity was observed in several
+analyses, particularly for Tmax and Cmax. The limited number of studies
+and the narrower dose range for KO compared to FO constrain some
+conclusions. While FO has been studied at dosages exceeding 3000 mg/
+day, KO has only been evaluated at lower doses under 1900 mg/day.
+Consequently, there is a lack of evidence to compare the bioavailability
+of FO and KO at higher doses above 2000 mg.
+Future research should explore KO supplementation in different
+molecular forms with higher daily doses. Standardizing methodologies
+across studies will be crucial to reduce heterogeneity and enhance
+reliability. Additional studies focusing on the long-term effects and
+impact on different populations are necessary to validate and enhance
+the applicability of these findings in nutritional practice.
+5. Conclusion
+This study highlights the critical importance of understanding the
+bioavailability differences between FO and KO, particularly in terms of
+their
+molecular
+forms.
+Our
+findings
+reveal
+that
+KO,
+with
+its
+phospholipid-bound Omega-3 , offers superior absorption and efficacy
+at lower doses compared to the triglyceride-bound Omega-3
+in FO.
+High-dose FO (above 3000 mg, up to 4400 mg per day of DHA + EPA) is
+most effective for increasing the O3i. At lower dosages (under 2000 mg),
+KO shows superior Omega-3 absorption compared to fish oil. KO-PL/
+FFA is preferred for increasing AUC, while emulsion forms of FO are
+more effective for Cmax. The study demonstrates that low-dose Omega-
+3 fatty acids from KO and emulsion FO forms can be as effective and
+safer than high-dose FO, potentially reducing adverse effects. Future
+research should build on these findings by exploring the long-term im-
+pacts of different Omega-3 formulations to develop more personalized
+and effective nutritional interventions.
+CRediT authorship contribution statement
+Thi-Phuong-Thao Pham: Conceptualization, Methodology, Data
+curation, Software,Resources, Visualization, Writing - original draft.
+Thi-Van Hoang: Writing – original draft, Software, Resources, Meth-
+odology, Formal analysis, Data curation, Conceptualization. Phuc-
+Thao-Nguyen Cao: Writing – original draft, Software, Resources,
+Methodology, Formal analysis, Data curation, Conceptualization. Van-
+Thao-Nguyen Ho: Software, Resources, Methodology, Data curation.
+Thi-Mai-Hoa Vu: Software, Resources, Formal analysis, Data curation.
+Thi-Hoai-Thu Le: Software, Resources, Methodology, Data curation.
+Huynh-Thien-Xuan Pham: Software, Resources, Formal analysis, Data
+curation. Thanh-Thien Tran: Software, Resources, Data curation,
+Conceptualization. Okti Ratna Mafruhah: Resources, Investigation,
+Formal analysis. Thi-Thuy-Linh Pham: Writing – original draft,
+Table 2 (continued)
+MFO - PSRS <2
+−0.0041
+[−0.0639; 0.0557]
+−0.13
+0.8929
+Cmax - Sub 2
+k
+m
+n
+2
+15
+4
+Comparison: other treatments vs ‘KO - PL/FFA < 2’
+Interventions
+MD
+95 %-CI
+z
+p-value
+FO- rTAG <2
+−0.1708
+[−0.5821; 0.2404]
+−0.81
+0.4155
+FO - EE < 2
+−0.4096
+[−0.8230; 0.0039]
+−1.94
+0.0522
+FO - TG < 2
+−0.2172
+[−0.4910; 0.0565]
+−1.56
+0.1199
+Notes
+* Statistically significant results highlighted in bold.
+- “95 %-CI”: 95 % Confidence Interval; “vs”: Versus;
+Number of studies: k; Number of pairwise comparisons: m; Number of treatments: n; Treatment estimate: sm ¼ ‘MD’: Mean Difference;
+- Effect size: Random model effect.
+Table 3
+Treatment ranking (SUCRA %) for O3i, AUC, Cmax, and Tmax.
+Omega-3 Index
+AUC
+Cmax
+Tmax
+Treatment
+SUCRA
+Sub 1
+SUCRA
+Sub 1
+SUCRA
+Treatment
+SUCRA
+Placebo
+92.35
+MFO-PSRS <2
+82.50
+MFO - PSRS <2
+81.78
+FO - EE > 3
+95.22
+KO-LPL < 2
+98.70
+FO < 2
+64.26
+FO < 2
+80.18
+KO - PL/FFA < 2
+55.90
+KO-PL < 2
+77.23
+MFO-PS < 2
+63.06
+MFO-PS < 2
+65.82
+FO - rTAG <2
+39.08
+KO < 2
+67.12
+FO-EMS < 2
+55.40
+FO - EMB < 2
+51.44
+FO - EE < 2
+36.25
+KO-HPL < 2
+64.29
+FO-EMB < 2
+22.72
+FO - EMN < 2
+18.48
+FO - TG < 2
+23.55
+FO-EE > 3
+58.27
+FO-EMN < 2
+16.92
+FO - EMS < 2
+02.30
+–
+–
+FO < 3
+55.64
+Sub 2
+SUCRA
+Sub 2
+SUCRA
+–
+–
+FO < 2
+44.42
+FO-EE < 2
+81.87
+FO - EE < 2
+86.63
+–
+–
+MFO-PS < 2
+42.68
+FO-rTAG <2
+62.83
+FO - TG < 2
+56.77
+–
+–
+MFO-PSRS <2
+38.14
+FO-TG < 2
+43.90
+FO- rTAG <2
+45.87
+–
+–
+FO-rTAG <3
+19.68
+KO-PL/FFA < 2
+11.40
+KO - PL/FFA < 2
+10.73
+–
+–
+FO-EE < 2
+18.40
+–
+–
+–
+–
+–
+–
+FO-rTAG <2
+16.20
+–
+–
+–
+–
+–
+–
+FO > 3
+14.71
+–
+–
+–
+–
+–
+–
+Notes: “-”: No data; Outcomes including O3i, AUC, and Cmax: High ranking from bottom to top, and Tmax variable in reverse, ranking from top to bottom.
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+11 
+
+Visualization, Software, Methodology, Data curation, Conceptualiza-
+tion. Min-Tsang Hsieh: Writing – review & editing, Supervision, Soft-
+ware, Funding acquisition, Data curation. Hai-Anh Ha: Writing – review
+& editing, Supervision, Software, Investigation, Data curation.
+Declaration of competing interest
+The authors declare that they have no known competing financial
+interests or personal relationships that could have appeared to influence
+the work reported in this paper.
+Data availability
+All data included within manuscript and supplementary documents
+Acknowledgment
+This research was funded by China Medical University (CMU112-
+MF-102) and China Medical University from The Featured Areas
+Research Center Program within the framework of the Higher Education
+Sprout Project by the Ministry of Education (MOE) in Taiwan.
+Appendix A. Supplementary data
+Supplementary data to this article can be found online at https://doi.
+org/10.1016/j.fochx.2024.101880.
+References
+Ahmmed, M. K., Hachem, M., Ahmmed, F., Rashidinejad, A., Oz, F., Bekhit, A. A., …
+Bekhit, A. E.-D. A. (2023). Marine fish-derived Lysophosphatidylcholine: Properties,
+extraction, quantification, and brain health application. Molecules, 28(7), 3088.
+https://doi.org/10.3390/molecules28073088
+Atkinson, A. J. (2012). Chapter 4—Drug absorption and bioavailability. In
+A. J. Atkinson, S.-M. Huang, J. J. L. Lertora, & S. P. Markey (Eds.), Principles of
+clinical pharmacology (3rd ed., pp. 41–53). Academic Press. https://doi.org/10.1016/
+B978-0-12-385471-1.00004-0.
+Berge, K., Musa-Veloso, K., Harwood, M., Hoem, N., & Burri, L. (2014). Krill oil
+supplementation lowers serum triglycerides without increasing low-density lipoprotein
+cholesterol in adults with borderline high or high triglyceride levels (CN-00978431)., 34
+(2), 126–133. https://doi.org/10.1016/j.nutres.2013.12.003
+Berge, R. K., Ramsvik, M. S., Bohov, P., Svardal, A., Nordrehaug, J. E., Rostrup, E., …
+Bjørndal, B. (2015). Krill oil reduces plasma triacylglycerol level and improves
+related lipoprotein particle concentration, fatty acid composition and redox status in
+healthy young adults—A pilot study. Lipids in Health and Disease, 14, 163. https://
+doi.org/10.1186/s12944-015-0162-7
+Bernhard, B., Heydari, B., Abdullah, S., Francis, S. A., Lumish, H., Wang, W., …
+Kwong, R. Y. (2024). Effect of six month’s treatment with omega-3 acid ethyl esters
+on long-term outcomes after acute myocardial infarction: The OMEGA-REMODEL
+randomized clinical trial. International Journal of Cardiology, 399, Article 131698.
+https://doi.org/10.1016/j.ijcard.2023.131698
+Bhargava, R., Pandey, K., Ranjan, S., Mehta, B., & Malik, A. (2023). Omega-3 fatty acids
+supplements for dry eye—Are they effective or ineffective? Indian Journal of
+Ophthalmology, 71(4), 1619–1625. https://doi.org/10.4103/IJO.IJO_2789_22
+Burri, L., Hoem, N., Banni, S., & Berge, K. (2012). Marine omega-3 phospholipids:
+Metabolism and biological activities. International Journal of Molecular Sciences, 13
+(11), 15401–15419. https://doi.org/10.3390/ijms131115401
+Calder, P. C. (2017). Omega-3 fatty acids and inflammatory processes: From molecules to
+man. Biochemical Society Transactions, 45(5), 1105–1115. https://doi.org/10.1042/
+BST20160474
+Calder, P. C., & Yaqoob, P. (2009). Understanding Omega-3 polyunsaturated fatty acids.
+Postgraduate Medicine, 121(6), 148–157. https://doi.org/10.3810/
+pgm.2009.11.2083
+Colletti, A., Cravotto, G., Citi, V., Martelli, A., Testai, L., & Cicero, A. F. G. (2021).
+Advances in Technologies for Highly Active Omega-3 fatty acids from krill oil:
+Clinical applications. Marine Drugs, 19(6), 306. https://doi.org/10.3390/
+md19060306
+Cook, C. M., Hallaråker, H., Sæbø, P. C., Innis, S. M., Kelley, K. M., Sanoshy, K. D., …
+Maki, K. C. (2016). Bioavailability of long chain omega-3 polyunsaturated fatty acids
+from phospholipid-rich herring roe oil in men and women with mildly elevated
+triacylglycerols. Prostaglandins, Leukotrienes and Essential Fatty Acids, 111, 17–24.
+https://doi.org/10.1016/j.plefa.2016.01.007
+Crippa, A., & Orsini, N. (2016). Dose-response meta-analysis of differences in means.
+BMC Medical Research Methodology, 16(1), 91. https://doi.org/10.1186/s12874-016-
+0189-0
+Detopoulou, P., & Papamikos, V. (2014). Gastrointestinal bleeding after high intake of
+Omega-3 fatty acids, cortisone and antibiotic therapy: A case study. International
+Journal of Sport Nutrition and Exercise Metabolism, 24(3), 253–257. https://doi.org/
+10.1123/ijsnem.2013-0204
+Djuricic, I., & Calder, P. C. (2023). Pros and cons of long-chain Omega-3 polyunsaturated
+fatty acids in cardiovascular health. Annual Review of Pharmacology and Toxicology,
+63(1), 383–406. https://doi.org/10.1146/annurev-pharmtox-051921-090208
+Ebert, M. H., Cuijpers, P., Furukawa, T., & David.. (2021). Doing Meta-analysis with R: A
+hands-on guide. Chapman and Hall/CRC.. https://doi.org/10.1201/9781003107347
+Elagizi, A., Lavie, C. J., O’Keefe, E., Marshall, K., O’Keefe, J. H., & Milani, R. V. (2021).
+An update on Omega-3 polyunsaturated fatty acids and cardiovascular health.
+Nutrients, 13(1), 204. https://doi.org/10.3390/nu13010204
+Gaengler, S., Sadlon, A., De Godoi Rezende Costa Molino, C., Willett, W. C.,
+Manson, J. E., Vellas, B., … Bischoff-Ferrari, H. A. (2024). Effects of vitamin D,
+omega-3 and a simple strength exercise programme in cardiovascular disease
+prevention: The DO-HEALTH randomized controlled trial. The Journal of Nutrition,
+Health & Aging, 28(2), Article 100037. https://doi.org/10.1016/j.jnha.2024.100037
+Harris, W. S., Gobbo, L. D., & Tintle, N. L. (2017). The Omega-3 index and relative risk
+for coronary heart disease mortality: Estimation from 10 cohort studies.
+Atherosclerosis, 262, 51–54. https://doi.org/10.1016/j.atherosclerosis.2017.05.007
+Harris, W. S., & Von Schacky, C. (2004). The Omega-3 index: A new risk factor for death
+from coronary heart disease? Preventive Medicine, 39(1), 212–220. https://doi.org/
+10.1016/j.ypmed.2004.02.030
+Huang, H., Liao, D., He, B., Zhou, G., & Cui, Y. (2023). Clinical effectiveness of krill oil
+supplementation on cardiovascular health in humans: An updated systematic review
+and meta-analysis of randomized controlled trials. Diabetes and Metabolic Syndrome:
+Clinical Research and Reviews, 17(12), Article 102909. https://doi.org/10.1016/j.
+dsx.2023.102909
+Hutton, B., Salanti, G., Caldwell, D. M., Chaimani, A., Schmid, C. H., Cameron, C., …
+Moher, D. (2015). The PRISMA extension statement for reporting of systematic
+reviews incorporating network meta-analyses of health care interventions: Checklist
+and explanations. Annals of Internal Medicine, 162(11), 777–784. https://doi.org/
+10.7326/M14-2385
+Kang, K.-M., Jeon, S.-W., De, A., Hong, T.-S., & Park, Y.-J. (2023). A randomized, open-
+label, single-dose, crossover study of the comparative bioavailability of EPA and
+DHA in a novel liquid crystalline nanoparticle-based formulation of ω-3 acid ethyl
+Ester versus Omacor® soft capsule among healthy adults. International Journal of
+Molecular Sciences, 24(24), Article 17201. https://doi.org/10.3390/ijms242417201
+Kim, M. G., Yang, I., Lee, H. S., Lee, J.-Y., & Kim, K. (2020). Lipid-modifying effects of
+krill oil vs fish oil: A network meta-analysis. Nutrition Reviews, 78(9), 699–708.
+https://doi.org/10.1093/nutrit/nuz102
+Kim, V., Shin, W. G., & Choi, S. A. (2016). Parenteral nutrition enriched with fish oil after
+gastrointestinal surgery: A systematic review and Meta-analysis of randomized
+controlled trials. International Journal of Clinical Pharmacology & Pharmacotherapy, 1
+(1). https://doi.org/10.15344/2456-3501/2016/108
+K¨ohler, A., Sarkkinen, E., Tapola, N., Niskanen, T., & Bruheim, I. (2015). Bioavailability of
+fatty acids from krill oil, krill meal and fish oil in healthy subjects—A randomized, single-
+dose, cross-over trial (CN-01256015)., 14, 19. https://doi.org/10.1186/s12944-015-
+0015-4
+Kroupova, P., Van Schothorst, E. M., Keijer, J., Bunschoten, A., Vodicka, M., Irodenko, I.,
+… Horakova, O. (2020). Omega-3 phospholipids from krill oil enhance intestinal
+fatty acid oxidation more effectively than Omega-3 Triacylglycerols in high-fat diet-
+fed obese mice. Nutrients, 12(7), 2037. https://doi.org/10.3390/nu12072037
+Laidlaw, M., Cockerline, C., & Rowe, W. (2014). Comparative bioavailability of omega-3
+fatty acids from four different omega-3 supplements (CN-01060805). 28(1). https://
+www.cochranelibrary.com/central/doi/10.1002/central/CN-01060805/full.
+Lange, K. W., Nakamura, Y., Gosslau, A. M., & Li, S. (2019). Are there serious adverse
+effects of omega-3 polyunsaturated fatty acid supplements? Journal of Food
+Bioactives, 7. https://doi.org/10.31665/jfb.2019.7192
+Liao, J., Xiong, Q., Yin, Y., Ling, Z., & Chen, S. (2022). The effects of fish oil on
+cardiovascular diseases: Systematical evaluation and recent advance. Frontiers in
+Cardiovascular Medicine, 8, Article 802306. https://doi.org/10.3389/
+fcvm.2021.802306
+Lin, C., Lee, S.-H., Huang, C.-M., Wu, Y.-W., Chang, Y.-X., Liu, H.-L., Ng, S.-H., Cheng, Y.-
+C., Chiu, C.-C., & Wu, S.-C. (2024). Cognitive protection and brain entropy changes
+from omega-3 polyunsaturated fatty acids supplement in late-life depression: A 52-
+week randomized controlled trial. Journal of Affective Disorders, 351, 15–23. https://
+doi.org/10.1016/j.jad.2024.01.205
+Maki, K. C., Reeves, M. S., Farmer, M., Griinari, M., Berge, K., Vik, H., … Rains, T. M.
+(2009). Krill oil supplementation increases plasma concentrations of
+eicosapentaenoic and docosahexaenoic acids in overweight and obese men and
+women. Nutrition research (New York, N.Y.) (Vol. 29,(9), 609–615. https://doi.org/
+10.1016/j.nutres.2009.09.004
+Pham, T.-P.-T., Hoang, T.-V., Le, T.-T.-D., Cao, P.-T.-N., Ho, V.-T.-N., Vu, T.-M.-H., Le, T.-
+H.-T., Pham, H.-T.-X., Ratna Mafruhah, O., Pham, T.-T.-L., Hsieh, M.-T., & Ha, H.-A.
+(2024). Comparing the cardiovascular risk-reducing effects of polyunsaturated fatty
+acids in fish oil and krill oil: A network meta-analysis. Journal of Functional Foods,
+120, Article 106379. https://doi.org/10.1016/j.jff.2024.106379
+Pham, T.-P.-T., Le, T.-H.-T., Pham, H.-T.-X., Tran, T.-T., Pham, V.-T., Mafruhah, O. R., &
+Ha, H.-A. (2024). Comparative efficacy of antioxidant therapies for sepsis and septic
+shock in the intensive care unit: A frequentist network meta-analysis. Heliyon, 10
+(10), Article e31447. https://doi.org/10.1016/j.heliyon.2024.e31447
+Schuchardt, J., Schneider, I., Meyer, H., Neubronner, J., Von Schacky, C., & Hahn, A.
+(2011). Incorporation of EPA and DHA into plasma phospholipids in response to
+different omega-3 fatty acid formulations—A comparative bioavailability study of
+fish oil vs. krill oil. Lipids in Health and Disease, 10(1), 145. https://doi.org/10.1186/
+1476-511X-10-145
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+12 
+
+Schuchardt, J. P., Cerrato, M., Ceseri, M., DeFina, L. F., Delgado, G. E., Gellert, S., …
+Harris, W. S. (2022). Red blood cell fatty acid patterns from 7 countries: Focus on the
+Omega-3 index. Prostaglandins, Leukotrienes, and Essential Fatty Acids, 179, Article
+102418. https://doi.org/10.1016/j.plefa.2022.102418
+Shahidi, F., & Abad, A. (2024). Why is Antactic krill (Euphasia superba) oil on the
+spotlight? A review. Food Production, Processing and Nutrition, 6(1). https://doi.org/
+10.1186/s43014-024-00260-6
+Shahidi, F., & Ambigaipalan, P. (2018). Omega-3 polyunsaturated fatty acids and their
+health benefits. Annual Review of Food Science and Technology, 9(1), 345–381.
+https://doi.org/10.1146/annurev-food-111317-095850
+Stonehouse, W., Benassi-Evans, B., Bednarz, J., Vincent, A. D., Hall, S., & Hill, C. L.
+(2022). Krill oil improved osteoarthritic knee pain in adults with mild to moderate
+knee osteoarthritis: A 6-month multicenter, randomized, double-blind, placebo-
+controlled trial. The American Journal of Clinical Nutrition, 116(3), 672–685. https://
+doi.org/10.1093/ajcn/nqac125
+Sung, H. H., Sinclair, A. J., Huynh, K., Smith, A. A. T., Mellett, N. A., Meikle, P. J., &
+Su, X. Q. (2020). Krill oil has different effects on the plasma Lipidome compared
+with fish oil following 30 days of supplementation in healthy women: A randomized
+controlled and crossover study. Nutrients, 12(9), 2804. https://doi.org/10.3390/
+nu12092804
+Tseng, P.-T., Zeng, B.-Y., Chen, J.-J., Kuo, C.-H., Zeng, B.-S., Kuo, J. S., … Lin, P.-Y.
+(2024). High dosage Omega-3 fatty acids outperform existing pharmacological
+options for migraine prophylaxis: A network Meta-analysis. Advances in Nutrition, 15
+(2), Article 100163. https://doi.org/10.1016/j.advnut.2023.100163
+Ulven, S. M., & Holven, K. B. (2015). Comparison of bioavailability of krill oil versus fish
+oil and health effect. Vascular Health and Risk Management, 11, 511–524. https://doi.
+org/10.2147/VHRM.S85165
+Van Dael, P. (2021). Role of n-3 long-chain polyunsaturated fatty acids in human
+nutrition and health: Review of recent studies and recommendations. Nutrition
+Research and Practice, 15(2), 137. https://doi.org/10.4162/nrp.2021.15.2.137
+Van Der Wurff, I. S. M., Von Schacky, C., Bergeland, T., Leontjevas, R., Zeegers, M. P.,
+Jolles, J., … De Groot, R. H. M. (2019). Effect of 1 year krill oil supplementation on
+cognitive achievement of Dutch adolescents: A double-blind randomized controlled
+trial. Nutrients, 11(6), 1230. https://doi.org/10.3390/nu11061230
+Vonschacky, C., & Harris, W. (2007). Cardiovascular benefits of omega-3 fatty acids.
+Cardiovascular Research, 73(2), 310–315. https://doi.org/10.1016/j.
+cardiores.2006.08.019
+Vossk¨otter, F., Burhop, M., Hahn, A., & Schuchardt, J. P. (2023). Equal bioavailability of
+omega-3 PUFA from Calanus oil, fish oil and krill oil: A 12-week randomized parallel
+study. Lipids, 58(3), 129–138. https://doi.org/10.1002/lipd.12369
+Wang, L., Yang, F., Rong, Y., Yuan, Y., Ding, Y., Shi, W., & Wang, Z. (2019). Effects of
+different proteases enzymatic extraction on the lipid yield and quality of Antarctic
+krill oil. Food Science & Nutrition, 7(7), 2224–2230. https://doi.org/10.1002/
+fsn3.1017
+Watanabe, Y., & Tatsuno, I. (2021). Omega-3 polyunsaturated fatty acids focusing on
+eicosapentaenoic acid and docosahexaenoic acid in the prevention of cardiovascular
+diseases: A review of the state-of-the-art. Expert Review of Clinical Pharmacology, 14
+(1), 79–93. https://doi.org/10.1080/17512433.2021.1863784
+Xie, D., Gong, M., Wei, W., Jin, J., Wang, X., Wang, X., & Jin, Q. (2019). Antarctic krill
+(Euphausia superba) oil: A comprehensive review of chemical composition, extraction
+technologies, health benefits, and current applications. Comprehensive Reviews in
+Food Science and Food Safety, 18(2), 514–534. https://doi.org/10.1111/1541-
+4337.12427
+Yurko-Mauro, K., Kralovec, J., Bailey-Hall, E., Smeberg, V., Stark, J. G., & Salem, N.
+(2015). Similar eicosapentaenoic acid and docosahexaenoic acid plasma levels
+achieved with fish oil or krill oil in a randomized double-blind four-week
+bioavailability study. Lipids in Health and Disease, 14, 99. https://doi.org/10.1186/
+s12944-015-0109-z
+T.-P.-T. Pham et al.
+Food Chemistry: X 24 (2024) 101880 
+13 

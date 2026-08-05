@@ -1,0 +1,1293 @@
+Special Article
+Lipid-modifying effects of krill oil in humans: systematic review
+and meta-analysis of randomized controlled trials
+Sorin Ursoniu, Amirhossein Sahebkar, Maria-Corina Serban, Diana Antal, Dimitri P. Mikhailidis,
+Arrigo Cicero, Vasilios Athyros, Manfredi Rizzo, Jacek Rysz, Maciej Banach; for the Lipid and
+Blood Pressure Meta-analysis Collaboration Group
+Context: Some experimental and clinical trials have shown that krill oil, extracted
+from small red crustaceans, might be an effective lipid-modifying agent, but the
+evidence is not conclusive. Objective: The effect of krill oil supplements on plasma
+lipid concentrations was assessed through a systematic review of the literature and
+a meta-analysis of available randomized controlled trials. Data sources: PubMed
+and Scopus were searched up to March 25, 2016, to identify RCTs investigating the
+effect of krill oil supplements on plasma lipids. Study selection: Randomized con-
+trolled trials that investigated the impact of at least 2 weeks of supplementation
+with krill oil on plasma/serum concentrations of at least one of the main lipid par-
+ameters (ie, total cholesterol, low-density lipoprotein cholesterol, high-density lipo-
+protein cholesterol, or triglycerides) and that reported sufficient information on
+plasma/serum lipid levels at baseline and at the end of study in both krill oil and
+control groups were eligible for inclusion. Data extraction: Two reviewers inde-
+pendently extracted the following data: first author’s name, year of publication,
+study location, study design, number of participants in the krill oil and control
+groups, dosage of krill oil, type of control allocation, treatment duration, demo-
+graphic characteristics of study participants, and baseline and follow-up plasma
+concentrations of lipids. Effect size was expressed as the weighted mean difference
+(WMD) and 95% confidence interval (95%CI). Results: Meta-analysis of data from
+7 eligible trials (14 treatment arms) with 662 participants showed a significant re-
+duction in plasma concentrations of low-density lipoprotein cholesterol (WMD,
+15.52mg/dL; 95%CI, 28.43 to 2.61; P ¼ 0.018) and triglycerides (WMD,
+14.03mg/dL; 95%CI, 21.38 to 6.67; P < 0.001) following supplementation
+with krill oil. A significant elevation in plasma concentrations of high-density lipo-
+protein cholesterol was also observed (WMD, 6.65mg/dL; 95%CI, 2.30 to 10.99;
+P ¼ 0.003), while a reduction in plasma concentrations of total cholesterol did not
+Affiliation: S. Ursoniu is with the Department of Functional Sciences, Discipline of Public Health, Victor Babes University of Medicine and
+Pharmacy, Timisoara, Romania. A. Sahebkar is with the Biotechnology Research Center, Mashhad University of Medical Sciences, Mashhad,
+Iran. M.-C. Serban is with the Department of Functional Sciences, Discipline of Pathophysiology, Victor Babes University of Medicine and
+Pharmacy, Timisoara, Romania. D. Antal is with the Discipline of Pharmaceutical Botany, Faculty of Pharmacy, Victor Babes University of
+Medicine and Pharmacy, Timisoara, Romania. D.P. Mikhailidis is with the Department of Clinical Biochemistry, Royal Free Campus,
+University College London Medical School, University College London, London, United Kingdom. A. Cicero is with the Medical & Surgical
+Sciences Department, Alma Mater Studiorum – University of Bologna, Bologna, Italy. V. Athyros is with the Second Propedeutic
+Department of Internal Medicine, Medical School, Aristotle University of Thessaloniki, Hippocration General Hospital, Thessaloniki, Greece.
+M. Rizzo is with the Biomedical Department of Internal Medicine and Medical Specialties, University of Palermo, Palermo, Italy. J. Rysz and
+M. Banach are with the Department of Hypertension, Medical University of Lodz, Lodz, Poland.
+Correspondence: M. Banach, Department of Hypertension, WAM University Hospital, Medical University of Lodz, Zeromskiego 113, 90-549
+Lodz, Poland. Email: maciejbanach@aol.co.uk. Phone: þ48-42-639-37-71.
+Key words: Euphausiacea krill, krill oil, meta-analysis, plasma lipids.
+V
+C The Author(s) 2017. Published by Oxford University Press on behalf of the International Life Sciences Institute.
+All rights reserved. For Permissions, please e-mail: journals.permissions@oup.com.
+doi: 10.1093/nutrit/nuw063
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+1
+
+reach statistical significance (WMD, 7.50mg/dL; 95%CI, 17.94 to 2.93;
+P ¼ 0.159). Conclusion: Krill oil supplementation can reduce low-density lipopro-
+tein cholesterol and triglycerides. Additional clinical studies with more participants
+are needed to assess the impact of krill oil supplementation on other indices of car-
+diometabolic risk and on the risk of cardiovascular outcomes.
+INTRODUCTION
+Krill are red shrimp-like crustaceans that live in the cold
+waters of the southern (Antarctic) and northern (Arctic)
+polar seas.1 Although krill is the main food source for
+whales, it remains an abundant biomass on earth because
+of its high proliferation properties.2 Krill have a short life-
+span (1–2 years) and, because they live in clean waters, are
+free of heavy metals, pesticides, and dioxins.2 The major
+krill species, Euphausia superba, known as Antarctic krill,
+is the source of extracted krill oil.3 Many experimental
+and clinical trials have reported a protective role of krill oil
+in chronic inflammation,2 dyslipidemia,4 premenstrual
+syndrome,5 osteosarcoma,6 and rheumatoid arthritis.7
+Krill oil is rich in phospholipids that contain n-3 polyun-
+saturated fatty acids, mainly eicosapentaenoic acid (EPA)
+and docosahexaenoic acid (DHA).8 It also contains vari-
+ous potent antioxidants, such as the carotenoid astaxan-
+thin, and vitamins A and E.9 The association between
+phospholipids and long-chain n-3 fatty acids greatly facili-
+tates the passage of fatty acid molecules through the intes-
+tinal wall, thereby increasing their bioavailability and
+improving the ratio of n-3 to n-6 fatty acids.3,10
+Most of krill oil’s benefits have been attributed to its
+high EPA and DHA content.11 The well-recognized
+metabolic effects of EPA and DHA include lowering of
+triglyceride (TG) and very low-density lipoprotein chol-
+esterol levels.12 Choline, an ingredient in krill oil, reduces
+homocysteine, transports different lipids, and is involved
+in the synthesis of neurotransmitters (acetylcholine) and
+phospholipids (sphingomyelin, lyso-phosphatidylcholine,
+phosphatidylcholine, and choline plasmalogen).13
+The lipid-modifying effects of krill oil have been
+demonstrated in some trials, but the data are still incon-
+clusive. Therefore, all published trials on krill oil supple-
+mentation were reviewed systematically and assessed to
+determine the overall efficacy of krill oil on plasma lip-
+ids using meta-analysis.
+METHODS
+Search strategy
+This systematic review and meta-analysis was per-
+formed in compliance with the PRISMA guidelines.14
+The Scopus and MEDLINE databases were searched
+using the following search terms in titles and abstracts
+(also in combination with MeSH terms): (“randomized
+controlled trial” OR “randomized” OR “placebo” OR
+“cholesterol” OR “triglyceride” OR “LDL” OR “LDL-C”
+OR “LDL-cholesterol” OR “HDL” OR “HDL-C” OR
+“HDL-cholesterol” OR “hyperlipidemia” OR “hyperlip-
+idemic” OR “hypolipidemic” OR “dyslipidemia” OR
+“dyslipidemic”) and (“krill oil” OR “euphausiaceae” OR
+“euphausia superba”). The wild-card term ‘‘*’’ was used
+to increase the sensitivity of the search strategy. The lit-
+erature search was limited to papers published in
+English and to studies conducted in humans. The litera-
+ture was searched from inception to March 25, 2016.
+Two investigators (S.U. and M-C.S.) independently
+assessed each article, carried out data extraction, and per-
+formed quality assessment. Disagreements were resolved
+by consensus and discussion with a third party (M.B.).
+The PICOS (Participants, Intervention/exposure,
+Comparison, Outcomes, Study design) criteria used to
+define the research question are shown in Table 1.
+Study selection
+The following criteria were used for the inclusion of ori-
+ginal articles in the meta-analysis: a randomized controlled
+design; investigation of the effects of krill oil on plasma/
+serum concentrations of at least one of the main lipid par-
+ameters (ie, total cholesterol, low-density lipoprotein chol-
+esterol
+(LDL-C),
+high-density
+lipoprotein
+cholesterol
+(HDL-C), or TGs; measurement of either plasma/serum
+concentrations of lipids at baseline and at the end of study
+in both krill oil and control groups or the net change in
+lipid levels during the study; and administration of krill oil
+for a period of at least 2 weeks. The following exclusion cri-
+teria were applied: experimental studies; uncontrolled trials;
+administration of krill oil preparations for <2 weeks; and
+lack of reporting of baseline or follow-up lipid concentra-
+tions or the net change in lipid levels during the study.
+Data extraction
+Studies meeting the inclusion criteria were reviewed,
+and data regarding authors, study location, publication
+2
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+date, size of study population, trial design, dose and
+duration of intervention, control group allocation, base-
+line characteristics of study population (including age,
+gender, and body mass index), and changes in plasma
+concentrations of lipids were extracted.
+Quality assessment
+Risk of bias in the studies considered in this meta-
+analysis was evaluated according to the Cochrane in-
+structions.15 Selection bias, performance bias, attrition
+bias, detection bias, reporting bias, and other sources of
+bias were judged to be high, low, or unclear in each of
+the studies included.
+Quantitative data synthesis
+Comprehensive Meta-Analysis V2 software (Biostat, NJ,
+USA)16 was used for statistical procedures. Plasma con-
+centrations of lipids and lipoproteins were collated in
+milligram per deciliter. Inverse variance-weighted mean
+differences (WMDs) and 95% confidence limits were
+used as the summary statistics and calculated as previ-
+ously described,17,18 considering a correlation coeffi-
+cient of 0.5. When standard deviation values were not
+reported in a study, they were imputed by the pooled
+standard deviations from other studies.
+Meta-analysis was performed under fixed- and
+random-effects models when I2 (heterogeneity) values
+were <50% and 50%, respectively. For trials with
+more than one treatment arm and a single control
+group, the number of subjects in the control group was
+divided into a corresponding number of smaller groups.
+In order to evaluate the influence of each study on the
+overall effect size, sensitivity analysis was conducted
+using the one-study remove (leave-one-out) approach.
+Leave-one-out sensitivity analysis is a simple method to
+check if the overall estimate of effect is significantly
+driven by a single study or treatment arm. In this
+method, all included treatment arms are iteratively
+removed from the analysis, the effect size is calculated,
+and
+the
+significance
+of
+the
+pooled
+estimate
+is
+evaluated.19
+Meta-regression
+As potential confounders of treatment response, dosage
+and duration of supplementation with krill oil were
+entered into a meta-regression model to explore their
+association with the estimated effect size in each lipid
+species.
+Publication bias
+Funnel plot evaluation, Begg’s rank correlation, and
+Egger’s weighted regression tests were employed to as-
+sess the presence of publication bias in the meta-
+analysis. When there was evidence of funnel plot
+asymmetry, potentially missing studies were imputed
+using the trim-and-fill method. In the case of a signifi-
+cant result, the number of potentially missing studies
+required to make the P value nonsignificant was esti-
+mated using the fail-safe N method as another marker
+of publication bias.20–23
+RESULTS
+Search results and trial flow
+The initial screening for potential relevance removed
+the articles whose titles and/or abstracts were obviously
+irrelevant. Of the 15 full-text articles assessed for eligi-
+bility, 8 were excluded for the following reasons: did
+not measure plasma lipid levels (n ¼ 4), investigated
+bioavailability of fatty acids only (n ¼ 1), and did not
+have an appropriate randomized controlled trial [RCT]
+design) (n ¼ 3) (Figure 1).
+After assessment, 7 RCTs (equivalent to 14 treat-
+ment arms) met the inclusion criteria and were used for
+the final meta-analysis. In total, 427 participants were
+allocated to a krill oil supplementation group and 235
+to a control group in the selected studies.4,24–29 The
+number of participants in these trials ranged from 20 to
+267. Included studies were published between 2004 and
+2015 and were conducted in Canada (n ¼ 3), Norway
+(n ¼ 2), and the United States (n ¼ 2). All studies used
+500-mg capsules or softgels of krill oil, and the dosages
+ranged from 500 mg/d to 4 g/d. Duration of supplemen-
+tation with krill oil ranged between 4 weeks and
+Table 1 PICOS criteria for inclusion and exclusion of studies
+Parameter
+Description
+Participants
+Healthy individuals and dyslipidemic individuals
+Intervention/exposure
+Krill oil supplementation administered for at least 2 wk
+Comparison
+Individuals supplemented with krill oil vs control individuals
+Outcomes
+Plasma/serum concentrations of at least one of the main lipid parameters (ie, total cholesterol, low-density
+lipoprotein cholesterol, high-density lipoprotein cholesterol, or triglycerides)
+Study design
+Randomized controlled trials with a parallel or crossover design
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+3
+
+3 months. Four trials were designed as parallel-group
+studies and 3 had a crossover design. Three studies
+were multicenter. Demographic and baseline param-
+eters of the included studies are shown in Table 2.4,24–29
+The common side effects usually observed after admin-
+istration of fish oil supplements, such as reflux, fishy
+aftertaste, or belching of fish flavors, were not reported
+after krill oil intake. Except for a few cases of mild to
+moderate gastrointestinal symptoms, krill oil was safe
+and well tolerated in all of the RCTs included in this re-
+view. No adverse events related to the supplementation
+were reported.
+Risk-of-bias assessment
+The risk of bias with respect to sequence generation
+and allocation concealment was unclear, but studies
+were of low risk in terms of other sources of bias. The
+systematic assessment of bias in the included studies is
+shown in Table 3.4,24–29
+Quantitative data synthesis
+Total cholesterol. The meta-analysis of RCTs showed a
+reduction in plasma total cholesterol levels following
+supplementation with krill oil, but this reduction did
+not reach statistical significance (WMD, 7.5 mg/dL;
+95%CI, 17.94 to 2.93; P ¼ 0.159) (Figure 2). This effect
+size was robust in the sensitivity analysis (Figure 3). The
+effect of krill oil on plasma total cholesterol concentra-
+tions was not different in subgroups of RCTs with dos-
+ages of either <2 g/d or 2 g/d. With respect to
+treatment duration, there was a significant reduction in
+total cholesterol concentrations in the subset of RCTs
+lasting 12 weeks but not in the subset lasting <12
+weeks (Table 4).
+Visual inspection of the funnel plot as well as the
+results of Begg’s rank correlation and Egger’s linear re-
+gression tests suggested potential publication bias in the
+meta-analysis of krill oil’s effects on plasma total choles-
+terol concentrations (Table 5 and Figure 4).
+Low-density lipoprotein cholesterol. A significant reduc-
+tion in plasma concentrations of LDL-C was observed
+following
+supplementation
+with
+krill
+oil
+(WMD,
+15.52 mg/dL; 95%CI, 28.43 to 2.61; P ¼ 0.018)
+(Figure 2). This effect size was sensitive to one of the
+included studies4 (Figure 3). The effect of krill oil on
+LDL-C concentrations did not reach statistical signifi-
+cance in subgroups of RCTs with dosages of either
+<2 g/d or 2 g/d. Regarding treatment duration, there
+was a significant reduction in plasma LDL-C in the sub-
+set of RCTs with supplementation durations 12 weeks
+Figure 1 Flow diagram of the literature search process.
+4
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+Table 2 Demographic characteristics and baseline parameters of the included studies
+Study
+Berge et al.
+(2014)24
+Bunea et al.
+(2004)4
+Maki et al.
+(2009)25
+Ramprasath et al.
+(2013)26
+Ulven et al.
+(2011)27
+Lobraico et al.
+(2015)28
+Ramprasath et al.
+(2015)29
+Location
+Norway
+Canada
+USA
+Canada
+Norway
+USA
+Canada
+Design
+Multicenter
+randomized
+double-blind
+placebo-con-
+trolled parallel
+trial
+Multicenter
+randomized
+double-blind
+placebo-con-
+trolled parallel
+trial
+Multicenter
+randomized
+double-blind
+placebo-con-
+trolled parallel
+trial
+Randomized
+double-blind
+placebo-con-
+trolled cross-
+over trial
+Randomized par-
+allel group
+trial
+Randomized
+double-blind
+placebo-con-
+trolled cross-
+over trial
+Randomized
+double-blind
+placebo-con-
+trolled cross-
+over trial
+Duration of trial
+12 wk
+3 mo
+4 wk
+4 wk
+7 wk
+4 wk
+4 wk
+Inclusion criteria
+Subjects aged
+21–79 y with a
+low habitual
+fatty fish and
+seafood intake
+(defined as in-
+take of fatty
+fish and sea-
+food 2 times
+per month)
+and borderline
+high or high
+fasting serum
+TG levels
+(defined as a
+fasting TG
+level of 150–
+499 mg/dL at
+screening visit,
+inclusive)
+Patients aged
+18–85 y with
+at least a 6-mo
+diagnosis of
+mildly high to
+very high
+blood choles-
+terol (193.9–
+347.9 mg/dL)
+and TG levels
+(203.8–
+354.4 mg/dL)
+Healthy men and
+women aged
+35–64 y with a
+waist circum-
+ference of
+102 cm
+(men) or
+88 cm
+(women)
+Healthy
+volunteers
+Healthy volun-
+teers of both
+genders with
+normal or
+slightly ele-
+vated total
+blood choles-
+terol
+(<7.5 mmol/L)
+and normal or
+slightly ele-
+vated blood
+triglyceride
+level
+(<4.0 mmol/L)
+Adults diagnosed
+with type 2
+diabetes who
+were on oral
+glucose-lower-
+ing agents
+and/or insulin
+that could be
+confirmed by a
+healthcare
+provider
+Healthy males
+and non-
+pregnant
+women aged
+18–49 y
+Krill oil form
+500-mg capsule
+500-mg softgel
+500-mg capsule
+500-mg capsule
+500-mg capsule
+500-mg capsule
+500-mg
+capsule
+Krill oil intervention
+500 mg/d
+1 g/d
+2 g/d
+3 g/d
+3 g/d
+1 g/d
+1.5 g/d
+1 g/d
+1.5 g/d
+2 g/d
+2 g/d
+3 g/d
+4 g/d
+3 g/d
+No. of participants
+Cases
+53
+23
+25
+24
+36
+47
+20
+53
+7
+51
+19
+58
+11
+Controls
+52
+30
+25
+37
+(continued)
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+5
+
+Table 2 Continued
+Study
+Berge et al.
+(2014)24
+Bunea et al.
+(2004)4
+Maki et al.
+(2009)25
+Ramprasath et al.
+(2013)26
+Ulven et al.
+(2011)27
+Lobraico et al.
+(2015)28
+Ramprasath et al.
+(2015)29
+Location
+Norway
+Canada
+USA
+Canada
+Norway
+USA
+Canada
+Age (y)a
+Cases
+46.4 6 12.7
+51 6 9.46
+49.4 6 1.7b
+28.23 6 5.35b
+40.3 6 14.8
+64.8 6 8.8
+NS
+40.5 6 13.1
+44.3 6 12.1
+45.5 6 11.9
+Controls
+43.5 6 11
+47.4 6 1.6b
+40.5 6 12.1
+Male (%)
+Cases
+66
+NS
+12.0
+50.0
+29.5
+66.0
+55.0
+64
+73
+67
+Controls
+65
+20.0
+33.3
+BMI (kg/m2)a
+Cases
+29.9 6 3.3
+25.4 6 3.9
+(male)
+28.2 6 5.1
+(female)
+32.6 6 1.5b
+23.76 6 2.96b
+23.6 63 .3
+30.5 6 6.9
+23.79 6 0.71b
+29.0 6 3.3
+29.7 6 2.6
+23.62 6 0.68b
+29.3 6 2.9
+Controls
+30.2 6 3.0
+33.3 6 1.7b
+23.9 6 3.0
+23.61 6 0.63b
+Total cholesterol (mg/dL)a
+Cases
+221.1 6 37.1
+235.83c
+201.6 6 6.1b
+168.85 6 5.45b
+192.61 6 31.46
+153.7 6 32.6
+173.62 6 7.06b
+209.4 6 40.3
+231.19c
+221.4 6 36.1
+247.42c
+168.02 6 6.26b
+216.2 6 31.2
+250.52c
+Controls
+207.9 6 32.4
+221.91c
+201.2 6 7.3b
+172.55 6 5.69b
+191.07 6 35.70
+169.56 6 5.53b
+LDL-C (mg/dL)a
+Cases
+132.7 6 4.6
+167.78c
+129.7 6 5.5b
+93.05 6 4.66b
+118.50 6 27.95
+78.7 6 28.4
+96.93 6 7.25b
+120.8 6 4.6
+164.74c
+133.1 6 4.7
+182.86c
+94.28 6 5.47b
+125.8 6 4.4
+172.81c
+Controls
+122.8 6 4.7
+136.47c
+125.5 6 6.6b
+95.03 6 4.82b
+115.03 6 31.81
+93.89 6 5.07b
+HDL-C (mg/dL)a
+Cases
+44.5 6 10.8
+57.22c
+46.5 6 2.8b
+55.74 6 2.91b
+57.90 6 14.20
+44.6 6 13.7
+55.48 6 3.33b
+42.1 6 10.6
+58.76c
+42.1 6 9.2
+51.03c
+54.52 6 3.14b
+46.2 6 10
+64.18c
+Controls
+39.5 6 9.3
+56.83c
+45.4 6 2.1b
+56.22 6 3.38b
+61.37 6 13.66
+54.71 6 3.02b
+TGs (mg/dL)a
+Cases
+230.1 6 71.4
+120.50c
+126.9 6 9.3b
+101.10 6 10.53b
+97.35 6 56.46
+155.6 6 95.3
+106.2 6 9.62b
+238.9 6 69.8
+126.70c
+237.4 6 73.1
+160.37c
+98.02 6 11.76b
+220.2 6 63
+152.77c
+Controls
+236.5 6 80.9
+143.53c
+152.8 6 18.1b
+103.41 6 9.84b
+81.42 6 36.64
+99.91 6 10.02b
+Abbreviations: SD: standard deviation; SEM: standard error of the mean; BMI: body mass index; NS: not stated; LDL-C: low-density lipoprotein cholesterol; HDL-C: high-density lipoprotein
+cholesterol; TG, triglyceride.
+aValues are expressed as mean 6 SD unless otherwise indicated.
+bValues are expressed as mean 6 SEM.
+cMean value.
+6
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+but not in the subset with supplementation lasting <12
+weeks (Table 4).
+Visual inspection of the funnel plot as well as the
+results of Begg’s rank correlation and Egger’s linear re-
+gression tests suggested potential publication bias in the
+meta-analysis of krill oil’s effects on plasma LDL-C con-
+centrations (Table 4 and Figure 4).
+High-density lipoprotein cholesterol. The meta-analysis
+of RCT data suggested a significant elevation in plasma
+HDL-C concentrations following krill oil supplementa-
+tion (WMD, 6.65 mg/dL; 95%CI, 2.30–10.99; P ¼ 0.003)
+(Figure 2). This effect size was robust in the sensitivity
+analysis, and iterative removal of each single study from
+the meta-analysis did not affect the statistical signifi-
+cance of the effect size (Figure 3). In the subgroup ana-
+lysis, there was a significant increase in plasma HDL-C
+concentrations in the subset of trials with krill oil dos-
+ages of 2 g/d but not in the subset with dosages of
+<2 g/d. With respect to the duration of supplementa-
+tion, HDL-C elevations remained significant in both
+study subsets with supplementation durations of <12
+weeks and 12 weeks, though a greater reduction was
+observed in the latter subgroup (Table 4).
+Visual inspection of the funnel plot as well as the
+results of Begg’s rank correlation and Egger’s linear re-
+gression tests suggested potential publication bias in the
+meta-analysis of krill oil’s effects on plasma HDL-C
+concentrations (Table 5 and Figure 4).
+Triglycerides. A significant reduction in plasma TG
+concentrations following krill oil supplementation was
+found
+in
+the
+meta-analysis
+of
+RCTs
+(WMD,
+14.03 mg/dL; 95%CI, 21.38 to 6.67; P < 0.001)
+(Figure 2). This effect size was robust in the sensitivity
+analysis, and iterative removal of each single study from
+the meta-analysis did not affect the statistical signifi-
+cance of the effect size (Figure 3). In the subgroup ana-
+lysis, there was a significant reduction in plasma TG
+concentrations in both subsets of trials with krill oil
+doses of <2 g/d and 2 g/d. However, with respect to
+supplementation
+duration,
+significant
+reduction
+of
+plasma TG concentrations was observed only in the
+subset of RCTs lasting 12 weeks and not in the subset
+lasting <12 weeks (Table 4). Although the results of
+Begg’s rank correlation and Egger’s linear regression
+tests did not indicate any publication bias (Table 5), the
+funnel plot was slightly asymmetric, suggesting poten-
+tial publication bias in the meta-analysis of krill oil’s ef-
+fects on plasma TG concentrations. Using Duval and
+Tweedie trim-and-fill correction, 3 potentially missing
+studies were imputed on the left side of funnel plot,
+yielding
+a
+corrected
+effect
+size
+of
+15.12 mg/dL
+(95%CI, 22.00 to 8.23) (Figure 4).
+DISCUSSION
+To the best of knowledge, the current systematic review
+and meta-analysis is the first to analyze evidence from
+RCTs on the effect of krill oil supplementation on
+plasma lipids. The results showed a significant reduc-
+tion in plasma concentrations of LDL-C and TGs and a
+significant elevation in plasma HDL-C concentrations
+following supplementation with krill oil, while a reduc-
+tion in plasma total cholesterol levels did not reach stat-
+istical significance. When the studies were stratified
+according to their duration, there was a significant re-
+duction in total cholesterol, LDL-C, and TGs in the sub-
+set of RCTs lasting 12 weeks but not in the subset
+lasting <12 weeks, while HDL-C elevations remained
+significant in both study subsets.
+The favorable effects of krill oil on the lipid profile
+found in the current meta-analysis suggest the use of
+this marine product as an interesting add-on therapy in
+dyslipidemic patients. However, the exact mechanisms
+responsible for the lipid-lowering effects of krill oil are
+not completely understood. It has been shown that krill
+oil acts more as an antihyperlipidemic product than a
+hypolipidemic one, since TGs and cholesterol levels are
+lowered in patients with elevated blood lipids, but not
+in healthy volunteers.26 It has been proved that krill oil
+reduces the expression of genes required for lipid and
+isoprenoid/cholesterol synthesis.30 In contrast, fish oil
+modulates expression of several genes, such as peroxi-
+some proliferator-activated receptor (PPAR)-a, sterol
+regulatory element-binding proteins (SREBP)-1, and
+Table 3 Risk of bias in the included studies as assessed using Cochrane criteria
+Reference
+Sequence
+generation
+Allocation
+concealment
+Blinding of
+participants
+and personnel
+Blinding of
+outcome
+assessment
+Incomplete
+outcome
+data
+Selective
+outcome
+reporting
+Other
+potential threats
+to validity
+Berge et al. (2014)24
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Bunea et al. (2004)4
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Maki et al. (2009)25
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Ramprasath et al. (2013)26
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Ulven et al. (2011)27
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Lobraico et al. (2015)28
+Low
+Low
+Low
+Low
+Low
+Low
+Low
+Ramprasath et al (2015)29
+Unclear
+Unclear
+Low
+Low
+Low
+Low
+Low
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+7
+
+Figure 2 Forest plots detailing weighted mean differences and 95% confidence intervals for the effect of krill oil supplementation
+on plasma lipid concentrations. Abbreviations: HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein cholesterol; TC,
+total cholesterol; TG, triglycerides.
+8
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+Figure 3 Leave-one-out sensitivity analysis for the effects of krill oil supplementation on plasma lipid concentrations. Abbreviations:
+HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein cholesterol; TC, total cholesterol; TG, triglycerides.
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+9
+
+Table 4 Meta-analysis of the effects of krill oil on plasma lipid concentrations in the subgroups of studies with different dosages and durations of supplementation
+Total cholesterol (mg/dL)
+LDL-C (mg/dL)
+HDL-C (mg/dL)
+Triglycerides (mg/dL)
+WMD (95%CI)
+P value
+WMD (95%CI)
+P value
+WMD (95%CI)
+P value
+WMD (95%CI)
+P value
+Dosage <2 g/d
+11.12 (27.53 to 5.29)
+0.184
+18.85 (42.32 to 4.61)
+0.115
+6.44 (1.06 to 13.95)
+0.092
+21.31 (26.63 to 16.00)
+<0.001
+Dosage 2 g/d
+5.55 (19.80 to 8.69)
+0.445
+14.33 (31.98 to 3.32)
+0.112
+7.25 (1.27 to 13.24)
+0.018
+12.16 (17.11 to 7.21)
+<0.001
+Duration <12 wk
+3.86 (2.17 to 9.89)
+0.210
+3.91 (1.14 to 8.95)
+0.129
+2.29 (0.24 to 4.33)
+0.028
+4.60 (16.82 to 7.61)
+0.460
+Duration 12 wk
+24.12 (45.37 to 2.86)
+0.026
+37.14 (64.96 to 9.31)
+0.009
+12.53 (3.44 to 21.63)
+0.007
+17.67 (27.15 to 8.19)
+<0.001
+Abbreviations: LDL-C, low-density lipoprotein cholesterol; HDL-C, high-density lipoprotein cholesterol; WMD, weighted mean difference.
+Figure 4 Funnel plots detailing publication bias in the studies
+selected for analysis. Trim-and-fill method was used to impute
+for potentially missing studies. Open circles represent observed
+published studies; closed circles represent imputed unpublished
+studies. Abbreviations: HDL-C, high-density lipoprotein cholesterol;
+LDL-C, low-density lipoprotein cholesterol; TC, total cholesterol; TG,
+triglycerides.
+10
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+(SREBP)-2, all involved in triacylglycerol and fatty acid
+catabolism in skeletal muscle and liver.31
+A higher bioavailability of long-chain n-3 polyun-
+saturated fatty acids and a higher therapeutic effect1 has
+been observed in studies comparing the efficacy of krill
+oil with that of fish oil.5,26,27,32 The association between
+long-chain n-3 fatty acids and phospholipids is respon-
+sible for lipogenic effects of krill oil, while the associ-
+ation between n-3 fatty acids and TGs is culpable for
+the lipogenic effects of fish oil.3 Phospholipids are
+amphipathic molecules that do not require emulsifica-
+tion via bile salts like the hydrophobic TGs, hence they
+are able to move easily across the intestinal wall and cell
+membranes.5 Therefore, the association between long-
+chain n-3 fatty acids and phospholipids might have an
+important role in improving the bioavailability and ab-
+sorption of fatty acids through the intestinal wall and
+enhancing the n-3:n-6 ratio.27 The different effects of
+krill oil as compared with fish oil on lipid parameters in
+experimental studies might be also explained by the dif-
+ferent effects of these oils on the secretion of very low-
+density lipoprotein and the distinct modulation of gene
+expression in the intestine and the liver.33 Moreover,
+experimental studies showed that krill oil is capable of
+upregulating the activity of the mitochondrial respira-
+tory chain and downregulating the activity of pathways
+involved in lipid and cholesterol synthesis and hepatic
+glucose production, while fish oil did not modulate the
+same metabolic pathways regulated by krill oil.30
+While fish oil upregulates the cholesterol synthesis
+pathway, the effect of krill oil is the opposite.30 An ex-
+perimental study in rats fed a krill-oil-enriched diet has
+shown that krill oil might have the capacity to inhibit de
+novo lipogenesis by decreasing the activity of both cyto-
+solic acetyl coenzyme A carboxylase and the mitochon-
+drial citrate carrier and to increase the oxidation of fatty
+acids by decreasing the fatty acid synthetase activity.34,35
+Another unique feature of krill oil is related to its
+powerful antioxidant astaxanthin, which has a slight,
+but not significant, glucose-lowering effect on plasma
+lipid concentrations.36 Another important antioxidant
+found in krill oil is vitamin E, known for its capacity to
+protect
+biological
+membranes
+against
+lipid
+peroxidation.37 Nevertheless, krill oil is a rich source of
+high-quality protein in the range of 60% to 65% dry
+weight, including all 9 essential amino acids required by
+adults.38
+One study showed that daily consumption of 3 g of
+krill oil formulated with 543 mg of EPA and DHA raises
+the plasma EPA and DHA concentrations exactly the
+same as intake of fish oil containing 864 mg of EPA and
+DHA.27 Another new study in healthy subjects showed
+that the proportion of EPA and DHA in plasma
+phospholipid fatty acids measured during a 72-hour
+follow-up as an incremental area under the curve was
+significantly larger after krill oil ingestion than after fish
+oil ingestion.9 The adverse effects observed after krill oil
+consumption are observed only in individuals with
+known allergies to different crustaceans or shellfish,
+such as shrimp or crabs.1,39 Moreover, patients who
+take krill oil and anticoagulant/antiplatelet drugs simul-
+taneously might have an increased risk of bleeding.
+The present meta-analysis has some limitations.
+Most of the included studies had a small number of par-
+ticipants and were heterogeneous with regard to the char-
+acteristics of patients. Moreover, the lipid profile and
+content of krill oil could fluctuate appreciably according
+to conditions such as the krill species used, the age of the
+krill, the season harvested, and the delay time between
+collection and freezing. The effects of krill on small, dense
+LDL subfractions and HDL function do not seem to have
+been investigated. The function of HDL may be even
+more relevant than its measured levels.13 However, the ef-
+fect of krill oil on TG and HDL-C levels suggests there
+will be an improvement in small, dense LDL subfrac-
+tions.40 The baseline dietary data and the prescribed diet
+were not clearly described in all the studies included. In
+this meta-analysis, the most significant effects on plasma
+lipids were reported in the treatment arms in the study by
+Bunea et al.4 Although the impact of each treatment arm
+on the overall estimated effect size was explored in the
+sensitivity analysis, another attempt was made to assess
+the impact of this study on the effect size by removing all
+treatment arms in this study from the meta-analysis. The
+results revealed that, although the TG-lowering effect of
+krill oil remains significant, the effects on LDL-C and
+Table 5 Publication bias in the meta-analysis of studies reporting the effects of krill oil supplementation on plasma lipids
+Plasma lipid
+Begg’s rank correlation test
+Egger’s linear regression test
+Kendall’s taua
+z value
+P valueb
+Intercept (95%CI)
+t
+df
+P valueb
+No. of studiesc
+Total cholesterol
+0.46
+2.30
+0.021
+3.00 (5.20 to 0.80)
+3.82
+9
+0.004
+N/A
+LDL-C
+0.55
+2.74
+0.006
+4.15 (6.95 to 1.34)
+3.22
+12
+0.007
+44
+HDL-C
+0.59
+2.96
+0.003
+2.35 (0.21 to 4.49)
+2.40
+12
+0.034
+91
+Triglycerides
+0.07
+0.33
+0.743
+0.59 (0.72 to 1.89)
+0.98
+12
+0.346
+105
+Abbreviations: HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein cholesterol.
+aWith continuity correction.
+bTwo-tailed.
+cNumber of studies (calculated using the fail-safe N method) required to make the P value nonsignificant.
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+11
+
+HDL-C were no longer evident when the study of Bunea
+et al.4 was excluded. This highlights the need for future
+studies to better evaluate whether krill oil supplementa-
+tion exerts a LDL-lowering effect. Finally, the value of
+adding krill oil to conventional and novel lipid-lowering
+medications41–44 remains unknown.
+CONCLUSION
+The present meta-analysis of RCTs suggests the efficacy
+of krill oil supplementation in lowering plasma concen-
+trations of LDL-C and TGs as well as increasing those
+of HDL-C. Further, well-designed clinical studies with
+higher numbers of participants are necessary to assess
+the impact of krill oil supplementation on other indices
+of cardiometabolic risk and on the risk of cardiovascu-
+lar outcomes. The value of adding krill oil to statins and
+other routinely administered lipid-lowering therapies is
+also open to question.
+Acknowledgments
+Funding/support. No external funding was received for
+this work.
+Declaration of interest. The authors have no relevant
+interests to declare.
+REFERENCES
+1.
+Kwantes JM, Grundmann O. A brief review of krill oil history, research, and the
+commercial market. J Diet Suppl. 2015;12:23–35.
+2.
+Deutsch L. Evaluation of the effect of Neptune Krill Oil on chronic inflammation
+and arthritic symptoms. J Am Coll Nutr. 2007;26:39–48.
+3.
+Burri L, Johnsen L. Krill products: an overview of animal studies. Nutrients.
+2015;7:3300–3321.
+4.
+Bunea R, El Farrah K, Deutsch L. Evaluation of the effects of Neptune Krill Oil on
+the clinical course of hyperlipidemia. Altern Med Rev. 2004;9:420–428.
+5.
+Sampalis F, Bunea R, Pelland MF, et al. Evaluation of the effects of Neptune Krill
+Oil on the management of premenstrual syndrome and dysmenorrhea.
+Alternative Med Rev. 2003;8:171–179.
+6.
+Xiao SU, Tanalgo P, Bustos M, et al. The effect of krill oil and n-3 polyunsaturated
+fatty acids on human osteosarcoma cell proliferation and migration. Curr Drug
+Targets. 2015;16. doi:10.2174/1389450116666150107152206.
+7.
+Ierna M, Kerr A, Scales H, et al. Supplementation of diet with krill oil protects
+against
+experimental
+rheumatoid
+arthritis.
+BMC
+Musculoskelet
+Disord.
+2010;11:136. doi:10.1186/1471-2474-11-136.
+8.
+Salem N Jr, Kuratko CN. A reexamination of krill oil bioavailability studies. Lipids
+Health Dis. 2014;13:137. doi:10.1186/1476-511X-13-137.
+9.
+Ko¨hler A, Sarkkinen E, Tapola N, et al. Bioavailability of fatty acids from krill oil, krill
+meal and fish oil in healthy subjects – a randomized, single-dose, cross-over trial.
+Lipids Health Dis. 2015;14:19. doi:10.1186/s12944-015-0015-4.
+10.
+Cicero AFG, Colletti A. Krill oil: evidence of a new source of polyunsaturated fatty
+acids with high bioavailability. Clin Lipidol. 2015;10:1–4.
+11.
+Krill oil monograph. Altern Med Rev. 2010;15:84–86.
+12.
+Kris-Etherton PM, Fleming JA. Emerging nutrition science on fatty acids and car-
+diovascular
+disease:
+nutritionists’
+perspectives.
+Adv
+Nutr.
+2015;6(suppl):
+326S–337S.
+13.
+Otocka-Kmiecik A, Mikhailidis DP, Nicholls SJ, et al. Dysfunctional HDL: a novel im-
+portant diagnostic and therapeutic target in cardiovascular disease? Prog Lipid
+Res. 2012;51:314–324.
+14.
+Moher D, Liberati A, Tetzlaff J, et al. Preferred reporting items for systematic re-
+views and meta-analyses: the PRISMA statement. BMJ. 2009;339:b2535.
+doi:10.1136/bmj.b2535.
+15.
+Higgins, JPT, Green S, eds. Cochrane Handbook for Systematic Reviews of
+Interventions. Version 5.1.0 [updated March 2011]. London, England: The
+Cochrane Collaboration; 2011.
+16.
+Borenstein M, Hedges L, Higgins J, et al. Comprehensive Meta-analysis. Version 2.
+Englewood, NJ: Biostat; 2005:104.
+17.
+Michalska-Kasiczak M, Sahebkar A, Mikhailidis DP, et al. Analysis of vitamin D
+levels in patients with and without statin-associated myalgia – a systematic
+review and meta-analysis of 7 studies with 2420 patients. Int J Cardiol.
+2015;178:111–116.
+18.
+Ferretti G, Bacchetti T, Sahebkar A. Effect of statin therapy on paraoxonase-1 sta-
+tus: a systematic review and meta-analysis of 25 clinical trials. Prog Lipid Res.
+2015;60:50–73.
+19.
+Greenhouse JB Iyengar S. Sensitivity analyses and diagnostics. In: Cooper H,
+Hedges LV, Valentine JC, eds. The Handbook of Research Synthesis. New York, NY:
+Russell Sage Foundation; 1994:383–398.
+20.
+Sahebkar A. Does PPARgamma2 gene Pro12Ala polymorphism affect nonalcoholic
+fatty liver disease risk? Evidence from a meta-analysis. DNA Cell Biol.
+2013;32:188–198.
+21.
+Banach M, Serban C, Sahebkar A, et al. Impact of statin therapy on coronary pla-
+que composition: a systematic review and meta-analysis of virtual histology intra-
+vascular ultrasound studies. BMC Med. 2015;13:229. doi:10.1186/s12916-015-
+0459-4.
+22.
+Duval S, Tweedie R. Trim and fill: a simple funnel-plot-based method of testing
+and adjusting for publication bias in meta-analysis. Biometrics. 2000;56:455–463.
+23.
+Duval S, Tweedie R. A nonparametric “trim and fill” method of accounting for
+publication bias in meta-analysis. J Am Stats Assoc. 2000;95:89–98.
+24.
+Berge K, Musa-Veloso K, Harwood M, et al. Krill oil supplementation lowers serum
+triglycerides without increasing low-density lipoprotein cholesterol in adults with
+borderline high or high triglyceride levels. Nutr Res. 2014;34:126–133.
+25.
+Maki KC, Reeves MS, Farmer M, et al. Krill oil supplementation increases plasma
+concentrations of eicosapentaenoic and docosahexaenoic acids in overweight
+and obese men and women. Nutr Res. 2009;29:609–615.
+26.
+Ramprasath VR, Eyal I, Zchut S, et al. Enhanced increase of omega-3 index in
+healthy individuals with response to 4-week n-3 fatty acid supplementation from
+krill oil versus fish oil. Lipids Health Dis. 2013;12:178. doi:10.1186/1476-511X-12-
+178.
+27.
+Ulven SM, Kirkhus B, Lamglait A, et al. Metabolic effects of krill oil are essentially
+similar to those of fish oil but at lower dose of EPA and DHA, in healthy volun-
+teers. Lipids. 2011;46:37–46.
+28.
+Lobraico JM, DiLello LC, Butler AD, et al. Effects of krill oil on endothelial function
+and other cardiovascular risk factors in participants with type 2 diabetes, a
+randomized controlled trial. BMJ Open Diab Res Care. 2015;3:e000107.
+doi:10.1136/bmjdrc-2015-000107.
+29.
+Ramprasath VR, Eyal I, Zchut S, et al. Supplementation of krill oil with high
+phospholipid content increases sum of EPA and DHA in erythrocytes compared
+with low phospholipid krill oil. Lipids Health Dis. 2015;14:142. doi:10.1186/
+s12944-015-0142-y.
+30.
+Burri L, Berge K, Wibrand K, et al. Differential effects of krill oil and fish oil on
+the hepatic transcriptome in mice. Front Genet. 2011;2:45. doi:10.3389/
+fgene.2011.00045.
+31.
+Gessner DK, Grone B, Rosenbaum S, et al. Effect of dietary fish oil on the expres-
+sion of genes involved in lipid metabolism in liver and skeletal muscle of lactating
+sows. J Anim Physiol Anim Nutr (Berlin). 2016;100:337–347.
+32.
+Salem N Jr, Kuratko CN. A reexamination of krill oil bioavailability studies. Lipids
+Health Dis. 2014;13:137. doi:10.1186/1476-511X-13-137.
+33.
+Tillander V, Bjørndal B, Burri L, et al. Fish oil and krill oil supplementations differen-
+tially regulate lipid catabolic and synthetic pathways in mice. Nutr Metab
+(London). 2014;11:20. doi:10.1186/1743-7075-11-20.
+34.
+Ferramosca A, Conte L, Zara V. A krill oil supplemented diet reduces the activities
+of the mitochondrial tricarboxylate carrier and of the cytosolic lipogenic enzymes
+in rats. J Anim Physiol Anim Nutr (Berlin). 2012;96:295–306.
+35.
+Ferramosca A, Conte A, Burri L, et al. A krill oil supplemented diet suppresses hep-
+atic steatosis in high-fat fed rats. PloS One. 2012;7:e38797. doi:10.1371/
+journal.pone.0038797.
+36.
+Ursoniu S, Sahebkar A, Serban M-C, et al. Lipid profile and glucose changes after
+supplementation with astaxanthin: a systematic review and meta-analysis of
+randomized controlled trials. Arch Med Sci. 2015;11:253–266.
+37.
+Tou JC, Jaczynski J, Chen YC. Krill for human consumption: nutritional value and
+potential health benefits. Nutr Rev. 2007;65:63–77.
+38.
+Chen YC, Tou J, Jaczynski J. Amino acid and mineral composition of protein and
+other components and their recovery yields from whole Antarctic krill (Euphausia
+superba)
+using
+isoelectric
+solubilization/precipitation.
+J
+Food
+Sci.
+2009;
+74:H31–H39.
+39.
+Bengtson Nash SM, Schlabach M, Nichols PD. A nutritional-toxicological assess-
+ment of Antarctic krill oil versus fish oil dietary supplements. Nutrients.
+2014;6:3382–3402.
+12
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+
+40.
+Mikhailidis DP, Elisaf M, Rizzo M, et al. “European panel on low density lipo-
+protein (LDL) subclasses”: a statement on the pathophysiology, atheroge-
+nicity and clinical significance of LDL subclasses. Curr Vasc Pharmacol.
+2011;9:531–532.
+41.
+Sahebkar A, Chew GT, Watts GF. Recent advances in pharmacotherapy for hyper-
+triglyceridemia. Prog Lipid Res. 2014;56:47–66.
+42.
+Sahebkar A, Watts GF. New LDL-cholesterol lowering therapies: pharmacology, clinical
+trials, and relevance to acute coronary syndromes. Clin Ther. 2013;35:1082–1098.
+43.
+Dragan S, Serban MC, Banach M. Proprotein convertase subtilisin/kexin 9 inhibitors:
+an emerging lipid-lowering therapy? J Cardiovasc Pharmacol Ther. 2015;20:157–168.
+44.
+Banach M, Aronow WS, Serban C, et al. Lipids, blood pressure and kidney update
+2014. Pharmacol Res. 2015;95–96:111–125.
+Nutrition ReviewsV
+R Vol. 0(0):1–13
+13

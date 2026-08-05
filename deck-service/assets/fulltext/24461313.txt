@@ -1,0 +1,913 @@
+Krill oil supplementation lowers serum triglycerides without
+increasing low-density lipoprotein cholesterol in adults with
+borderline high or high triglyceride levels
+Kjetil Berge a,⁎, Kathy Musa-Veloso b, Melody Harwood a, Nils Hoem a, Lena Burri a
+a Aker BioMarine ASA, Fjordalléen 16, 0115 Oslo, Norway
+b Intertek Cantox, Mississauga, Ontario, Canada L5N 2X7
+A R T I C L E I N F O
+A B S T R A C T
+Article history:
+Received 14 August 2013
+Revised 11 December 2013
+Accepted 12 December 2013
+The aim of the study was to explore the effects of 12 weeks daily krill oil supplementation on
+fasting serum triglyceride (TG) and lipoprotein particle levels in subjects whose habitual fish
+intake is low and who have borderline high or high fasting serum TG levels (150–499 mg/dL).
+We hypothesized that Krill oil lowers serum TG levels in subjects with borderline high or
+high fasting TG levels. To test our hypothesis 300 male and female subjects were included in
+a double-blind, randomized, multi-center, placebo-controlled study with five treatment
+groups: placebo (olive oil) or 0.5, 1, 2, or 4 g/day of krill oil. Serum lipids were measured after
+an overnight fast at baseline, 6 and 12 weeks. Due to a high intra-individual variability in TG
+levels, data from all subjects in the four krill oil groups were pooled to increase statistical
+power, and a general time- and dose-independent one-way analysis of variance was
+performed to assess efficacy. Relative to subjects in the placebo group, those administered
+krill oil had a statistically significant calculated reduction in serum TG levels of 10.2%.
+Moreover, LDL-C levels were not increased in the krill oil groups relative to the placebo
+group. The outcome of the pooled analysis suggests that krill oil is effective in reducing a
+cardiovascular risk factor. However, owing to the individual fluctuations of TG
+concentrations measured, a study with more individual measurements per treatment
+group is needed to increase the confidence of these findings.
+© 2014 The Authors. Published by Elsevier Inc.
+Keywords:
+Cardiovascular disease risk
+clinical trial
+Docosahexaenoic acid
+Eicosapentaenoic acid
+Krill oil
+Low-density lipoprotein cholesterol
+Omega-3 index
+Phospholipids
+Triglycerides
+1.
+Introduction
+Dyslipidemia is a lipoprotein metabolism disorder of epidemic
+proportions that is associated with increased risk for cardio-
+vascular disease (CVD) [1,2]. It can include elevated blood
+triglyceride (TG), total cholesterol and low-density lipoprotein
+cholesterol (LDL-C) levels and/or low high-density lipoprotein
+cholesterol (HDL-C) concentrations. TG-rich lipoproteins have
+some atherogenic properties, but their inverse association with
+HDL-C and direct association with smaller and denser athero-
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+Abbreviations: ANOVA, analysis of variance; BMI, body mass index; CVD, cardiovascular disease; DHA, docosahexaenoic acid; EFSA,
+European Food Safety Authority; EPA, eicosapentaenoic acid; HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein
+cholesterol; NDA Panel, Panel on Dietetic Products, Nutrition and Allergies; NHPD, Natural Health Products Directorate; n-3 LCPUFAs,
+omega-3 long-chain polyunsaturated fatty acids; PL, phospholipid; SD, standard deviation; TG, triglyceride; U.S, United States.
+⁎ Corresponding author. Aker BioMarine ASA, Fjordalléen 16, NO-0115 Oslo, Norway. Tel.: +47 24130000; fax: +47 24130110.
+E-mail address: kjetil.berge@akerbiomarine.com (K. Berge).
+0271-5317 © 2014 The Authors. Published by Elsevier Inc.
+http://dx.doi.org/10.1016/j.nutres.2013.12.003
+Available online at www.sciencedirect.com
+ScienceDirect
+www.nrjournal.com
+Open access under CC BY-NC-ND license.
+Open access under CC BY-NC-ND license.
+
+genic LDL particles is the likely cause of the increased risk for
+CVD in these patients [3]. One option to tackle high TG levels
+and potentially decrease CVD risk is by dietary supplementa-
+tion with the long-chain n-3 polyunsaturated fatty acids (n-3
+LCPUFAs) that are known to decrease TG production and
+increase TG clearance [4].
+In the Canadian Natural Health Products Directorate
+(NHPD) Fish Oil Monograph, the dose of n-3 LCPUFAs required
+for TG reductions is 1 to 3 g/day. In Europe, the Panel on
+Dietetic Products, Nutrition and Allergies (NDA Panel) of the
+European Food Safety Authority (EFSA) recently concluded
+that the n-3 LCPUFAs effectively reduce TG levels when con-
+sumed at intakes of 2 to 4 g/day. There is some indication
+from dose–response assessments that the n-3 LCPUFAs may
+be efficacious in reducing fasting TG levels when consumed at
+doses even lower than these recommended doses. In a recent
+meta-analysis of randomized controlled trials, it was demon-
+strated that TG levels are dose-dependently reduced by the n-
+3 LCPUFAs, eicosapentaenoic acid (EPA) and docosahexaenoic
+acid (DHA) [5]. Even though there were only a limited number
+of data points in the dose–response assessment at EPA and
+DHA intakes of less than 1 g/day, there was some sugges-
+tion that even modest intakes of the n-3 LCPUFAs could be
+beneficial with regards to reducing fasting serum TG levels.
+Likewise, in a dose- response assessment restricted to algal
+sources of DHA, Ryan et al. demonstrated a dose–response
+relationship between dose of DHA and the reduction in fasting
+TG level [6]. Although this latter dose–response assessment
+was restricted to studies conducted with algal DHA, it has
+been reported that EPA and DHA have similar TG-reducing
+effects when administered individually [7–9].
+Krill oil is processed from Antarctic krill (Euphausia superba),
+small shrimp-like animals of the crustacean superorder Eucar-
+ida found in the Southern Ocean. Krill oil is a unique source of
+EPA and DHA because unlike most other oils of marine origin,
+the major part of EPA and DHA in krill oil occurs naturally in
+phospholipid (PL) and not in TG form [10,11]. There are
+indications that, compared to the delivery of EPA and DHA in
+the TG form, the delivery of EPA and DHA in the PL form results
+in higher tissue levels of EPA and DHA [12–15]. Krill oil is
+characterized by a higher amount of EPA compared to DHA,
+with a ratio of 2 to 1. While there is consensus in the scientific
+literature that the dietary intake of both EPA and DHA (either
+individually or in combination) can reduce elevated TG levels,
+DHA (but not EPA) has been suggested to be responsible for a
+simultaneous elevation in LDL-C seen particularly in patients
+with very high (>500 mg/dL) TG levels [8,9,16].
+In rodents, krill oil supplementation has been shown to
+suppress lipid synthesis by up-regulating genes involved in
+lipid oxidation and down-regulating those that are involved in
+lipogenesis [17,18]. Blood TG and cholesterol levels were sig-
+nificantly reduced after the administration of krill oil, both in
+normolipidemic rats [19] and in rats with diet-induced hyper-
+lipidemia [20]. Pre-clinical experiments also suggest that the
+endocannabinoid system plays a major role in the action of
+krill oil on fat distribution in obese rats [12,21].
+Thus, the objective of the clinical study described herein
+was to test our hypothesis that krill oil can lower serum TG
+levels in humans with borderline-high or high fasting serum
+TG levels (i.e., 150–499 mg/dL). Further, the study aimed to
+evaluate whether reductions in TG levels are achievable with
+intakes of EPA and DHA from krill oil that are lower than those
+currently recommended in the NHPD Fish Oil Monograph and
+in the EFSA NDA Panel’s Scientific Opinion for TG lowering.
+2.
+Methods and materials
+2.1.
+Study population and design
+A randomized, double-blind, placebo-controlled, multi-center
+study was performed by former Cetero Research at two United
+States (U.S.) clinical research sites – one in Fargo, North Dakota
+and the other in St. Charles, Missouri. To be included, subjects
+had to be between 21 and 79 years of age, have a low habitual
+fatty fish and seafood intake (defined as the intake of fatty
+fish and seafood at a frequency not to exceed twice per month),
+and have borderline high or high fasting serum TG levels
+(defined as a fasting TG level of 150–499 mg/dL at Screening
+visit, inclusive). Subjects were not eligible for study participa-
+tion if they tested positive for drug or alcohol screens, tested
+positive for pregnancy (for women of child-bearing potential),
+were on lipid lowering medications or omega-3 supplementa-
+tion, had a body mass index (BMI) ≥35 kg/m2, had CVD or other
+co-morbidities, bleeding disorders, hypertension, familial
+hypercholesterolemia, coronary, peripheral or cerebral vascu-
+lar disease, or allergy to fish or crustaceans. The primary ob-
+jective of the study was to assess the effects on fasting serum
+TG levels during 12 weeks of daily supplementation with four
+different daily doses of SuperbaTM krill oil (0.5, 1.0, 2.0 and
+4.0 g). Qualifying subjects were randomly and evenly allocated
+into 5 study groups. Randomization was stratified by gender.
+Subjects were instructed to avoid fish and seafood meals
+36 hours before each clinic visit and to avoid consuming
+alcohol in the 24 hours before each scheduled visit. A total of
+5 visits were included: one for screening, one for randomiza-
+tion and collection of baseline information, one at day 7 to
+ensure the test products were being taken appropriately, and
+two efficacy visits (6 and 12 weeks) when blood was drawn.
+2.2.
+Study products
+Krill oil capsules were provided by Aker BioMarine ASA (Oslo,
+Norway) and olive oil (placebo) was obtained from Ruiz-
+Canela e Hijos (Sevilla, Spain). The fatty acid and lipid profiles
+of the study products are presented in Table 1. All subjects
+were required to consume 8×500 mg capsules daily for the 12-
+week intervention period; 4 capsules in the morning with
+water before breakfast, and 4 capsules in the evening with
+water before dinner. Subjects allocated to the placebo group
+consumed 8 placebo capsules daily whereas subjects allocated
+to krill oil took 1, 2, 4 or 8 krill oil capsules and the remainder
+as placebo. The group that was assigned 1 krill oil capsule per
+day took it with the morning meal, otherwise the krill oil and
+placebo capsules were distributed evenly amongst the morn-
+ing and evening doses. The varying doses of krill oil (i.e., 0, 0.5,
+1, 2, and 4 g/day) corresponded to daily intakes of EPA + DHA
+of 0, 100, 200, 400, and 800 mg/day, respectively. All subjects
+filled out compliance records daily, which included questions
+on capsules count and time of intake.
+127
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+Krill oil has a distinctive odor, taste, and color. It was therefore
+imperative to blind the subjects to the identity of the capsules.
+Thus, to mask the different colors of the krill and placebo oils, the
+gelatin capsules were black. To make the krill oil and placebo
+capsules taste similar, a vanillin extract was added to all of the
+capsules. To make the krill and placebo oil capsulessmell similar,
+the placebo capsules were rubbed with negligible amounts of krill
+oil. All capsules were provided to subjects in 7×4 AM and PM
+blister packs; each set of AM and PM blister packs provided a
+subject with a week’s worth of dosing. The blister packs were
+coded in a manner that maintained the blinding of the study.
+Study subjects and personnel were blinded to the study.
+2.3.
+Ethics
+The study was conducted with approval of an Institutional
+Review Board and in accordance with Good Clinical Practices and
+the World Medical Association Declaration of Helsinki. All
+subjects received appropriate oral and written information on
+the background of the study and potential risks and benefits of
+taking krill oil supplements. After comprehensive information
+and time forquestions,written informed consent was asked from
+all subjects who wanted to enroll in the study. It was made clear
+that at any time the subjects could withdraw their consent. The
+study was registered at www.clinicaltrials.gov (NCT01415388).
+2.4.
+Serum lipids, omega-3 index and safety assessments
+Body weight and BMI were measured for all subjects during each
+visit [screening, baseline, week 6 and week 12 (±3 days)]. Blood
+from venipuncture for the assessment of serum lipids was
+obtained after an overnight fast (≥12 h) at screening and all visits.
+After sitting for 30 min at room temperature, serum was
+separated in silica gel tubes (BD Vacutainer) by centrifugation at
+1,300 x g for 12 min at room temperature. Serum analysis of total
+cholesterol, LDL-C, HDL-C, and TG was performed using standard
+enzymatic methods on an Olympus AU 5400 or AU 5431 analyzer.
+Blood for the assessment of the omega-3 index was collected
+at baseline, 6 and 12 weeks after an overnight fast. It was
+analyzed as described previously at Omegametrix GmbH (Mar-
+tinsried, Germany) [22,23]. In short, fatty acid methyl esters from
+red blood cells were analyzed by gas chromatography (GC2010,
+Shimadzu, Duisburg, Germany) equipped with a SP2560 100-m
+column (Supelco, Bellefonte, PA, USA), using hydrogen gas as a
+carrier. Omega-3 index was given as EPA + DHA in red blood cells
+expressed as a percentage of the total identified fatty acids.
+Safety assessments included measurements of blood pressure,
+pulse rate, body temperature, and the collection of information on
+unsolicited adverse events at all visits, as well as 12-lead
+echocardiogram (ECG), physical checkup, urinalysis, hematology
+and clinical chemistry at the screening and end-of-study visits.
+2.5.
+Statistical analyses
+In order to detect a difference of 15% between each of the
+dosing groups and the placebo group and assuming a two-
+tailed alpha-level of 0.05, a standard deviation (SD) in percent
+change from baseline in fasting serum triglycerides of 25%,
+and 80% power, it was estimated that 60 subjects would be
+required per group, and 300 subjects would be required, in
+total. However, a large degree of intra-individual variation was
+observed in the TG measurements, which were not accounted
+for in the power calculation. Thus, in addition to present the
+TG level changes after 6 and 12 weeks, the mean changes from
+baseline at 6 and 12 weeks in fasting TG in the four krill oil
+groups were pooled in a time- and dose-independent manner
+for comparison to the placebo group. By doing so, the
+statistical power was increased and the relative (%) changes
+from baseline in fasting TGs were compared using a Student’s
+t-test. However, the pooling approach can only be seen as
+explorative data analysis. The other lipid parameters (total
+cholesterol, LDL-C and HDL-C) were not associated with large
+intra-individual variability and were therefore compared to
+the corresponding measures in the placebo group using an
+analysis of variance (ANOVA), without pooling the data points
+across the krill oil groups. The TG data presented in Table 4
+was analyzed using ANOVA. The statistical analyses were
+performed in JMP 10.0.2 (SAS Institute, Cary, NC). Changes
+were considered statistically significant at p < 0.05. All data are
+presented as means ± SD, unless otherwise specified.
+3.
+Results
+3.1.
+Baseline subject characteristics
+A total of 300 subjects were randomized into five groups and
+were supplemented with either placebo (olive oil) or one of
+four krill oil doses (0.5, 1, 2 or 4 g/day) (Fig. 1). Altogether, data
+for 33 subjects were not included in the efficacy analysis. The
+average of the Screening and Day 0 TG values was used as
+baseline TG values. However, twenty-four subjects had a
+fasting TG level within the range required for inclusion at
+screening (i.e., between 150 and 499 mg/dL, inclusive); and not
+at baseline, where the fasting TG levels were normal (i.e., <150
+mg/dL). Data for these 24 subjects were excluded from the
+analysis. Of the other 9 subjects whose data were not included
+in the efficacy analysis, 1 subject was determined from the
+dietary records to consume fatty fish more than twice per
+month, 1 subject had adverse events (hypertension; not
+Table 1 – Fatty acid and lipid composition of the products
+administered
+Fatty acids
+Placebo
+Krill oil
+16:0
+10.3
+13.4
+18:1 n-9
+61.1
+5.9
+18:2 n-6
+8.9
+1.2
+18:4 n-3
+0
+2.2
+20:5 n-3
+0
+13.1
+22:6 n-3
+0
+6.5
+Totals and lipids
+7.9
+23.4
+Saturated fatty acids
+10.3
+21.9
+n-6 PUFA
+8.9
+1.8
+n-3 PUFA
+0.7
+24.5
+Total fatty acids
+88.2
+65.7
+Triglycerides
+86
+30
+Free fatty acids
+0.2
+3.8
+Phospholipids
+0
+45
+Total lipids
+86.8
+82.6
+PUFA = polyunsaturated fatty acids.
+128
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+related to study product intake), 3 subjects withdrew from the
+study (two because of scheduling conflicts and one for
+personal reasons) and 4 subjects had major protocol de-
+viations (all four were not fasted at blood sampling).
+Daily EPA and DHA doses are depicted in Table 2, as are
+the numbers of subjects that could be used for the efficacy
+assessments. More males (69%) than females participated in
+the study. Most subject characteristics at baseline were not
+significantly different between the groups. In particular mean
+fasting serum TG values at baseline, which were approxi-
+mately 232 mg/dL, were similar between the groups. Fasting
+serum TG concentrations of <150 mg/dL (<1.7 mmol/L) are
+considered to be normal, while values between 150–199 mg/dL
+(1.7-2.25 mmol/L) define borderline hypertriglyceridemia, 200–
+499 mg/dL (2.25-5.65 mmol/L) define high TGs, and >500 mg/dL
+(>5.65 mmol/L) define very high TGs. Also serum LDL-C con-
+centrations were similar across the groups, with a mean value
+of 127 mg/dL.
+Some significant differences between the treatment and
+placebo groups at baseline were observed for HDL-C, BMI and
+the omega-3 index (Table 2); nonetheless, overall, the subjects
+had a low omega-3 index (between 3.5-4%) and BMI was
+around 30 kg/m2.
+3.2.
+Adverse events, body weight and blood pressure
+Only three participants withdrew from the study (Fig. 1).
+Overall, krill oil supplementation was well tolerated in all
+groups and no serious adverse events related to study pro-
+duct occurred during the study. There were two subjects with
+Fig. 1 – Study design and disposition of participating study subjects. “TG < 150″ states the number of subjects that had
+triglyceride levels below 150 at baseline and were excluded from final study analysis. “Excluded” includes subjects that
+failed on inclusion/exclusion criteria, experienced adverse events or had major protocol deviations.
+Table 2 – Baseline parameters and blood measurements of subjects
+Characteristics
+Overall
+Placebo
+0.5 g krill oil
+1 g krill oil
+2 g krill oil
+4 g krill oil
+Pooled data for
+krill oil groups
+EPA dose (mg/day)
+0
+67
+134
+268
+536
+257.7
+DHA dose (mg/day)
+0
+33
+66
+132
+264
+126.9
+Number of subjects
+267
+52
+53
+53
+51
+58
+215
+Weight (kg)
+89.6 ± 13.4
+90.5 ± 14.1
+90.1 ± 13.4
+87.6 ± 14.7
+91.7 ± 12.5
+88.2 ± 12.1
+89.3 ± 13.2
+Height (cm)
+1.74 ± 0.1
+1.73 ± 0.11
+1.73 ± 0.1
+1.73 ± 0.09
+1.75 ± 0.09
+1.73 ± 0.09
+1.74 ±0.1
+BMI (kg/m2)
+29.6 ± 3
+30.2 ± 3
+29.9 ± 3.3
+29 ± 3.3*
+29.7 ± 2.6
+29.3 ± 2.9
+29.5 ± 3
+Age (y)
+44.1 ± 12.3
+43.5 ± 11
+46.4 ± 12.7
+40.5 ± 13.1
+44.3 ± 12.1
+45.5 ± 11.9
+44.2 ± 12.6
+Men (%)
+69
+65
+66
+64
+73
+67
+67
+White (%)
+94
+98
+85
+98
+94
+95
+93
+Omega-3 index (%)
+3.68 ± 0.88
+3.54 ± 1.05
+3.66 ± 0.9
+3.56 ± 0.81
+4 ± 0.88*
+3.65 ± 0.7
+3.71 ± 0.84
+Triglycerides (mg/dL)
+232.3 ± 71.5
+236.5 ± 80.9
+230.1 ± 71.4
+238.9 ± 69.8
+237.4 ± 73.1
+220.2 ± 63
+231.3 ± 69.2
+Total cholesterol (mg/dL)
+215.2 ± 35.7
+207.9 ± 32.4
+221.1 ± 37.1
+209.4 ± 40.3
+221.4 ± 36.1
+216.2 ± 31.2
+216 ± 36.3
+HDL cholesterol (mg/dL)
+43 ± 10.2
+39.5 ± 9.3
+44.5 ± 10.8*
+42.1 ± 10.6
+42.1 ± 9.2
+46.2 ± 10*
+43.8 ± 10.3
+LDL cholesterol (mg/dL)
+127 ± 33.1
+122.8 ± 4.7
+132.7 ± 4.6
+120.8 ± 4.6
+133.1 ± 4.7
+125.8 ± 4.4
+128 ± 33.8
+129
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+unrelated serious adverse events, including asthma and
+cellulitis. Other incidences of non-serious adverse events
+that could possibly be related to study product intake were:
+hypertension (1), soft stool (2), flatulence (1), upset stomach
+(3), gastrointestinal discomfort (1), decreased appetite (1),
+headache (1), taste change (1), diarrhea (4), fishy burps (1),
+heartburn (1) and intermittent belching (1). Body weight and
+blood pressure remained unchanged during the 12-week
+study compared to baseline values in all five groups.
+3.3.
+Omega-3 index
+Compliance was confirmed by measuring the omega-3 index
+(Table 3). The omega-3 index levels increased significantly in
+all treatment groups after both 6 and 12 weeks of krill oil
+supplementation, whereas the placebo group remained un-
+changed. The omega-3 index changed by −3, 5, 12, 19 and 52%
+from baseline in the placebo, 0.5, 1, 2 or 4 g krill oil groups,
+respectively, after 6 weeks of supplementation. The corre-
+sponding changes after 12 weeks were - 3, 8, 18, 29, and 73%.
+3.4.
+Serum triglycerides
+After 6 weeks, subjects in the 1, 2 and 4 g/day krill oil groups
+revealed a 18.6 to 19.9 mg/dL decrease in fasting serum TG
+levels, whereas the 0.5 g/day group showed a 13.1 mg/dL
+decrease, when compared to baseline (Table 4). However, a
+significant changein TGlevelswas lostat 12 weeks inall groups.
+Still, after 12 weeks of supplementation, subjects receiving krill
+oil demonstrated a 10.2% decrease in fasting serum TG values,
+when assessed by a pooled group- and time-independent
+approach that included all the measurements after 6 and 12
+weeks in the 0.5, 1, 2 and 4 g/day krill oil groups compared to
+placebo (Fig. 2). The changes (%) from baseline in TG levels
+amongst subjects supplemented with krill oil were significant
+relative to the (%) change from baseline in TGs in the placebo
+group (p = 0.0389). The change from baseline in fasting TGs was
+3.9% in the placebo group and −6.3% in the krill oil group.
+3.5.
+Serum lipoproteins
+Total cholesterol (Fig. 3), LDL-C (Fig. 4), and HDL-C (Fig. 5) at 6
+weeks and at 12 weeks remained unchanged relative to
+baseline in the placebo and krill oil groups.
+4.
+Discussion
+In order to accurately assess the efficacy of krill oil
+supplementation in lowering fasting levels of TGs, the TG
+levels have to be reliable. Studies wherein the primary
+outcome variable is fasting TG level are challenging for several
+reasons. Serum TG levels are known to show day-to-day
+biological variations within individuals that can be as high as
+25% in healthy fasted subjects when measured 2.5 months
+apart [24]. Hypertriglyceridemic individuals can have even
+greater fluctuations in fasting TG levels. Other reasons for
+intra-individual variability in TG measures can be associated
+with the preparation, processing, storage, and analysis of
+blood samples. Despite attempts to minimize variability
+during sample collection, storage, shipment, and measure-
+ment, the individual biological fluctuations in fasting TGs
+were large, thereby resulting in a much higher intra-individual
+variation than accounted for in the power calculation
+(Supplementary Fig. 1). Multiple TG measurements at the
+individual visits, higher subject numbers or less dose groups
+should be considered in future studies. In order to circumvent
+these limitations, an explorative data analysis approach was
+chosen to increase the statistical power of the study. Hence,
+the mean of 6 and 12 weeks treatment TG measurements of
+the four krill oil groups were pooled in a group- and time-
+independent manner.
+Across the 4 krill oil groups, the mean intake of krill oil was
+1.875 g/day, and the associated intake of EPA and DHA was
+calculated to be 385 mg/day. This theoretical intake of EPA and
+DHA resulted in a 6.3% reduction from baseline in fasting TGs
+and a 10.2% placebo-adjusted reduction from baseline in
+fasting TGs. The efficacy of krill oil in reducing fasting serum
+TG levels has been reported in other studies; however, the
+doses of krill oil administered were larger than what was
+administered in the current study. Ulven et al. demonstrated
+that a daily dose of 2 g krill oil lowered fasting TGs in
+participants with borderline high and high TG levels over a 7-
+week period [25]. Krill oil has also been found to be effective in
+hyperlipidemic patients without exclusion of lipid-lowering
+medication by significantly reducing total cholesterol, LDL-C,
+and TG, and by increasing HDL-C levels after 3 months of
+supplementation; moreover, krill oil appeared more effective
+than fish oil in reducing glucose, TG, and LDL-C levels [26]. The
+Table 3 – Omega-3 index levels of subjects in the placebo and krill oil supplementation after 6 and 12 weeks
+Placebo
+0.5 g krill oil
+1 g krill oil
+2 g krill oil
+4 g krill oil
+Baseline
+3.54 ± 1.05
+3.66 ± 0.9
+3.56 ± 0.82
+4 ± 0.88*
+3.65 ± 0.7
+6 weeks
+3.44 ± 0.88
+3.83 ± 0.75*
+4 ± 0.75*
+4.76 ± 0.86*
+5.54 ± 0.87*
+12 weeks
+3.43 ± 0.77
+3.97 ± 0.8*
+4.19 ± 0.79*
+5.17 ± 0.96*
+6.3 ± 0.99*
+Table 4 – Triglyceride levels (mg/dL) and change from baseline of subjects in the placebo and krill oil supplementation after 6
+and 12 weeks
+Placebo
+0.5 g krill oil
+1 g krill oil
+2 g krill oil
+4 g krill oil
+Baseline
+236.5 ± 80.9
+230.1 ± 71.4
+238.9 ± 69.8
+237.5 ± 73.1
+220.2 ± 63
+Change after 6 weeks
+12.0 ± 10.7
+−13.1 ± 10.8
+−19.9 ± 10.8*
+−19.9 ± 10.8*
+−18.6 ± 10.3*
+Change after 12 weeks
+6.4 ± 12.7
+−23.0 ± 12.7
+−9.1 ± 12.8
+−16.1 ± 12.7
+2.1 ± 12.1
+130
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+study, however, lacked information about the nature of the
+placebo and, more importantly, information about the base-
+line characteristics of the groups, particularly with respect to
+medication use (i.e. lipid-lowering drugs). Very recently, a
+pilot study demonstrated that daily supplementation of 4 g
+krill powder (containing 60% krill oil) over 24 weeks showed a
+significant TG-lowering effect in obese subjects [27]. The study
+product, as well as the length of the study, is not directly
+comparable with the current study, but the findings support
+the hypothesis that krill oil has beneficial effects in subjects
+with elevated levels of serum TGs.
+The results of our study lend support to the suggestion
+made by Musa-Veloso and colleagues that reductions in
+fasting TG levels are possible with EPA and DHA intakes that
+are less than the 2 g/day dose suggested by the EFSA NDA
+panel. According to the equation of the first-order elimination
+function presented by Musa-Veloso and colleagues, an intake
+of 385 mg/day of EPA and DHA is estimated to result in a
+placebo-adjusted reduction from baseline in fasting TGs of
+approximately 5.2% (Fig. 6). This estimated reduction un-
+derestimates the theoretical pooled TG reduction in our study
+of 10.2%. The reason for the higher-than-predicted reduction
+in fasting TGs in our study is not clear. It may be that the first-
+order elimination function used by Musa-Veloso et al. un-
+derestimates reductions in TGs at lower intakes of EPA and
+DHA; indeed, if the dose–response equation by Ryan et al. [6] is
+used, which was linear as opposed to non-linear, but which
+did not correct for changes in TGs observed in the placebo
+group, the predicted reduction in fasting serum TGs at an EPA
+and DHA intake of 385 mg/day is 12.4%. Although the dose–
+response assessment undertaken by Ryan et al. included only
+studies in which algal sources of DHA were administered, EPA
+and DHA are generally similarly efficacious in reducing fasting
+serum TGs, although DHA (but not EPA) tends to cause slight
+increases in LDL-C [7,8]. Qualitatively, it appears from the data
+points presented in Fig. 1 of the study by Ryan et al. [6] that the
+Fig. 2 – Placebo-adjusted changes (%) from baseline of fasted
+triglyceride (TG), total cholesterol (Chol), high-density
+lipoprotein cholesterol (HDL-C) and low-density lipoprotein
+cholesterol (LDL-C) concentrations after 12 weeks of krill oil
+supplementation. All four krill oil group measurements were
+pooled and the mean compared to the mean of the placebo
+group. Significant changes are highlighted by (*), p < 0.05.
+Fig. 3 – Comparison of serum total cholesterol in the placebo
+or 0.5, 1, 2 and 4 g krill oil treatment groups after 0, 6 and 12
+weeks of supplementation. Bars represent means ± SD. No
+significant changes (p < 0.05) were detected.
+Fig. 4 – Comparison of mean serum values of LDL-C
+(low-density lipoprotein cholesterol) in the placebo or 0.5,
+1, 2 and 4 g krill oil treatment groups after 0, 6 and 12 weeks
+of supplementation Bars represent means ± SD. No
+significant changes (p < 0.05) were detected.
+Fig. 5 – Comparison of mean serum values of HDL-C
+(high-density lipoprotein cholesterol) in placebo, 0.5, 1, 2
+and 4 g krill oil treatment groups. Bars represent means ± SD.
+No significant changes (p < 0.05) were detected after 0, 6
+and 12 weeks of supplementation.
+131
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+dose–response relationship is non-linear as opposed to linear.
+This observation is supported by the y-intercept of the equa-
+tion of the line, which is −11.3%. Likely, the predicted reduc-
+tion from baseline in fasting TGs is underestimated by the
+model generated by Musa-Veloso et al. but overestimated by
+the model generated by Ryan et al. [6].
+Alternatively, the higher-than-expected reduction in fast-
+ing TGs in our study may be due to the unique compositional
+qualities of krill oil over other oils of marine origin, namely the
+fact that krill oil is rich in PLs. This structural difference may
+impact tissue uptake; indeed, it has been demonstrated that
+PLs were a more efficient delivery form of n-3 LCPUFAs than
+TGs [13,15,21]. The presence of PLs in krill oil [28] might be of
+importance not only as a vehicle for transporting EPA and
+DHA to tissues, but in lowering serum and liver cholesterol
+and TG levels, whilst increasing HDL-C [29]. PLs might exert
+these benefits by affecting biliary cholesterol excretion, intes-
+tinal cholesterol absorption and gene expression for lipo-
+protein metabolism. Some studies have demonstrated that
+PLs containing n-3 PUFAs have more potent effects on liver
+and blood plasma lipid levels, compared to PLs without n-3
+PUFAs [30,31]. A speculative explanation for the observed in-
+crease in serum TG levels after 12 weeks in comparison to 6
+weeks of krill oil supplementation could be a beneficial effect
+of krill oil on hepatic TG levels. Release of hepatic TG might
+take more than 6 weeks to establish itself and could explain
+the observed increase in serum TG levels after 12 weeks of
+supplementation. This potential beneficial effect of krill oil on
+the liver in addition to a high variation in TG measurements
+could have caused the loss of significance in serum TG reduc-
+tion at 12 weeks in particular in the 4 g krill oil group.
+The reliability of plasma cholesterol measurements is
+much lower than for TG measurements [24]. It was therefore
+possible to compare individual treatment groups for changes
+in cholesterollevels at weeks 6 and 12. In our study, no sig-
+nificant effects of krill oil treatment on serum HDL-C and LDL-
+C concentration could be observed at any time point. The EPA
+to DHA ratio of 2:1 in krill oil might help to prevent an increase
+in LDL-C that has been observed with fish oil intake or the
+intake of n-3 LCPUFA preparations containing predominantly
+DHA [32,33].
+Another suggested risk factor for CVD is the omega-3 index
+that gives the percentage of EPA and DHA in total fatty acids in
+red blood cells [34]. Red blood cell omega-3 fatty acids are highly
+correlated with their corresponding atrial fatty acids [35].
+In this study, the omega-3 index was significantly in-
+creased at both time-points with all krill oil doses given and
+confirmed regular study product intake. Furthermore, approx-
+imately 2/3 of the omega-3 index increase during the study
+period was already seen after the first 6 weeks.
+Noteworthy, the omega-3 index went from 3.7 to 6.3% at 4 g
+daily krill oil intake. Similar changes were associated with
+decreased risk for sudden cardiac death in a prospective
+cohort study by about 80% [36] and by a 90% reduction for risk
+of primary cardiac arrest in a case–control study [37].
+In conclusion, the hypothesis could be confirmed and the
+combination of n-3 PUFA and PLs in krill oil has shown to be a
+safe and promising intervention with regards to reducing
+fasting serum TG levels and increasing omega-3 index, while
+not increasing LDL-C or total cholesterol. Krill oil in combina-
+tion with lifestyle changes that include diet and exercise may
+therefore significantly reduce one’s risk for CVD morbidity
+and mortality. However, due to the individual fluctuations of
+TG concentrations measured, a potential biasing effect of TG
+release from presumably fatty liver with time or other rea-
+sons, a new study with more individual measurements per
+treatment group and preferentially over a longer study period
+would help to clarify the shortcomings of this study.
+Supplementary data to this article can be found online at
+http://dx.doi.org/10.1016/j.nutres.2013.12.003.
+Acknowledgments
+We are very grateful for comments on the protocol from
+Intertek Cantox (Canada) and on the manuscript from the Aker
+BioMarine science board members. Thanks to Laura Stibich for
+editing the final manuscript. The study was partly funded with
+a grant from the Norwegian Research Council (Grant nr 199360)
+and Norwegian SkatteFUNN (Grant nr 223281).
+R E F E R E N C E S
+[1] Assmann G, Schulte H. Role of triglycerides in coronary
+artery disease: lessons from the Prospective Cardiovascular
+Munster Study. Am J Cardiol 1992;70:10H–3H.
+[2] Assmann G, Schulte H, Cullen P. New and classical risk
+factors–the Munster heart study (PROCAM). Eur J Med Res
+1997;2:237–42.
+[3] Izumi-Nagai K, Nagai N, Ohgami K, Satofuka S, Ozawa Y,
+Tsubota K, et al. Inhibition of choroidal neovascularization
+with an anti-inflammatory carotenoid astaxanthin. Invest
+Ophthalmol Vis Sci 2008;49:1679–85.
+[4] Shearer GC, Savinova OV, Harris WS. Fish oil – how does it
+reduce plasma triglycerides? Biochim Biophys Acta
+1821;2012:843–51.
+[5] Musa-Veloso K, Binns MA, Kocenas AC, Poon T, Elliot JA, Rice
+H, et al. Long-chain omega-3 fatty acids eicosapentaenoic
+Fig. 6 – TG reductions predicted by the first-order elimination
+function modeled by Musa-Veloso et al. The placebo-
+adjusted reduction in fasting TG with the consumption of
+0.385 g/day of EPA and DHA from krill oil was 10.2%, a value
+less than the 5.2% reduction predicted by the first-order
+elimination function modeled by Musa-Veloso et al. [5].
+132
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3
+
+acid and docosahexaenoic acid dose-dependently reduce
+fasting serum triglycerides. Nutr Rev 2010;68:155–67.
+[6] Ryan AS, Keske MA, Hoffman JP, Nelson EB. Clinical overview
+of algal-docosahexaenoic acid: effects on triglyceride levels
+and other cardiovascular risk factors. Am J Ther 2009;16:
+183–92.
+[7] Mozaffarian D, Wu JH. (n-3) fatty acids and cardiovascular
+health: are effects of EPA and DHA shared or complementary?
+J Nutr 2012;142:614S–25S.
+[8] Wei MY, Jacobson TA. Effects of eicosapentaenoic acid
+versus docosahexaenoic acid on serum lipids: a systematic
+reviewand meta-analysis.CurrAtherosclerRep 2011;13:474–83.
+[9] Mori TA, Burke V, Puddey IB, Watts GF, O'Neal DN, Best JD,
+et al. Purified eicosapentaenoic and docosahexaenoic acids
+have differential effects on serum lipids and lipoproteins, LDL
+particle size, glucose, and insulin in mildly hyperlipidemic
+men. Am J Clin Nutr 2000;71:1085–94.
+[10] Araujo P, Zhu H, Breivik JF, Hjelle JI, Zeng Y. Determination
+and Structural Elucidation of Triacylglycerols in Krill Oil by
+Chromatographic Techniques. Lipids Nov 5 2013, E-pub
+ahead of print.
+[11] Schuchardt JP, Schneider I, Meyer H, Neubronner J, von
+Schacky C, Hahn A. Incorporation of EPA and DHA into
+plasma phospholipids in response to different omega-3 fatty
+acid formulations – a comparative bioavailability study of fish
+oil vs. krill oil. Lipids Health Dis 2011;10:145.
+[12] Batetta B, Griinari M, Carta G, Murru E, Ligresti A, Cordeddu L,
+et al. Endocannabinoids may mediate the ability of (n-3) fatty
+acids to reduce ectopic fat and inflammatory mediators in
+obese Zucker rats. J Nutr 2009;139:1495–501.
+[13] Graf BA, Duchateau GS, Patterson AB, Mitchell ES, van
+Bruggen P, Koek JH, et al. Age dependent incorporation of
+14C-DHA into rat brain and body tissues after dosing various
+14C-DHA-esters. Prostaglandins Leukot Essent Fatty Acids
+2010;83:89–96.
+[14] Lagarde M, Bernoud N, Brossard N, Lemaitre-Delaunay D,
+Thies F, Croset M, et al. Lysophosphatidylcholine as a
+preferred carrier form of docosahexaenoic acid to the brain.
+J Mol Neurosci 2001;16:201–4.
+[15] Wijendran V, Huang MC, Diau GY, Boehm G, Nathanielsz PW,
+Brenna JT. Efficacy of dietary arachidonic acid provided as
+triglyceride or phospholipid as substrates for brain
+arachidonic acid accretion in baboon neonates. Pediatr Res
+2002;51:265–72.
+[16] Grimsgaard S, Bonaa KH, Hansen JB, Nordoy A. Highly
+purified eicosapentaenoic acid and docosahexaenoic acid in
+humans have similar triacylglycerol-lowering effects but
+divergent effects on serum fatty acids. Am J Clin Nutr 1997;66:
+649–59.
+[17] Burri L, Berge K, Wibrand K, Berge RK, Barger JL. Differential
+effects of krill oil and fish oil on the hepatic transcriptome in
+mice. Front Nutrigenomics 2011;2:1–8.
+[18] Ferramosca A, Conte A, Burri L, Berge K, De Nuccio F, Giudetti
+AM, et al. A krill oil supplemented diet suppresses hepatic
+steatosis in high-fat fed rats. PloS one 2012;7:e38797.
+[19] Ferramosca A, Conte L, Zara V. A krill oil supplemented diet
+reduces the activities of the mitochondrial tricarboxylate
+carrier and of the cytosolic lipogenic enzymes in rats. J Anim
+Physiol Anim Nutr 2011:1–12.
+[20] Zhu JJ, Shi JH, Qian WB, Cai ZZ, Li D. Effects of krill oil on
+serum lipids of hyperlipidemic rats and human SW480 cells.
+Lipids Health Dis 2008;7:30.
+[21] Di Marzo V, Griinari M, Carta G, Murru E, Ligresti A, Cordeddu
+L, et al. Dietary krill oil increases docosahexaenoic acid and
+reduces 2-arachidonoylglycerol but not N-acylethanolamine
+levels in the brain of obese Zucker rats. Int Dairy J 2010;20:
+231–5.
+[22] Harris WS, Von Schacky C. The Omega-3 Index: a new risk
+factor for death from coronary heart disease? Prev Med
+2004;39:212–20.
+[23] Neubronner J, Schuchardt JP, Kressel G, Merkel M, von
+Schacky C, Hahn A. Enhanced increase of omega-3 index in
+response to long-term n-3 fatty acid supplementation from
+triacylglycerides versus ethyl esters. Eur J Clin Nutr 2011;65:
+247–54.
+[24] Jacobs Jr DR, Barrett-Connor E. Retest reliability of plasma
+cholesterol and triglyceride. The Lipid Research Clinics
+Prevalence Study. Am J Epidemiol 1982;116:878–85.
+[25] Ulven SM, Kirkhus B, Lamglait A, Basu S, Elind E, Haider T,
+et al. Metabolic effects of krill oil are essentially similar to
+those of fish oil but at lower dose of EPA and DHA, in healthy
+volunteers. Lipids 2011;46:37–46.
+[26] Bunea R, El Farrah K, Deutsch L. Evaluation of the effects of
+Neptune Krill Oil on the clinical course of hyperlipidemia.
+Altern Med Rev 2004;9:420–8.
+[27] Berge K, Piscitelli F, Hoem N, Silvestri C, Meyer I, Banni S, et al.
+Chronic treatment with krill powder reduces plasma
+triglyceride and anandamide levels in mildly obese men.
+Lipids Health Dis 2013;12:78.
+[28] Winther B, Hoem N, Berge K, Reubsaet L. Elucidation of
+phosphatidylcholine composition in krill oil extracted from
+Euphausia superba. Lipids 2011;46:25–36.
+[29] Sahebkar A. Fat Lowers Fat: Purified Phospholipids as
+Emerging Therapies for Dyslipidemia. Biochim Biophys Acta
+1831;2013:887–93.
+[30] Dasgupta S, Bhattacharyya DK. Dietary effect of
+eicosapentaenoic acid (EPA) containing soyphospholipid.
+J Oleo Sci 2007;56:563–8.
+[31] Shirouchi B, Nagao K, Inoue N, Ohkubo T, Hibino H,
+Yanagita T. Effect of dietary omega-3 phosphatidylcholine
+on obesity-related disorders in obese Otsuka Long-Evans
+Tokushima fatty rats. J Agric Food Chem 2007;55:7170–6.
+[32] Bernstein AM, Ding EL, Willett WC, Rimm EB. A meta-analysis
+shows that docosahexaenoic acid from algal oil reduces
+serum triglycerides and increases HDL-cholesterol and
+LDL-cholesterol in persons without coronary heart disease.
+J Nutr 2012;142:99–104.
+[33] Harris WS. Fish oils and plasma lipid and lipoprotein
+metabolism in humans: a critical review. J Lipid Res 1989;30:
+785–807.
+[34] Harris WS. The omega-3 index: from biomarker to risk marker
+to risk factor. Curr Atheroscler Rep 2009;11:411–7.
+[35] Metcalf RG, Cleland LG, Gibson RA, Roberts-Thomson KC,
+Edwards JR, Sanders P, et al. Relation between blood and atrial
+fatty acids in patients undergoing cardiac bypass surgery. Am
+J Clin Nutr 2010;91:528–34.
+[36] Albert CM, Campos H, Stampfer MJ, Ridker PM, Manson JE,
+Willett WC, et al. Blood levels of long-chain n-3 fatty acids
+and the risk of sudden death. N Engl J Med 2002;346:1113–8.
+[37] Siscovick DS, Raghunathan TE, King I, Weinmann S,
+Wicklund KG, Albright J, et al. Dietary intake and cell
+membrane levels of long-chain n-3 polyunsaturated fatty
+acids and the risk of primary cardiac arrest. JAMA 1995;274:
+1363–7.
+133
+N U T R I T I O N R E S E A R C H 3 4 ( 2 0 1 4 ) 1 2 6 – 1 3 3

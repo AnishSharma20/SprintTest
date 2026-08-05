@@ -1,0 +1,844 @@
+RESEARCH ARTICLE
+The Effect of Krill Oil Supplementation on
+Exercise Performance and Markers of
+Immune Function
+Mariasole Da Boit, Ina Mastalurova, Goda Brazaite, Niall McGovern, Keith Thompson,
+Stuart Robert Gray¤*
+Institute of Medical Sciences, Foresterhill, University of Aberdeen, Aberdeen, Scotland, United Kingdom
+¤ Current address: Institute of Cardiovascular and Medical Sciences, University of Glasgow, Glasgow,
+Scotland, United Kingdom
+* Stuart.gray@glasgow.ac.uk
+Abstract
+Background
+Krill oil is a rich source of the long-chain n-3 polyunsaturated fatty acids (PUFAs), eicosa-
+pentaenoic acid (EPA) and docosahexaenoic acid (DHA), which may alter immune function
+after exercise. The aim of the study was to determine the effects of krill oil supplementation
+on post exercise immune function and performance.
+Methods
+Nineteen males and 18 females (age: 25.8 ± 5.3 years; mean ± S.D.) were randomly
+assigned to 2 g/day of krill oil (n = 18) or placebo (n = 19) supplementation for 6 weeks. A
+maximal incremental exercise test and cycling time trial (time to complete set amount of
+work) were performed pre-supplementation with the time trial repeated post-supplementa-
+tion. Blood samples collected pre- and post- supplementation at rest, and immediately, 1
+and 3h post-exercise. Plasma IL-6 and thiobarbituric acid reactive substances (TBARS)
+concentrations and, erythrocyte fatty acid composition were measured. Natural killer (NK)
+cell cytotoxic activity and peripheral blood mononuclear cell (PBMC) IL-2, IL-4, IL-10, IL-17
+and IFNγ production were also measured.
+Results
+No effects of gender were noted for any variable. PBMC IL-2 and NK cell cytotoxic activity
+were greater (P < 0.05) 3h post exercise in the krill oil compared to the control group.
+Plasma IL-6 and TBARS, PBMC IL-4, IL-10, IL-17 and IFNγ production, along with perfor-
+mance and physiological measures during exercise, were not different between groups.
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+1 / 14
+OPEN ACCESS
+Citation: Da Boit M, Mastalurova I, Brazaite G,
+McGovern N, Thompson K, Gray SR (2015) The
+Effect of Krill Oil Supplementation on Exercise
+Performance and Markers of Immune Function. PLoS
+ONE 10(9): e0139174. doi:10.1371/journal.
+pone.0139174
+Editor: Andrew Philp, University of Birmingham,
+UNITED KINGDOM
+Received: June 17, 2015
+Accepted: September 8, 2015
+Published: September 25, 2015
+Copyright: © 2015 Da Boit et al. This is an open
+access article distributed under the terms of the
+Creative Commons Attribution License, which permits
+unrestricted use, distribution, and reproduction in any
+medium, provided the original author and source are
+credited.
+Data Availability Statement: The study was
+approved by the University of Aberdeen College of
+Life Sciences and Medicine Ethics Review Board and
+data are ethically restricted for reasons related to
+patient privacy. Any data requests can be sent to the
+corresponding author, Dr. Stuart Gray (stuart.
+gray@glasgow.ac.uk), who will liaise with the ethics
+committee regarding data access. Any interested
+researcher can obtain a de-identified, minimal dataset
+pending ethical approval.
+Funding: This work was supported with funding from
+Aker Biomarine Antarctic AS. The funders had no
+
+Conclusion
+Six weeks of krill oil supplementation can increase PBMC IL-2 production and NK cell cyto-
+toxic activity 3h post-exercise in both healthy young males and females. Krill oil does not
+modify exercise performance.
+Introduction
+Fish oils are rich in the long chain n-3 polyunsaturated fatty acids (PUFAs) eicosapentaenoic
+acid (EPA) and docosahexaenoic acid (DHA), which have been found to have positive effects
+in chronic inflammatory disease, such as cardiovascular disease [1] and diabetes mellitus [2].
+PUFAs are essential constituents of cell membranes of immune cells and are precursors of
+inflammatory mediators, such as prostaglandins and leukotrienes (for review see [3]). The pri-
+mary PUFA found in cell membranes of leukocytes is the n-6 PUFA arachidonic acid (AA).
+However, increasing dietary consumption of EPA and DHA will alter the cell membrane com-
+position and increase EPA and DHA levels with a concomitant reduction in the amount of AA
+[4]. This alteration in fatty acid composition alters the substrate used for eicosanoid synthesis,
+resulting in a reduction in pro-inflammatory AA-derived mediators and an increase in the less
+potent EPA/DHA-derived alternative inflammatory mediators, such as the 3-, rather than the
+2-, series prostaglandins [5]. Fish oils are not the only source of EPA and DHA with Antarctic
+krill also being a rich source of n-3 PUFAs. The primary difference between fish and krill oil is
+that while fish oil contains the majority of n-3 PUFAs as triacylglycerol (TG) krill oil consists
+of more than 40% of n-3 PUFAs as phospholipids (PL) [6]. Krill oil also contains the antioxi-
+dant astaxanthin. During supplementation studies, similar increases in plasma EPA and DHA
+can be seen when a third less PUFAs are given as krill compared to fish oil supplements [7]. In
+another study when similar amounts of fish oil and krill oil, 600mg/day, are given the increases
+in plasma and erythrocyte EPA and DHA were found to be greater with krill compared to fish
+oil [8].
+Fish oil supplements have been recommend for athletic populations due to evidence of their
+anti-inflammatory, antithrombotic, antiarrhythmic, hypolipidemic and antiproliferative prop-
+erties. It is thus suggested that the majority of athletes, especially those at leisure level, should
+consume 1–2 g/day of EPA and DHA to prevent muscle and joint inflammation and improve
+overall health. Over time this would not only improve overall health but may ultimately
+improve performance [9]. In spite of these assertions the evidence to support the use of n-3
+PUFAs specifically in exercising populations is limited and there is also concern that due to
+their high number of double bonds an increase in n-3 PUFA consumption may result in an
+increase in lipid peroxidation.
+Whilst both fish and krill oil are rich n-3 PUFAs the majority of previous research in this
+area has utilised fish oil supplementation. One area where n-3 PUFA supplements may be use-
+ful is in the post-exercise recovery period where there are a variety of perturbations in the
+immune system [10]. However there are a few studies which have investigated the effects of
+fish oil supplementation on various aspects of immune function after exercise. Toft and col-
+leagues found that fish oil supplementation had no effect on plasma cytokine levels after exer-
+cise [11]. One study found higher ex vivo activated peripheral blood mononuclear cell
+proliferation (PBMC) [12]. In recent work we demonstrated that fish oil supplementation
+results in an increase in PBMC IL-2 production and natural killer (NK) cell cytotoxic activity
+in the recovery period after exercise in healthy young males [13]. Whether this effect will be
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+2 / 14
+role in study design, data collection and analysis,
+decision to publish, or preparation of the manuscript.
+Competing Interests: This study received financial
+support from Aker Biomarine AS. This did not alter
+the authors' adherence to PLOS ONE policies on
+sharing data and materials.
+
+seen in females remains to be established. It has also been suggested that, via different mecha-
+nisms, n-3 PUFA supplementation may improve exercise performance. Indeed n-3 PUFA sup-
+plementation has been found to reduce HR and _VO2 during exercise [14–17], although our
+ﬁndings do not support this [13]. Furthermore these cardiometabolic changes do not translate
+into improvements in exercise performance [14, 16, 18], although one study did ﬁnd an
+increase in _VO2max after ﬁsh oil supplementation [19]. The effects of krill oil on cardiometa-
+bolic variable and exercise performance remain to be established.
+The aim of the present study was to investigate the effects of six weeks of supplementation
+with krill oil on markers of immune function (NK cell cytotoxicity and PBMC Th1/Th2 cyto-
+kine production) following an acute bout of endurance exercise in both males and females. A
+secondary aim was to determine whether krill oil supplementation altered exercise perfor-
+mance during a simulated cycling time trial.
+Methods
+Subjects
+Nineteen males and 18 females (aged 25.8 ± 5.3 years, height 175 ± 11.9 cm, weight 72.5 ± 14.9
+kg; mean ± S.D.) volunteered to participate in the study. The study was approved by the Uni-
+versity of Aberdeen College of Life Sciences and Medicine Ethics Review Board and partici-
+pants were made aware of the aims, risks and potential discomfort associated with the study
+before providing written informed consent.
+Supplementation
+Participants were randomly assigned to either a placebo (n = 19) or krill oil (n = 18) group.
+Capsules were closely matched for both colour and shape, and both participants and investiga-
+tors were blind to the supplementation group. After the preliminary maximal exercise test, par-
+ticipants in the placebo group consumed 2g (4500mg) of placebo oil daily, while those in the
+krill oil group consumed 2g (4500mg) of krill oil daily for a six week period. All capsules were
+provided by Aker Biomarine Antarctic AS (Oslo, Norway). The placebo oil was produced to
+reflect the fatty acid composition of the average European diet [20]. Each 500mg krill oil cap-
+sule contained 60mg EPA, 30mg DHA and 61μg astaxanthin. To put this into a dietary context
+a 140g portion of oily fish would typically provide approximately 2.8 g EPA plus DHA,
+although this is known to vary dramatically between wild and farmed fish due to recent
+changes in feeds [21].
+Maximal Exercise Test
+For the 24h period prior to each visit, participants were instructed to refrain from the con-
+sumption of alcohol, caffeine and strenuous exercise. For the same period before the maximal
+exercise test, participants were asked to record their dietary intake and replicate this prior to
+the post-supplementation trial. All tests began at the same time of day, between 7 and 10am. A
+fasting blood sample was collected before performing an incremental maximal exercise test on
+a cycle ergometer (Lode, Netherlands). Participants cycled at self-selected cadence (70–90
+rpm) with workload increasing by 30 Watts every minute for males and 20 Watts every minute
+for females until volitional exhaustion. Gas exchange (Medical Graphics, UK) and heart rate
+(Polar, Finland) were monitored throughout the test. _VO2peak was taken as the highest _VO2
+measured over a 30 second period and a workload estimated to elicit 70% _VO2peak calculated to
+be used in the exercise trials.
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+3 / 14
+
+Baseline Exercise Trial
+The exercise trial was a simulated time trial with the ergometer set in the linear mode. Approxi-
+mately 7 days prior to this trial a familiarisation trial was carried out where no physiological
+measures were made but the participant completed the time trial as below. After a 5 min warm
+up at 75 Watts subjects performed a set amount of work in as quick a time as possible. The
+amount of work was based on the results of the maximal exercise test as:
+Work ¼ 0:70  Wmax  3600
+And the linear factor (L) used to set up the ergometer was calculated as:
+W ¼ L  ðrpmÞ2
+This factor was chosen so that 70% of Wmax would be achieved at around 80rpm which is
+the preferred pedal rate, in our experience, in this population. During the time trial participants
+did not receive any information on workload, pedal rate, time or heart rate with only the
+amount of work completed and the amount remaining passed on to participants. Heart rate
+and gas exchange (3 min recording) were recorded at approximately 25, 50 and 75% of the per-
+centage of work performed. Water was available ad libitum. This trial was the same as the post-
+supplementation trial, except no blood samples were collected during this trial.
+Post-supplementation Trial
+After the 6-week supplementation period, fasted blood samples were taken. Participants then
+performed the time trial as in the baseline exercise trial. Immediately on cessation of exercise a
+post-exercise blood sample was drawn. During a 3h recovery period, participants remained
+fasted, and further blood samples were taken 1h and 3h post-exercise. Throughout the post-
+supplementation trial heart rate and gas exchange were recorded in the same way as during the
+baseline exercise trial. Participants were permitted to consume water ad libitum.
+Blood Sampling
+Blood samples were drawn from an antecubital vein using a butterfly needle (21G). Blood was
+collected in vacutainers coated with Lithium-Heparin (BD, Oxford, UK), for peripheral blood
+mononuclear cell (PBMC) isolation, and K+EDTA (BD, Oxford, UK) for separation of plasma.
+The K+EDTA vacutainer was centrifuged at 800g for 10 minutes at 4°C and plasma stored at
+-80°C until analysis.
+Erythrocyte Fatty Acid Composition Analysis
+Fatty acid analysis was performed in EDTA blood samples sent to a commercial laboratory
+(Omegametrix) and analysed as previously described [22]. Samples were collected in 4 ml
+EDTA vacutainers, mixed and immediately shipped to Germany for analysis. Briefly, fatty acid
+methyl esters were generated from erythrocytes by acid transesterification and analysed by gas
+chromatography using a GC2010 Gas Chromatograph (Shimadzu, Duisburg, Germany)
+equipped with a SP2560, 100-m column (Supelco, Bellefonte, PA) using hydrogen as the carrier
+gas. Fatty acids were identified by comparison with a standard mixture of fatty acids character-
+istic of erythrocytes. A total of 26 fatty acids were identified and quantified. Results are given as
+percentage of total identified fatty acids after response factor correction. The coefficient of vari-
+ation for EPA plus DHA and for most other fatty acids was ~4%. Analyses were quality-con-
+trolled according to DIN ISO 15189.
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+4 / 14
+
+Plasma IL-6
+Measurements were performed using commercially available high sensitivity ELISA kits (R&D
+Systems, UK) according to the manufacturer’s instructions.
+Plasma thiobarbituric acid reactive substances (TBARS)
+Measurements were performed using commercially available parameter assay kits (R&D Sys-
+tems, UK) according to the manufacturer’s instructions. The principle of this assay is that mal-
+ondialdehyde (MDA), from lipid peroxides, in the presence of heat and acid, reacts with
+2-thiobarbituric acid to produce a coloured end product which can be measured in a spectro-
+photometric plate reader. For this reason TBARS results are expressed as MDA concentration.
+PBMC Isolation and Incubation
+These procedures were carried out using the same methods as our previous work [13] where
+the protocol was sufficient to show a robust stimulation of cytokine production. Twenty ml
+whole blood was mixed with 10ml PBS and layered onto 20ml Histopaque (Sigma-Aldrich, St
+Louis, USA) before being centrifuged at 400g for 30 minutes at room temperature. The PBMC
+layer was collected and mixed with 40ml PBS and centrifuged at 250g for 10 minutes. The
+supernatant was then removed and the cell pellet reconstituted with 20ml PBS. This washing
+phase was then repeated. The final pellet was reconstituted with 1ml RPMI-1640 medium and
+cell numbers determined. 1.5x106 cells, in duplicate, were then incubated at 37°C and 5% CO2
+for 24h supplemented with 2mM glutamine, antibiotics, 2.5% autologous plasma and 10 mg/L
+concanavalin A (Con A). At the end of incubation, each well was centrifuged at 250g for 10
+minutes, the supernatant removed and frozen at -80°C for analysis of PBMC cytokine
+production.
+PBMC Cytokine Production
+All measurements were performed using commercially available multiplex assay kits (R&D
+Systems, UK) according to the manufacturer’s instructions (Luminex, USA). The cytokines IL-
+2, IL-4, IL-10, IL-17 and IFN-γ were measured in culture supernatants.
+Natural Killer Cell Cytotoxic Activity
+Natural killer cell cytotoxic activity was measured in PBMCs, isolated as above but prior to
+treatment/incubation, using NKTEST kits (Opregen Pharma, Heidelberg, Germany) according
+to the manufacturer’s instructions. While this kit will measure primarily NK cell cytotoxic
+activity other cell types with NK cell-like activity, ie γδ T cells, will make a minor contribution.
+Briefly, PBMCs were mixed with pre-stained K562 target cells in ratios of 50:1 and 25:1. Tubes
+were centrifuged for 3 min at 120g and then incubated for 2h in a CO2 incubator at 37°C. 50μl
+of DNA staining solution was added to the cells, which were incubated in the dark on ice for 5
+min before analysis by flow cytometry. 2,500 cells were analysed for each sample, allowing us
+to determine the effects of exercise and krill oil. To discriminate target and effector cells a gate
+was set in the green fluorescence histogram. The percentage of dead cells was then determined
+using the red fluorescence histogram and the percentage specific cytotoxicity determined by
+subtracting the percentage dead cells in a tube containing K562 cells alone from the percentage
+of dead target cells in the samples.
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+5 / 14
+
+Statistical Analysis
+Data analysis was carried out using SPSS software. Baseline characteristic data were compared
+between groups using independent t-tests. Initial analyses by sex found no effects and therefore
+are not presented here. Data were then analysed using a two way (time and group) repeated
+measures ANOVA with Bonferroni corrected post-hoc t-tests performed where appropriate.
+Statistical significance was accepted at P <0.05. All data are expressed as mean ± SD.
+Results
+Baseline characteristics
+Subject baseline characteristics are summarised in Table 1. Baseline physical characteristics
+were similar between the groups.
+Erythrocyte fatty acid composition
+There were no differences in erythrocyte fatty acid composition between groups at baseline. In
+the control group there were no changes in erythrocyte fatty acid composition over the supple-
+mentation period. However in the krill oil group there were significant increases (P<0.05) in
+levels of C20:5n3, C22:6n3 and the Omega-3 index, with decreases (P<0.05) in levels of
+C20:4n6 and C22:4n6 (Table 2).
+Time trial variables
+The ANOVA revealed no time (F(3,105) = 3.67, P = 0.07), group (F(1,35) = 0.005, P = 0.94) or
+interaction (F(3,105) = 2.42, P = 0.12) effect for time to completion during the time trial. In the
+control group the time to complete the baseline time trial was 80.5 ± 11.2 min and 84.7 ± 17.1
+min after the supplementation period. In the krill oil group baseline time to complete was
+83.9 ± 14.7 min and 85.4 ± 19.8 min after the supplementation period. Similarly no time (HR:
+F(3,105) = 3.01, P = 0.09; _VO2Fð3;105Þ ¼ 3:52, P = 0.07), group (HR: F(1,35) = 0.001, P = 0.97.
+_VO2Fð1;35Þ ¼ 0:48, P = 0.50), or interaction (HR: F(3,105) = 1.22, P = 0.28. _VO2Fð3;105Þ ¼ 0:08,
+P = 0.78) effects were noted for HR or _VO2 during the time trial (Fig 1).
+Plasma IL-6 and TBARS
+The ANOVA for plasma IL-6 showed a time (F(3,105) = 7.6, P<0.05) effect with no group
+(F(1,35) = 0.45, P = 0.50) or interaction (F(3,105) = 0.40, P = 0.75) effects. Plasma IL-6 was higher
+(P<0.05) immediately, 1h and 3h post-exercise, compared to baseline, in both groups. There
+were no time (F(3,105) = 2.13, P = 0.10), group (F(1,35) = 0.15, P = 0.71) or interaction (F(3,105) =
+0.12, P = 0.95) effects for plasma TBARS (Fig 2).
+Table 1. Baseline characteristics of subjects in control and krill oil groups. Values are mean ± SD.
+Measure
+Control Group (n = 19: 10 females)
+Krill Oil Group (n = 18: 8 females)
+P Value
+Age (years)
+26 ± 6
+25 ± 5
+0.757
+Height (cm)
+176 ± 12
+175 ± 12
+0.670
+Weight (kg)
+73.5 ± 16.4
+71.3 ± 13.7
+0.318
+_V_O2max (ml/kg/min)
+41.6 ± 7.8
+43.6 ± 6.4
+0.439
+doi:10.1371/journal.pone.0139174.t001
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+6 / 14
+
+Table 2. Erythrocyte fatty acid composition in control and krill oil groups at rest pre- and post-supplementation (6 weeks). Values are mean ± SD. *
+indicates a significant difference (P<0.05) from baseline values. (c = cis and t = trans)
+Control Group (n = 19: 10 female)
+Krill Oil Group (n = 18: 8 females)
+Fatty Acid
+Pre-Supplementation
+Post-Supplementation
+Pre-Supplementation
+Post-Supplementation
+C14:0
+0.35 ± 0.10
+0.39 ± 0.13
+0.36 ± 0.11
+0.39 ± 0.13
+C16:0
+21.85 ± 0.92
+21.81 ± 0.95
+21.91 ± 0.88
+22.37 ± 1.01
+C16:1n7t
+0.12 ± 0.03
+0.15 ± 0.06
+0.12 ± 0.02
+0.13 ± 0.04
+C16:1n7
+0.34 ± 0.12
+0.36 ± 0.16
+0.30 ± 0.12
+0.29 ± 0.12
+C18:0
+16.46 ± 0.98
+16.13 ± 1.52
+16.34 ± 1.05
+16.13 ± 0.86
+C18:1t
+0.40 ± 0.28
+0.36 ± 0.10
+0.30 ± 0.10
+0.32 ± 0.08
+C18:1n9
+16.06 ± 0.86
+15.77 ± 1.11
+16.39 ± 0.85
+16.29 ± 1.57
+C18:2n6tt
+0.11 ± 0.05
+0.10 ± 0.05
+0.12 ± 0.05
+0.10 ± 0.05
+C18:2n6ct
+0.05 ± 0.04
+0.03 ± 0.02
+0.03 ± 0.02
+0.04 ± 0.03
+C18:2n6tc
+0.13 ± 0.06
+0.12 ± 0.08
+0.17 ± 0.15
+0.10 ± 0.07
+C18:2n6
+12.87 ± 2.20
+13.37 ± 2.16
+13.77 ± 1.55
+13.80 ± 1.75
+C20:0
+0.15 ± 0.04
+0.15 ± 0.03
+0.15 ± 0.04
+0.16 ± 0.04
+C18:3n6
+0.08 ± 0.02
+0.10 ± 0.06
+0.07 ± 0.04
+0.08 ± 0.02
+C20:1n9
+0.27 ± 0.06
+0.28 ± 0.13
+0.29 ± 0.07
+0.29 ± 0.05
+C18:3n3
+0.17 ± 0.06
+0.19 ± 0.10
+0.20 ± 0.05
+0.24 ± 0.09
+C20:2n6
+0.24 ± 0.06
+0.24 ± 0.04
+0.23 ± 0.05
+0.25 ± 0.05
+C22:0
+0.32 ± 0.17
+0.40 ± 0.18
+0.33 ± 0.13
+0.33 ± 0.12
+C20:3n6
+1.91 ± 0.50
+1.93 ± 0.50
+1.82 ± 0.38
+1.75 ± 0.36
+C20:4n6
+14.93 ± 1.42
+14.44 ± 1.36
+14.50 ± 1.56
+13.45 ± 1.11*
+C24:0
+0.85 ± 0.38
+0.90 ± 0.53
+0.80 ± 0.26
+0.76 ± 0.37
+C20:5n3
+0.74 ± 0.34
+0.80 ± 0.19
+0.82 ± 0.34
+1.48 ± 0.73*
+C24:1n9
+0.86 ± 0.23
+0.81 ± 0.15
+0.82 ± 0.29
+0.79 ± 0.22
+C22:4n6
+2.99 ± 0.50
+2.87 ± 0.52
+2.72 ± 0.57
+2.27 ± 0.46*
+C22:5n6
+0.61 ± 0.16
+0.62 ± 0.15
+0.49 ± 0.14
+0.45 ± 0.13
+C22:5n3
+2.40 ± 0.37
+2.31 ± 0.32
+2.44 ± 0.41
+2.54 ± 0.32
+C22:6n3
+4.54 ± 1.06
+4.60 ± 1.09
+4.49 ± 1.08
+5.43 ± 1.24*
+Omega-3 Index
+5.20 ± 1.28
+5.40 ± 1.19
+5.32 ± 1.36
+6.79 ± 1.66*
+doi:10.1371/journal.pone.0139174.t002
+Fig 1. The effect of 6 weeks krill oil/placebo supplementation on heart rate, oxygen consumption and
+time taken to complete the time trial (pre and post 6 weeks supplementation).
+doi:10.1371/journal.pone.0139174.g001
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+7 / 14
+
+PBMC Cytokine Production
+PBMC cytokine data is shown in Fig 3. The ANOVA revealed an interaction (F(3,105) = 3.17,
+P = 0.02) and time effect (F(3,105) = 6.43, P<0.05) for PBMC IL-2 production. Post-hoc analysis
+revealed that PBMC IL-2 was lower (P<0.05) than baseline, at 1h post-exercise in the control
+group and higher (P<0.05) than baseline, at 3h post-exercise in the krill oil group. Furthermore
+3h post-exercise PBMC IL-2 was higher (P<0.05) in the krill oil compared to the control
+group. No group effect (F(1,35) = 1.11, P = 0.30) was observed for PBMC IL-2. Analysis showed
+an effect of time for PBMC IFN-γ (F(3,105) = 18.54, P<0.05) with post-hoc analysis revealing
+that PBMC IFN-γ was higher (P<0.05) immediately and after 3h, and lower at 1h, post-exer-
+cise compared with baseline in both groups. No group (F(1,35) = 0.02, P = 0.89) or interaction
+(F(3,105) = 0.94, P = 0.42) effect was observed for PBMC IFN-γ. The ANOVA revealed a time
+effect for PBMC IL-4 (F(3,105) = 3.27, P<0.05) with post hoc analysis showing that PBMC IL-4
+was greater (P<0.05) at 1h and 3h post-exercise, compared with baseline, in the two groups.
+The analysis of PBMC IL-4 showed no interaction (F(3,105) = 0.26, P = 0.85) or group effect
+(F(1,35) = 0.04, P = 0.84). Analysis of PBMC IL-10 found an effect of time (F(3,105) = 5.763,
+Fig 2. The effect of 6 weeks krill oil/placebo supplementation on plasma IL-6 and TBARS (expressed
+as MDA concentration) before and after exercise. * denotes a significant difference (P<0.05) from
+baseline in both groups.
+doi:10.1371/journal.pone.0139174.g002
+Fig 3. The effect of 6 weeks krill oil/placebo supplementation on exercise induced cytokine
+production by PBMCs stimulated with concanavalin A. * indicates significant difference (P<0.05) from
+baseline values. † indicates significant difference (P<0.05) between groups.
+doi:10.1371/journal.pone.0139174.g003
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+8 / 14
+
+P<0.05) with post-hoc analysis revealing that PBMC IL-10 was higher (P<0.05) 3h post-exer-
+cise compared with baseline in both groups. No group (F(1,35) = 0.24, P = 0.63) or interaction
+(F(3,105) = 0.59, P = 0.62) effect was observed for PBMC IL-10. The ANOVA revealed a time
+effect for PBMC IL-17 (F(3,105) = 12.86, P<0.05) with post-hoc analysis revealing that PBMC
+IL-17 was higher (P<0.05) at every time point compared with baseline, in both groups. No
+group (F(1,35) = 0.01, P = 0.91) or interaction (F(3,105) = 0.32, P = 0.81) effect was observed for
+PBMC IL-17.
+NK cell function
+Analysis of natural killer cell cytotoxic activity revealed a significant interaction effect at both
+50:1 (F(3,105) = 8.18, P<0.05) and 25:1 (F(3,105) = 4.09, P<0.05) effector:target cell ratios. Post
+hoc analysis revealed that at 3h post-exercise NK cell cytotoxic activity was greater in the krill
+oil group, compared to the control group, for both effector:target ratios of 50:1 and 25:1
+(P<0.05 Fig 4). In addition, time effects in NK cell cytotoxic activity at the 50:1(F(3,105) = 12.91,
+P<0.05) and 25:1 (F(3,105) = 13.77, P<0.05) ratios were observed. Post-hoc analysis found that
+NK cell cytotoxic activity was greater (P<0.05) at 1h post-exercise, compared to baseline, in
+the two groups and higher at 3h post-exercise, compared to baseline, in the krill oil group only.
+There was no effect of group for NK cell cytotoxic activity at either ratio (50:1−F(1,35) = 3.53,
+P = 0.07. 25:1−F(1,35) = 1.51, P = 0.22).
+Discussion
+The current study has demonstrated that supplementation of the diet with 2 g per day of krill
+oil for 6 weeks increases the production of IL-2 in stimulated PBMCs and the cytotoxic activity
+of NK cells in the recovery period after exercise. These effects were seen in both males and
+females. There was no effect of krill oil supplementation on plasma levels of IL-6 and TBARS,
+or on PBMC production of IL-4, IL-10, IL-17 and IFNγ in response to exercise. Similarly, krill
+oil supplementation did not alter time trial performance or the oxygen cost and HR response
+to exercise.
+The current study has demonstrated that 6 weeks of supplementation with krill oil results in
+a 75% increase in erythrocyte EPA, a 21% increase in DHA and a 27% increase in the Omega-3
+Index. Alongside these increases in n-3 PUFA there were concomitant decreases of 7% and
+Fig 4. The effect of 6 weeks krill oil/placebo supplementation on NK cell cytotoxic activity at 50:1 and
+25:1 effector:target cell ratio, before and after exercise. * indicates significant difference (P<0.05) from
+baseline values. † indicates significant difference between groups.
+doi:10.1371/journal.pone.0139174.g004
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+9 / 14
+
+17% in levels of arachidonic and docosatetraenoic acid, respectively. Therefore, our study is in
+agreement with previous work [7] which has demonstrated that krill oil supplementation at a
+level of around 1/3rd lower than previous work with fish oil can result in a similar magnitude
+of a rise in EPA and DHA. It is worth pointing out here that the current study made no direct
+comparison to a group of participants supplemented with fish oil. However, due to the lack of
+studies in this area with krill oil supplementation we have compared our studies to those where
+fish oil supplementation was given. That is not to say that fish and krill oil are the exact same,
+as highlighted in the introduction.
+There were no effects of krill oil supplementation on any measures of immune function
+and lipid peroxidation at rest in the current study, which is in agreement with previous work
+with fish oil supplementation in healthy populations [4, 13, 23]. Others have shown that sup-
+plementation with increasing quantities of EPA tends to result in an increase in NK cell cyto-
+toxic activity, although PBMC IL-2 production was not altered, in healthy young males [24].
+However, there are several studies in disagreement with this. In healthy older (>55y) partici-
+pants it has been shown that 1.2 g/day EPA supplementation for 12 weeks can reduce NK cell
+cytotoxic activity [25]. Similar findings were observed in young healthy men who were supple-
+mented with 6g/day DHA for 90 days [26]. Furthermore, in vitro studies of human NK cells
+and in young mice have found that EPA and DHA treatment reduces NK cell cytotoxic activ-
+ity [27–29].
+The current study has demonstrated that NK cell cytotoxic activity and PBMC IL-2, but not
+other cytokines, are increased after krill oil supplementation. What remains to be established
+are the mechanisms through which n-3 PUFA supplementation results in these alterations. It
+is known that PGE-2 can reduce the cytotoxic activity of human NK cells [30] and it is likely
+that the increase in EPA and DHA incorporation into immune cell membranes as a result of
+krill and fish oil supplementation will result in a concomitant decrease in membrane AA levels
+and thus altered eicosanoid synthesis [31]. Primarily this would reduce PGE-2 synthesis and
+relieve its suppressive effects on NK cells, although why we do not then see a universal increase
+in NK cell activity with fish oil supplementation, in the above studies, is not clear. What is
+clear, from our work, is that both krill and fish oil supplementation results in an increase in
+PBMC IL-2 production and NK cell cytotoxic activity and as exercise increases PGE-2 produc-
+tion this may explain why we only see these positive effects with exercise. Indeed when indo-
+methacin, which inhibits PGE-2 production, is administered during exercise a greater NK cell
+cytotoxic activity is observed [32]. The current study has also found that there was no effect of
+krill oil on plasma IL-6 levels, which is in agreement with previous fish oil studies in this area
+[11, 13, 33].
+There has been one study investigating the effects of krill oil supplementation on markers of
+oxidative stress and inflammation which, contrary to the current findings, demonstrated that
+in the recovery period after a bout of exercise, TBARS levels were lower in the krill oil group,
+compared to placebo [34]. No differences in tumor-necrosis factor-alpha (TNF-α) or the activ-
+ity of superoxide dismutase, glutathione peroxidase and creatine kinase were observed between
+groups. Previous work which has investigated the effects of fish oil supplementation on mark-
+ers of oxidative stress is equivocal. Work by Bloomer and colleagues found that fish oil supple-
+mentation had no effect on plasma TBARS after 1h of treadmill exercise [35], which is in
+agreement with the current findings. However, it has also been shown that fish oil supplemen-
+tation increase plasma F2-isoprostanes following three days of 3h cycling sessions [36], but
+plasma TBARS were found to be reduced after eccentric knee extensor exercise [23]. It would
+appear therefore that EPA and DHA have no effect on markers of oxidative stress after acute
+submaximal exercise, but can reduce and increase such markers after acute eccentric and
+short-term intensified training, respectively.
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+10 / 14
+
+The current data found that krill oil did not affect time trial performance, nor were heart
+rate or oxygen consumption affected. The fact that performance was not affected is in broad
+agreement with data published with fish oil where several studies have found no performance
+benefit, although cardiometabolic changes (ie reduced HR and _VO2) were observed [14–17]. It
+is not clear why in the current study, and in our previous ﬁsh oil work, we have found no effect
+of n-3 PUFA supplementation on HR and _VO2. The human studies where these effects have
+been observed have in general been at either lower (i.e. 55% peak workload—compared to
+~70% _VO2max in the current study) or higher intensities (~10 min time trial to exhaustion) but
+it is not obvious why this would alter any effect of ﬁsh oil on these parameters. To clarify this it
+would be important to examine the effects of n-3PUFAs on HR and _VO2 at varying exercise
+intensities within the same population. Together our data and that of others indicates that sup-
+plementation with n-3 PUFAs, either via ﬁsh or krill oil, does not alter exercise performance in
+young healthy volunteers. This lack of change in exercise performance may be due to the dose
+of krill, in the current study, and ﬁsh oil in previous studies, given not being sufﬁcient to alter
+the fatty acid composition of muscle itself. Whilst we based our dose of krill oil on previous
+work comparing krill and ﬁsh oil [7] we have no data to show that this alter the muscle fatty
+acid composition. As measures of immune function were the primary outcome of the current
+study we chose not to collect muscle samples for such analysis but subsequent studies with a
+focus on exercise performance may wish to consider this. Furthermore it may also be the case
+that ﬁsh oil may still be of beneﬁt for exercise performance in different populations, ie older
+people, or for different forms of exercise, ie strength training [37, 38]. On the other hand it
+may be, as the evidence suggests, that increasing n-3 PUFA consumption simply does not alter
+endurance exercise performance.
+On top of the effects of krill oil supplementation on markers of immune function the cur-
+rent study also provides important information regarding the effects of exercise alone. Prior to
+discussion of these results, however, it is worth noting that we did not have a control group
+with no-exercise and so it is possible that these changes are circadian in origin. Our work
+would indicatively support recent findings that exercise results in an increase in the production
+of the T helper cell Th17 cytokine IL-17 [39], which has recently been identified in having an
+important role in the regulation of inflammation with precise roles still being identified [40].
+The precise role of this increase in PBMC IL-17 during exercise is yet to be established and fur-
+ther work is needed in this area. IL-17 is known to drive the production of IL-6 and PGE-2 in
+many cell types, such as epithelial, endothelial, and fibroblastic cells [41] and can also stimulate
+T cell proliferation and IL-2 production [42], indicating several areas where IL-17 may have
+important roles during exercise. Furthermore determining the cell type that is producing IL-17
+and whether we are observing and increase in individual cell IL-17 production or just a greater
+number of cells, e.g. Th17 cells, producing IL-17. We have also extended the pioneering work
+of Ostrowski and colleagues, who found increases in plasma IL-10 after exercise [43], by show-
+ing that exercise increases PBMC IL-10 production. We have further added to basic exercise
+immunology research by showing that these changes are seen in both males and females. In
+fact the majority of previous research in exercise immunology has been in male volunteers and
+so the current study is the first to find that the effects of such exercise on selective markers of
+immune function are independent of gender.
+In conclusion, the current study is the first study to investigate the effects of 6-weeks of krill
+oil supplementation on exercise performance, markers of immune function and lipid peroxida-
+tion, and has shown that krill oil can increase PBMC IL-2 production and NK cell cytotoxic
+activity 3h post-exercise in both healthy young males and females without modifying perfor-
+mance. It is worth noting at this point that ideally we would have taking blood samples not
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+11 / 14
+
+only during the final time trial but also during the initial time trial, allowing a more direct com-
+parison of responses in immune measures after the supplementation period in the same indi-
+viduals, this is a limitation of the current study. It also remains to be established whether these
+alterations in immune function can ultimately reduce the burden of upper respiratory tract
+infections which are elevated in those with high training loads [44]. In that vein, our recent
+work has found that a supplement containing EPA, DHA, protein and vitamin D can reduce
+URTI symptoms, while not URTI numbers or duration, in active young males and females (3),
+although whether these effects are specifically due to EPA and DHA is not clear.
+Acknowledgments
+We thank the technical support of the Institute of Medical Sciences Musculoskeletal Pro-
+gramme and the Iain Fraser Cytometry Centre.
+Author Contributions
+Conceived and designed the experiments: SG MDB KT. Performed the experiments: SG MDB
+IM NM GB KT. Analyzed the data: SG MDB IM NM GB KT. Contributed reagents/materials/
+analysis tools: SG KT. Wrote the paper: SG MDB IM NM GB KT.
+References
+1.
+Lemaitre RN, King IB, Mozaffarian D, Kuller LH, Tracy RP, Siscovick DS. n-3 polyunsaturated fatty
+acids, fatal ischemic heart disease, and nonfatal myocardial infarction in older adults: The Cardiovascu-
+lar Health Study. American Journal of Clinical Nutrition. 2003; 77:319–25. PMID: 12540389
+2.
+Nettleton JA, Katz R. n-3 long-chain polyunsaturated fatty acids in type 2 diabetes: A review. Journal of
+the American Dietetic Association. 2005; 105:428–40. PMID: 15746832
+3.
+Calder PC. Polyunsaturated fatty acids and inflammatory processes: new twists in an old tale. Biochi-
+mie. 2009; 91:791–795 doi: 10.1016/j.biochi.2009.01.008 PMID: 19455748
+4.
+Yaqoob P, Pala HS, Cortina-Borja M, Newsholme EA, Calder PC. Encapsulated fish oil enriched in
+alpha-tocopherol alters plasma phospholipid and mononuclear cell fatty acid compositions but not
+mononuclear cell functions. European journal of clinical investigation. 2000; 30:260–74. PMID:
+10692004
+5.
+Calder PC. Omega-3 fatty acids and inflammatory processes. Nutrients. 2010; 2:355–74. doi: 10.3390/
+nu2030355 PMID: 22254027
+6.
+Tou JC, Jaczynski J, Chen Y-C. Krill for Human Consumption: Nutritional Value and Potential Health
+Benefits. Nutrition reviews. 2007; 65:63–77. PMID: 17345959
+7.
+Ulven SM, Kirkhus B, Lamglait A, Basu S, Elind E, Haider T, et al. Metabolic effects of krill oil are essen-
+tially similar to those of fish oil but at lower dose of EPA and DHA, in healthy volunteers. Lipids. 2011;
+46:37–46. doi: 10.1007/s11745-010-3490-4 PMID: 21042875
+8.
+Ramprasath V, Eyal I, Zchut S, Jones P. Enhanced increase of omega-3 index in healthy individuals
+with response to 4-week n-3 fatty acid supplementation from krill oil versus fish oil. Lipids in Health and
+Disease. 2013; 12:178. doi: 10.1186/1476-511X-12-178 PMID: 24304605
+9.
+Simopoulos AP. Omega-3 fatty acids and athletics. Curr Sports Med Rep. 2007; 6:230–6. PMID:
+17617998
+10.
+Walsh NP, Gleeson M, Shephard RJ, Woods JA, Bishop NC, Fleshner M, et al. Position statement.
+Part one: Immune function and exercise. Exercise immunology review. 2011; 17:6–63. PMID:
+21446352
+11.
+Toft AD, Thorn M, Ostrowski K, Asp S, Moller K, Iversen S, et al. N-3 polyunsaturated fatty acids do not
+affect cytokine response to strenuous exercise. Journal of applied physiology. 2000; 89:2401–6.
+PMID: 11090595
+12.
+Andrade PMM, Ribeiro BG, Bozza MT, Costa Rosa LF, do Carmo MGT. Effects of the fish-oil supple-
+mentation on the immune and inflammatory responses in elite swimmers. Prostaglandins, Leukotrienes
+and Essential Fatty Acids. 2007; 77:139–45.
+13.
+Gray P, Gabriel B, Thies F, Gray SR. Fish oil supplementation augments post-exercise immune func-
+tion in young males. Brain, behavior, and immunity. 2012; 26:1265–72. doi: 10.1016/j.bbi.2012.08.002
+PMID: 22902522
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+12 / 14
+
+14.
+Peoples GE, McLennan PL, Howe PR, Groeller H. Fish oil reduces heart rate and oxygen consumption
+during exercise. Journal of cardiovascular pharmacology. 2008; 52:540–7. doi: 10.1097/FJC.
+0b013e3181911913 PMID: 19034030
+15.
+Peoples GE, McLennan PL. Dietary fish oil reduces skeletal muscle oxygen consumption, provides
+fatigue resistance and improves contractile recovery in the rat in vivo hindlimb. The British journal of
+nutrition. 2010; 104:1771–9. doi: 10.1017/S0007114510002928 PMID: 20691135
+16.
+Buckley JD, Burgess S, Murphy KJ, Howe PRC. DHA-rich fish oil lowers heart rate during submaximal
+exercise in elite Australian Rules footballers. Journal of Science and Medicine in Sport. 2009; 12:503–
+7. doi: 10.1016/j.jsams.2008.01.011 PMID: 18555744
+17.
+Kawabata F, Neya M, Hamazaki K, Watanabe Y, Kobayashi S, Tsuji T. Supplementation with eicosa-
+pentaenoic acid-rich fish oil improves exercise economy and reduces perceived exertion during sub-
+maximal steady-state exercise in normal healthy untrained men. Bioscience, biotechnology, and
+biochemistry. 2014; 78:2081–8. doi: 10.1080/09168451.2014.946392 PMID: 25144572
+18.
+Oostenbrug GS, Mensink RP, Hardeman MR, De Vries T, Brouns F, Hornstra G. Exercise perfor-
+mance, red blood cell deformability, and lipid peroxidation: effects of fish oil and vitamin E. Journal of
+applied physiology. 1997; 83:746–52. PMID: 9292459
+19.
+Zebrowska A, Mizia-Stec K, Mizia M, Gasior Z, Poprzecki S. Omega-3 fatty acids supplementation
+improves endothelial function and maximal oxygen uptake in endurance-trained athletes. Eur J Sport
+Sci. 2015; 15:305–14. doi: 10.1080/17461391.2014.949310 PMID: 25176010
+20.
+Bull NL, Day MJ, Burt R, Buss DH. Individual fatty acids in the British household food supply. Human
+nutritionApplied nutrition. 1983; 37:373–7.
+21.
+(COT) SACoNSaCoT. Advice on fish consumption: benefits & risks. London, United Kingdom: Her
+Majesty's Stationery Office2004. doi: 10.1016/j.envres.2014.10.029 PMID: 25667172
+22.
+von Schacky C, Kemper M, Haslbauer R, Halle M. Low Omega-3 Index in 106 german elite winter
+endurance athletes: a pilot study. International Journal of Sport Nutrition and Exercise Metabolism.
+2014; 24:559–64. doi: 10.1123/ijsnem.2014-0041 PMID: 25203220
+23.
+Gray P, Chappell A, Jenkinson AM, Thies F, Gray SR. Fish Oil Supplementation Reduces Markers of
+Oxidative Stress But Not Muscle Soreness After Eccentric Exercise. International Journal of Sport
+Nutrition and Exercise Metabolism. 2014. 24:206–214 doi: 10.1123/ijsnem.2013-0081 PMID:
+24225668
+24.
+Miles EA, Banerjee T, Wells SJ, Calder PC. Limited effect of eicosapentaenoic acid on T-lymphocyte
+and natural killer cell numbers and functions in healthy young males. Nutrition (Burbank, Los Angeles
+County, Calif). 2006; 22:512–9.
+25.
+Thies F, Nebe-von-Caron G, Powell JR, Yaqoob P, Newsholme EA, Calder PC. Dietary supplementa-
+tion with eicosapentaenoic acid, but not with other long-chain n-3 or n-6 polyunsaturated fatty acids,
+decreases natural killer cell activity in healthy subjects aged >55 y. American Journal of Clinical Nutri-
+tion. 2001; 73:539–48. PMID: 11237929
+26.
+Kelley D, Taylor P, Nelson G, Schmidt P, Ferretti A, Erickson K, et al. Docosahexaenoic acid ingestion
+inhibits natural killer cell activity and production of inflammatory mediators in young healthy men. Lipids.
+1999; 34:317–24. PMID: 10443964
+27.
+Meydani SN, Yogeeswaran G, Liu S, Baskar S, Meydani M. Fish Oil and Tocopherol-Induced Changes
+in Natural Killer Cell-Mediated Cytotoxicity and PGE2 Synthesis in Young and Old Mice. The Journal of
+nutrition. 1988; 118:1245–52. PMID: 3183771
+28.
+Purasiri P, McKechnie A, Heys SD, Eremin O. Modulation in vitro of human natural cytotoxicity, lympho-
+cyte proliferative response to mitogens and cytokine production by essential fatty acids. Immunology.
+1997; 92:166–72. PMID: 9415022
+29.
+Yamashita N, Yokoyama A, Hamazaki T, Yano S. Inhibition of natural killer cell activity of human lym-
+phocytes by eicosapentaenoic acid. Biochemical and biophysical research communications. 1986;
+138:1058–67. PMID: 3019330
+30.
+Hall TJ, Chen SH, Brostoff J, Lydyard PM. Modulation of human natural killer cell activity by pharmaco-
+logical mediators. Clinical and experimental immunology. 1983; 54:493–500. PMID: 6317242
+31.
+Calder PC, Yaqoob P, Thies F, Wallace FA, Miles EA. Fatty acids and lymphocyte functions. The British
+journal of nutrition. 2002; 87 Suppl 1:S31–S48. PMID: 11895154
+32.
+Pedersen BK, Tvede N, Klarlund K, Christensen LD, Hansen FR, Galbo H, et al. Indomethacin in vitro
+and in vivo abolishes post-exercise suppression of natural killer cell activity in peripheral blood. Interna-
+tional Journal of Sports Medicine. 1990; 11:127–31. PMID: 2338373
+33.
+Nieman DC, Henson DA, McAnulty SR, Jin F, Maxwell KR. n-3 polyunsaturated fatty acids do not alter
+immune and inflammation measures in endurance athletes. International Journal of Sport Nutrition and
+Exercise Metabolism. 2009; 19:536–46. PMID: 19910654
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+13 / 14
+
+34.
+Skarpańska-Stejnborn A, Pilaczyńska-Szcześniak Ł, Basta P, Foriasz J, Arlet J. Effects of Supplemen-
+tation with Neptune Krill Oil (Euphasia Superba) on Selected Redox Parameters and Pro-Inflammatory
+Markers in Athletes during Exhaustive Exercise. Journal of Human Kinetics. 2010; 25:49–57.
+35.
+Bloomer R, Larson D, Fisher-Wellman K, Galpin A, Schilling B. Effect of eicosapentaenoic and docosa-
+hexaenoic acid on resting and exercise-induced inflammatory and oxidative stress biomarkers: a ran-
+domized, placebo controlled, cross-over study. Lipids in Health and Disease. 2009; 8:36. doi: 10.1186/
+1476-511X-8-36 PMID: 19691834
+36.
+McAnulty SR, Nieman DC, Fox-Rabinovich M, Duran V, McAnulty LS, Henson DA, et al. Effect of n-3
+fatty acids and antioxidants on oxidative stress after exercise. Medicine and science in sports and exer-
+cise. 2010; 42:1704–11. doi: 10.1249/MSS.0b013e3181d85bd1 PMID: 20164809
+37.
+Rodacki CLN, Rodacki ALF, Pereira G, Naliwaiko K, Coelho I, Pequito D, et al. Fish-oil supplementation
+enhances the effects of strength training in elderly women. The American Journal of Clinical Nutrition.
+2012; 95:428–36. doi: 10.3945/ajcn.111.021915 PMID: 22218156
+38.
+Smith GI, Julliand S, Reeds DN, Sinacore DR, Klein S, Mittendorfer B. Fish oil–derived n–3 PUFA ther-
+apy increases muscle mass and function in healthy older adults. The American Journal of Clinical Nutri-
+tion. 2015; 102:115–122 doi: 10.3945/ajcn.114.105833 PMID: 25994567
+39.
+Perry C, Pick M, Bdolach N, Hazan-Halevi I, Kay S, Berr I, et al. Endurance exercise diverts the balance
+between Th17 cells and regulatory T cells. PloS one. 2013; 8:e74722. doi: 10.1371/journal.pone.
+0074722 PMID: 24130669
+40.
+Gaffen SL. An overview of IL-17 function and signaling. Special Issue—Abstracts and Reviews:
+7thJoint Conference of the International Cytokine Society and the International Society for Interferon
+and Cytokine Research. 2008; 43:402–7.
+41.
+Fossiez F, Djossou O, Chomarat P, Flores-Romo L, Ait-Yahia S, Maat C, et al. T cell interleukin-17
+induces stromal cells to produce proinflammatory and hematopoietic cytokines. The Journal of experi-
+mental medicine. 1996; 183:2593–603. PMID: 8676080
+42.
+Iwakura Y, Nakae S, Saijo S, Ishigame H. The roles of IL-17A in inflammatory immune responses and
+host defense against pathogens. Immunological reviews. 2008; 226:57–79. doi: 10.1111/j.1600-065X.
+2008.00699.x PMID: 19161416
+43.
+Ostrowski K, Rohde T, Asp S, Schjerling P, Pedersen BK. Pro- and anti-inflammatory cytokine balance
+in strenuous exercise in humans. The Journal of physiology. 1999; 515:287–91. PMID: 9925898
+44.
+Nieman DC, Johanssen LM, Lee JW, Arabatzis K. Infectious episodes in runners before and after the
+Los Angeles Marathon. The Journal of sports medicine and physical fitness. 1990; 30:316–28. PMID:
+2266764
+Krill Oil and Exercise
+PLOS ONE | DOI:10.1371/journal.pone.0139174
+September 25, 2015
+14 / 14

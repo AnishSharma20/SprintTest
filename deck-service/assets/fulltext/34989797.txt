@@ -1,0 +1,1214 @@
+Original Investigation | Cardiology
+Effectiveness of a Novel ω-3 Krill Oil Agent in Patients
+With Severe Hypertriglyceridemia
+A Randomized Clinical Trial
+Dariush Mozaffarian, MD, DrPH; Kevin C. Maki, PhD; Harold E. Bays, MD; Fernando Aguilera, MD; Glenn Gould, MD; Robert A. Hegele, MD; Patrick M. Moriarty, MD;
+Jennifer G. Robinson, MD, MPH; Peilin Shi, PhD; Josefina F. Tur, MD; Jean-François Lapointe, PhD; Sarya Aziz, PhD; Pierre Lemieux, PhD;
+for the TRILOGY (Study of CaPre in Lowering Very High Triglycerides) investigators
+Abstract
+IMPORTANCE Intense interest exists in novel ω-3 formulations with high bioavailability to reduce
+blood triglyceride (TG) levels.
+OBJECTIVE To determine the phase 3 efficacy and safety of a naturally derived krill oil with
+eicosapentaenoic acid and docosahexaenoic acid as both phospholipid esters (PLs) and free fatty
+acids (FFAs) (ω-3–PL/FFA [CaPre]), measured by fasting TG levels and other lipid parameters in
+severe hypertriglyceridemia.
+DESIGN, SETTING, AND PARTICIPANTS This study pooled the results of 2 identical randomized,
+double-blind, placebo-controlled trials. TRILOGY 1 (Study of CaPre in Lowering Very High
+Triglycerides) enrolled participants at 71 US centers from January 23, 2018, to November 20, 2019;
+TRILOGY 2 enrolled participants at 93 US, Canadian, and Mexican centers from April 6, 2018, to
+January 9, 2020. Patients with fasting TG levels from 500 to 1500 mg/dL, with or without stable
+treatment with statins, fibrates, or other agents to lower cholesterol levels, were eligible to
+participate.
+INTERVENTIONS Randomization (2.5:1.0) to ω-3–PL/FFA, 4 g/d, vs placebo (cornstarch) for
+26 weeks.
+MAIN OUTCOMES AND MEASURES The primary outcome was the mean percentage of change in
+TG levels at 12 weeks; persistence at 26 weeks was the key secondary outcome. Other prespecified
+secondary outcomes were effects on levels of non–high-density lipoprotein cholesterol
+(non–HDL-C), very-low-density lipoprotein cholesterol (VLDL-C), HDL-C, and low-density lipoprotein
+cholesterol (LDL-C); safety and tolerability; and TG level changes in prespecified subgroups.
+RESULTS A total of 520 patients were randomized, with a mean (SD) age of 54.9 (11.2) years (339
+men [65.2%]), mean (SD) body mass index of 31.5 (5.1), and baseline mean (SD) TG level of 701 (222)
+mg/dL. Two hundred fifty-six patients (49.2%) were of Hispanic or Latino ethnicity; 275 (52.9%) had
+diabetes; and 248 (47.7%) were receiving statins. In the intention-to-treat analysis, TG levels were
+reduced by 26.0% (95% CI, 20.5%-31.5%) in the ω-3–PL/FFA group and 15.1% (95% CI, 6.6%-23.5%)
+in the placebo group at 12 weeks (mean treatment difference, −10.9% [95% CI, −20.4% to −1.5%];
+P = .02), with reductions persisting at 26 weeks (mean treatment difference, −12.7% [95% CI, −23.1%
+to −2.4%]; P = .02). Compared with placebo, ω-3–PL/FFA had no significant effect at 12 weeks on
+mean treatment differences for non–HDL-C (−3.2% [95% CI, −8.0% to 1.6%]; P = .18), VLDL-C
+(−3.8% [95% CI, −12.2% to 4.7%]; P = .38), HDL-C (0.7% [95% CI, −3.7% to 5.1%]; P = .77), or LDL-C
+(4.5% [95% CI, −5.9% to 14.8%]; P = .40) levels; corresponding differences at 26 weeks were −5.8%
+(continued)
+Key Points
+Question Is ω-3–phospholipid/free
+fatty acid (ω-3–PL/FFA), a naturally
+derived krill oil with both free fatty acid
+and phospholipid ω-3s, an effective and
+safe treatment for severe
+hypertriglyceridemia?
+Findings In pooled data from 2
+randomized clinical trials including 520
+patients, blood triglyceride levels were
+reduced by 26.0% in the ω-3–PL/FFA
+group and 15.1% in the placebo group at
+12 weeks, for a significant mean
+treatment difference that persisted at
+26 weeks. ω-3–PL/FFA was well
+tolerated, with a safety profile similar to
+that of placebo.
+Meaning This study found that
+ω-3–PL/FFA reduced triglyceride levels
+and was safe and well tolerated in
+patients with severe
+hypertriglyceridemia.
++ Visual Abstract
++ Supplemental content
+Author affiliations and article information are
+listed at the end of this article.
+Open Access. This is an open access article distributed under the terms of the CC-BY-NC-ND License.
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+1/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+Abstract (continued)
+(95% CI, −11.3% to −0.3%; P = .04) for non–HDL-C levels, −9.1% (95% CI, −21.5% to 3.2%; P = .15) for
+VLDL-C levels, 1.9% (95% CI, −4.8% to 8.6%; P = .57) for HDL-C levels, and 6.3% (95% CI, −12.4%
+to 25.0%; P = .51) for LDL-C levels. Effects on the primary end point did not vary significantly by age,
+sex, race and ethnicity, country, qualifying TG level, diabetes, or fibrate use but tended to be larger
+among patients taking statins or cholesterol absorption inhibitors at baseline (mean treatment
+difference, −19.5% [95% CI, −34.5% to −4.6%]; P = .08 for interaction) and with lower (less than
+median) baseline blood eicosapentaenoic acid plus docosahexaenoic acid levels (−19.5% [95% CI,
+−33.8% to −5.3%]; P = .08 for interaction). ω-3–PL/FFA was well tolerated, with a safety profile
+similar to that of placebo.
+CONCLUSIONS AND RELEVANCE This study found that ω-3 –PL/FFA, a novel krill oil–derived ω-3
+formulation, reduced TG levels and was safe and well tolerated in patients with severe
+hypertriglyceridemia.
+TRIAL REGISTRATION ClinicalTrials.gov Identifiers: NCT03398005 and NCT03361501
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+Introduction
+ω-3 Fatty acids are of great interest as therapeutic agents for reducing blood triglyceride (TG) levels,
+especially novel formulations with higher bioavailability and lack of adverse effects on low-density
+lipoprotein cholesterol (LDL-C) or apolipoprotein B (ApoB). The incidence of obesity and type 2
+diabetes, each of which is associated with hypertriglyceridemia, is rapidly rising, especially in low-
+and middle-income nations.1,2 In the US, half of adults now have diabetes or prediabetes, and
+one-third have elevated TG levels (150 mg/dL [to convert to mmol/L, multiply by 0.0113]),
+including approximately 36 million (16.2% of adults) with hypertriglyceridemia (TG levels of 200 to
+<500 mg/dL) and 4 million (nearly 2% of adults) with severe hypertriglyceridemia (TG levels of
+500 mg/dL).3,4 Hypertriglyceridemia is often accompanied by nephrotic syndrome, chronic renal
+insufficiency, hypothyroidism, and fatty liver; and severe hypertriglyceridemia increases risk of
+pancreatitis, a life-threatening condition.5 Based on epidemiological, genetic, clinical, and
+mechanistic studies, elevated TG levels also increase atherosclerotic cardiovascular disease (ASCVD),
+which is related to atherogenic potential (particularly remnants of chylomicron very-low-density
+lipoprotein [VLDL] particles) and other metabolic abnormalities associated with
+hypertriglyceridemia.6 Safe and effective new ω-3 agents for reducing TG levels can add to the
+armamentarium for practicing cardiologists, lipidologists, and other clinicians.
+Uncertainties and unanswered questions remain about the ω-3 class, especially effects of
+different ω-3 formulations on bioavailability, lowering of TG levels, increasing of LDL-C and ApoB
+levels, and other cardiometabolic risks. Two recent clinical trials showed differing effects of 2 ω-3
+formulations on ASCVD among patients with hypertriglyceridemia while taking stable statin therapy,
+with risk reduction observed with 4 g/d of ω-3 icosapent ethyl compared with mineral oil,7,8 but not
+4 g/d of ω-3 carboxylic acids compared with corn oil.9 This finding highlights the importance of
+continued evaluation and testing of different ω-3 formulations.
+ω-3–Phospholipid/free fatty acid (ω-3–PL/FFA [CaPre]) is a new investigational drug containing
+a naturally derived, krill oil mixture with a novel formulation that includes ω-3s as FFAs and bound
+to PLs (approximate ratio of 50:50). Both FFA and PL ω-3s have high absorption and
+bioavailability,10,11 and PL ω-3s may also not increase LDL-C levels compared with other ω-3
+formulations. In previous phase 2 trials,12,13 ω-3–PL/FFA lowered TG levels without increasing LDL-C
+levels in patients with high fasting TG levels (200 to <877 mg/dL). The TRILOGY (Study of CapRe in
+Lowering Very High Triglycerides) phase 3 program compared the efficacy and safety of ω-3–PL/FFA,
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+2/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+4 g/d, vs placebo on altering TG levels and other lipid risk factors in patients with severe
+hypertriglyceridemia (fasting TG level, 500 to 1500 mg/dL). This study reports the pooled results of
+the TRILOGY 1 and TRILOGY 2 phase 3 trials.
+Methods
+Study Design
+TRILOGY 1 and 2 were double-blind, placebo-controlled phase 3 randomized clinical trials to test the
+efficacy and safety of ω-3–PL/FFA, 4 g/d, or matched placebo (cornstarch) in adults 18 years or older
+with fasting TG levels from 500 to 1500 mg/dL. The 2 trials had identical study designs, with
+TRILOGY 1 enrolling 242 participants at 71 US centers from January 23, 2018, to November 20, 2019,
+and TRILOGY 2 enrolling 278 participants at 93 US, Canadian, and Mexican centers from April 6,
+2018, to January 9, 2020. Both trials enrolled participants and completed follow-up as designed. As
+reported by the sponsor, although TG levels were lowered in the active treatment group in both trials,
+these differences did not achieve statistical significance compared with placebo in either individual
+trial owing to larger than expected reductions in TG levels in the placebo groups. This analysis reports
+the pooled results, based on a statistical analysis plan finalized after both trials were completed but
+before any data were pooled for analysis. The final pooled statistical analysis plan and original trial
+protocols and statistical analysis plans are provided in Supplement 1 and the eMethods in
+Supplement 2, respectively. This report follows the Consolidated Standards of Reporting Trials
+(CONSORT) reporting guidelines for randomized trials.
+This study was conducted according to Good Clinical Practice Guidelines, the Declaration of
+Helsinki,14 and US Title 21 Code of Federal Regulations.15 The lead investigator at each site
+(Supplement 3) obtained clinical protocol approval from an appropriately constituted institutional
+review board or independent ethics committee. All patients provided informed written consent.
+Screening and Eligibility
+Adults 18 years or older with fasting TG levels from 500 to 1500 mg/dL were eligible. Participants
+could be taking stable doses of fibrates, statins, proprotein convertase subtilisin/kexin type 9 serine
+protease inhibitors (PCSK9I), cholesterol-absorption inhibitors (CAIs) such as ezetimibe, or any
+combination of these agents. Detailed inclusion and exclusion criteria are provided in the eMethods
+in Supplement 2.
+At screening, potentially eligible patients entered a diet, lifestyle, and medication stabilization
+period, including information on and instructions to maintain the National Cholesterol Education
+Program Therapeutic Lifestyle Changes Diet16 throughout the study (eFigure 1 in Supplement 2
+presents a flowchart of study visits). Patients were reevaluated after 4 weeks if taking a stable dose
+of permissible agents to alter lipid levels or none or at 6 weeks if doses of permissible agents had
+changed or if the patient and their clinician had discontinued prohibited lipid level–altering therapy
+(ie, ω-3 prescription agents or supplements, bile acid sequestrants, niacin supplement of >200
+mg/d). After the stabilization period, patients were eligible to be randomized and enter the double-
+blind intervention period if mean fasting TG level at the 2 qualification visits ranged from 500 to
+1500 mg/dL. If not, 1 additional optional TG level measurement was permitted 1 week later, and
+eligibility was based on the mean levels from the 2 most recent visits.
+From 2099 patients screened at 164 study centers from January 2018 to April 2019, 520 were
+randomized and included in the intention-to-treat analysis for efficacy (eFigure 2 in Supplement 2).
+Race and ethnicity, classified by participants with options defined by the investigator, were assessed
+to inform generalizability and explore as effect modifiers.
+Randomization and Treatments
+Patients meeting eligibility criteria were randomized to receive ω-3–PL/FFA, 4 g/d (including 1.24 g/d
+of eicosapentaenoic acid [EPA] and docosahexaenoic acid [DHA] as FFAs or PLs and 2.4 g of total
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+3/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+PLs) or matched placebo (cornstarch, selected to be relatively inert compared with lipid-based or
+mineral oil placebos). Patients were randomized in a 2.5:1.0 ratio (ω-3–PL/FFA to placebo) to increase
+the ability to assess safety and tolerability, stratified at study level by both qualifying (mean) TG level
+(750 vs >750 mg/dL) and use of statin, CAI, or PCSK9I alone or in combination (yes or no). After
+randomization, patients were seen at approximately 4, 11, 12, 18, and 26 weeks for physical
+examination, continued dietary counseling, fasting blood draw (9 h except water and medications),
+and urinalysis. Concomitant medications and any adverse events were recorded. Adherence was
+assessed using measured pill counts.
+End Points
+The primary end point for this pooled analysis was the same as in the 2 individual TRILOGY trials: the
+percentage of change from baseline in fasting TG level at 12 weeks, comparing ω-3–PL/FFA with
+placebo. This change at 26 weeks was defined as a key secondary end point. Other secondary end
+points were percentage changes in non–high-density lipoprotein cholesterol (non–HDL-C), VLDL-C
+(using ultracentrifugation), HDL-C, and LDL-C (using ultracentrifugation) levels at 12 and 26 weeks.
+Prespecified subgroup analyses evaluated heterogeneity in TG effects at 12 and 26 weeks; other
+secondary end points were assessed in subgroups for which the primary end point varied at α < .10.
+Exploratory end points at 12 and 26 weeks included the proportion of patients achieving a
+fasting TG level of less than 500 mg/dL and percentage changes in concentrations of total
+cholesterol, ApoB, ApoC3, ApoA5, LDL particle, high-sensitivity C-reactive protein (hs-CRP), log
+hs-CRP, fasting glucose, and hemoglobin A1c (the latter 2 overall and among patients with diabetes
+only). Pharmacokinetic end points included absolute and percentage changes at 4, 12, 18, and 26
+weeks in plasma phospholipid and total serum EPA, DHA, and EPA plus DHA concentrations
+(percentage of fatty acids). Change in TG levels according to tertiles of achieved EPA plus DHA, EPA,
+and DHA concentrations was also evaluated. Laboratory measures were performed using
+standardized methods (eMethods in Supplement 2) by personnel unaware of randomization
+assignments. Safety and tolerability were assessed by physical examination, adverse events, 12-lead
+electrocardiography, and clinical laboratory measures.
+Statistical Analysis
+For each individual trial, a sample size of 245 patients (randomized 2.5:1.0) was calculated to provide
+90% power to detect a difference of 20 percentage points between the ω-3–PL/FFA and placebo
+groups in the primary end point, based on an estimated 15% dropout rate and 2-sided α = .05. After
+confirming that results of the primary and key secondary end points were similar in both individual
+trials (eTable 1 in Supplement 2), the findings were pooled at the individual patient level. All
+assessments of efficacy were performed using intention-to-treat analysis (all participants who
+provided informed consent and were randomized).
+The primary end point, key secondary end point, and continuous efficacy parameters were
+assessed using analysis of covariance (ANCOVA) with main effects of treatment; qualifying TG
+category (750 or >750 mg/dL); use of statin, CAI, or PCSK9I alone or in combination at
+randomization (yes or no); and the baseline parameter value as covariates. Missing end point values
+were imputed using multiple imputation (eMethods in Supplement 2). To minimize the effects of
+usual within-person variation, the baseline values for TG, non–HDL-C, HDL-C, and total cholesterol
+concentrations were defined as the mean of the last 3 measurements obtained before
+randomization; and for VLDL-C and LDL-C (measured by ultracentrifugation), as the mean of the last
+2 measurements. Similarly, the week 12 values for these end points were defined as the mean of as
+many as 2 measurements at weeks 11 and 12.
+Prespecified subgroups for stratified analyses were by age (65 vs >65 years); race (minoritized
+racial group [American Indian or Alaska Native, Asian, Black or African American, or other] vs White);
+ethnicity (Hispanic or Latino vs non-Hispanic or Latino); sex (male or female); study (TRILOGY 1 or 2);
+country (US, Canada, or Mexico); qualifying TG level (750 vs >750 mg/dL); use of statin, CAI, and/or
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+4/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+PCSK9I at randomization (yes or no); use of fibrate at randomization (yes or no); prevalent diabetes
+(yes or no); and baseline phospholipid EPA plus DHA level (median or less vs greater than median).
+Statistical significance of interaction was tested by including a main effect of subgroup and a
+treatment-by-subgroup interaction effect in the primary efficacy ANCOVA model. The proportion of
+participants with achieved fasting TG level of less than 500 mg/dL was assessed using the Cochran-
+Mantel-Haenszel test, controlling for qualifying TG category (750 vs >750 mg/dL) and the use of
+statin, CAI, or PCSK9I alone or in combination at randomization (yes or no). In sensitivity analyses,
+normality of the primary and secondary efficacy end points was investigated using the Shapiro-Wilk
+test for the residuals; if not normally distributed, these end points were assessed using a
+nonparametric rank-based ANCOVA, with the same covariates as the primary efficacy analysis.
+Although this pooled investigation and analysis plan were prespecified before pooling, the
+pooling occurred after completion of each individual trial, and thus all efficacy analyses should be
+considered exploratory. Accordingly, no adjustment for multiplicity was performed, and as such,
+nominal P values are reported. Analyses were performed using SAS, version 9.4 (SAS Institute Inc).
+Results
+Study Population
+Among the 520 patients who were randomized, the mean (SD) age was 54.9 (11.2) years (339 men
+[65.2%] and 181 women [34.8%]); mean (SD) body mass index (calculated as weight in kilograms
+divided by height in meters squared), 31.5 (5.1); and baseline mean (SD) TG level, 701 (222) mg/dL
+(with 168 [32.3%] >750 mg/dL) (Table 1). Two hundred fifty-six patients (49.2%) were Hispanic or
+Latino; 275 (52.9%) had diabetes; and 248 (47.7%) were receiving statins. Other agents to lower lipid
+levels included fibrates (50 [9.6%]) and CAI (14 [2.7%]). Baseline characteristics were comparable
+between treatment groups. Four hundred eighty-one participants (92.5%) in both treatment groups
+completed the 26-week double-blind treatment period (eFigure 2 in Supplement 2).
+Primary and Key Secondary End Point
+The mean percentage changes in TG levels during the 26 weeks treatment period are in Figure 1. At
+12 weeks (primary end point), TG levels were reduced by 26.0% (95% CI, 20.5%-31.5%) in the
+ω-3–PL/FFA group and 15.1% (95% CI, 6.6%-23.5%) in the placebo group (mean treatment
+difference, −10.9% [95% CI, −20.4% to −1.5%]; P = .02). The treatment difference persisted at 26
+weeks, with TG level reduced by 33.5% (95% CI, 27.2%-39.8%) in the ω-3–PL/FFA group and 20.8%
+(95% CI, 11.5%-30.1%) in the placebo group (mean treatment difference, −12.7% [95% CI, −23.1% to
+−2.4%]; P = .02). Absolute changes in TG levels are given in eFigure 3 in Supplement 2.
+Other Secondary End Points
+Compared with placebo, ω-3–PL/FFA had no significant effect at 12 weeks on mean treatment
+differences in non–HDL-C (−3.2% [95% CI, −8.0% to 1.6%]; P = .18), VLDL-C (−3.8% [95% CI, −12.2%
+to 4.7%]; P = .38), HDL-C (0.7% [95% CI, −3.7% to 5.1%]; P = .77), or LDL-C (4.5% [95% CI, −5.9%
+to 14.8%]; P = .40) levels (Table 2). Corresponding differences at 26 weeks were −5.8% (95% CI,
+−11.3% to −0.3%; P = .04) for non–HDL-C, −9.1% (95% CI, −21.5% to 3.2%; P = .15) for VLDL-C, 1.9%
+(95% CI, −4.8% to 8.6%; P = .57) for HDL-C, and 6.3% (95% CI, −12.4% to 25.0%; P = .51) for LDL-
+C levels.
+Exploratory End Points
+At 12 weeks, 210 of 372 patients (56.5%) in the ω-3–PL/FFA group and 68 of 148 (45.90%) in the
+placebo group had achieved TG levels of less than 500 mg/dL (treatment difference, 10.5% [95% CI,
+1.0% to 20.1%]; P = .02); corresponding proportions at 26 weeks were 234 of 372 (62.9%) and 76
+of 148 (51.4%) (treatment difference, 11.5% [95% CI, 2.1% to 21.0%]; P = .01) (eTable 2 in
+Supplement 2). Changes in concentrations of total cholesterol, ApoB, ApoC3, ApoA5, LDL particle,
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+5/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+Table 1. Participant Characteristics at Baseline
+Characteristic
+Patient treatment groupa
+All
+(n = 520)
+Placebo
+(n = 148)
+ω-3–PL/FFA, 4 g/d
+(n = 372)
+Country
+US
+439 (84.4)
+127 (85.8)
+312 (83.9)
+Canada
+26 (5.0)
+4 (2.7)
+22 (5.9)
+Mexico
+55 (10.6)
+17 (11.5)
+38 (10.2)
+Sex
+Men
+339 (65.2)
+100 (67.6)
+239 (64.2)
+Women
+181 (34.8)
+48 (32.4)
+133 (35.7)
+Age, mean (SD), y
+54.9 (11.2)
+53.9 (11.8)
+55.3 (10.9)
+Ethnicity
+Hispanic or Latino
+256 (49.2)
+75 (50.7)
+181 (48.7)
+Not Hispanic or Latino
+264 (50.8)
+73 (49.3)
+191 (51.3)
+Race
+American Indian or Alaska Native
+46 (8.8)
+13 (8.8)
+33 (8.9)
+Asian
+26 (5.0)
+8 (5.4)
+18 (4.8)
+Black or African American
+15 (2.9)
+3 (2.0)
+12 (3.2)
+White
+426 (81.9)
+123 (83.1)
+303 (81.5)
+Other,b unknown, or not reported
+7 (1.3)
+1 (0.7)
+6 (1.6)
+BMI, mean (SD)
+31.5 (5.1)
+31.5 (5.5)
+31.5 (5.1)
+Diabetesc
+275 (52.9)
+81 (54.7)
+194 (52.1)
+Smoking
+Never
+291 (56.0)
+92 (62.2)
+199 (53.5)
+Former
+112 (21.5)
+27 (18.2)
+85 (22.8)
+Current
+117 (22.5)
+29 (19.6)
+88 (23.7)
+Alcohol use
+Never
+247 (47.5)
+68 (45.9)
+179 (48.1)
+Former
+20 (3.8)
+6 (4.1)
+14 (3.8)
+Current
+253 (48.7)
+74 (50.0)
+179 (48.1)
+Statin, CAI, and/or PCSK9I use
+Any
+254 (48.8)
+73 (49.3)
+181 (48.7)
+Statin
+248 (47.7)
+70 (47.3)
+178 (47.8)
+CAI
+14 (2.7)
+7 (4.7)
+7 (1.9)
+PCSK9I
+0
+0
+0
+Fibrate use
+50 (9.6)
+17 (11.5)
+33 (8.9)
+Fasting TG level, mg/dL
+Mean (SD)
+701 (222)
+706 (219)
+699 (223)
+Median (IQR)
+641 (541-804)
+644 (551-807)
+637 (530-803)
+TG category at qualification
+≤750 mg/dL
+352 (67.7)
+100 (67.6)
+252 (67.7)
+>750 mg/dL
+168 (32.3)
+48 (32.4)
+120 (32.3)
+Non–HDL-C level, mean (SD), mg/dL
+201.7 (47.6)
+202.9 (48.9)
+201.2 (47.2)
+VLDL-C level, mean (SD), mg/dL
+117.9 (47.4)
+120.0 (46.1)
+117.0 (47.9)
+HDL-C level, mean (SD), mg/dL
+31.6 (7.8)
+30.7 (8.1)
+31.9 (7.6)
+LDL-C level, mean (SD), mg/dL
+87.0 (32.4)
+87.9 (33.8)
+86.6 (31.8)
+HbA1c level, mean (SD), %
+6.7 (1.5)
+6.7 (1.7)
+6.6 (1.4)
+HbA1c level among participants with
+diabetes only, mean (SD), %
+7.6 (1.5)
+7.9 (1.7)
+7.6 (1.4)
+Phospholipid level, mean (SD), % fatty acids
+EPA
+0.54 (0.37)
+0.58 (0.50)
+0.52 (0.30)
+DHA
+1.89 (0.64)
+1.86 (0.61)
+1.90 (0.65)
+EPA plus DHA
+2.42 (0.82)
+2.45 (0.86)
+2.41 (0.81)
+Abbreviations: BMI, body mass index (calculated as
+weight in kilograms divided by height in meters
+squared); CAI, cholesterol-absorption inhibitor; DHA,
+docosahexaenoic acid; EPA, eicosapentaenoic acid;
+HbA1c, hemoglobin A1c; HDL-C, high-density
+lipoprotein cholesterol; LDL-C, low-density lipoprotein
+cholesterol; ω-3–PL/FFA, ω-3–phospholipid/free fatty
+acid; PCSK9I, proprotein convertase subtilisin/kexin
+type 9 serine protease inhibitors; TG, triglycerides;
+VLDL-C, very low-density lipoprotein cholesterol.
+SI conversion factors: To convert HbA1c to proportion
+of total hemoglobin, multiply by 0.01; HDL-C, LDL-C,
+and VLDL-C to mmol/L, multiply by 0.0259; TG to
+mmol/L, multiply by 0.0113.
+a Data are expressed as number (%) for categorical
+variables (percentages have been rounded and may
+not total 100) and mean (SD) for continuous
+variables; median (IQR) values are also shown for TG.
+Detailed methods for measurement of each of the
+variables herein are provided in eMethods in
+Supplement 2.
+b Patients self-identified as “other” if they did not
+identify as any of the other races or ethnicities.
+c Defined by history of diabetes diagnosis, current use
+of antidiabetic medication, or HbA1c level of at least
+6.5% at baseline.
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+6/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+hs-CRP, log hs-CRP, fasting glucose, and hemoglobin A1c are also shown in eTable 2 in Supplement 2.
+For example, mean treatment differences in ApoB were −2.07% (95% CI, −6.39% to 2.24%; P = .35)
+at 12 weeks and −0.89% (95% CI, −5.30% to 3.51%; P = .69) at 26 weeks. Concentrations of ApoC3
+were reduced by ω-3–PL/FFA at 26 weeks (treatment difference, −21.99% [95% CI, −42.01% to
+−1.77%]; P = .03). Changes in other exploratory end points were not statistically significant.
+Pharmacokinetic End Points
+Treatment with ω-3–PL/FFA significantly increased levels of EPA, DHA, and EPA plus DHA compared
+with placebo at all study visits (eFigure 4 in Supplement 2). Proportional increases were larger for
+EPA compared with DHA; absolute increases were more similar. Changes in TG levels according to
+tertiles of achieved plasma PL EPA plus DHA are presented in Figure 2. At 26 weeks in all participants
+combined, TG levels were reduced by 15.6% (95% CI, −23.7% to −7.6%) in tertile 1, 17.3% (95% CI,
+−26.4% to −8.2%) in tertile 2, and 19.5% (95% CI, −27.2% to −11.7%) in tertile 3 of achieved EPA plus
+DHA concentrations; these reductions were not statistically significantly different from one another.
+Figure 1. Percentage Changes in Fasting Triglyceride (TG) Levels Between Baseline and Week 26 (N = 520)
+0
+–10
+–20
+–30
+–40
+Change, %
+Study week
+26
+0
+4
+12
+18
+ω-3–PL/FFA
+Placebo
+The 520 participants received ω-3–phospholipid/free
+fatty acid (ω-3–PL/FFA), 4 g/d, or placebo. Values are
+least-square mean differences from baseline, with
+95% CIs (error bars) from analysis of covariance,
+including the main effects of treatment; qualifying TG
+category (750 vs >750 mg/dL); use of statins,
+cholesterol-absorption inhibitors, and/or proprotein
+convertase subtilisin/kexin type 9 serine protease
+inhibitors (yes or no); and baseline TG value as
+covariates.
+Table 2. Changes in Primary, Key Secondary, and Other Secondary End Points in the Intention-to-Treat Analysisa
+End point
+Change by treatment group (95% CI), %
+Treatment difference
+(95% CI), %
+P value
+Placebo (n = 148)
+ω-3–PL/FFA (n = 372)
+TG level, mg/dL
+Week 12
+−15.1 (−23.5 to −6.6)
+−26.0 (−31.5 to −20.5)
+−10.9 (−20.4 to −1.5)
+.02
+Week 26
+−20.8 (−30.1 to −11.5)
+−33.5 (−39.8 to −27.2)
+−12.7 (−23.1 to −2.4)
+.02
+Non–HDL-C level, mg/dL
+Week 12
+−4.6 (−8.8 to −0.5)
+−7.8 (−10.5 to −5.1)
+−3.2 (−8.0 to 1.6)
+.18
+Week 26
+−3.6 (−8.3 to 1.2)
+−9.4 (−12.7 to −6.1)
+−5.8 (−11.3 to −0.3)
+.04
+VLDL-C level, mg/dL
+Week 12
+−9.4 (−16.9 to −1.9)
+−13.2 (−18.0 to −8.3)
+−3.8 (−12.2 to 4.7)
+.38
+Week 26
+−10.7 (−22.0 to 0.6)
+−19.8 (−27.7 to −12.0)
+−9.1 (−21.5 to 3.2)
+.15
+HDL-C level, mg/dL
+Week 12
+8.8 (4.9 to 12.6)
+9.4 (7.0 to 11.9)
+0.7 (−3.7 to 5.1)
+.77
+Week 26
+10.7 (5.0 to 16.4)
+12.6 (8.7 to 16.5)
+1.9 (−4.8 to 8.6)
+.57
+LDL-C level, mg/dL
+Week 12
+8.1 (−1.9 to 18.1)
+12.6 (8.0 to 17.2)
+4.5 (−5.9 to 14.8)
+.40
+Week 26
+14.9 (−4.5 to 34.4)
+21.2 (12.4 to 30.1)
+6.3 (−12.4 to 25.0)
+.51
+Abbreviations: HDL-C, high-density lipoprotein
+cholesterol; LDL-C, low-density lipoprotein
+cholesterol; ω-3–PL/FFA, ω-3–phospholipid/free fatty
+acid; TG, triglycerides; VLDL-C, very low-density
+lipoprotein cholesterol.
+SI conversion factors: To convert HDL-C, LDL-C, and
+VLDL-C levels to mmol/L, multiply by 0.0259; TG to
+mmol/L, multiply by 0.0113.
+a The primary end point was the treatment difference
+in TG levels at 12 weeks; the key secondary end point,
+the treatment difference in TG levels at 26 weeks.
+Values are least-square mean differences from
+baseline, with P value from analysis of covariance
+including main effects of treatment; qualifying TG
+category (750 vs >750 mg/dL); use of statin,
+calcium-absorption inhibitors, and/or proprotein
+convertase subtilisin/kexin type 9 serine protease
+inhibitors (yes or no); and baseline TG value as
+covariates.
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+7/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+Efficacy Across Subgroups
+Changes in the primary end point were not significantly different by age, sex, race and ethnicity,
+country, qualifying TG level, diabetes, or fibrate use (Figure 3). Patients taking statins or CAI (mean
+treatment difference, −19.5% [95% CI, −34.5% to −4.6%]; P = .01; P = .08 for interaction) and with
+lower baseline blood EPA plus DHA levels (−19.5% [95% CI, −33.8% to −5.3%]; P = .007; P = .08 for
+interaction) had larger effects than those in comparison groups, but the interaction was not
+statistically significant. Changes in secondary end points in these 2 subgroups are presented in
+eTables 3 and 4 in Supplement 2. Patients taking baseline statins or CAI, when compared with
+patients not taking these medications, were older (mean [SD] age, 56.2 [10.1] vs 53.7 [11.9] years),
+had higher mean (SD) body mass index (32.2 [5.0] vs 30.8 [5.2]) and hemoglobin A1c levels (6.9%
+[1.6%] vs 6.4% [1.5%]), and were more commonly taking fibrates (36 patients [14.6%] vs 14
+patients [5.1%]).
+Sensitivity Analyses
+Sensitivity analyses assessing the median percentage change in TG levels, using a nonparametric
+rank-based ANCOVA, were generally similar to the primary efficacy analysis, although with a
+modestly smaller median value and attenuated statistical significance compared with mean
+treatment differences (eTable 5 in Supplement 2). For example, comparing ω-3–PL/FFA with placebo
+at 26 weeks, the median percentage difference in TG levels was 10.1% (95% CI, −21.4% to 1.2%;
+P = .11), compared with a mean treatment difference of −12.7% (95% CI, −23.1% to −2.4%; P = .02).
+Safety and Tolerability
+The occurrence of any adverse event, serious adverse events, severe adverse events, and adverse
+events leading to treatment discontinuation was generally similar across the treatment groups
+(eTable 6 and eTable 7 in Supplement 2). Most adverse events (placebo group: 240 of 247 adverse
+events [97.2%] among 88 patients experiencing 1 adverse event; ω-3–PL/FFA group: 586 of 608
+adverse events [96.4%] among 215 patients experiencing 1 adverse event) were mild to moderate
+in severity and were considered unrelated to the study drug, as assessed by study site investigators
+blinded to treatment assignment. The most common were headache (placebo, 9 of 148 [6.1%];
+Figure 2. Percentage Change From Baseline in Fasting Triglyceride Levels According to Tertiles of Achieved
+Concentrations of Plasma Phospholipid Eicosapentaenoic Acid and Docosahexaenoic Acid
+10
+0
+–10
+–20
+–30
+Change in mean fasting TG level (95% CI)
+Study week
+Tertile 1
+A
+26
+12
+10
+0
+–10
+–20
+–30
+Change in mean fasting TG level (95% CI)
+Study week
+Tertile 2
+B
+26
+12
+10
+0
+–10
+–20
+–30
+Change in mean fasting TG level (95% CI)
+Study week
+Tertile 3
+C
+26
+12
+Values are least-square mean differences from
+baseline (circles), with 95% CIs (error bars) from the
+analysis of covariance, including main effects of
+treatment; qualifying triglyceride (TG) category (750
+vs >750 mg/dL); use of statin, cholesterol-absorption
+inhibitors, and/or proprotein convertase subtilisin/
+kexin type 9 serine protease inhibitors (yes or no); and
+baseline TG value as covariates. The ranges of achieved
+eicosapentaenoic acid plus docosahexaenoic acid
+concentrations in each tertile, assessed as percent of
+fatty acids, are as follows: T1, 1.2 to 2.4 (12 weeks) and
+1.1 to 2.3 (26 weeks); T2, 2.5 to 3.6 (12 weeks) and 2.4
+to 3.5 (26 weeks); T3, 3.7 to 9.0 (12 weeks) and 3.6 to
+11.3 (26 weeks).
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+8/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+ω-3–PL/FFA, 27 of 372 [7.3%]), diabetes (placebo, 12 of 148 [8.1%]; ω-3–PL/FFA, 20 of 372 [5.4%]),
+and nasopharyngitis (placebo, 6 of 148 [4.1%]; ω-3–PL/FFA, 20 of 372 [5.4%]). No deaths occurred.
+Twenty-two patients experienced a serious adverse effect (placebo, 7 of 148 [4.7%]; ω-3–PL/FFA,
+15 of 372 [4.0%]), and 20 discontinued treatment or participation because of an emergent adverse
+effect (placebo, 5 of 148 [3.4%]; ω-3–PL/FFA, 15 of 372 [4.0%]). One serious adverse effect of atrial
+fibrillation was reported in the ω-3–PL/FFA group, and none in the placebo group. ω-3–PL/FFA
+produced no significant changes in either trial in vital signs, electrocardiographic parameters, liver
+enzymes, or creatinine kinase values. Occurrence of bleeding adverse events (hemorrhages,
+grouping adverse events as Standardized MedDRA Query terms) was similar in both groups (5 of 148
+[3.4%] vs 10 of 372 [2.7%]), as were gastrointestinal disorders (24 of 148 [16.2%] vs 68 of
+372 [18.3%]).
+Figure 3. Percentage Changes in Fasting Triglyceride (TG) Levels at 12 Weeks Across Prespecified Subgroups
+–50
+–20
+20
+–30
+0
+–10
+10
+Treatment difference (95% CI)
+–40
+P value for
+interaction
+Favors
+ω-3–PL/FFA
+Favors
+placebo
+Placebo group
+No.
+TG change (95% CI), %
+ω-3–PL/FFA group
+No.
+TG change (95% CI), %
+Subgroup
+Age, y
+≤65
+>65
+121
+27
+–14.4 (–23.8 to –4.9)
+–19.3 (–37.3 to –1.3)
+–23.5 (–29.6 to –17.5)
+–39.4 (–52.0 to –26.7)
+–9.1 (–19.7 to 1.4)
+–20.1 (–40.3 to 0.2)
+310
+62
+Treatment difference 
+(95% CI), %
+.37
+Race
+White
+Minoritized racial group
+123
+25
+–15.2 (–24.6 to –5.7)
+–16.1 (–34.6 to 2.4)
+–26.9 (–33.1 to –20.6)
+–25.2 (–36.8 to –13.6)
+–11.7 (–22.1 to –1.2)
+–9.2 (–30.8 to 12.5)
+303
+69
+.71
+Ethnicity
+Hispanic/Latino
+Non-Hispanic/Latino
+75
+73
+–24.6 (–36.1 to –13.0)
+–5.8 (–17.1 to 5.6)
+–36.6 (–44.3 to –29.0)
+–15.5 (–22.8 to –8.1)
+–12.1 (–24.8 to 0.6)
+–9.7 (–22.7 to 3.3)
+181
+191
+.77
+Sex
+Male
+Female
+100
+48
+–8.8 (–19.3 to 1.8)
+–32.0 (–44.5 to –19.4)
+–19.7 (–26.4 to –13.0)
+–41.1 (–50.1 to –32.1)
+–10.9 (–23.0 to 1.3)
+–9.1 (–22.6 to 4.4)
+239
+133
+.90
+Study
+TRILOGY 1
+TRILOGY 2
+69
+79
+–21.6 (–33.2 to –10.2)
+–8.0 (–19.9 to 3.9)
+–28.4 (–36.2 to –20.7)
+–23.8 (–31.3 to –16.3)
+–6.8 (–20.1 to 6.5)
+–15.8 (–28.8 to –2.7)
+173
+199
+.35
+Country
+US
+Mexico
+127
+21
+–15.4 (–24.5 to –6.3)
+–16.9 (–37.5 to 3.6)
+–26.6 (–32.7 to –20.6)
+–23.7 (–36.4 to –11.0)
+–11.2 (–21.3 to –1.1)
+–6.8 (–31.0 to 17.4)
+312
+60
+.82
+Qualifying TG level, mg/dL
+≤750
+>750
+100
+48
+–19.4 (–29.1 to –9.8)
+–7.6 (–22.4 to 7.2)
+–30.2 (–36.4 to –24.0)
+–18.6 (–28.0 to –9.2)
+–10.8 (–21.8 to 0.3)
+–11.0 (–28.3 to 6.3)
+252
+120
+.99
+Use of statin/CAIs
+Yes
+No
+70
+78
+–9.0 (–23.4 to 5.4)
+–20.1 (–29.8 to –10.4)
+–28.5 (–37.7 to –19.3)
+–23.1 (–30.0 to –16.3)
+–19.5 (–34.5 to –4.6)
+–3.0 (–14.6 to 8.5)
+176
+196
+.08
+Use of fibrate
+Yes
+No
+17
+131
+1.4 (–24.3 to 27.2)
+–17.4 (–26.1 to –8.6)
+–14.8 (–32.6 to 3.1)
+–27.1 (–33.0 to –21.2)
+–16.2 (–47.0 to 14.6)
+–9.7 (–19.6 to 0.2)
+33
+339
+.61
+Prevalent type 2 diabetes
+Yes
+No
+81
+67
+–15.2 (–25.8 to –4.6)
+–15.1 (–28.4 to –1.9)
+–26.6 (–33.9 to –19.3)
+–25.6 (–33.9 to –17.4)
+–11.4 (–23.5 to 0.7)
+–10.5 (–25.0 to 4.0)
+195
+177
+.92
+Baseline phosopholipid EPA+DHA
+≤Median
+>Median
+69
+71
+–5.3 (–18.3 to 7.6)
+–24.4 (–35.8 to –13.0)
+–24.8 (–33.0 to –16.7)
+–26.9 (–34.9 to –18.9)
+–19.5 (–33.8 to –5.3)
+–2.5 (–15.4 to 10.3)
+184
+165
+.08
+Comparisons were between ω-3–phospholipid/free fatty acid (ω-3–PL/FFA), 4 g/d, or
+placebo. Values are least-square mean differences from baseline, with P values based on
+analysis of covariance (ANCOVA), including main effects of treatment; qualifying TG
+category (750 vs >750 mg/dL); use of statin, cholesterol-absorption inhibitors (CAIs),
+and/or proprotein convertase subtilisin/kexin type 9 serine protease inhibitors; and
+baseline value as covariates. P value for interaction was tested by including a main effect
+of subgroup and a treatment-by-subgroup interaction effect within the same ANCOVA
+model. DHA indicates docosahexaenoic acid; EPA, eicosapentaenoic acid.
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+9/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+Discussion
+The TRILOGY program is the largest randomized, controlled investigation to date of an ω-3
+formulation in severe hypertriglyceridemia. In pooled results of 2 multicenter trials, 4 g/d of
+ω-3–PL/FFA reduced TG levels by 10.9% at 12 weeks and 12.7% at 26 weeks, relative to placebo. At
+both 12 and 26 weeks, approximately 1 in 9 patients in the ω-3–PL/FFA group achieved TG levels of
+less than 500 mg/dL, providing a number needed to treat 11 patients for 1 more patient to achieve
+this goal. ω-3–PL/FFA was generally well tolerated, with a safety profile similar to that of placebo.
+Other prescription ω-3 formulations investigated in their phase 3 trials for severe
+hypertriglyceridemia lowered TG levels from between a 12% to 39% reduction (eTable 8 in
+Supplement 2).17-22 These prior trials were generally much smaller (total often <50 patients and
+always <200 patients vs 520 patients in TRILOGY) and of shorter duration (typically 6-12 weeks vs 26
+weeks in TRILOGY). Compared with these other formulations, ω-3–PL/FFA contains less EPA plus
+DHA per 4 g (1.24 vs 3.0-3.5 g) but has a unique and potentially more bioavailable formulation with
+about half of ω-3s as FFAs and half bound to PLs. Distinct from ethyl ester formulations, ω-3–PL/FFA
+bioavailability is also less dependent on coconsumption with higher-fat meals,10,11 which is relevant
+because low-fat diets are recommended for severe hypertriglyceridemia.
+Treatment with ω-3–PL/FFA did not significantly raise LDL-C or ApoB levels. Other ω-3
+formulations, such as ω-3 ethyl esters and ω-3 carboxylic acids, raise LDL-C levels, with usual
+increases of approximately 15% to 30% in patients with severe hypertriglyceridemia.23 In TRILOGY,
+nonsignificant numerical changes in LDL-C levels (4.5% at 12 weeks and 6.3% at 26 weeks) were not
+accompanied by any increase in ApoB level (−2.1% at 12 weeks and −0.9% at 26 weeks). This suggests
+potentially increased LDL particle size with ω-3–PL/FFA—a phenotype moving away from
+atherogenic dyslipidemia—rather than increased particle number. Prior ω-3–PL/FFA trials12,13 in
+patients with TG levels of at least 200 and less than 877 mg/dL also identified lowering of TG levels
+without raising LDL-C levels. The phospholipid-bound EPA and DHA in ω-3–PL/FFA may explain, at
+least partly, such an effect by interfering with intestinal cholesterol absorption24,25 and/or
+modulating expression and activity of transcriptional factors and enzymes involved in hepatic
+lipoprotein metabolism.26,27
+Compared with baseline, TG levels in the ω-3–PL/FFA group decreased by 26.0% at 12 weeks
+and 33.5% at 26 weeks. However, reductions in TG levels in the placebo group were also larger than
+typically seen in such patients, declining 20.8% at 26 weeks vs baseline. In other ω-3 trials for severe
+hypertriglyceridemia, reductions in TG levels in the placebo group were much smaller, typically
+ranging from reductions of 4.6% to increases of 21.7% (eFigure 5 in Supplement 2).17-22 TRILOGY’s
+cornstarch placebo was unlikely to have meaningful TG-lowering effects: the dose herein of this
+widely used food ingredient was approximately 16 kcal/d. Fasting glucose and hemoglobin A1c levels
+generally did not significantly change (eTable 2 in Supplement 2), making it unlikely that better
+diabetes control explains the findings. We found that participants in the placebo group who
+experienced larger TG level reductions after randomization were also more likely to show a large
+increase in TG after the initial screening visit but before randomization. This suggests that the
+placebo-group reduction in TG levels may in part be associated with regression toward the mean
+among patients who had less stable or less severe hypertriglyceridemia at baseline.
+The TG level–lowering effects of ω-3–PL/FFA appeared possibly stronger among patients
+already taking stable statin treatment (<3% took a CAI and none took PCSK9I), in whom the mean
+treatment difference was approximately 20%. The larger efficacy in this subgroup could be due to an
+unknown pharmacological interaction between ω-3–PL/FFA and statins or reflect statin use at study
+entry as a marker of patients with more persistent, severe hypertriglyceridemia status (ie, less prone
+to regression of episodically elevated TG levels to the mean). Exploration of TG changes in this
+subgroup, compared with patients not taking statins or CAI, showed both smaller reductions in the
+placebo group and larger reductions in the ω-3–PL/FFA group. Patients taking baseline statins or CAI
+were older and had higher BMI, had higher hemoglobin A1c levels, and were more commonly taking
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+10/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+fibrates, each suggesting a higher-risk phenotype. This exploratory finding requires confirmation in
+future trials.
+Effects of ω-3–PL/FFA on TG levels also appeared possibly stronger among patients with lower
+baseline circulating EPA plus DHA levels (mean treatment difference, 19.5%). This finding could be
+due to chance but is also consistent with potentially greater biological benefits of ω-3s when baseline
+exposure is lower.28 In a large ω-3 primary prevention trial,29 supplementation reduced the
+composite primary CVD end point in the prespecified subgroup of participants with lower baseline
+fish consumption. The exploratory result with ω-3–PL/FFA and baseline EPA plus DHA levels also
+requires confirmation in future studies.
+Strengths and Limitations
+This study has several strengths. A large number of participants increased statistical power for both
+efficacy and safety outcomes. Compliance and follow-up were high, minimizing bias. An extended
+26-week intervention was performed, compared with 6 to 12 weeks in most prior ω-3 trials in severe
+hypertriglyceridemia.17-22 A range of important lipid, lipoprotein, and pharmacokinetic end points
+was assessed, adding to the knowledge base on effects on ω-3 therapy on these outcomes. Enrolled
+patients had considerable ethnic diversity, with 49.2% being Hispanic, increasing generalizability of
+findings to this important and growing demographic group.
+This study also has some limitations. The placebo group experienced a large reduction in TG
+levels, reducing the statistical ability to detect a difference and requiring pooling of the 2 trials.
+Statistical significance was attenuated when using nonparametric analyses, although the observed
+TG reductions were similar numerically. Stronger findings in the prespecified subgroups of statin or
+CAI users and patients with lower baseline EPA plus DHA levels should be considered exploratory and
+warrant future investigation.
+Conclusions
+The pooled results of 2 large trials among patients with severe hypertriglyceridemia show that
+ω-3–PL/FFA, a novel, krill oil–derived mixture of ω-3, reduced TG levels at 12 and 26 weeks and
+increased the proportion of patients with TG levels of less than 500 mg/dL. The treatment was safe
+and well tolerated.
+ARTICLE INFORMATION
+Accepted for Publication: October 18, 2021.
+Published: January 6, 2022. doi:10.1001/jamanetworkopen.2021.41898
+Open Access: This is an open access article distributed under the terms of the CC-BY-NC-ND License. © 2022
+Mozaffarian D et al. JAMA Network Open.
+Corresponding Authors: Dariush Mozaffarian, MD, DrPH, Tufts Friedman School of Nutrition Science and Policy,
+150 Harrison Ave, Boston, MA 02111 (dariush.mozaffarian@tufts.edu); Pierre Lemieux, PhD, Acasti Pharma, Inc,
+3009 Boul de la Concorde Est, Ste 102, Laval, QC H7E 2B5, Canada (p.lemieux@acastipharma.com).
+Author Affiliations: Tufts Friedman School of Nutrition Science and Policy, Boston, Massachusetts (Mozaffarian,
+Shi); Midwest Biomedical Research, Addison, Illinois (Maki); Indiana University School of Public Health,
+Bloomington (Maki); L-MARC Research Center, Louisville, Kentucky (Bays); Scientia lnvestigación Clinica, SC,
+Chihuahua, Mexico (Aguilera); Burke Primary Care, Morganton, North Carolina (Gould); Robarts Research Institute,
+London, Ontario, Canada (Hegele); Department of Internal Medicine, University of Kansas Medical Center, Kansas
+City (Moriarty); Prevention Intervention Center, Departments of Epidemiology & Medicine, University of Iowa,
+Iowa City (Robinson); Finlay Medical Research Corp, Miami, Florida (Tur); Acasti Pharma Inc, Laval, Quebec, Canada
+(Lapointe, Aziz, Lemieux).
+Author Contributions: Dr Mozaffarian had full access to all the data in the study and takes responsibility for the
+integrity of the data and the accuracy of the data analysis.
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+11/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+Concept and design: Mozaffarian, Lapointe, Aziz, Lemieux.
+Acquisition, analysis, or interpretation of data: Mozaffarian, Maki, Bays, Aguilera, Gould, Hegele, Moriarty,
+Robinson, Shi, Tur, Lapointe, Lemieux.
+Drafting of the manuscript: Mozaffarian, Tur, Lapointe, Aziz, Lemieux.
+Critical revision of the manuscript for important intellectual content: Mozaffarian, Maki, Bays, Aguilera, Gould,
+Hegele, Moriarty, Robinson, Shi, Lapointe, Lemieux.
+Statistical analysis: Mozaffarian, Hegele, Shi, Tur, Lemieux.
+Obtained funding: Lemieux.
+Administrative, technical, or material support: Mozaffarian, Maki, Aguilera, Gould, Hegele, Aziz, Lemieux.
+Supervision: Mozaffarian, Aguilera, Tur, Lapointe, Lemieux.
+Conflict of Interest Disclosures: Dr Mozaffarian reported serving as a consultant for Acasti Pharma Inc as principal
+investigator of this trial; receiving research funding from the National Institutes of Health, the Gates Foundation,
+and the Rockefeller Foundation; personal fees from Barilla, Cleveland Clinic Foundation, Danone SA, and Motif
+FoodWorks; chapter royalties from UpToDate; serving on the scientific advisory board of Beren Therapeutics PBC,
+Brightseed, Calibrate, DayTwo (ended June 2020), Elysium Health, Filtricine Inc, Foodome Inc, HumanCo, January,
+Perfect Day Inc, Season, and Tiny Organics; and holding stock ownership in Calibrate and HumanCo outside the
+submitted work. Dr Maki reported receiving research grants from and consulting for Acasti Pharma Inc and Matinas
+BioPharma Holdings Inc, and receiving research funding from Indiana University Foundation, Pharmavite, Novo
+Nordisk A/S, General Mills Inc, The Kellogg Company, and PepsiCo Inc, and consulting for 89bio Inc, and
+NewAmsterdam Pharma outside the submitted work. Dr Bays reported receiving research grants from Acasti
+Pharma Inc. Dr Aguilera reported receiving research grants from Acasti Pharma Inc. Dr Gould reported receiving
+research grants from Acasti Pharma Inc. Dr Hegele reported receiving research grants from Acasti Pharma Inc and
+personal fees from Akcea-Ionis, Amgen Inc, Arrowhead Pharmaceuticals, HLS Therapeutics Inc, Novartis
+International AG, and Pfizer Inc outside the submitted work. Dr Moriarty reported receiving research grants from
+Acasti Pharma Inc. Dr Robinson reported receiving research grants to the institution from Acasti Pharma Inc,
+Amarin Corporation, Amgen Inc, Astra-Zeneca, Eli Lilly & Co, Esperion Therapeutics Inc, The Medicines Company,
+Merck & Co Inc, Novartis International AG, Novo Nordisk A/S, and Regeneron Pharmaceuticals Inc, and consulting
+fees from COR2ED, Getz Pharma Limited, The Medicines Company, and Novartis International AG. Dr Shi reported
+consulting for Acasti Pharma Inc for performing statistical analyses on this trial. Dr Tur reported receiving research
+grants from Acasti Pharma Inc. Dr Lapointe reported owning stock or stock options in Acasti Pharma Inc. Dr Aziz
+reported owning stock or stock options in Acasti Pharma Inc. Dr Lemieux reported serving chief operating officer/
+chief strategy officer of Acasti Pharma Inc during the conduct of the study and outside the submitted work and
+holding a patent for CaPre. No other disclosures were reported.
+Funding/Support: The study was sponsored by Acasti Pharma Inc.
+Role of the Funder/Sponsor: The sponsor collaborated with the academic principal investigator (Dr Mozaffarian)
+in the design and conduct of the study, interpretation of the data, and review and suggestions for editing of the
+manuscript. The sponsor collaborated with the academic principal investigator and an independent contract
+research organization (IQVIA) in study implementation, data collection, and management. The sponsor had no role
+in the analysis of the data or the decision to submit the manuscript for publication.
+Group Information: The TRILOGY (Study of CaPre in Lowering Very High Triglycerides) investigators are listed in
+Supplement 3.
+Data Sharing Statement: See Supplement 4.
+Additional Contributions: We thank the TRILOGY study investigators and each of the patients who participated
+in this study. Tao Hao, PhD, Harvard Chan School of Public Health, Boston, Massachusetts, assisted with certain
+statistical analyses. Monica Langlois, BSc, and Sebastian Klingler, MSc, consultants to Acasti Pharma Inc, and Karl
+Halmos-Westram, BSc, Danaë Lemieux, MSc, and Anastassia Alezzi, MSc, Acasti Pharma Inc, assisted in clinical trial
+management. These contributors were compensated for their work. We also acknowledge the contributions to
+this trial of Theresa Martinez, MD, Health and Life Research Institute, LLC, Miami, Florida, who passed away during
+the preparation of the manuscript.
+Additional Information: Data collection and management was performed by a contractual research organization
+(IQVIA, Durham, NC), with joint oversight by the principal investigator and sponsor. The statistical analysis plan
+was finalized by the principal investigator and sponsor prior to data pooling. All statistical analyses were performed
+by an independent academic statistician (Dr Shi).
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+12/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+REFERENCES
+1. NCD Risk Factor Collaboration (NCD-RisC). Worldwide trends in body-mass index, underweight, overweight,
+and obesity from 1975 to 2016: a pooled analysis of 2416 population-based measurement studies in 128·9 million
+children, adolescents, and adults. Lancet. 2017;390(10 113):2627-2642.
+2. NCD Risk Factor Collaboration (NCD-RisC). Worldwide trends in diabetes since 1980: a pooled analysis of 751
+population-based studies with 4.4 million participants. Lancet. 2016;387(10 027):1513-1530.
+3. Miller M, Stone NJ, Ballantyne C, et al; American Heart Association Clinical Lipidology, Thrombosis, and
+Prevention Committee of the Council on Nutrition, Physical Activity, and Metabolism; Council on Arteriosclerosis,
+Thrombosis and Vascular Biology; Council on Cardiovascular Nursing; Council on the Kidney in Cardiovascular
+Disease. Triglycerides and cardiovascular disease: a scientific statement from the American Heart Association.
+Circulation. 2011;123(20):2292-2333. doi:10.1161/CIR.0b013e3182160726
+4. Maki KC, Bays HE, Dicklin MR. Treatment options for the management of hypertriglyceridemia: strategies based
+on the best-available evidence. J Clin Lipidol. 2012;6(5):413-426. doi:10.1016/j.jacl.2012.04.003
+5. Berglund L, Brunzell J, Sacks FM. Patient guide to the assessment and treatment of hypertriglyceridemia (high
+triglycerides). J Clin Endocrinol Metab. 2012;97(9):31A-32A. doi:10.1210/jcem.97.9.zeg31a
+6. Nordestgaard BG. Triglyceride-rich lipoproteins and atherosclerotic cardiovascular disease: new insights from
+epidemiology, genetics, and biology. Circ Res. 2016;118(4):547-563. doi:10.1161/CIRCRESAHA.115.306249
+7. Bhatt DL, Steg PG, Miller M, et al; REDUCE-IT Investigators. Effects of icosapent ethyl on total ischemic events:
+from REDUCE-IT. J Am Coll Cardiol. 2019;73(22):2791-2802. doi:10.1016/j.jacc.2019.02.032
+8. Bhatt DL, Steg PG, Miller M, et al; REDUCE-IT Investigators. Cardiovascular risk reduction with icosapent ethyl
+for hypertriglyceridemia. N Engl J Med. 2019;380(1):11-22. doi:10.1056/NEJMoa1812792
+9. Nicholls SJ, Lincoff AM, Garcia M, et al. Effect of high-dose omega-3 fatty acids vs corn oil on major adverse
+cardiovascular events in patients at high cardiovascular risk: the STRENGTH randomized clinical trial. JAMA. 2020;
+324(22):2268-2280. doi:10.1001/jama.2020.22258
+10. Lapointe JF, Harvey L, Aziz S, Jordan H, Hegele RA, Lemieux P. A single-dose, comparative bioavailability study
+of a formulation containing OM3 as phospholipid and free fatty acid to an ethyl ester formulation in the fasting and
+fed states. Clin Ther. 2019;41(3):426-444. doi:10.1016/j.clinthera.2019.01.017
+11. Lapointe JF, Harvey L, Aziz S, Hegele RA, Lemieux P. Evaluation of OM3-PL/FFA pharmacokinetics after single
+and multiple oral doses in healthy volunteers. Clin Ther. 2019;41(12):2500-2516. doi:10.1016/j.clinthera.2019.
+10.003
+12. ClinicalTrials.gov. TRIal For Efficacy of Capre on hyperTriglyceridemiA (TRIFECTA). NCT01455844. Accessed
+October 8, 2021. https://clinicaltrials.gov/ct2/show/NCT01455844
+13. ClinicalTrials.gov. Assess the Safety and Efficacy of NKPL66 (CaPre™) in the Treatment of Mild-to-high
+Hypertriglyceridemia. NCT01516151. Accessed October 8, 2021. https://clinicaltrials.gov/ct2/show/NCT01516151
+14. World Medical Association. World Medical Association Declaration of Helsinki: ethical principles for medical
+research involving human subjects. JAMA. 2013;310(20):2191-2194. doi:10.1001/jama.2013.281053
+15. US Food and Drug Administration. Code of Federal Regulations—Title 21: Food and Drugs. Accessed November
+30, 2021. https://www.fda.gov/medical-devices/medical-device-databases/code-federal-regulations-title-21-
+food-and-drugs
+16. National Cholesterol Education Program (NCEP) Expert Panel on Detection, Evaluation, and Treatment of High
+Blood Cholesterol in Adults (Adult Treatment Panel III). Third Report of the National Cholesterol Education
+Program (NCEP) Expert Panel on Detection, Evaluation, and Treatment of High Blood Cholesterol in Adults (Adult
+Treatment Panel III) final report. Circulation. 2002;106(25):3143-3421. doi:10.1161/circ.106.25.3143
+17. Harris WS, Ginsberg HN, Arunakul N, et al. Safety and efficacy of omacor in severe hypertriglyceridemia.
+J Cardiovasc Risk. 1997;4(5-6):385-391. doi:10.1177/174182679700400511
+18. Abe Y, El-Masri B, Kimball KT, et al. Soluble cell adhesion molecules in hypertriglyceridemia and potential
+significance on monocyte adhesion. Arterioscler Thromb Vasc Biol. 1998;18(5):723-731. doi:10.1161/01.ATV.18.5.723
+19. Pownall HJ, Brauchi D, Kilinç C, et al. Correlation of serum triglyceride and its reduction by omega-3 fatty acids
+with lipid transfer activity and the neutral lipid compositions of high-density and low-density lipoproteins.
+Atherosclerosis. 1999;143(2):285-297. doi:10.1016/S0021-9150(98)00301-3
+20. US Food & Drug Administration Center for Drug Evaluation and Research, Office of Translational Sciences,
+Office of Biostatistics. Application No. 202057. Statistical Review(s). Accessed November 30, 2021. https://www.
+accessdata.fda.gov/drugsatfda_docs/nda/2012/202057Orig1s000StatR.pdf
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+13/14
+Downloaded from jamanetwork.com by guest on 09/23/2025
+
+21. US Food & Drug Administration Center for Drug Evaluation and Research, Office of Translational Sciences,
+Office of Biostatistics. Application No. 205060. Statistical Review(s). Accessed November 30, 2021. https://www.
+accessdata.fda.gov/drugsatfda_docs/nda/2014/205060Orig1s000StatR.pdf
+22. US Food & Drug Administration Center for Drug Evaluation and Research, Office of Translational Sciences,
+Office of Biostatistics. Application No. 204977. Statistical Review(s). Accessed November 30, 2021. https://www.
+accessdata.fda.gov/drugsatfda_docs/nda/2014/204977Orig1s000StatR.pdf
+23. Skulas-Ray AC, Wilson PWF, Harris WS, et al; American Heart Association Council on Arteriosclerosis,
+Thrombosis and Vascular Biology; Council on Lifestyle and Cardiometabolic Health; Council on Cardiovascular
+Disease in the Young; Council on Cardiovascular and Stroke Nursing; and Council on Clinical Cardiology. Omega-3
+fatty acids for the management of hypertriglyceridemia: a science advisory from the American Heart Association.
+Circulation. 2019;140(12):e673-e691. doi:10.1161/CIR.0000000000000709
+24. Cohn JS, Kamili A, Wat E, Chung RW, Tandy S. Dietary phospholipids and intestinal cholesterol absorption.
+Nutrients. 2010;2(2):116-127. doi:10.3390/nu2020116
+25. Sahebkar A. Fat lowers fat: purified phospholipids as emerging therapies for dyslipidemia. Biochim Biophys
+Acta. 2013;1831(4):887-893. doi:10.1016/j.bbalip.2013.01.013
+26. Burri L, Berge K, Wibrand K, Berge RK, Barger JL. Differential effects of krill oil and fish oil on the hepatic
+transcriptome in mice. Front Genet. 2011;2:45. doi:10.3389/fgene.2011.00045
+27. Rossmeisl M, Medrikova D, van Schothorst EM, et al. Omega-3 phospholipids from fish suppress hepatic
+steatosis by integrated inhibition of biosynthetic pathways in dietary obese mice. Biochim Biophys Acta. 2014;1841
+(2):267-278. doi:10.1016/j.bbalip.2013.11.010
+28. Mozaffarian D. Fish, cardiovascular disease, and mortality—what is the global evidence? JAMA Intern Med.
+2021;181(5):649-651. doi:10.1001/jamainternmed.2021.0045
+29. Manson JE, Cook NR, Lee IM, et al; VITAL Research Group. Marine n-3 fatty acids and prevention of
+cardiovascular disease and cancer. N Engl J Med. 2019;380(1):23-32. doi:10.1056/NEJMoa1811403
+SUPPLEMENT 1.
+Statistical Analysis Plan and Trial Protocol
+SUPPLEMENT 2.
+eMethods. Trial Operations, Inclusion and Exclusion Criteria, Laboratory Measurements, Assignment to Treatment
+Groups, and Statistical Analysis
+eFigure 1. Design of the TRILOGY Trials
+eFigure 2. Flow Diagram of Participants
+eFigure 3. Changes in Fasting Triglyceride (TG) Levels in the 4-g/d ω-3–PL/FFA and Placebo Groups Between
+Baseline and Week 26 (n = 520)
+eFigure 4. Absolute and Percentage Changes in Plasma Phospholipid EPA, DHA, and EPA Plus DHA (% Fatty Acids)
+During the 26-Week Double-Blind Period
+eFigure 5. Comparison of Triglyceride Lowering Between Placebo and ω-3 Drugs in Severe Hypertriglyceridemia
+eTable 1. Percentage Changes in Primary, Key Secondary, and Other Secondary End Points in Intention-to-Treat
+Analysis for TRILOGY 1 and 2
+eTable 2. Changes in Exploratory End Points in Intention-to-Treat Analysis
+eTable 3. Changes in Primary, Key Secondary, and Other Secondary End Points After 12 and 26 Weeks in Intention-
+to-Treat Analysis, Subgroup—Use of Statin, CAI and/or PCSK9
+eTable 4. Changes in Primary, Key Secondary, and Other Secondary End Points After 12 and 26 Weeks in Intention-
+to-Treat Analysis, Subgroup—Baseline Phospholipid EPA Plus DHA
+eTable 5. Changes in Triglycerides After 12 and 26 Weeks in Intention-to-Treat Analysis (Sensitivity Analyses)
+eTable 6. Summary of Adverse Events
+eTable 7. Detailed Summary of Severe Adverse Events
+eTable 8. Comparison of TG-Lowering Effect of ω-3 Drugs at 4 g/d in Severe Hypertriglyceridemia
+eReferences
+SUPPLEMENT 3.
+Nonauthor Collaborators
+SUPPLEMENT 4.
+Data Sharing Statement
+JAMA Network Open | Cardiology
+Novel ω-3 Krill Oil Agent in Patients With Hypertriglyceridemia
+JAMA Network Open. 2022;5(1):e2141898. doi:10.1001/jamanetworkopen.2021.41898
+(Reprinted)
+January 6, 2022
+14/14
+Downloaded from jamanetwork.com by guest on 09/23/2025

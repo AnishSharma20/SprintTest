@@ -1,0 +1,1203 @@
+Nutrition and Disease
+Pilot Randomized Controlled Trial of Krill Oil Supplementation for 
+Chronic Musculoskeletal Pain in Older Adults
+Javier A Tamargo 1,2,3,* , Ellie Carvajal 1,2 , Katarina Simic 1,2 , Rene Przkora 4 ,
+Stephen D Anton 3,5 , Yenisel Cruz-Almeida 1,2,3,6
+1 Pain Research and Intervention Center of Excellence, University of Florida, Gainesville, FL, United States; 2 Department of Community Dentistry 
+and Behavioral Science, University of Florida, Gainesville, FL, United States; 3 Claude D. Pepper Older Americans Independence Center, University 
+of Florida, Gainesville, FL, United States; 4 Department of Anesthesiology, University of Florida, Gainesville, FL, United States; 5 Department of 
+Physiology and Aging, University of Florida, Gainesville, FL, United States; 6 Department of Neuroscience, University of Florida, Gainesville, FL, 
+United States
+A B S T R A C T
+Background: Chronic musculoskeletal (MSK) pain is highly prevalent in older adults and the leading cause of disability. Long-chain 
+omega-3 (ω-3) polyunsaturated fatty acids have anti-inflammatory and analgesic properties, yet intake and circulating levels are low in 
+older US adults. Krill oil, a phospholipid-bound source of eicosapentaenoic acid (EPA) and docosahexaenoic acid (DHA) that also contains 
+astaxanthin and choline, may represent a feasible nutrition-based intervention for chronic MSK pain.
+Objectives: To evaluate the feasibility and acceptability of krill oil supplementation in older adults with chronic MSK pain and to 
+characterize changes in ω-3 status and exploratory pain outcomes.
+Methods: A 12-wk, randomized, double-blind, placebo-controlled pilot trial in 40 community-dwelling adults aged ≥60 y with moderate 
+chronic MSK pain. Participants were stratified by sex and randomly assigned 1:1 to krill oil (4 g/d; 1288 mg EPA+DHA) or placebo. 
+Primary outcomes were feasibility metrics (recruitment, retention, adherence, and acceptability). Secondary outcomes included bio-
+markers of ω-3 status and inflammation. Exploratory outcomes included pain intensity, pain interference, pain distribution, and global 
+improvement.
+Results: Recruitment targets were met within 8 mo; retention was 95%, adherence exceeded prespecified thresholds (>70%) in both 
+groups, and overall acceptability was rated 7.7 ± 2.3 of 10. Krill oil supplementation increased the ω-3 index from 4.3% to 7.4%, 
+approaching levels consistent with lower cardiometabolic risk (≥8%), whereas the placebo group showed no meaningful change. Pre-
+liminary analyses showed trends favoring krill oil for reduced pain intensity (ΔKO – ΔP = ‒1.05), fewer pain sites (rate ratio: 0.59; 95% 
+confidence interval: 0.41, 0.84), and global improvement (adjusted odds ratio: 4.35; 95% confidence interval: 0.97, 19.55). No serious 
+adverse events occurred.
+Conclusions: Krill oil supplementation was feasible and acceptable among older US adults with chronic MSK pain. These findings support 
+a fully powered randomized controlled trial to evaluate krill oil as a nutritional strategy for pain management in aging populations. 
+This trial was registered at clinicaltrials.gov as NCT06580912.
+Keywords: chronic pain, ω-3 fatty acids, dietary supplements, feasibility studies
+Introduction
+Chronic musculoskeletal (MSK) pain is disproportionately 
+prevalent among older adults [1] and is the leading cause of 
+disability globally [2]. Pain management in this population re-
+mains particularly challenging and often ineffective,
+complicated by multimorbidity, age-related physiological 
+changes, and concerns related to polypharmacy [3]. Opioid 
+analgesics used to manage moderate-to-severe pain carry the 
+risk of adverse effects such as dependence and tolerance, 
+cognitive impairments, and drug-drug interactions in older 
+adults, highlighting the need for non-pharmacological
+Abbreviations: MSK, musculoskeletal; PEG, pain, enjoyment of life, and general activity; PGIC, patient global impression of change; WOMAC, Western Ontario and 
+McMaster Universities osteoarthritis index.
+* Corresponding author. E-mail address: j.tamargo@ufl.edu (J.A. Tamargo).
+journal homepage: https://jn.nutrition.org/
+https://doi.org/10.1016/j.tjnut.2026.101517
+Received 13 February 2026; Received in revised form 18 March 2026; Accepted 26 March 2026; Available online 1 April 2026
+0022-3166/© 2026 American Society for Nutrition. Published by Elsevier Inc. All rights are reserved, including those for text and data mining, AI training, and 
+similar technologies.
+The Journal of Nutrition 156 (2026) 101517
+
+approaches [3-5]. Nutrition-based interventions are particularly 
+appealing as they are non-invasive, cost-effective, highly indi-
+vidualized, and generally low risk. Despite the growing burden 
+of chronic pain in aging populations [6], safe and scalable 
+nutrition strategies that target MSK pain remain underexplored.
+Most older adults in the United States do not meet the rec-
+ommended intakes of omega (ω)-3 long-chain PUFAs (LC-
+PUFAs), and <2% exhibit circulating levels associated with a 
+reduced risk of cardiovascular disease and mortality [7-9]. Due 
+to their well-recognized anti-inflammatory properties [10], ω-3 
+LC-PUFAs, particularly EPA and DHA, have been increasingly 
+studied for their potential analgesic effects. Mechanistically, ω-3 
+LC-PUFAs may modulate pain both peripherally and centrally by 
+promoting specialized pro-resolving mediators, dampening 
+neuronal excitability, and supporting nerve repair and neuro-
+immune homeostasis [11]. Additionally, ω-3 LC-PUFAs may 
+support MSK pain specifically by attenuating catabolic processes 
+and the progression of osteoarthritis (OA) [12,13]. 
+Meta-analyses of ω-3 supplementation trials have found mod-
+erate, clinically meaningful reductions for inflammatory pain 
+[11,14,15], whereas evidence for OA-related pain remains 
+limited and inconclusive [11]. As suggested by Xie et al. [11], 
+the lack of statistically significant effects observed in some OA 
+trials may reflect the complex and multifactorial nature of 
+OA-related pain, including low-grade inflammation, mechanical 
+drivers of pain, and the use of multidimensional outcome mea-
+sures [11]. Moreover, relatively few trials have specifically 
+examined OA populations.
+Krill oil (Ephausia superba) is a marine source of ω-3 LC-
+PUFAs in which EPA and DHA are predominantly bound to 
+phospholipids rather than triglycerides or ethyl esters. This 
+structural difference is thought to enhance bioavailability and 
+tissue uptake [16]. On the contrary, the absolute EPA and DHA 
+content per gram in krill oil is often lower than that of concen-
+trated fish oils [17,18], which may offset its benefits by the need 
+for higher volumes to achieve the desired intake of EPA and 
+DHA, potentially compromising tolerability and acceptability, 
+especially in older adults. Beyond ω-3 fatty acids, krill oil con-
+tains additional bioactive compounds that may be beneficial for 
+pain. Krill is naturally rich in astaxanthin, a xanthophyll carot-
+enoid with potent anti-inflammatory/antioxidant, ger-
+oprotective, and analgesic properties [19,20]. In addition, krill 
+oil provides choline as phosphatidylcholine, an essential 
+nutrient involved in neurotransmission, cell signaling, lipid 
+metabolism, and homocysteine regulation. As a precursor to 
+acetylcholine, choline may influence cholinergic pathways 
+involved in pain modulation [21] and plays an important role in 
+skeletal muscle metabolism and musculoskeletal health [22]. 
+Yet, choline is poorly consumed by older adults in the United 
+States [23,24]. Although krill oil supplementation has demon-
+strated favorable effects on knee OA [25], older adults have 
+been underrepresented in these trials. As such, the feasibility, 
+acceptability, and potential effects of krill oil on chronic MSK 
+pain in older adults remain unknown.
+The Krill Oil for Pain in Elders (KOPE) pilot study was a 
+randomized, double-blind, placebo-controlled trial designed to 
+evaluate the feasibility of conducting a larger efficacy trial in 
+older adults with chronic MSK pain. Consistent with the 
+CONSORT extension for pilot and feasibility trials, the primary 
+objectives of the KOPE pilot were to assess feasibility metrics,
+including recruitment, retention, adherence, acceptability, 
+and data completeness, to inform the design of a future fully 
+powered randomized controlled trial. Our secondary objec-
+tives were to characterize changes in ω-3 status and inflam-
+mation, and we performed preliminary analyses of pain 
+outcomes.
+Methods
+Trial design
+This pilot trial used a randomized, double-blind, placebo-
+controlled, parallel-group design conducted over a 12-wk 
+intervention period. Participants completed 3 in-person study 
+visits: a baseline visit prior to randomization (week 0), a mid-
+intervention follow-up visit (week 6), and a final assessment at 
+the end of the intervention period (week 12). The trial was 
+designed and reported in accordance with the CONSORT 
+extension for randomized pilot and feasibility trials (see Sup-
+plementary Checklist) [26]. All research was conducted at the 
+University of Florida. The study was approved by the University 
+of Florida Institutional Review Board (#202400581) and con-
+ducted under an active US Food and Drug Administration 
+Investigational New Drug application. All participants provided 
+written informed consent prior to participation. The 
+trial is registered with clinicaltrials.gov (NCT06580912); full 
+details are available at https://clinicaltrials.gov/study/ 
+NCT06580912.
+Participants
+A total of 40 community-dwelling older adults were 
+recruited from Gainesville, FL, and neighboring areas primarily 
+through postcard mailings and social media advertisements. 
+Participants were first screened for preliminary eligibility by 
+telephone and subsequently invited for an in-person screening 
+visit, during which written informed consent and eligibility 
+assessments were completed. Eligible participants completed 
+the baseline assessment within 30 d of the screening visit prior 
+to randomization. If >30 d elapsed between screening and 
+baseline, eligibility assessments were repeated to confirm 
+continued eligibility.
+Eligible participants were males and females aged ≥60 y who 
+reported moderate pain (≥4 on a 0–10 scale) [27] in the hips, 
+knees, or lower back on most days for the past 3 mo and 
+demonstrated moderate mobility limitations. Exclusion criteria 
+were designed to minimize risks and reduce confounding. These 
+included: bleeding or coagulation disorders; use of anticoagu-
+lants, full-dose aspirin, opioids, high-dose nonsteroidal 
+anti-inflammatory drugs, selective serotonin reuptake in-
+hibitors, and complementary medicines/supplements that may 
+pose a risk of food-drug interaction (e.g., St. John’s Wort) or 
+may affect study results; ω-3 supplementation (<3 mo) or >2 
+servings per week of fatty fish intake; seafood allergy; clinically 
+significant or uncontrolled medical conditions; substance use 
+history; severe mobility impairment; or planned surgery during 
+the study period.
+Randomization and blinding
+Participants were stratified by sex and randomly assigned in 
+a 1:1 ratio to receive either krill oil or a placebo. Randomization
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+2
+
+was performed by (YC-A) using a computer-generated allocation 
+sequence with block randomization using varying block sizes (2, 
+4, and 6) to ensure balance between groups. Allocation 
+concealment was maintained by using identical-appearing study 
+capsules and bottles. Except for (YC-A), participants, in-
+vestigators, and study staff who interacted with participants 
+were blinded to group assignment throughout the trial. (YC-A) 
+was not involved in patient recruitment, enrollment, or clinical 
+assessments.
+Intervention
+Participants assigned to the treatment group received 4 g/ 
+d of krill oil (Superba Boost, Aker BioMarine Antarctic US LLC) 
+in the form of 4 1000 mg capsules, providing a total of 1288 mg/ 
+d EPA+DHA, 0.45 mg astaxanthin, and 320 mg choline daily. 
+Placebo capsules matched the krill oil capsules in appearance, 
+odor, and taste, containing 1000 mg of mixed vegetable oil, 
+comprised olive oil, corn oil, palm oil, and medium-chain tri-
+glycerides in a ratio of 4:4:3:2 (~31% SFAs, 46% MUFAs, and 
+22% PUFAs, with no EPA or DHA). This mixture resembles the 
+fatty acid composition of a typical Western diet [28,29]. Within 
+the context of the whole diet, the small amount of mixed fats 
+consumed in the placebo is not expected to have any indepen-
+dent effects. Participants were instructed to take the assigned 
+capsules once daily, with a meal, for 12 wk and to maintain their 
+usual diet and physical activity patterns throughout the study 
+period. Tolerance was assessed weekly for the first 3 wk, and 
+dosage and timing were adjusted as needed. If participants re-
+ported digestive discomfort or difficulty tolerating 4 capsules 
+per day, they were advised to temporarily reduce intake to 1 
+capsule and gradually increase by 1 capsule daily as tolerated 
+until the full daily dose was reached. If taking all capsules at 
+once was not well tolerated, the dose could also be divided 
+across the day (e.g., 2 capsules in the morning and 2 in the 
+evening).
+Data collection
+Study data were collected and managed using REDCap 
+(Research Electronic Data Capture) hosted at the University of 
+Florida [30,31].
+• Feasibility outcomes (primary): feasibility was determined
+by meeting pre-selected criteria, which included achieving
+≥80% of the recruitment goal within 12 mo, maintaining 
+<20% attrition, and achieving >70% adherence to the 
+intervention. The Medication Acceptability Questionnaire 
+(MAQ) was used to assess perceptions of convenience, taste 
+and texture, appearance and smell, side effects, and overall 
+acceptance[32].
+• Biomarker outcomes (secondary): fasted whole-blood sam-
+ples were obtained at each study visit. Changes in blood fatty 
+acid profile were assessed from dried blood spots using gas 
+chromatography (OmegaQuant Analytics) [33]. The ω-3 
+index is calculated as the percentage of EPA and DHA in 
+erythrocytes, and is considered a clinically relevant 
+biomarker of ω-3 status that is highly responsive to dietary 
+intake [34,35]. The circulating ω-6:ω-3 ratio was included for 
+contextualization with prior studies, although it is no longer 
+considered a preferred indicator of ω-3 status.
+High-sensitivity C-reactive protein (hs-CRP) was measured 
+at every visit as an inflammatory biomarker and for safety 
+monitoring. Hs-CRP concentrations were quantified in serum 
+using a high-sensitivity immunoturbidimetric assay and re-
+ported in milligrams per liter.
+• Clinical outcomes (exploratory): due to small sample sizes, 
+pilot studies cannot adequately provide evidence of safety, 
+tolerability, or effect sizes. Here, we present preliminary 
+analyses focused on the primary endpoints planned for a 
+future, fully powered trial: pain intensity and interference, 
+and physical function. 
+Average pain intensity (past week) was assessed using a 
+single item from the Graded Chronic Pain Scale–Revised (0–10 
+scale), which includes the 3-item Pain, Enjoyment of Life, and 
+General Activity (PEG) scale used as a summary measure of 
+pain intensity and interference [36]. The Western Ontario and 
+McMaster Universities OA Index (WOMAC) was used to mea-
+sure joint pain, stiffness, and physical function; all scores were 
+normalized to a 0–100 scale [37]. The overall perceived treat-
+ment response was assessed using the Patient Global Impres-
+sion of Change (PGIC) [38], dichotomized as “improved” 
+compared with “not improved.” Pain distribution was quanti-
+fied as the total number of painful body sites using the Michigan 
+Body Map (range: 0–32) [39]. Neuropathic pain symptoms 
+were assessed with the painDETECT [40]. Self-reported phys-
+ical function was assessed with the Pepper Assessment Tool for 
+Disability, which evaluates mobility, transferring, upper ex-
+tremity function, activities of daily living, and instrumental 
+activities of daily living [41,42]. Performance-based physical 
+function was assessed using the short physical performance 
+battery (SPPB), which includes tests of balance, gait speed, and 
+chair stands, with a total score ranging from 0 to 12 [43,44]. 
+Handgrip strength was measured using a handheld dyna-
+mometer as the highest value derived from the mean of 2 trials 
+performed on each hand [45]. Functional capacity and endur-
+ance were assessed using the 6-min walk test [46].
+• Additional measures: sociodemographic characteristics (age, 
+sex, race and ethnicity, as well as education) were self-
+reported. Height and weight were measured using stan-
+dardized procedures and used to calculate the BMI (in kg/ 
+m 2 ). Dietary intake was assessed using the Diet History 
+Questionnaire III to measure total energy intake, overall diet 
+quality using the Healthy Eating Index (HEI), and dietary fat 
+quality via the HEI fatty acids component. HEI scores range 
+from 0 to 100, with higher scores indicating greater adher-
+ence to the Dietary Guidelines for Americans.
+Sample size
+This pilot study was designed to guide the design and 
+implementation of large-scale trials. We planned to enroll 40 
+older adults within a 12-mo period. Randomization was strati-
+fied by sex to ensure balanced representation across treatment 
+arms (10 males and 10 females per arm). Allowing an antici-
+pated attrition rate of ~20%, we expected ~32 participants 
+(~16 per group) to complete the intervention. This sample size 
+is appropriate for assessing feasibility outcomes and is consis-
+tent with methodological recommendations for pilot random-
+ized trials, particularly when anticipated effects are small to 
+moderate [47].
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+3
+
+Statistical analysis
+Analyses of feasibility outcomes were descriptive in nature 
+and summarized using proportions and means with SDs. 
+Changes in biomarkers and clinical outcomes were evaluated 
+using mixed-effects models with fixed effects for treatment 
+group, time (modeled as a categorical variable), and the group-
+by-time interaction, a random intercept for each participant, 
+and an independent covariance structure. All models were 
+adjusted for age, sex, and BMI. For continuous outcomes, 
+treatment effects are reported as adjusted between-group dif-
+ferences in change from baseline (ΔKO − ΔP) with 95% confi-
+dence intervals (CIs). Hs-CRP was log-transformed prior to 
+analysis due to right-skewed distributions. Total pain sites, a 
+count outcome, were analyzed using negative binomial mixed-
+effects models and are reported as rate ratios with 95% CIs. 
+The PGIC was analyzed as a binary outcome using logistic 
+regression, with results reported as odds ratios and 95% CIs. 
+Standardized effect sizes (Cohen’s d) were also reported for 
+continuous outcomes to aid interpretation of effect 
+magnitude, calculated using the residual SD from the mixed-
+effects models. Effect sizes were interpreted using conven-
+tional thresholds, with values of ~0.2, ~0.5, and ~0.8 repre-
+senting small, medium, and large effects, respectively. Model 
+assumptions were evaluated through standard diagnostic pro-
+cedures, including inspection of residual distributions and 
+assessment of homoscedasticity. All analyses followed the 
+intention-to-treat principle. Statistical analyses were conducted 
+using SAS version 9.4 (SAS Institute).
+Results
+A participant flowchart is presented in Figure 1. Recruitment 
+began in January 2025 and continued through September 2025. 
+During this period, 334 individuals were phone-screened for 
+initial eligibility. Of these, 63 participants (18.9%) met pre-
+liminary criteria and were invited to complete an in-person
+screening visit. A total of 23 individuals were excluded during 
+screening. The most common reasons for exclusion were SPPB 
+scores outside the eligible range (>10, n = 11; <4, n = 1) and a 
+history of clinically significant conditions (n = 6). One indi-
+vidual declined participation during the informed consent 
+process.
+A total of 40 participants were subsequently randomly 
+assigned to receive either krill oil (n = 20) or placebo (n = 20) in 
+a sex-stratified manner (10 males and 10 females per group). All 
+randomly assigned participants received their allocated inter-
+vention and were included in the intention-to-treat analyses.
+Participant characteristics
+Baseline characteristics were generally similar between 
+groups (Table 1). Participants had a mean age of 70.1 y (SD = 
+5.7), were predominantly non-Hispanic White (72.5%), and had 
+a mean BMI of 30.8 (SD = 6.7). The proportion of non-Hispanic 
+White participants was slightly higher in the placebo group. Diet 
+quality was similar between groups, although mean total energy 
+intake was higher in the placebo group.
+Participants reported a high pain burden, with a mean of 7.8 
+(SD = 4.2) pain sites per participant (range: 2–21). The most 
+common pain sites were the lower back (75.0%), hips (65.0%), 
+and knees (62.5%). The lower back was also the most frequently 
+reported worst pain site (30.0%) and second-worst pain site 
+(12.5%), experienced for durations of 10 (IQR: 3, 16) and 5 (3, 
+25) y, respectively. Participants also reported moderate to high 
+pain intensity and interference, with a mean PEG score of 5.5 
+(SD = 2.3) and a WOMAC score of 40.1 (SD = 13.5). Nearly half 
+(47.5%) of participants were classified as having possible or 
+likely neuropathic pain, with a mean PainDETECT score of 12.7 
+(SD = 6.8).
+Performance-based physical function tests showed moderate 
+impairments, with a mean SPPB score of 8.5 (SD = 1.4), 6-min 
+walk test distance of 368.0 m (SD = 85.1), and handgrip 
+strength of 28.9 kg (SD = 9.7).
+FIGURE 1. Krill Oil for Pain in Elders (KOPE) pilot participant flowchart. SPPB, Short Physical Performance Battery.
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+4
+
+Feasibility outcomes
+Recruitment took place over ~8 mo, with an average of 5 
+participants enrolled per month. Notably, enrollment 
+differed by sex. The target enrollment for females (n = 20) was 
+reached in ~5.5 mo, an enrollment rate of 3.6 females per 
+month. In contrast, males were enrolled at a rate of ~2.5 per 
+month.
+Retention throughout the study period was high, with 38 of 
+40 participants (95%) completing the intervention. All partici-
+pants who completed the intervention also completed all 
+scheduled assessments, resulting in complete outcome data 
+among completers. During the 12-wk intervention period, 2 
+participants (5.0%) in the krill oil group withdrew from the 
+study, resulting in 38 participants who completed the final 
+assessment. One participant withdrew within 5 d of intervention 
+initiation due to a migraine flare-up, and 1 participant withdrew 
+for personal reasons. No participants were discontinued during 
+the intervention, and no withdrawals were attributed to serious 
+adverse events.
+Adherence to the study supplement was high across both 
+groups. Based on self-reported capsule intake (n = 37), mean 
+adherence was 95.1% (SD = 5.8) in the krill oil group and 91.7% 
+(SD = 12.0) among controls. Using capsule counts (n = 36), 
+mean adherence was ~80.8% (SD = 9.9) in the krill oil group 
+and 77.7% (SD = 12.1) among controls. When applying the 
+prespecified adherence criterion of ≥70% daily capsule con-
+sumption, 100% of participants in the krill oil group (n = 18) 
+and 89.5% of controls (n = 17) met this threshold based on self-
+report. Similarly, 83.3% of participants in the krill oil group (n = 
+15) and 83.3% of controls (n = 15) met the ≥70% adherence 
+threshold based on capsule counts.
+The intervention’s acceptability, assessed with the Medica-
+tion Acceptability Questionnaire, was generally high at the end 
+of the study. Mean scores for convenience, taste, appearance, 
+and tolerability ranged from ~71% to ~85%, indicating good 
+overall acceptability of the study products. Perceived efficacy 
+scores were lower and more variable (mean = 46.5%, SD = 
+24.6). Participants also reported being generally satisfied with 
+the side effects, with a mean of 8.1 of 10 (SD = 2.6), and rated 
+the overall acceptability at 7.7 of 10 (SD = 2.3). No substantial 
+differences were observed between study groups (all P > 0.17).
+Adverse events
+In total, 30 participants (75%) reported ≥1 adverse event 
+during the study, with 16 (80%) in the control group and 14 
+(70%) in the krill oil group. A total of 92 adverse events were 
+recorded (controls: 58; the krill oil group: 34). No serious 
+adverse events occurred in either group. Gastrointestinal 
+symptoms were the most frequently reported adverse events, 
+including diarrhea, constipation, flatulence, abdominal pain, 
+and dyspepsia. Changes in appetite were also reported: 
+decreased appetite by 6 participants (placebo: n = 5; krill oil: n
+= 1) and increased appetite by 3 participants (all in the control 
+group). Unanticipated adverse events were more frequent in the 
+control group (11 events) than in the krill oil group (3 events). 
+Adverse events considered related to the intervention were also 
+more frequent among controls (placebo: 5; krill oil: 2), all of 
+which were gastrointestinal symptoms, including diarrhea, 
+dyspepsia, flatulence, and abdominal pain. One participant in 
+the krill oil group discontinued the intervention due to a 
+migraine flare-up; no participants in the control group withdrew 
+due to adverse events.
+TABLE 1
+Baseline characteristics of participants in the Krill Oil for Pain in Elders (KOPE) pilot trial
+Characteristic
+Krill oil (n = 20)
+Placebo (n = 20)
+Standardized difference 1
+Age, y
+69.4 ± 5.5 
+70.7 ± 5.9 
+0.23
+Sex, female
+10 (50)
+10 (50)
+0.00
+Race and ethnicity 
+Non-Hispanic White 
+13 (65.0)
+16 (80.0)
+0.49
+Non-Hispanic Black 
+1 (5.0)
+2 (10.0)
+Hispanic
+4 (20.0)
+2 (10.0)
+Asian
+2 (10.0)
+0 (0)
+Education
+High school or less 
+8 (40.0)
+3 (15.0)
+0.48
+Some college 
+2 (10.0)
+5 (25.0)
+Bachelor’s or higher 
+10 (50.0) 
+12 (60.0) 
+Diet
+Total energy intake
+(kcals/d)
+1326 ± 423 
+1652 ± 860 
+0.49
+HEI 2
+62.7 ± 10.4 
+63.8 ± 7.9 
+0.12
+HEI fatty acids (0‒10) 3 
+4.6 ± 3.2 
+4.7 ± 3.0 
+0.03
+BMI (kg/m 2 )
+29.9 ± 7.5 
+31.8 ± 5.9 
+0.28
+Physical performance 
+SPPB total score (0–12) 
+9.0 ± 1.1 
+8.1 ± 1.6 
+0.66
+6-min walk distance (m) 
+384.1 ± 63.8 
+352.0 ± 101.2 
+0.38
+Handgrip strength (kg)
+30.2 ± 8.4
+27.7 ± 10.9
+0.26
+Values are shown as mean ± SD or n (%).
+Abbreviations: HEI, Healthy Eating Index; SPPB, Short Physical Performance Battery.
+1 Standardized differences were calculated as the difference in means or proportions divided by the pooled SD. Absolute values are presented.
+2 HEI scores range from 0 to 100, with higher scores indicating greater adherence to the Dietary Guidelines for Americans.
+3 HEI fatty acids component reflects dietary fat quality and is calculated as the ratio of (PUFAs+MUFAs)/SFAs, expressed as a percentage (%) of 
+total energy. Scores range from 0 to 10 points, with 0 points for a ratio ≤1.2 and 10 points assigned for a ratio ≥2.5; intermediate values are scored 
+proportionally.
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+5
+
+Biomarkers
+The baseline ω-3 index (adjusted mean: 4.3%; 95% CI: 3.8%, 
+4.8%) was low among participants, consistent with limited di-
+etary intake of ω-3 fatty acids. Changes in the ω-3 index are 
+shown in Table 2 and Figure 2. The adjusted between-group 
+mean difference in change of 3.0% (95% CI: 1.9, 4.0), corre-
+sponding to a very large effect (Cohen’s d = 4.40). As expected, 
+the ω-3 index increased significantly only in the krill oil group, 
+with a marked increase evident by 6 wk (7.3%; 95% CI: 6.7%, 
+7.8%) and remaining stable through the final assessment (7.4%; 
+95% CI: 6.9%, 8.0%). In contrast, the placebo group showed no 
+meaningful change over time (range: 4.5–4.7%). A similar 
+pattern was seen with the ω-6:ω-3 ratio. No substantial changes 
+in hs-CRP were observed.
+Clinical pain outcomes
+Across clinical pain outcomes, changes over time favored the 
+krill oil group (Table 3). On the Graded Chronic Pain Sca-
+le–Revised average pain intensity item, the between-group dif-
+ference in change was − 1.05 points (95% CI: − 2.72, 0.62; 
+Cohen’s d = − 0.77), corresponding to greater within-group pain 
+intensity reductions in the krill oil group compared with placebo 
+(− 1.20 compared with − 0.15, respectively); shown in
+Figure 3A. For pain interference, assessed using the PEG scale, 
+the between-group difference in change was small (− 0.09; 95% 
+CI: − 2.00, 1.83; Cohen’s d = − 0.06), consistent with similar 
+within-group changes in the krill oil and placebo groups (− 0.76 
+compared with − 0.68, respectively).
+Similar patterns were observed for WOMAC outcomes. The 
+between-group difference in change was − 5.0 for pain (95% CI:
+− 18.9, 9.0; Cohen’s d = − 0.46), − 8.7 for stiffness (95% CI:
+− 25.6, 8.1; Cohen’s d = − 0.66), and − 0.9 for physical function 
+(95% CI: − 13.1, 11.2; Cohen’s d = − 0.13). For the WOMAC 
+total score, the between-group difference in change was − 2.4 
+(95% CI: − 14.0, 9.2; Cohen’s d = − 0.32). Within-group changes 
+are presented in Table 3.
+Beyond pain intensity and interference, participants 
+receiving krill oil demonstrated a greater reduction in pain 
+distribution, with a mean decrease of 3.5 total pain sites 
+compared with 0.4 sites in the placebo group (Figure 3B). This 
+corresponded to a 41% lower rate of pain sites at follow-up (rate 
+ratio: 0.59; 95% CI: 0.41, 0.84).
+Finally, consistent with these patterns, a greater proportion 
+of participants in the krill oil group reported overall improve-
+ment on the PGIC compared with placebo (66.7% compared 
+with 40.0%; adjusted odds ratio: 4.35; 95% CI: 0.97, 19.55).
+TABLE 2
+Biomarker outcomes at baseline and 12 wk, with between-group difference in change and effect size
+Outcome
+Krill Oil
+Placebo
+ΔKO − ΔP
+95% CI
+Cohen’s d 2
+t0 1
+t2 1
+t0 1
+t2 1
+ω-3 index (%) 
+4.29
+7.41
+4.49
+4.67
+2.95
+1.89, 4.00
+4.40
+ω-6:ω-3 ratio 
+9.49
+5.17
+9.23
+9.12
+− 4.22
+− 5.75, − 2.69
+− 4.19
+log(hs-CRP)
+0.79
+0.68
+0.74
+0.84
+− 0.22
+− 1.05, 0.62
+− 0.48
+Abbreviations: CI, confidence interval; hs-CRP, high-sensitivity C-reactive protein; ΔKO, within-group change from baseline in the krill oil group; 
+ΔP, within-group change from baseline in the placebo group.
+1 Values shown are model-based adjusted least-squares means at baseline and 12 wk from linear mixed-effects models, controlling for age, sex, 
+and BMI.
+2 Cohen’s d was calculated using the residual SD from the mixed-effects model (ΔΔ standardized mean difference). Cohen’s d interpreted as: 
+small (~0.2), medium (~0.5), large (~0.8).
+FIGURE 2. Change in ω-3 index over 12 wk in the KOPE pilot trial (n = 40). ω-3 Index (%EPA+DHA in erythrocytes) measured at baseline, 6 wk, 
+and 12 wk in participants randomly assigned to krill oil or placebo. Horizontal reference lines denote ω-3 index thresholds: ≤4% indicates high 
+cardiovascular and mortality risk, whereas ≥8% indicates low risk. KOPE, Krill Oil for Pain in Elders.
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+6
+
+Physical function outcomes
+No meaningful between-group differences were observed 
+across self-reported and performance-based physical function 
+measures (Table 4).
+Discussion
+This pilot randomized controlled trial shows that a 12-wk 
+protocol of 4 g/d krill oil supplementation is feasible and 
+acceptable among older adults with moderate-to-severe chronic 
+MSK pain. Although previous studies have shown promise for 
+the analgesic effects of krill oil, most have focused on middle-
+aged adults, condition- and site-specific pain (i.e., knee OA), 
+with mild-to-moderate symptom severity, and have been con-
+ducted outside the United States [25,48–52]. In contrast, we 
+targeted older adults with chronic MSK pain and pain-related 
+interference on physical function, a population with a greater 
+burden of pain, comorbidities, and risk factors, and for whom 
+non-pharmacological pain management strategies are particu-
+larly needed. Adherence exceeding the predetermined feasi-
+bility threshold, together with favorable acceptability, suggests 
+that a 4 g/d dosing strategy is acceptable and implementable in 
+this population.
+The feasibility outcomes from this pilot inform and support 
+the design of future fully powered randomized trials. Recruit-
+ment targets were met ahead of schedule, retention was high, 
+adherence exceeded the prespecified thresholds, and overall 
+acceptability of the intervention was favorable. We found that 
+females were enrolled more rapidly than males, which led us to 
+modify recruitment materials specifically for males. This sug-
+gests that diverse, targeted recruitment strategies may be 
+needed to ensure balanced sex representation in a larger trial. 
+Retention and adherence exceeded the prespecified criteria, 
+supporting the feasibility of a longer intervention period and 
+suggesting that a higher adherence threshold of ≥80% may be a 
+reasonable benchmark.
+The robust increase in the ω-3 index in the krill oil group 
+confirms biological uptake and supports its use as an objective 
+adherence biomarker. Mean ω-3 index values increased from 
+~4% at baseline to ~8% by follow-up, representing a clinically 
+meaningful change from a higher-risk to a lower-risk range [34, 
+53]. This response is consistent with dose-response predictions 
+by Walker et al. [54], which estimate that with a baseline ω-3 
+index ~4%–5%, ~1.2–1.4 g/d of EPA+DHA (as triglycerides) 
+would be required to reach an ω-3 index of 8%. Although 
+Walker’s model does not account for phospholipid-bound ω-3 
+sources such as krill oil, the model-based prediction closely
+FIGURE 3. Trajectories of pain intensity and pain distribution over 12 wk in the Krill Oil for Pain in Elders (KOPE) pilot (n = 40). Mean pain 
+intensity (panel A) and count of painful body sites (panel B) assessed at baseline, 6 wk, and 12 wk in the krill oil and placebo groups.
+TABLE 3
+Changes in clinical pain outcomes from baseline to 12 wk
+Outcomes
+Krill Oil
+Placebo
+ΔKO − ΔP
+95% CI
+Cohen’s d 2
+t0 1
+t2 1
+t0 1
+t2 1
+Pain intensity (0–10)
+5.52
+4.32
+5.19
+5.04
+− 1.05
+− 2.72, 0.62
+− 0.77
+PEG score (0–10)
+5.18
+4.42
+5.82
+5.14
+− 0.09
+− 2.00, 1.83
+− 0.06
+WOMAC pain (0–100)
+44.96
+35.18
+45.13
+40.32
+− 4.96
+− 18.87, 8.95
+− 0.46
+WOMAC stiffness (0–100) 
+48.57
+39.27
+56.30
+55.73
+− 8.73
+− 25.58, 8.12
+− 0.66
+WOMAC physical function (0–100) 
+39.00
+33.01
+40.91
+35.84
+− 0.93
+− 13.10, 11.24
+− 0.13
+WOMAC total score (0–100)
+41.04
+34.01
+43.07
+38.43
+− 2.39 
+− 13.98, 9.20
+− 0.32
+Rate ratio 
+95% CI
+Total pain sites (count)
+7.91
+4.46
+7.54
+7.19
+0.59
+0.41, 0.84
+—
+Abbreviations: CI, confidence interval; PEG, Pain, Enjoyment of Life, and General Activity; WOMAC, Western Ontario and McMaster Universities 
+Osteoarthritis Index; ΔKO, within-group change from baseline in the krill oil group; ΔP, within-group change from baseline in the placebo group.
+1 Values shown are model-based adjusted least-squares means at baseline and 12 wk from linear mixed-effects models, controlling for age, sex, 
+and BMI.
+2 Cohen’s d was calculated using the residual SD from the mixed-effects model (ΔΔ standardized mean difference). Cohen’s d interpreted as: 
+small (~0.2), medium (~0.5), large (~0.8).
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+7
+
+aligns with the 1288 mg/d provided in this trial. Additionally, 
+the model was derived from supplementation trials with a mean 
+treatment duration of 13.6 wk, which is comparable to the 
+12-wk intervention period in the present study. Interestingly, 
+the ω-3 index increased over 6 wk and stabilized thereafter, 
+despite erythrocytes having a ~120-d lifespan. It may be that 
+incorporation into erythrocyte membranes may reach a steady 
+state earlier than complete red blood cell turnover. Whether 
+longer supplementation durations would lead to further in-
+creases in the ω-3 index warrants investigation with extended 
+follow-up. On the contrary, habitual intake of fatty fish with this 
+supplementation protocol may achieve the desired ω-3 index 
+threshold of ≥8% [55].
+Although the study was not designed or powered to test ef-
+ficacy, preliminary analyses of clinical pain outcomes consis-
+tently favored krill oil supplementation across multiple pain 
+measures and domains. Participants receiving krill oil demon-
+strated larger reductions in average pain intensity, musculo-
+skeletal pain and stiffness, pain distribution, and a greater 
+likelihood of reporting overall improvement compared with 
+placebo. These trends can be expected to continue with a longer 
+supplementation period, as a meta-analysis of ω-3 supplemen-
+tation randomized controlled trials indicated that benefits are 
+noticeable within 1 mo and continue to improve by 6 mo [11]. 
+These patterns suggest the potential efficacy of krill oil for more 
+generalized, multisite, and high-impact pain phenotypes 
+commonly seen in older adults. Reductions in multisite pain may 
+be particularly relevant for older adults, as widespread pain is 
+strongly associated with mobility limitations and disability. 
+Importantly, effect size estimates are presented to aid interpre-
+tation and considerations for future trials, and should not be 
+interpreted as evidence of efficacy.
+On the contrary, krill oil supplementation did not result in 
+meaningful improvements in self-reported or performance-
+based physical function over the 12-wk intervention period. As 
+with pain interference, improvements in musculoskeletal health 
+and physical function likely require longer intervention periods 
+and sustained biological adaptation. ω-3 supplementation trials 
+have shown limited and inconsistent evidence of efficacy for 
+muscle mass, strength, and functional outcomes in older adults, 
+particularly in interventions under 6 mo duration [56–59].
+Although studies with krill oil are limited, a randomized 
+controlled trial in generally healthy older adults showed that 4 
+g/d of krill oil for 6 mo significantly increased knee extensor 
+strength, handgrip strength, and vastus lateralis muscle thick-
+ness, without improvements in SPPB performance [60,61]. In 
+addition to intervention duration, improvements in physical 
+function may be more difficult to achieve in older adults with 
+high-impact chronic MSK pain.
+Several limitations should be considered. As a pilot feasibility 
+study with a relatively small sample size and short duration, it 
+cannot inform the efficacy or safety of the intervention. The 
+participants were recruited from a single academic center and 
+surrounding areas and were mostly non-Hispanic White, which 
+may limit generalizability to broader, more diverse populations. 
+On the contrary, the participants in this study exhibit diet pat-
+terns and baseline ω-3 index levels that align with those in the 
+general older population. Baseline dietary data confirmed low 
+consumption of oily fish, with no participant reporting >1 
+serving per week (data not shown). Although adherence was 
+high, as confirmed by self-report, capsule counts, and ω-3 index 
+levels, long-term adherence may differ.
+In conclusion, this pilot trial demonstrates that krill oil 
+supplementation at 4 g/d is feasible and acceptable among 
+older adults with chronic MSK pain. The feasibility and 
+adherence data, together with consistent preliminary signals 
+across pain outcomes, support and inform the design of a 
+larger, fully powered randomized controlled trial. Given the 
+burden of chronic pain in aging populations and the limitations 
+of current pharmacologic pain management in older adults, 
+krill oil may represent a promising, generally low risk, first-line 
+or adjunctive non-pharmacological strategy to support pain 
+management in aging. The findings support the practicality of 
+implementing a krill oil nutritional intervention in this high-
+risk population.
+Acknowledgments
+We thank the study participants for making this research 
+possible, as well as Laurel Deaton, Caroline Casper, Alexis 
+Graves, and Matei Chiciu, student assistants at the University of 
+Florida, for their contributions to the study.
+TABLE 4
+Changes in physical function outcomes from baseline to 12 wk
+Outcomes
+Krill Oil
+Placebo
+ΔKO − ΔP
+95% CI
+Cohen’s d 2
+t0 1
+t2 1
+t0 1
+t2 1
+PAT-D total (0− 76) 
+47.27
+42.89
+49.48
+47.63
+− 2.53
+− 14.60, 9.55
+− 0.30
+Mobility (0− 28)
+16.85
+15.44
+17.19
+16.39
+− 0.61
+− 5.31, 4.10
+− 0.18
+Basic ADLs (0− 20) 
+14.51
+13.10
+15.48
+14.96
+− 0.89
+− 5.21, 3.43
+− 0.27
+Instrumental ADLs (0− 28) 
+9.24
+8.41
+9.37
+9.45
+− 0.92
+− 4.40, 2.57
+− 0.35
+SPPB (0–12)
+8.96
+9.64
+8.10
+8.85
+− 0.072
+− 1.33, 1.19
+− 0.08
+6-min walk distance (m) 
+375.1
+362.9
+358.5
+353.9
+− 7.61
+− 76.5, 61.3
+− 0.24
+Handgrip strength (kg)
+30.82
+32.20
+29.22
+30.76
+− 0.18
+− 6.93, 6.58
+− 0.06
+Abbreviations: ADL, activities of daily living; CI, confidence interval; PAT-D, Pepper Assessment Tool for Disability; SPPB, Short Physical Per-
+formance Battery; ΔKO, within-group change from baseline in the krill oil group; ΔP, within-group change from baseline in the placebo group.
+1 Values shown are model-based adjusted least-squares means at baseline and 12 wk from linear mixed-effects models, controlling for age, sex, 
+and BMI.
+2 Cohen’s d was calculated using the residual SD from the mixed-effects model (ΔΔ standardized mean difference). Cohen’s d interpreted as: 
+small (~0.2), medium (~0.5), large (~0.8).
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+8
+
+Author contributions
+The authors’ responsibilities were as follows – JAT, SDA, YC-
+A: designed the research; JAT, EC, KS: conducted the research; 
+JAT, YC-A: performed statistical analyses; JAT, EC: wrote the 
+first draft of the paper; KS, RP, SDA, YC-A: provided critical 
+review; JAT: had primary responsibility for final content; and all 
+authors: read and approved the final manuscript.
+Declaration of AI and AI-assisted technologies in the 
+writing process
+During the preparation of this work, the authors used 
+ChatGPT (OpenAI) in order to assist with editing, clarity, and 
+formatting of the manuscript text. After using this tool, the au-
+thors reviewed and edited the content as needed and take full 
+responsibility for the content of the publication.
+Conflict of interest
+The authors report no conflicts of interest.
+Funding
+Research reported in this publication was supported by the 
+National Institute on Aging (NIA) of the NIH through the Claude
+D. Pepper Older Americans Independence Center at the Uni-
+versity of Florida (award number P30AG028740). Investigator 
+support was also provided by the NIA (T32AG049673, 
+L32AG096730, and R01AG076082), the National Institute of 
+Arthritis 
+and 
+Musculoskeletal 
+and 
+Skin 
+Diseases 
+(UC2AR082196), and the National Institute of Dental and 
+Craniofacial Research (U54DE035413). REDCap (Research 
+Electronic Data Capture) is supported by the National Center for 
+Advancing Translational Sciences of the NIH (award number 
+UL1TR002243). The content is solely the responsibility of the 
+authors and does not necessarily represent the official views of 
+the NIH. Superba Boost krill oil and mixed vegetable oil placebo 
+were manufactured and supplied at no cost by Aker BioMarine 
+Antarctic US LLC. The sponsor had no role in the design, 
+conduct, analysis, interpretation, or reporting of the study.
+Data availability
+Data described in the manuscript, code book, and analytic 
+code will be made available upon request, pending application 
+and approval.
+Appendix A. Supplementary data
+Supplementary data to this article can be found online at 
+https://doi.org/10.1016/j.tjnut.2026.101517.
+References
+[1] S.N. El-Tallawy, R. Nalamasu, G.I. Salem, J.A. LeQuang, J.V. Pergolizzi,
+P.J. Christo, Management of musculoskeletal pain: an update with 
+emphasis on chronic musculoskeletal pain, Pain Ther 10 (1) (2021) 
+181–209, https://doi.org/10.1007/s40122-021-00235-2.
+[2] GBD 2021 Diseases and Injuries Collaborators, Global incidence,
+prevalence, years lived with disability (YLDs), disability-adjusted life-
+years (DALYs), and healthy life expectancy (HALE) for 371 diseases and 
+injuries in 204 countries and territories and 811 subnational locations, 
+1990-2021: a systematic analysis for the Global Burden of Disease 
+Study 2021, Lancet 403 (10440) (2024) 2133–2161, https://doi.org/ 
+10.1016/S0140-6736(24)00757-8.
+[3] A. Nawai, Chronic pain management among older adults: A scoping 
+review, Sage Open Nurs 5 (2019) 2377960819874259, https://doi.org/ 
+10.1177/2377960819874259.
+[4] G. Pickering, A. Kotli 
+nska-Lemieszek, N. Krcevski Skvarc,
+D. O’Mahony, F. Monacelli, R. Knaggs, et al., Pharmacological pain 
+treatment in older persons, Drugs Aging 41 (12) (2024) 959–976, 
+https://doi.org/10.1007/s40266-024-01151-8.
+[5] S. Pask, M. Dell’Olio, F.E. Murtagh, J.W. Boland, The effects of opioids 
+on cognition in older adults with cancer and chronic noncancer pain: A 
+systematic review, J. Pain Symptom Manage. 59 (4) (2020) 871–893. 
+e1, https://doi.org/10.1016/j.jpainsymman.2019.10.022.
+[6] A. Zajacova, H. Grol-Prokopczyk, Z. Zimmer, Pain trends among 
+American adults, 2002-2018: patterns, disparities, and correlates, 
+Demography 58 (2) (2021) 711–738, https://doi.org/10.1215/ 
+00703370-8977691.
+[7] C.K. Richter, K.J. Bowen, D. Mozaffarian, P.M. Kris-Etherton, A.
+C. Skulas-Ray, Total Long-Chain n-3 fatty acid intake and food sources 
+in the United States compared to recommended intakes: NHANES 
+2003-2008, Lipids 52 (11) (2017) 917–927, https://doi.org/10.1007/ 
+s11745-017-4297-3.
+[8] C. Cave, N. Hein, L.M. Smith, A. Anderson-Berry, C.K. Richter, K.
+S. Bisselou, et al., Omega-3 long-chain polyunsaturated fatty acids 
+intake by ethnicity, income, and education level in the United States: 
+NHANES 2003-2014, Nutrients 12 (7) (2020) 2045, https://doi.org/ 
+10.3390/nu12072045.
+[9] R.A. Murphy, P.P. Devarshi, S. Ekimura, K. Marshall, S. Hazels 
+Mitmesser, Long-chain omega-3 fatty acid serum concentrations across 
+life stages in the USA: an analysis of NHANES 2011-2012, BMJ Open 11 
+(5) (2021) e043301, https://doi.org/10.1136/bmjopen-2020-043301.
+[10] M. Banaszak, M. Dobrzy 
+nska, A. Kawka, I. G 
+orna, D. Wozniak,
+J. Przysławski, et al., Role of omega-3 fatty acids eicosapentaenoic 
+(EPA) and docosahexaenoic (DHA) as modulatory and anti-
+inflammatory agents in noncommunicable diet-related diseases – 
+reports from the last 10 years, Clin. Nutr. ESPEN. 63 (2024) 240–258, 
+https://doi.org/10.1016/j.clnesp.2024.06.053.
+[11] L. Xie, X. Wang, J. Chu, X. He, J. Bao, Y. Xi, et al., Effects of omega-3 
+fatty acids on chronic pain: a systematic review and meta-analysis, 
+Front Med. (Lausanne). 12 (2025) 1654661, https://doi.org/10.3389/ 
+fmed.2025.1654661.
+[12] M. Shawl, T. Geetha, D. Burnett, J.R. Babu, Omega-3 supplementation 
+and its effects on osteoarthritis, Nutrients 16 (11) (2024) 1650, https:// 
+doi.org/10.3390/nu16111650.
+[13] D.M. Cordingley, S.M. Cornish, Omega-3 fatty acids for the 
+management of osteoarthritis: A narrative review, Nutrients 14 (16) 
+(2022) 3362, https://doi.org/10.3390/nu14163362.
+[14] M. Abdulrazaq, J.K. Innes, P.C. Calder, Effect of omega-3 
+polyunsaturated fatty acids on arthritic pain: a systematic review, 
+Nutrition 39‒40 (2017) 57–66, https://doi.org/10.1016/j. 
+nut.2016.12.003.
+[15] R.J. Goldberg, J. Katz, A meta-analysis of the analgesic effects of 
+omega-3 polyunsaturated fatty acid supplementation for inflammatory 
+joint pain, Pain 129 (1‒2) (2007) 210–223, https://doi.org/10.1016/j. 
+pain.2007.01.020.
+[16] T.P. Pham, T.V. Hoang, P.T. Cao, T.T. Le, V.T. Ho, T.M. Vu, et al., 
+Comparison of Omega-3 polyunsaturated fatty acids bioavailability in 
+fish oil and krill oil: Network Meta-Analyses, Food Chem 24 (2024) 
+101880, https://doi.org/10.1016/j.fochx.2024.101880. X.
+[17] A. Colletti, G. Cravotto, V. Citi, A. Martelli, L. Testai, A.F. Cicero, 
+Advances in technologies for highly active omega-3 fatty acids from 
+krill oil: clinical applications, Mar. Drugs. 19 (6) (2021) 306, https:// 
+doi.org/10.3390/md19060306.
+[18] J.Y. Lee, J.B. Hong, B.K. Kim, S.B. Shim, H.W. Jang, J.B. Lee, Analysis 
+of fatty acid compositions and acid values of krill oil supplementary 
+products from the Korean market, J. Microbiol. Biotechnol. 34 (10) 
+(2024) 1988–1994, https://doi.org/10.4014/jmb.2406.06026.
+[19] V. Sorrenti, S. Davinelli, G. Scapagnini, B.J. Willcox, R.C. Allsopp, D.
+C. Willcox, Astaxanthin as a putative Geroprotector: molecular basis 
+and focus on brain aging, Mar. Drugs. 18 (7) (2020) 351, https://doi. 
+org/10.3390/md18070351.
+[20] L. Zhao, X. Tao, C. Wan, D. Dong, C. Wang, Q. Xi, et al., Astaxanthin 
+alleviates inflammatory pain by regulating the p38 mitogen-activated 
+protein kinase and nuclear factor-erythroid factor 2-related factor/ 
+heme oxygenase-1 pathways in mice, Food Funct 12 (24) (2021) 
+12381–12394, https://doi.org/10.1039/d1fo02326h.
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+9
+
+[21] P.V. Naser, R. Kuner, Molecular, cellular and circuit basis of cholinergic 
+modulation of pain, Neuroscience 387 (2018) 135–148, https://doi. 
+org/10.1016/j.neuroscience.2017.08.049.
+[22] A. Moretti, M. Paoletta, S. Liguori, M. Bertone, G. Toro, G. Iolascon, 
+Choline: an essential nutrient for skeletal muscle, Nutrients 12 (7) 
+(2020) 2144, https://doi.org/10.3390/nu12072144.
+[23] S.H. Zeisel, K.A. da Costa, Choline: an essential nutrient for public 
+health, Nutr. Rev. 67 (11) (2009) 615–623, https://doi.org/10.1111/ 
+j.1753-4887.2009.00246.x.
+[24] T.C. Wallace, V.L. Fulgoni 3rd., Assessment of total choline intakes in 
+the United States, J. Am. Coll. Nutr. 35 (2) (2016) 108–112, https:// 
+doi.org/10.1080/07315724.2015.1080127.
+[25] J. Meng, X. Wang, Y. Li, Y. Xiang, Y. Wu, Y. Xiong, et al., Krill oil for 
+knee osteoarthritis: A meta-analysis of randomized controlled trials, 
+Med. (Baltim.) 104 (7) (2025) e41566, https://doi.org/10.1097/ 
+MD.0000000000041566.
+[26] S.M. Eldridge, C.L. Chan, M.J. Campbell, C.M. Bond, S. Hopewell,
+L. Thabane, et al., CONSORT 2010 statement: extension to randomised 
+pilot and feasibility trials, Pilot Feasibility Stud 2 (2016) 64, https:// 
+doi.org/10.1186/s40814-016-0105-8.
+[27] D.J. Langford, R. Baron, R.R. Edwards, J.S. Gewandter, I. Gilron,
+R. Griffin, et al., What should be the entry pain intensity criteria for 
+chronic pain clinical trials? An IMMPACT update, Pain 164 (9) (2023) 
+1927–1930, https://doi.org/10.1097/j.pain.0000000000002930.
+[28] U.S. Department of Agriculture, Agricultural Research Service, Energy 
+Intakes: Percentages of Energy from Protein, Carbohydrate, Fat, and 
+Alcohol, by Male/Female and Age, What We Eat in America, NHANES 
+2017-March 2020 Prepandemic, Accessed December 11, 2025, 2022., 
+https://www.ars.usda.gov/ARSUserFiles/80400530/pdf/1720/Table_ 
+5_EIN_MaleFemale_1720.pdf.
+[29] U.S. Department of Agriculture, Agricultural Research Service, Usual 
+Nutrient Intake from Food and Beverages, by Gender and Age, What 
+We Eat in America, NHANES 2017-March 2020 Prepandemic. Accessed 
+December 11, 2025. https://www.ars.usda.gov/ARSUserFiles/ 
+80400530/pdf/usual/Usual_Intake_gender_WWEIA_2017_March% 
+202020.pdf.
+[30] P.A. Harris, R. Taylor, B.L. Minor, V. Elliott, M. Fernandez, L. O’Neal, 
+et al., The REDCap consortium: building an international community of 
+software platform partners, J. Biomed. Inform. 95 (2019) 103208, 
+https://doi.org/10.1016/j.jbi.2019.103208.
+[31] P.A. Harris, R. Taylor, R. Thielke, J. Payne, N. Gonzalez, J.G. Conde, 
+Research Electronic Data Capture (REDCap) – a metadata-driven 
+methodology and workflow process for providing translational 
+research informatics support, J. Biomed. Inform. 42 (2) (2009) 
+377–381, https://doi.org/10.1016/j.jbi.2008.08.010.
+[32] S Scott, A. Clark, H. May, D. Bhattacharya, Validation and feasibility 
+of the medication acceptability questionnaire to investigate tablet 
+and liquid alendronic acid with older hospital patients, Pharmacy 
+(Basel) 6 (3) (2018) 84, https://doi.org/10.3390/ 
+pharmacy6030084.
+[33] W.S. Harris, J. Polreis, Measurement of the omega-3 index in dried 
+blood spots, Ann. Clin. Lab. Res. 4 (4) (2016) 137, https://doi.org/ 
+10.21767/2386-5180.1000137.
+[34] W.S. Harris, C. von Schacky, The Omega-3 Index: a new risk factor for 
+death from coronary heart disease? Prev. Med. 39 (1) (2004) 212–220, 
+https://doi.org/10.1016/j.ypmed.2004.02.030.
+[35] W.S. Harris, The Omega-6:Omega-3 ratio: A critical appraisal and 
+possible successor, Prostaglandins Leukot. Essent. Fatty Acids 132 
+(2018) 34–40, https://doi.org/10.1016/j.plefa.2018.03.003.
+[36] M. Von Korff, L.L. DeBar, E.E. Krebs, R.D. Kerns, R.A. Deyo, F.J. Keefe, 
+Graded chronic pain scale revised: mild, bothersome, and high-impact 
+chronic pain, Pain 161 (3) (2020) 651–661, https://doi.org/10.1097/j. 
+pain.0000000000001758.
+[37] S. McConnell, P. Kolopack, A.M. Davis, The Western Ontario and 
+McMaster Universities osteoarthritis Index (WOMAC): a review of its 
+utility and measurement properties, Arthritis Rheum 45 (5) (2001) 
+453–461, https://doi.org/10.1002/1529-0131(200110)45:5<453:: 
+aid-art365>3.0.co;2-w.
+[38] J.T. Farrar, J.P. Young Jr., L. LaMoreaux, J.L. Werth, M.R. Poole, 
+Clinical importance of changes in chronic pain intensity measured on 
+an 11-point numerical pain rating scale, Pain 94 (2) (2001) 149–158, 
+https://doi.org/10.1016/S0304-3959(01)00349-9.
+[39] C.M. Brummett, R.R. Bakshi, J. Goesling, D. Leung, S.E. Moser, J.
+W. Zollars, et al., Preliminary validation of the Michigan Body Map, 
+Pain 157 (6) (2016) 1205–1212, https://doi.org/10.1097/j. 
+pain.0000000000000506.
+[40] R. Freynhagen, R. Baron, U. Gockel, T.R. T€ 
+olle, painDETECT: a new 
+screening questionnaire to identify neuropathic components in patients 
+with back pain, Curr Med Res Opin 22 (10) (2006) 1911–1920, https:// 
+doi.org/10.1185/030079906X132488.
+[41] W.J. Rejeski, W.H. Ettinger, S. Schumaker, P. James, R. Burns, J.
+T. Elam, Assessing performance-related disability in patients with knee 
+osteoarthritis, Osteoarthr. Cartil. 3 (3) (1995) 157–167, https://doi. 
+org/10.1016/S1063-4584(05)80050-0.
+[42] W.J. Rejeski, E.H. Ip, A.P. Marsh, M.E. Miller, D.F. Farmer, Measuring 
+disability in older adults: the International Classification System of 
+Functioning, Disability and Health (ICF) framework, Geriatr. Gerontol. 
+Int. 8 (1) (2008) 48–54, https://doi.org/10.1111/j.1447-
+0594.2008.00446.x.
+[43] D. Treacy, L. Hassett, The short physical performance battery,
+J Physiother 64 (1) (2018) 61, https://doi.org/10.1016/j. 
+jphys.2017.04.002.
+[44] C. de Fatima Ribeiro Silva, D.G. Ohara, A.P. Matos, A.C. Pinto, M.
+A. Pegorari, Short physical performance battery as a measure of 
+physical performance and mortality predictor in older adults: A 
+comprehensive literature review, Int. J. Environ. Res. Public Health. 18 
+(20) (2021) 10612, https://doi.org/10.3390/ijerph182010612.
+[45] A.A. Sayer, T.B. Kirkwood, Grip strength and mortality: a biomarker of 
+ageing? Lancet 386 (9990) (2015) 226–227, https://doi.org/10.1016/ 
+S0140-6736(14)62349-7.
+[46] N.D. Harada, V. Chiu, A.L. Stewart, Mobility-related function in older 
+adults: assessment with a 6-minute walk test, Arch. Phys. Med. Rehabil. 
+80 (7) (1999) 837–841, https://doi.org/10.1016/S0003-9993(99) 
+90236-8.
+[47] A.L. Whitehead, S.A. Julious, C.L. Cooper, M.J. Campbell, Estimating 
+the sample size for a pilot randomised trial to minimise the overall trial 
+sample size for the external pilot and main trial for a continuous 
+outcome variable, Stat. Methods Med. Res. 25 (3) (2016) 1057–1073, 
+https://doi.org/10.1177/0962280215588241.
+[48] L.L. Laslett, L.E. Scheepers, B. Antony, A.E. Wluka, G. Cai, C.L. Hill, et 
+al., Krill oil for knee osteoarthritis: A randomized clinical trial, JAMA 
+331 (23) (2024) 1997–2006, https://doi.org/10.1001/ 
+jama.2024.6063.
+[49] W. Stonehouse, B. Benassi-Evans, J. Bednarz, A.D. Vincent, S. Hall, C.
+L. Hill, Krill oil improved osteoarthritic knee pain in adults with mild to 
+moderate knee osteoarthritis: a 6-month multicenter, randomized, 
+double-blind, placebo-controlled trial, Am. J. Clin. Nutr. 116 (3) 
+(2022) 672–685, https://doi.org/10.1093/ajcn/nqac125.
+[50] L. Deutsch, Evaluation of the effect of Neptune Krill Oil on chronic 
+inflammation and arthritic symptoms, J. Am. Coll. Nutr. 26 (1) (2007) 
+39–48, https://doi.org/10.1080/07315724.2007.10719584.
+[51] Y. Suzuki, M. Fukushima, K. Sakuraba, K. Sawaki, K. Sekigawa, Krill oil 
+improves mild knee joint pain: A randomized control trial, PLOS One 
+11 (10) (2016) e0162769, https://doi.org/10.1371/journal. 
+pone.0162769.
+[52] H. Watanabe, Y. Matahira, N. Suzuki, T. Takara, Effects of ingestion of 
+Krill oil on quality of life related to mild knee pain: a randomized 
+double-blind placebo-controlled trial, Jpn. Pharmacol. Ther. 45 (2017) 
+999–1026.
+[53] W.S. Harris, N.L. Tintle, F. Imamura, F. Qian, A.V. Korat, M. Marklund, 
+et al., Blood n-3 fatty acid levels and total and cause-specific mortality 
+from 17 prospective studies, Nat Commun 12 (1) (2021) 2329, https:// 
+doi.org/10.1038/s41467-021-22370-2.
+[54] R.E. Walker, K.H. Jackson, N.L. Tintle, G.C. Shearer, A. Bernasconi,
+S. Masson, et al., Predicting the effects of supplemental EPA and DHA 
+on the omega-3 index, Am. J. Clin. Nutr. 110 (4) (2019) 1034–1040, 
+https://doi.org/10.1093/ajcn/nqz161.
+[55] S.L. McDonnell, C.B. French, C.A. Baggerly, W.S. Harris, Cross-
+sectional study of the combined associations of dietary and 
+supplemental eicosapentaenoic acid + docosahexaenoic acid on 
+Omega-3 Index, Nutr. Res. 71 (2019) 43–55, https://doi.org/10.1016/ 
+j.nutres.2019.09.001.
+[56] M. Timraz, A. Binmahfoz, T.J. Quinn, E. Combet, S.R. Gray, The effect 
+of long Chain n-3 fatty acid supplementation on muscle strength in
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+10
+
+older adults: a systematic review and meta-analysis, Nutrients 15 (16)
+(2023) 3579, https://doi.org/10.3390/nu15163579.
+[57] D.L. Dam, J.A. Christensen, P.Ø. Olsen, J.J. Wilson, M.A. Tully, S. 
+F. Buhl, et al., Impact of omega-3 fatty acids supplementation 
+combined with resistance training on muscle mass, neuromuscular and 
+physical function in older adults: a systematic review and meta-
+analysis of randomized clinical trials, JAL 5 (1) (2025) 4, https://doi. 
+org/10.3390/jal5010004.
+[58] D. Azzolino, C. Bertoni, V. De Cosmi, G.C. Spolidoro, C. Agostoni,
+T. Lucchi, et al., Omega-3 polyunsatured fatty acids and physical 
+performance across the lifespan: a narrative review, Front Nutr 11
+(2024) 1414132, https://doi.org/10.3389/fnut.2024.1414132.
+[59] Y.H. Huang, W.C. Chiu, Y.P. Hsu, Y.L. Lo, Y.H. Wang, Effects of omega-
+3 fatty acids on muscle mass, muscle strength and muscle performance
+among the elderly: A meta-analysis, Nutrients 12 (12) (2020) 3739, 
+https://doi.org/10.3390/nu12123739.
+[60] S.A. Alkhedhairi, F.F. Aba Alkhayl, A.D. Ismail, A. Rozendaal,
+M. German, B. MacLean, et al., The effect of krill oil supplementation 
+on skeletal muscle function and size in older adults: a randomised 
+controlled trial, Clin. Nutr. 41 (6) (2022) 1228–1235, https://doi.org/ 
+10.1016/j.clnu.2022.04.007.
+[61] O. Hayman, S.A. Alkhedhairi, E. Combet, T.J. Quinn, A.M. Hunter,
+S. Goodall, et al., Do the effects of krill oil supplementation on skeletal 
+muscle function and size in older adults differ by sex, age or BMI: a 
+secondary analysis of a randomised controlled trial, J. Nutr. Health 
+Aging 30 (1) (2026) 100747, https://doi.org/10.1016/j. 
+jnha.2025.100747.
+J.A. Tamargo et al.
+The Journal of Nutrition 156 (2026) 101517
+11

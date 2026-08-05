@@ -1,0 +1,1310 @@
+Research Article
+The Effects of Krill Oil on mTOR Signaling and
+Resistance Exercise: A Pilot Study
+John Georges,1 Matthew H. Sharp,1 Ryan P. Lowery,1 Jacob M. Wilson,1
+Martin Purpura,2 Troy A. Hornberger,3 Flint Harding,4 James H. Johnson,4
+David M. Peele,4 and Ralf J¨ager
+2
+1Applied Science and Performance Institute, 5850 W. Cypress St., Tampa, FL 33607, USA
+2Increnovo LLC, 2138 E. Lafayette Pl, Milwaukee, WI 53202, USA
+3Department of Comparative Biosciences, University of Wisconsin-Madison, Madison, WI 53706, USA
+4Avoca Inc., 841 Avoca Farm Rd., Merry Hill, NC 27957, USA
+Correspondence should be addressed to Ralf J¨ager; ralf.jaeger@increnovo.com
+Received 5 December 2017; Revised 2 March 2018; Accepted 27 March 2018; Published 26 April 2018
+Academic Editor: H. K. Biesalski
+Copyright © 2018 John Georges et al. Tis is an open access article distributed under the Creative Commons Attribution License,
+which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.
+Introduction. Krill oil supplementation has been shown to improve postexercise immune function; however, its eﬀect on muscle
+hypertrophy is currently unknown. Terefore, the aim of present study was to investigate the ability of krill oil to stimulate mTOR
+signaling and its ability to augment resistance training-induced changes in body composition and performance. Methods. C2C12
+myoblasts cells were stimulated with krill oil or soy-derived phosphatidylcholine (S-PC), and then, the ratio of P-p70-389 to total
+p70 was used as readout for mTOR signaling. In double-blind, placebo-controlled study, resistance trained subjects consumed
+either 3 g krill oil daily or placebo, and each took part in an 8-week periodized resistance training program. Body composition,
+maximal strength, peak power, and rate of perceived recovery were assessed collectively at the end of weeks 0 and 8. In addition,
+safety parameters (comprehensive metabolic panel (CMP), complete blood count (CBC), and urine analysis (UA)) and cognitive
+performance were measured pre- and posttesting. Results. Krill oil signiﬁcantly stimulated mTOR signaling in comparison to S-PC
+and control. No diﬀerences for markers on the CMP, CBC, or UA were observed. Krill oil signiﬁcantly increased lean body mass
+from baseline (p  0.021, 1.4 kg, +2.1%); however, there were no statistically signiﬁcant diﬀerences between groups for any
+measures taken. Conclusion. Krill oil activates mTOR signaling. Krill oil supplementation in athletes is safe, and its eﬀect on
+resistance exercise deserves further research.
+1. Introduction
+Athletes use nutrition strategies to improve their training
+and performance through increasing their metabolic ca-
+pacity, delaying the onset of fatigue, and improving muscle
+hypertrophy by enhancing recovery, improving immune
+function, and decreasing oxidative stress. Krill oil is rich in
+long-chain omega-3 polyunsaturated fatty acids (PUFAs),
+eicosapentaenoic acid (EPA), and docosahexaenoic acid
+(DHA), which have been found to have positive eﬀects on
+inﬂammation [1]. In krill oil, omega-3 PUFAs are bound
+to phospholipids (PL), whereas in ﬁsh oil, the majority of
+omega-3 PUFAs are bound to triacylglycerol (TG) [2].
+Greater bioavailability of omega-3 PUFA from krill oil in
+comparison to ﬁsh oil has been suggested based on lower
+doses of krill oil needed to result in a similar bloodstream
+level of EPA and/or DHA; however, more carefully con-
+trolled human trials are needed to establish their relative
+eﬃcacies after chronic administration [3]. Contrasting re-
+sults have been found on the eﬀects of ﬁsh oil supple-
+mentation on muscle damage and postexercise soreness in
+healthy men and women. While most of studies at ranges
+from 2.4 to 6 g/d for 1 to 8 weeks have shown beneﬁcial
+eﬀects [4–8], two studies showed no eﬀect [9, 10], potentially
+due to diﬀerent types of exercise used to induce muscle
+damage or diﬀerences in the dose and duration of omega-3
+
+PUFA supplementation among studies. A combination of
+EPA and DHA was found to increase the rates of muscle
+protein synthesis via an increase in activation of the mTOR-
+p70s6k signaling pathway in young- and middle-aged men
+and women [11]. Fish oil supplementation in combination
+with [12] or without [13] resistance exercise resulted in
+increased strength and functional ability in older adults.
+However, potential long-term beneﬁts of omega-3 PUFA
+supplementation on muscle hypertrophy and performance
+in young healthy subjects undergoing a controlled resistance
+training program are currently unknown.
+Krill oil contains astaxanthin, a red carotenoid pigment
+and strong antioxidant that naturally occurs in salmon,
+shrimp, krill, crustaceans, or certain types of algae, giving
+krill its reddish color. Astaxanthin administration has
+been shown to reduce muscle damage [14, 15], to increase
+time trial performance and power output in competitive
+cyclists [16], and to increase strength/endurance (number
+of squats) [17]. However, astaxanthin failed to improve
+muscle soreness and muscle damage in resistance trained
+men following an acute bout of eccentric exercise (coad-
+ministered with lutein) [18]. Discrepancies in astaxanthin’s
+ability to attenuate exercise-induced muscle injury might
+be due to the type of exercise stress (resistance or endurance
+exercise) or the dosage and timing of the administration.
+Krill oil contains approximately 0.5 mg of astaxanthin per
+3 g of krill oil, which is below the currently established
+eﬀective dose of 4 mg for athletes. However, the absorption
+of astaxanthin can be greatly enhanced in the presence of
+fats, surfactants, or phospholipids. Te phospholipid
+content in krill oil will likely increase the absorption of
+astaxanthin closing the gap between the actual content and
+eﬀective dose.
+In athletes, krill oil has been shown to improve post-
+exercise immune function (2 g/d for six weeks) [19] and
+diminished postexercise oxidative damage during recovery
+(1 g/d for six weeks) [20]; however, it failed to improve
+exercise performance (cycling time trial [19] and total run
+time in a 2,000 m test [20]). Te lack of performance beneﬁts
+of krill oil supplementation in previous exercise studies
+might have been based on a lack of an accompanying
+controlled challenging training protocol optimizing krill
+oil’s beneﬁts on recovery, as muscle recovery after an ex-
+ercise bout might inﬂuence training adaptations. While krill
+oil’s eﬀect on mTOR signaling is currently unknown,
+DHA/EPA has been shown to activate the mTOR-p70s6k
+signaling pathway [11]. A comparison of soy-derived
+(containing no omega-3 PUFAs) and PUFA-containing
+egg-derived phosphatidic acid showed a potential attenu-
+ating eﬀect of PUFAs bound to PL on mTOR activation [21].
+Terefore, the aim of the present study was to investigate the
+ability of krill oil to stimulate mTOR signaling and its ability
+to augment resistance training-induced changes in body
+composition and performance.
+2. Materials and Methods
+2.1. Cell Culture Tests. C2C12 myoblasts (ATCC; Manassas,
+Virginia) were plated at approximately 30% conﬂuence and
+grown for 24 hours in 10% FBS high glucose DMEM with
+antibiotics (100 μg/ml streptomycin and 100 U/ml penicillin;
+Sigma). At 16 hours prior to the experiment, myoblasts cells
+were switched to serum-free high-glucose DMEM (no an-
+tibiotics) and were approximately 70% conﬂuent at the time
+of the experiment with no indication of myoblast fusion
+present. All stimulants were dissolved in chloroform to yield
+a concentration of 10 mg/mL. Each stimulant was then dried
+with a stream of nitrogen gas and resuspended in PBS to
+obtain either 20 or 60 nmol/100 µL, such that 100 µL added
+to 2 mL of media resulted in 10 or 30 µM, respectively.
+Accordingly, cells were stimulated for 20 minutes with
+vehicle (Control; 100 µL of PBS), 10 or 30 µM of krill oil
+(Rimfrost USA, Merry Hill, North Carolina, USA) or S-PC
+(Avanti Polar Lipids, Inc., Alabaster, Alabama, USA) as the
+negative control. Cells were then harvested in lysis buﬀer
+(40 mM Tris, pH 7.5; 1 mM EDTA; 5 mM EGTA; 0.5%
+Triton X-100; 25 mM β-glycerophosphate; 25 mM NaF;
+1 mM Na3VO4; 10 µg/mL leupeptin; and 1 mM PMSF) and
+subjected to immunoblotting. Equivalent amounts of
+protein from each sample were dissolved in Laemmli buﬀer
+and subjected to electrophoretic separation on 7.5% SDS-
+PAGE. Following electrophoretic separation, proteins were
+transferred to a polyvinylidene diﬂuoride membrane in
+transfer buﬀer (242 mM Tris, 58 mM glycine). Membranes
+were blocked with 5% powdered milk in TBST (Tris-
+buﬀered saline with 0.1% Tween 20) for 1 h followed by
+an overnight incubation at 4°C with rabbit anti-phospho-
+p70 S6 kinase (P-p70(389); Cell signaling #9234; 1 :1000)
+dissolved in TBST containing 1% BSA. Membranes were
+washed for 30 min in TBST and then incubated for 1 h
+at
+room
+temperature
+in
+5%
+milk-TBST containing
+peroxidase-conjugated anti-rabbit (PI-1000 Vector Labo-
+ratories, Burlingame, CA, USA). After 30 min of washing
+in TBST, the blots were developed on a Chemi410 camera
+mounted to a UVP AutoChemi system (UVP, Upland, CA,
+USA) using prime-enhanced chemiluminescence (ECL)
+reagent (Pierce; Termo Fisher Scientiﬁc, Rockford, IL,
+USA). Once the appropriate image was captured, the
+membranes were stripped for 30 minutes in stripping
+buﬀer (100 mM β-mercaptoethanol, 2% SDS, 62.5 mM
+Tris-HCl pH 6.8) maintained at 50°C. Membranes were
+washed with TBST and then reblocked with 5% powdered
+milk in TBSTfor 1 h followed by an overnight incubation at
+4°C with rabbit anti-p70 S6 kinase (total p70, cell signaling
+#2708, 1 : 2000) dissolved in TBST containing 1% BSA.
+Membranes were washed for 30 min in TBST and then
+incubated for 1 h at room temperature in 5% milk-TBST
+containing
+peroxidase-conjugated
+anti-rabbit.
+After
+30 min of washing in TBST, the blots were developed on
+UVP using a regular ECL reagent. Once the appropriate
+image was captured, the membranes were stained with
+Coomassie blue to verify equal loading in all lanes. Den-
+sitometric measurements were performed by determining
+the density of each band using the public domain ImageJ
+software (U.S. National Institutes of Health, Bethesda, MD,
+USA; http://rsb.info.nih.gov/nih-image/). Te ratio of
+P-p70(389) to total p70 was used as a readout for mTOR
+signaling.
+2
+Journal of Nutrition and Metabolism
+
+2.2. Human Eﬃcacy Study
+2.2.1. Study Design. Tis study consisted of a randomized,
+double-blind protocol consisting of 2 groups of individuals
+given either 3 g of placebo (olive oil) or 3 g of krill (Euphausia
+superba) oil (Rimfrost Sublime, Rimfrost USA, LLC, Merry
+Hill, NC, USA, Lot 8723-15-01-03, consisting of 43.8%
+phospholipids (1.3 g), delivering 963mg total omega-3 fatty
+acids (240mg DHA, 393 mg EPA), and 0.54 mg astaxanthin)
+pre-workout on training days, and with breakfast on non-
+training days, during an 8-week high intensity, nonlinear,
+periodized resistance training protocol in form of 6 500mg
+softgel capsules. Te softgel capsules were manufactured by
+Aenova, Miami, FL, USA. Body composition, maximal
+strength, peak power, and rate of perceived recovery were
+assessed collectively at the end of weeks 0 and 8. In addition,
+safety parameters (comprehensive metabolic panel (CMP),
+complete blood count (CBC), and urine analysis (UA)) were
+measured pre- and posttesting.
+2.2.2. Subjects. Forty subjects were assessed for eligibility
+and of the twenty-one subjects enrolled 11 subjects received
+the placebo and 10 received krill oil. A total of 3 subjects
+were lost to follow-up by a lack of communication with the
+researcher (2 from the placebo and 1 from the krill oil
+group). A total of 18 subjects were analyzed, 9 from each
+condition (Figure 1).
+Subject inclusion criteria were males 18 to 30 years of age,
+resistance training at least 2 times per week for the past six
+months, a minimum of 1 year of training experience active and
+currently resistance training, free of musculoskeletal, metabolic,
+and respiratory disorders, free of cardiovascular disease, no
+musculoskeletal injuries with the last six months, no history of
+smoking or drug use, no history of excessive alcohol con-
+sumption, not taking prescription medication, have not used
+a ﬁsh oil-, thermogenic-, protein-, amino acid-, or creatine
+supplement within the prior two months, and have not ha-
+bitually used caﬀeine (e.g., more than 2 cups of coﬀee per day).
+Subjects were matched-paired by age, body mass, strength and
+resistance training, and physical activity background and then
+randomly placed into one of the two groups. Subjects were
+prohibited from consuming any nutritional supplements (in-
+cluding ﬁsh oil) for the duration of the study. Additionally,
+subjects were instructed to avoid consumption of all ﬁsh and ﬁsh
+byproducts. After an explanation of the procedures and asso-
+ciated risks, all volunteers completed written informed consent.
+All procedures were approved by the IntegReview Institutional
+Review Board, Austin, TX, USA (protocol #7952). Tis study
+was registered with the ISRCTN registry (ISRCTN11524409).
+Subject characteristic data are displayed in Table 1.
+Assessed for eligibility (n = 40)
+Randomized (n = 21)
+Krill oil
+Placebo
+Enrollment
+Allocation
+Follow-up
+Analysis
+Analyzed (n = 9)
+Excluded from analysis (n = 0)
+(i)
+Analyzed (n = 9)
+Excluded from analysis (n = 0)
+(i)
+Lost to follow-up (n = 1)
+No response (n = 1)
+(i)
+Allocated to intervention (n = 10)
+Received allocated intervention (n = 10)
+(i)
+Did not receive allocated intervention (n = 0)
+(ii)
+Lost to follow-up (n = 2)
+No response (n = 2)
+(i)
+Allocated to intervention (n = 11)
+(i) Received allocated intervention (n = 11)
+(ii) Did not receive allocated
+ 
+intervention (n = 0)
+Excluded (n = 19)
+Declined to participate (n = 12)
+Other reasons (n = 4)
+Not meeting inclusion criteria (n = 3)
+(i)
+(ii)
+(iii)
+Figure 1: CONSORT chart.
+Table 1: Subject characteristic data.
+Age
+(yrs)
+Training age
+(yrs)
+Body mass
+(kg)
+Height
+(cm)
+Placebo
+(n  9)
+22.0 ±
+0.6
+3.0 ± 0.2
+79.9 ± 3.9
+179.3 ±
+3.1
+Krill oil
+(n  9)
+22.3 ±
+0.4
+3.1 ± 0.7
+82.9 ± 5.0
+178.8 ±
+2.3
+Journal of Nutrition and Metabolism
+3
+
+2.2.3. Resistance Exercise Training Protocol. Resistance
+training occurred four days per week (programmed, non-
+linear training split). Te resistance training protocol was
+modiﬁed from Kraemer et al. [22] and Montiero et al. [23].
+Tese researchers found that a nonlinear resistance training
+program yielded greater results than a traditional or non-
+periodized program in athletes (Montiero et al. [23]). Te
+program was designed to train all major muscle groups using
+many compound movements for the upper body (e.g., bench
+press, dips, shoulder press, pull-ups, and bent over rows),
+lower body (leg press, leg extensions, and glute-ham raises),
+and the core. Te programmed, nonlinear training split was
+divided into hypertrophy days consisting of 8–10 RM loads
+for 3 sets, with 90 seconds rest, strength endurance days
+consisting of 12–15 repetitions, with 60 seconds rest, and on
+days training maximal strength consisting of 3 to 5 RM loads
+with 3 sets for all exercises except the leg press and bench
+press (5 total sets). Weights were progressively increased or
+decreased on a set-by-set basis by 2–5% to meet prescribed
+repetitions. Brieﬂy, when subjects could have achieved
+more than 2 repetitions over the prescribed number, the
+load was increased by 2–5%. When subjects failed to reach
+the prescribed repetitions under their own will, the load
+was decreased by 2–5%. All training sessions were closely
+monitored to ensure eﬀort and intensity to maximal on
+each training sessions. Subjects trained each body part
+twice weekly and alternately between hypertrophy and heavy
+workouts.
+We have
+selected this
+protocol
+because
+a meta-analysis by Rhea [24] indicated that training at
+this frequency was ideal for moderately resistance trained
+individuals (Table 2).
+2.2.4. Body Composition. A whole-body dual-energy X-ray
+absorptiometry (DXA) (Hologic, Bedford, MA, USA) scan
+was utilized to measure body composition. Lean body mass
+(LBM) and fat mass (FM) were determined for the total
+body with the subject laying in a supine position with the
+knee extended and instructed not to move for the entire
+duration of the scan (∼5 minutes). Results from each scan
+were uploaded and accessed on a computer directly con-
+nected to the DXA device. All DXA scans were conducted
+prior to and after the completion of the study, and each
+subject was required to fast overnight (10 hours) prior to
+the DXA scan. Calibration of the DXA device was done
+against a phantom provided by the manufacturing com-
+pany prior to testing.
+2.2.5. Strength Assessment. One-repetition maximum (1 RM)
+was assessed on bench press and leg press at baseline and
+after 8 weeks. Loads were increased incrementally until
+maximal load or failure at a given load was reached. Brieﬂy,
+subjects performed a general warmup and a speciﬁc warmup
+consisting of three sets. During the ﬁrst set, subjects per-
+formed 10 repetitions with 50% of their predicted 1 RM. For
+the second set, they performed ﬁve repetitions with 70% of
+Table 2: Training Protocol.
+Weekly Schedule
+Weight
+Training
+Week
+1E
+2H
+3E
+4H
+Hypertrophy/endurance:
+3 sets/12 repetitions
+60s rest
+3 sets/8 repetitions
+90 s rest
+3 sets/15 repetitions
+60s rest
+3 sets/10 repetitions
+90s rest
+Strength:
+3–5 sets/5 repetitions
+3–5 min rest
+3–5 sets/4 repetitions
+3–5 min rest
+3–5 sets/3
+repetitions
+3–5 min rest
+3–5 sets/5
+repetitions
+3–5 min rest
+Week
+5E
+6H
+7E
+8H
+Hypertrophy/endurance:
+3 sets/12 repetitions
+90 s rest
+3 sets/8 repetitions
+90s rest
+3 sets/15 repetitions
+60s rest
+3 sets/10 repetitions
+90s rest
+Strength:
+3–5 sets/ 4 repetitions
+3–5 min rest
+3–5 sets/4 repetitions
+3–5 min rest
+3–5 sets/ 3
+repetitions
+3–5 min rest
+3–5 sets/ 3
+repetitions
+3–5 min rest
+Exercise Selection
+Monday
+Tuesday
+Wednesday
+Tursday
+Friday
+Saturday
+Strength
+Rest
+Hypertrophy/endurance Hypertrophy/endurance
+Rest
+Strength
+Leg press
+Bench press
+Squat
+Bench press
+Squat
+BB row
+Deadlift
+BB row
+Glute-ham raise
+BB shoulder press
+Leg press
+BB shoulder press
+Pull-ups
+Glute-ham raise
+Pull-ups
+DB press
+Seated leg curl
+Incline DB press
+Lying leg curl
+Side lateral raise
+Leg ext.
+Preacher curl
+Calf raise
+Overhead tricep ext.
+Cable ﬂy
+Hammer curl
+Tricep pushdown
+Cable press
+4
+Journal of Nutrition and Metabolism
+
+the predicted 1 RM. In the third set, subjects perform one
+repetition with 90% of their predicted 1 RM. After the
+completion of warmup sets, subjects rested for 3 minutes.
+Ten, each subject had as many as ﬁve attempts to achieve
+their 1 RM load with 3–5 minutes rest between each attempt.
+2.2.6. Perceptual Measures. Te perceptual measures were
+collected using a perceived recovery status scale. Ratings of
+perceived recovery were collected at the beginning and end
+of every week. Te perceived recovery status scale consisted
+of a scalar representation numbering from 0 to 10. Visual
+descriptors of “very poorly recovered,” “adequately re-
+covered,” and “very well recovered” for perceived recovery
+were presented at numbers 0, 5, and 10, respectively. Sub-
+jects were asked to identify their level of perceived recovery
+after warming up and before performing the training
+protocol.
+2.2.7. Stroop Test. Te Stroop test is a psychological test of
+mental vitality and ﬂexibility. Te test consists of comput-
+erized presentation of the names of four colors (yellow, blue,
+green, and red), written in capital letters, Times New Roman
+font, size 24, in black. Te order is semirandom, so that the
+same word never appears two consecutive times throughout
+the test. Te subject’s task is to read each word as quickly as
+possible. Tis part of the test is intended to obtain a baseline
+to evaluate the reading ability and determine whether this
+ability is high enough so as not to hinder the interference
+eﬀect. Tis is because the eﬀect of color-word interference
+may be absent if the reading ability is lower than expected.
+Characterized by a series of colorized words, which them-
+selves are colors, subjects were instructed to read the color of
+the word aloud and not the word itself. Correct answers and
+time to completion were recorded. “Congruent” indicates
+the number of correct responses out of ﬁve responses to the
+test with matching words and colors. “Incongruent” in-
+dicates the number of correct responses out of ﬁfteen re-
+sponses to the test with nonmatched words and colors.
+2.2.8. Blood Safety Markers. Subjects donated approxi-
+mately 10 mL of fasted, whole blood at the baseline and at the
+∗
+∗
+Control
+Soy PC 10 µm
+Soy PC 30 µm
+Krill PC 10 µm
+Krill PC 30 µm
+P-p70(389)
+Total p70
+0
+100
+200
+300
+P-p70(389)/total p70
+(% of control)
+Figure 2: Te eﬀect of phosphatidylcholine on the activation of
+mTOR signaling. C2C12 myoblasts were stimulated for 20 minutes
+with vehicle (control), or 10–30 µM of S-PC, or krill oil-derived PC.
+Te samples were then subjected to the western blot analysis for p70
+phosphorylated on the threonine 389 residue (P-p70(389)) and total
+p70. Te ratio of these signals was calculated and used as a marker of
+mTOR signaling. Values in the graphs represent the mean + SEM and
+were obtained from 2 to 3 independent experiments (n  3–6/group).
+∗Signiﬁcantly diﬀerent from the control and S-PC (p < 0.05).
+∗
+80
+75
+70
+65
+60
+55
+50
+45
+40
+(kg)
+Pretest
+Posttest
+Placebo
+Krill oil
+(a)
+90
+85
+80
+75
+70
+65
+60
+55
+50
+Pretest
+Posttest
+(kg)
+Placebo
+Krill oil
+(b)
+∗
+4.0
+3.5
+3.0
+2.5
+2.0
+1.5
+1.0
+0.5
+0.0
+(∆ kg)
+Placebo
+Krill oil
+(c)
+Figure 3: Summary of the group lean mass values (a), individual
+lean mass response (b), and lean mass delta change (c) (∗signiﬁcant
+within-group diﬀerence (p < 0.05)).
+Journal of Nutrition and Metabolism
+5
+
+end of week 8. All blood samples were collected by a trained
+phlebotomist via venipuncture of an antecubital vein in the
+forearm using standard sterile procedures. Biomarkers com-
+prising CMP, CBC, and lipid panels were assayed for data
+collection.
+2.2.9. Statistical Analysis. Before carrying out the parametric
+statistical analysis, dependent variables were examined for
+a normal distribution and outliers through investigation of
+boxplots and a normality test (i.e., Shapiro–Wilk). Normality
+tests revealed no outliers, and analysis was performed using the
+original data set. Repeated measures ANOVA were used to
+scrutinize the eﬀects of supplementation on dependent variables
+assuming the group (placebo and krill oil) and time (pre- and
+posttest) as ﬁxed factors (GraphPad Prism 7®, La Jolla, CA).
+Whenever an interaction or main eﬀect was demonstrated,
+a Bonferroni post hoc test was performed to identify where the
+diﬀerences occurred. Te signiﬁcance level was previously set at
+p < 0.05. All data are reported as mean±SEM. Analysis of
+baseline characteristic revealed that there were no statistical
+signiﬁcant diﬀerence between groups for the investigated de-
+pendent variables (p > 0.05).
+3. Results
+3.1. Cell Culture Tests. As shown in Figure 2, S-PC showed
+no increase in the ratio of P-p70-389 to total p70 compared
+24
+10
+12
+14
+16
+18
+20
+22
+Pretest 
+Posttest
+(kg)
+Placebo
+Krill oil
+(a)
+24
+0
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+22
+(kg)
+Pretest
+Posttest
+Placebo
+Krill oil
+(b)
+2.0
+1.5
+1.0
+0.5
+0.0
+–0.5
+–1.0
+–1.5
+–2.0
+–2.5
+–3.0
+–3.5
+(∆ kg)
+Placebo
+Krill oil
+(c)
+Figure 4: Summary of group fat mass values (a), individual fat
+mass response (b), and fat mass delta change (c).
+Pretest
+Posttest
+125
+75
+80
+85
+90
+95
+100
+105
+110
+115
+120
+∗
+∗
+(kg)
+Placebo
+Krill oil
+(a)
+160
+150
+140
+130
+120
+110
+100
+90
+80
+70
+60
+50
+Pretest
+Posttest
+(kg)
+Placebo
+Krill oil
+(b)
+7
+6
+5
+4
+3
+2
+1
+0
+(∆ kg)
+Placebo
+Krill oil
+(c)
+Figure 5: Summary of group bench-press performance (a), indi-
+vidual bench-press performance (b), and bench-press performance
+delta change (c) (∗signiﬁcant time eﬀect whereby each group in-
+creased from baseline (p < 0.001)).
+6
+Journal of Nutrition and Metabolism
+
+to vehicle (control) stimulated cells. In contrast, elevated
+mTOR signaling was observed at all tested concentrations of
+krill oil-PC (+187% and +242% resp.; p < 0.001).
+3.2. Human Eﬃcacy Study
+3.2.1. Body Composition. A signiﬁcant main time eﬀect was
+noted for lean mass (p  0.021); however, there were no dif-
+ferences between the groups (placebo: meandiﬀ0.3kg, +0.5%;
+krill oil: meandiﬀ1.4 kg, +2.1%, Figure 3). Regarding the
+main time eﬀect for lean mass, post hoc analysis indicated
+a within-group diﬀerence from pre-to posttesting for krill
+oil (p  0.024, Figure 3(a)).
+No between or within group diﬀerences were observed
+for fat mass (p > 0.05, placebo: meandiﬀ0.3 kg, +0.3%; krill
+oil: meandiﬀ−0.6 kg, −3.6%, Figure 4).
+3.2.2. Muscle Strength. A signiﬁcant main time eﬀect was
+demonstrated whereby both conditions increased perfor-
+mance on bench press (p < 0.0001, placebo: meandiﬀ3.4 kg,
++3.5%; group krill oil: meandiﬀ4.2 kg, +4.3%, Figure 5) and
+leg press (p < 0.0001, placebo: meandiﬀ44.3 kg, +15.8%;
+krill oil: meandiﬀ49.0 kg, +15.8%, Figure 6) from pre-to
+posttesting.
+3.2.3. Perceptual Measures. A main time eﬀect was dem-
+onstrated for perceived recovery (p < 0.001). Placebo had
+a signiﬁcantly higher perceived recovery at week 8 com-
+pared to baseline and weeks 3, 4, and 6; while weeks 2, 5,
+and 7 were also higher than week 6. Krill oil had a signiﬁcantly
+higher perceived recovery at week 8 compared to baseline
+and weeks 4, 5, and 6; while weeks 1, 2, and 3 were also
+higher than week 6 (Figure 7). Tere were no between
+group diﬀerences for perceived recovery at any time point
+(Figure 7).
+∗
+∗
+450
+400
+350
+300
+250
+200
+150
+100
+Pretest
+Posttest
+(kg)
+Placebo
+Krill oil
+(a)
+500
+450
+400
+350
+300
+250
+200
+150
+100
+Pretest
+Posttest
+(kg)
+Placebo
+Krill oil
+(b)
+70
+65
+60
+55
+50
+45
+40
+35
+30
+(∆ kg)
+Placebo
+Krill oil
+(c)
+Figure 6: Summary of group leg-press performance (a) and in-
+dividual leg-press performance (b), and leg-press performance
+delta change (c) (∗signiﬁcant time eﬀect whereby each group in-
+creased from baseline (p < 0.001)).
+8
+7
+6
+5
+4
+∗
+Baseline
+Week 1
+Week 2
+Week 3
+Week 4
+Week 5
+Week 6
+Week 7
+Week 8
+a
+b
+b
+b
+b
+b
+b
+a
+a
+a
+a
+Perceived recovery (A.U.)
+Placebo
+Krill oil
+Figure 7: Summary plot for perceived recovery scale weekly av-
+erage (∗signiﬁcantly higher than baseline, a  signiﬁcantly lower
+than week 8 (p < 0.05), and b  signiﬁcantly higher than week 6
+(p < 0.05)).
+Table 3: Stroop test results.
+Placebo
+Krill oil
+Pre
+Post
+Pre
+Post
+Congruent
+5.0 ± 0.0
+5.0 ± 0.0
+5.0 ± 0.0
+5.0 ± 0.0
+Incongruent
+14.7 ± 0.2
+14.8 ± 0.2
+14.8 ± 0.2
+14.8 ± 0.2
+Completion time
+32.6 ± 6.7
+17.2 ± 2.3^ 33.8 ± 6.1
+18.3 ± 2.1^
+^Trend for within-group signiﬁcant diﬀerences from pretest (p < 0.1).
+Journal of Nutrition and Metabolism
+7
+
+3.2.4. Stroop Test. A main time eﬀect was demonstrated for
+the Stroop test completion time (p  0.007), and post hoc
+analysis indicated that each group demonstrated strong
+trends for within-group diﬀerences from pre- to posttesting
+(placebo, p  0.087; krill oil, p  0.085) (Table 3).
+3.2.5. Blood Safety Markers. Tere were no within or be-
+tween group diﬀerences for markers on the comprehensive
+metabolic panel (Table 4), complete blood count (Table 5), or
+urine analysis (not depicted) (p > 0.05).
+4. Discussion
+4.1. mTOR Activation. Previous studies have shown that
+soy-derived phosphatidic acid (PA), lyso-PA, or phospha-
+tidylserine (PS) can stimulate a robust increase in mTOR
+signaling; however, soy-derived PC was not eﬀective [21].
+While egg-derived PA increases mTOR signaling, its eﬀects
+are inferior to soy-derived PA. Egg-derived PA has a dif-
+ferent fatty acid composition in comparison to soy-derived
+PA, containing omega-3 fatty acids, such as DHA or EPA,
+indicating that the fatty acid composition of the phospho-
+lipid inﬂuences mTOR signaling and omega-3s likely at-
+tenuates the stimulatory eﬀect. Krill oil is a complex mixture
+of diﬀerent ingredients with PC being the main phospho-
+lipid. Krill oil-PC, like egg-derived phospholipids, is rich in
+omega-3 fatty acids which suggest that other ingredients in
+krill oil such as PA, PS, or even astaxanthin or the com-
+bination of these ingredients, might be responsible for the
+eﬀect on mTOR signaling, as astaxanthin has recently been
+shown to increase mTOR expressions in mice [25].
+4.2.BodyCompositionandAthleticPerformance. Phospholipids,
+including PC, PS, or PA, have previously been shown to
+improve athletic performance [21, 26]. PS has been shown to
+reduce exercise-induced increases in the catabolic hormone
+cortisol [27] and reduce muscle soreness [28]. PA enhances
+Table 4: Comprehensive metabolic panel.
+Placebo
+Krill oil
+G × T p value
+Pre
+Post
+Pre
+Post
+Glucose (mg/dL)
+84 ± 2
+86 ± 4
+91 ± 3
+90 ± 4
+0.689
+BUN (mg/dL)
+13 ± 1
+13 ± 1
+13 ± 2
+15 ± 2
+0.200
+Creatinine (mg/dL)
+1.07 ± 0.1
+1.05 ± 0.1
+1.06 ± 0.1
+1.00 ± 0.1
+0.523
+Total protein (g/dL)
+7.1 ± 0.1
+7.1 ± 0.1
+7.2 ± 0.1
+7.0 ± 0.1
+0.114
+Albumin (g/dL)
+4.6 ± 0.1
+4.5 ± 0.1
+4.8 ± 0.1
+4.6 ± 0.1
+0.227
+Total bilirubin (mg/dL)
+0.4 ± 0.1
+0.3 ± 0.1
+0.6 ± 0.3
+0.5 ± 0.3
+0.510
+Sodium (mmol/L)
+141 ± 1
+141 ± 1
+142 ± 1
+141 ± 1
+0.339
+Potassium (mmol/L)
+4.3 ± 0.1
+4.2 ± 0.1
+4.3 ± 0.1
+4.3 ± 0.1
+0.328
+Chloride (mmol/L)
+100 ± 1
+101 ± 1
+101 ± 1
+101 ± 1
+0.939
+CO2 (mmol/L)
+23 ± 1
+22 ± 1
+22 ± 1
+22 ± 1
+0.791
+ALP (IU/L)
+73 ± 6
+75 ± 6
+75 ± 5
+70 ± 6
+0.075
+AST (IU/L)
+24 ± 5
+22 ± 2
+20 ± 1
+17 ± 1
+0.827
+ALT (IU/L)
+22 ± 5
+19 ± 3
+19 ± 1
+17 ± 2
+0.754
+Values are reported as mean ± standard deviation; BUN, blood urea nitrogen; CO2, carbon dioxide; ALP, alkaline phosphatase; AST, aspartate amino-
+transferase; ALT, alanine transaminase.
+Table 5: Complete blood count panel
+Placebo
+Krill oil
+G × T p value
+Pre
+Post
+Pre
+Post
+WBC (K/µL)
+5.6 ± 0.2
+5.5 ± 0.2
+5.7 ± 0.2
+5.5 ± 0.3
+0.586
+RBC (M/µL)
+5.01 ± 0.14
+5.12 ± 0.12
+5.26 ± 0.08
+5.08 ± 0.09
+0.114
+Hemoglobin (g/dL)
+15.1 ± 0.4
+15.4 ± 0.2
+14.7 ± 1.1
+15.3 ± 0.3
+0.785
+Hematocrit (%)
+44.6 ± 1.2
+45.3 ± 0.7
+46.9 ± 0.9
+45.7 ± 1.1
+0.160
+MVC (fL)
+89.1 ± 1.6
+89.2 ± 1.1
+88.8 ± 1.3
+90.4 ± 1.2
+0.414
+MCH (pg)
+30.2 ± 0.7
+29.9 ± 0.5
+30.0 ± 0.6
+30.0 ± 0.4
+0.999
+MCHC (g/dL)
+33.4 ± 0.2
+33.2 ± 0.3
+33.8 ± 0.3
+33.3 ± 0.2
+0.481
+Platelets (K/µL)
+228 ± 10
+221 ± 10
+232 ± 11
+219 ± 10
+0.431
+Neutrophils (K/µL)
+2.8 ± 0.2
+2.9 ± 0.2
+3.1 ± 0.2
+2.8 ± 0.2
+0.197
+Lymphocytes (K/µL)
+2.1 ± 0.1
+2.0 ± 0.1
+2.0 ± 0.1
+2.0 ± 0.1
+0.999
+Monocytes (K/µL)
+0.5 ± 0.1
+0.5 ± 0.1
+0.5 ± 0.1
+0.5 ± 0.2
+0.739
+Eosinophils (K/µL)
+0.1 ± 0.1
+0.2 ± 0.1
+0.1 ± 0.1
+0.1 ± 0.1
+0.461
+Basophils (K/µL)
+0.0 ± 0.0
+0.0 ± 0.0
+0.0 ± 0.0
+0.0 ± 0.0
+0.555
+Values are reported as mean ± standard deviation; WBC, white blood cells; RBC, red blood cells; MVC, mean cell volume; MCH, mean cell hemoglobin;
+MCHC, mean cell hemoglobin concentration.
+8
+Journal of Nutrition and Metabolism
+
+exercise-stimulated increases in lean body mass through
+activation of the mTOR pathway [21], and PC has been
+shown to maintain choline concentration during exercise
+[29]. Muscle contractions are induced by signals carried
+along cholinergic nerves to the muscle ﬁber, and strenuous
+exercise has been reported to result in decreased choline
+concentrations, which negatively inﬂuence the rates in
+which the neurotransmitter acetylcholine is synthesized and
+released. Maintaining choline levels during exercise has been
+linked to an increase in athletic performance. 3 g of krill oil
+provides 1.3 g of phospholipids. Te phospholipids in krill
+oil consist of 90.5% choline containing phospholipids (76.1%
+PC, 7.0% alkyl acyl PC, 6.5% lyso-PC, and 0.9% lyso-alkyl
+acyl PC), 8.3% ethanolamine containing phospholipids
+(3.2% phosphatidylethanolamine (PE), 2.3% cardiolipin
+n-acetyl PE (CL/NAPE), 1.9% alkyl acyl PE, 0.7% lyso-PE,
+and 0.2% lyso-alkyl acyl PE), 0.7% phosphatidylinositol (PI),
+and 0.6% PS [30]. Te 1.2 g phosphatidylcholine from 3 g of
+krill oil provides 160 mg choline, and krill oil contains 7.8 mg
+PS and 0.54 mg of astaxanthin. Te concentration of all in-
+dividual active ingredients in 3 g krill oil is lower than the
+currently established individual eﬀective dose (600 mg of PS
+to lower cortisol levels, 4 mg of astaxanthin, or 0.2 g per kg
+body weight of PC). A potential synergy of the diﬀerent active
+ingredients at low doses could not be established in this trial.
+While lean body mass signiﬁcantly increased in the krill
+oil group (+1.4 kg, +2.1%) we observed no statistically sig-
+niﬁcant diﬀerence in comparison to the control group
+(+0.3 kg, +0.5%). Te increase in lean body mass was
+matched by an increase in muscle strength in the krill oil
+group (bench press +4.3 kg (+4.4%); leg press: +48.9 kg
+(+15.8%)); however, the increase was no diﬀerent from the
+control
+group
+(+3.4 kg
+(+3.3%);
+leg
+press:
++44.2 kg
+(+14.6%)). Perceived recovery signiﬁcantly increased in the
+krill oil group (+15%) at the end of the trial in comparison to
+baseline; however, the results were not statistically diﬀerent
+from the control group (+14%). Perceived recovery was the
+lowest in both groups in week 6, and subjects seem to adapt
+to recovering to the training stimulus by the end of the study.
+While the training protocol was challenging enough to see
+signiﬁcant increases in strength, the training stimulus or the
+recovery periods might not have been challenging enough to
+elicit diﬀerences in perceived recovery. Our results contrast
+with previous studies showing signiﬁcant improvements of
+postexercise muscle soreness with omega-3 supplementation
+[4–8], which might be due to the lower dose of omega-3s
+administered in our study, 963 mg for 8 weeks versus 2.4–
+6 g/d for 1 to 8 weeks, or the diﬀerence in training stimulus
+and recovery periods. Based on a post hoc power analysis the
+sample size needed to reach statistical signiﬁcance would be
+between 34 and 84 subjects for changes in lean body mass,
+depending on the level of statistical power (i.e., 50% to 90%
+probability of detecting a signiﬁcant diﬀerence at an alpha
+level of 0.05). Future studies should investigate the activation
+of mTOR in vivo through a muscular biopsy.
+4.3. Cognition. While long-chain omega-3 polyunsaturated
+fatty acid supplementation has been linked to improved
+cardiovascular health [31], the body of published clinical
+trials on the potential cognitive beneﬁts that may result from
+improving long-chain omega-3 fatty acid intakes in healthy
+young adults is limited. Omega-3 polyunsaturated fatty acids
+may improve brain functions by facilitating vasodilatation
+and perfusion [32]. DHA supplementation in subjects with
+very low dietary intakes of DHA and EPA showed signiﬁcant
+improvement in working memory, completing a working
+memory task 20% faster relative to placebo [33]. A study
+investigating which long-chain omega-3 polyunsaturated
+fatty acid, EPA-rich or DHA-rich, might improve cognitive
+performance and functional brain activation in young adults
+showed that EPA-rich omega-3 fatty acids showed greater
+cognitive performance in a Stroop color-word test [34].
+While krill oil is a EPA-rich source of omega-3 fatty acids,
+the completion time in the Stroop color-word test improved
+after the supplementation period in the krill oil group as well
+as in the control subjects. Tis may be due to a familiar-
+ization eﬀect. Te participants knew the situation and tasks
+during the second trial and, therefore, may have attained
+better results.
+5. Conclusion
+Krill oil activates mTOR signaling. Krill oil supplementation
+in athletes is safe, and while no signiﬁcant eﬀects on cog-
+nition and strength were observed, its eﬀects on body
+composition in combination with resistance exercise de-
+serves further research.
+Ethical Approval
+All procedures were approved by the IntegReview In-
+stitutional Review Board, Austin, TX, USA (protocol #7952).
+Tis study was registered with the ISRCTN registry
+(ISRCTN11524409).
+Conflicts of Interest
+Flint Harding, James H. Johnson, and David M. Peele are
+employees of Avoca, Inc., a manufacturer of Krill oil. Martin
+Purpura and Ralf J¨ager are independent paid consultants to
+Avoca, Inc., and David M. Peele, Ralf J¨ager, and Martin
+Purpura have been named as inventors for the patent
+PCT/US2016/048079. All other authors declare that they
+have no competing interests.
+Authors’ Contributions
+Cell culture tests were performed by Troy A. Hornberger at
+the University of Wisconsin-Madison. All human work was
+conducted at the Applied Science and Performance Institute
+by John Georges, Matthew H. Sharp, Ryan P. Lowery, and
+Jacob M. Wilson. Flint Harding, James H. Johnson, David
+M. Peele, Ralf J¨ager, and Martin Purpura were involved in
+concept and design of the overall study, but not in the data
+collection or analysis of the results. Te manuscript was
+written through contributions of all authors. All authors
+have given approval to the ﬁnal version of the manuscript.
+Journal of Nutrition and Metabolism
+9
+
+Acknowledgments
+Te authors would like to thank a dedicated group of
+subjects, who kindly donated their time and eﬀort to this
+study. Tis research was supported by Rimfrost USA (Merry
+Hill, NC) and by the National Institute of Arthritis and
+Musculoskeletal and Skin Diseases of the National Institutes
+of Health (NIH) under Award number AR057347.
+References
+[1] N. Da Boit, A. M. Hunter, and S. R. Gray, “Fit with good fat?
+Te role of n-3 polyunsaturated fatty acids on exercise per-
+formance,” Metabolism, vol. 66, pp. 45–54, 2017.
+[2] B. Winther, N. Hoem, K. Berge, and L. Reubsaet, “Elucidation
+of phosphatidylcholine composition in krill oil extracted from
+Euphausia superba,” Lipids, vol. 46, no. 1, pp. 25–36, 2011.
+[3] N. Salem Jr. and C. N. Kuratko, “A reexamination of krill oil
+bioavailability studies,” Lipids in Health and Disease, vol. 13,
+no. 1, p. 137, 2014.
+[4] K. B. Jouris, J. L. McDaniel, and E. P. Weiss, “Te eﬀect of n-3
+PUFA fatty acid supplementation on the inﬂammatory re-
+sponse to eccentric strength exercise,” Journal of Sports Sci-
+ence and Medicine, vol. 10, no. 3, pp. 432–438, 2011.
+[5] P. Lembke, J. Capodice, K. Hebert, and T. Swenson, “Inﬂu-
+ence of N-3 PUFA (N3) index on performance and wellbeing
+in young adults after heavy eccentric exercise,” Journal of
+Sports Science and Medicine, vol. 13, no. 1, pp. 151–156, 2014.
+[6] K. E. Corder, K. R. Newsham, J. L. McDaniel, U. R. Ezekiel,
+and E. P. Weiss, “Eﬀects of short-term docosahexaenoic acid
+supplementation on markers of inﬂammation after eccentric
+strength exercise in women,” Journal of Sports Science and
+Medicine, vol. 15, no. 1, pp. 176–183, 2016.
+[7] Y. Tsuchiya, K. Yanagimoto, K. Nakazato, K. Hayamizu, and
+E. Ochi, “Eicosapentaenoic and docosahexaenoic acids-rich
+ﬁsh oil supplementation attenuates strength loss and limited
+joint range of motion after eccentric contractions: a ran-
+domized, double-blind, placebo-controlled, parallel-group
+trial,” European Journal of Applied Physiology, vol. 116,
+no. 6, pp. 1179–1188, 2016.
+[8] G. M. Tinsley, J. J. Gann, S. R. Huber et al., “Eﬀects of ﬁsh oil
+supplementation on postresistance exercise muscle soreness,”
+Journal of Dietary Supplements, vol. 21, no. 1, pp. 1–12, 2016.
+[9] J. Lenn, T. Uhl, C. Mattacola et al., “Te eﬀects of ﬁsh oil and
+isoﬂavones on delayed onset muscle soreness,” Medicine &
+Science in Sports & Exercise, vol. 34, no.10, pp.1605–1613, 2002.
+[10] P. Gray, A. Chappell, A. M. Jenkinson, F. Ties, and S. R. Gray,
+“Fish oil supplementation reduces markers of oxidative stress
+but not muscle soreness after eccentric exercise,” In-
+ternational Journal of Sport Nutrition and Exercise Meta-
+bolism, vol. 24, no. 2, pp. 206–214, 2014.
+[11] G. I. Smith, P. Atherton, D. N. Reeds et al., “Omega-3
+polyunsaturated fatty acids augment the muscle protein an-
+abolic response to hyperinsulinaemia-hyperaminoacidaemia
+in healthy young and middle-aged men and women,” Clinical
+Science, vol. 121, no. 6, pp. 267–278, 2011.
+[12] C. L. Rodacki, A. L. Rodacki, G. Pereira et al., “Fish-oil
+supplementation enhances the eﬀects of strength training
+in elderly women,” American Journal of Clinical Nutrition,
+vol. 95, no. 2, pp. 428–436, 2012.
+[13] G. I. Smith, S. Julliand, D. N. Reeds, D. R. Sinacore, S. Klein,
+and B. Mittendorfer, “Fish oil-derived n-3 PUFA therapy
+increases muscle mass and function in healthy older adults,”
+American Journal of Clinical Nutrition, vol. 102, no. 1,
+pp. 115–122, 2015.
+[14] K. Sawaki, H. Yoshigi, K. Aoki et al., “Sports performance
+beneﬁts from taking natural astaxanthin characterized by
+visual acuity and muscle fatigue improvement in humans,”
+Journal of Clinical Medicine and Terapeutics, vol. 18, no. 9,
+pp. 1085–1100, 2002.
+[15] B. Djordjevic, I. Baralic, J. Kotur-Stevuljevic et al., “Eﬀect of
+astaxanthin supplementation on muscle damage and oxidative
+stress markers in elite young soccer players,” Journal of Sports
+Medicine and Physical Fitness, vol. 52, no. 4, pp. 382–392, 2012.
+[16] C. P. Earnest, M. Lupo, K. M. White, and T. S. Church, “Eﬀect of
+astaxanthin on cycling time trial performance,” International
+Journal of Sports Medicine, vol. 32, no. 11, pp. 882–888, 2011.
+[17] C. L. Malmsten and ˚A. Lignell, “Dietary supplementation with
+astaxanthin-rich algal meal improves strength endurance–a
+double blind placebo controlled study on male students,”
+Carotenoid Science, vol. 13, pp. 20–22, 2008.
+[18] R. J. Bloomer, A. Fry, B. Schilling, L. Chiu, N. Hori, and
+L. Weiss, “Astaxanthin supplementation does not attenuate
+muscle injury following eccentric exercise in resistance-
+trained men,” International Journal of Sport Nutrition and
+Exercise Metabolism, vol. 15, no. 4, pp. 401–412, 2005.
+[19] M. Da Boit, I. Mastalurova, G. Brazaitem, N. McGovern,
+K. Tompson, and S. R. Gray, “Te eﬀect of krill oil supple-
+mentation on exercise performance and markers of immune
+function,” PLoS One, vol. 10, no. 9, article e0139174, 2015.
+[20] A. Skarpa´nska-Stejnborn, Ł. Pilaczy´nska-Szcze´sniak, P. Basta,
+J. Foriasz, and J. Arlet, “Eﬀects of supplementation with neptune
+krill oil (Euphasia superba) on selected redox parameters and
+pro-inﬂammatory markers in athletes during exhaustive exer-
+cise,” Journal of Human Kinetics, vol. 47, no. 1, pp. 49–57, 2010.
+[21] J. M. Joy, D. M. Gundermann, R. P. Lowery et al., “Phos-
+phatidic acid enhances mTOR signaling and resistance ex-
+ercise induced hypertrophy,” Nutrition & Metabolism, vol. 11,
+no. 1, p. 29, 2014.
+[22] W. J. Kraemer, B. A. Spiering, J. S. Volek et al., “Recovery from
+a national collegiate athletic association division I football
+game: muscle damage and hormonal status,” Te Journal of
+Strength & Conditioning Research, vol. 23, no.1, pp. 2–10, 2009.
+[23] A. G. Monteiro, M. S. Aoki, and A. L. Evangelista, “Nonlinear
+periodization maximizes strength gains in split resistance
+training routines,” Te Journal of Strength & Conditioning
+Research, vol. 23, no. 4, pp. 1321–1326, 2009.
+[24] M. R. Rhea, B. A. Alvar, L. N. Burkett, and S. D. Ball, “A meta-
+analysis to determine the dose response to strength devel-
+opment,” Medicine and Science in Sports and Exercise, vol. 35,
+no. 3, pp. 456–464, 2003.
+[25] S. Li, T. Takahara, M. Fujino et al., “Astaxanthin prevents
+ischemia-reperfusion injury of the steatotic live in mice,” PLoS
+One, vol. 12, no. 11, article e0187810, 2017.
+[26] R. J¨ager, M. Purpura, and M. Kingsley, “Phospholipids and
+sports performance,” Journal of the International Society of
+Sports Nutrition, vol. 4, no. 1, p. 5, 2007.
+[27] M. A. Starks, S. L. Starks, M. Kingsley, M. Purpura, and R. J¨ager,
+“Te eﬀects of phosphatidylserine on endocrine response to
+moderate intensity exercise,” Journal of the International Society
+of Sports Nutrition, vol. 5, p. 11, 2008.
+[28] T. D. Fahey and M. S. Pearl, “Te hormonal and perceptive
+eﬀects of phosphatidylserine administration during two weeks
+of weight training-induced over-training,” Biology of Sport,
+vol. 15, no. 2, pp. 135–144, 1998.
+[29] H. N. von Allw¨orden, S. Horn, J. Kahl, and W. Feldheim, “Te
+inﬂuence of lecithin on plasma choline concentrations in
+10
+Journal of Nutrition and Metabolism
+
+triathletes and adolescent runners during exercise,” European
+Journal of Applied Physiology and Occupational Physiology,
+vol. 67, no. 1, pp. 87–91, 1993.
+[30] 31P NMR Analysis of Phospholipids of Rimfrost Sublime,
+Rimfrost USA LLC, Merry Hill, NC, USA, Lot # 8732-12-01-01:02,
+Industrial Research Limited, Lower Hutt, New Zealand.
+[31] T. L. Psota, S. K. Gebauer, and P. Kris-Etherton, “Dietary
+omega-3 fatty acid intake and cardiovascular risk,” American
+Journal of Cardiology, vol. 98, no. 4, pp. 3–18, 2006.
+[32] J. C. Kuszewski, R. H. X. Wong, and P. R. C. Howe, “Eﬀects of
+long-chain omega-3 polyunsaturated fatty acids on endothelial
+vasodilator function and cognition-are they interrelated?,”
+Nutrients, vol. 9, no. 5, p. E487, 2017.
+[33] W. Stonehouse, C. A. Conlon, J. Podd et al., “DHA supple-
+mentation improved both memory and reaction time in healthy
+young adults: a randomized controlled trial,” American Journal
+of Clinical Nutrition, vol. 97, no. 5, pp. 1134–1143, 2013.
+[34] I. Bauer, M. Hughes, R. Rowsell et al., “Omega-3 supple-
+mentation improves cognition and modiﬁes brain activation
+in young adults,” Human Psychopharmacology: Clinical and
+Experimental, vol. 29, no. 2, pp. 133–144, 2014.
+Journal of Nutrition and Metabolism
+11

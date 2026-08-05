@@ -1,0 +1,2145 @@
+DSX 17 (2023) 102909
+Available online 23 November 2023
+1871-4021/© 2023 Research Trust of DiabetesIndia (DiabetesIndia) and National Diabetes Obesity and Cholesterol Foundation (N-DOC). Published by Elsevier Ltd.
+All rights reserved.
+Clinical effectiveness of krill oil supplementation on cardiovascular health 
+in humans: An updated systematic review and meta-analysis of randomized 
+controlled trials 
+Haohai Huang a,b,*, Dan Liao c, Bin He b, Guanghui Zhou d, Yejia Cui e 
+a Department of Clinical Pharmacy, Dongguan Songshan Lake Central Hospital, Dongguan Third People s Hospital, Afliated Dongguan Shilong People s Hospital of 
+’
+’
+Southern Medical University, Dongguan, Guangdong, China 
+b Medical and Pharmacy Research Laboratory, Dongguan Songshan Lake Central Hospital, Dongguan Third People s Hospital, Afliated Dongguan Shilong People s 
+’
+’
+Hospital of Southern Medical University, Dongguan, Guangdong, China 
+c Department of Gynaecology, Dongguan Songshan Lake Central Hospital, Dongguan Third People s Hospital, Afliated Dongguan Shilong People s Hospital of Southern 
+’
+’
+Medical University, Dongguan, Guangdong, China 
+d Department of Rehabilitation Medicine, Dongguan Songshan Lake Central Hospital, Dongguan Third People s Hospital, Afliated Dongguan Shilong People s Hospital of 
+’
+’
+Southern Medical University, Dongguan, Guangdong, China 
+e Department of Clinical Laboratory, Dongguan Songshan Lake Central Hospital, Dongguan Third People s Hospital, Afliated Dongguan Shilong People s Hospital of 
+’
+’
+Southern Medical University, Dongguan, Guangdong, China   
+A R T I C L E I N F O  
+Keywords: 
+Blood pressure 
+CVD 
+Lipid 
+Krill oil 
+Meta-analysis 
+A B S T R A C T  
+Background: The potential role of krill oil (KO) supplementation on cardiovascular health are inconsistent in 
+several clinical trials. Therefore, our present meta-analysis aimed to systematically evaluate the impacts of 
+supplementation of KO on cardiovascular disease risk factors (CVDRFs). 
+Methods: Intervention trials assessing KO supplementation on cardiovascular disease (CVD) outcomes were 
+systematically retrieved for pooling. The primary outcome was lipid prole. Secondary outcomes were consisted 
+by blood pressure, glycemic indices, body composition together with inammatory markers. We synthesized the 
+effect sizes with 95% condence intervals and weighted mean difference. To explore the heterogeneity source, 
+we employed meta-regression and subgroup analysis. Quality assessment, publication bias, sensitivity-analysis 
+and the certainty of evidence were also carried out. 
+Results: We included 14 trials (18 treatment arms) with 1458 participants. KO supplementation had benecial 
+effects on total cholesterol (
+0.01), low-density lipoprotein cholesterol (
+0.006), and triglycerides (
+P =
+P =
+P =
+0.0005). However, no effects were found for other CVDRFs, such as blood pressure, glycemic control, body 
+composition as well as inammatory markers. Subgroup analyses indicated that these notably favorable effects 
+were observed in trials with a parallel design, treatment duration <8 weeks and subjects with baseline body mass 
+index 
+28 kg/m
+<
+2. The above ndings remained consistent in the sensitivity analysis, without obvious publica-
+tion bias detected. 
+Conclusions: The current evidence demonstrated that daily KO supplementation may as a candidate for lipid 
+management strategies. In future, studies should pay attention to the relationships of KO intake with the inci-
+dence of CVD events or all-cause mortality.   
+1. Introduction 
+Cardiovascular disease (CVD) is signicantly connected to most 
+disabilities, morbidities, and mortalities in the world [ ]. The global 
+1
+increase in aging populations is attributed to the rapid escalation in the 
+prevalence of CVD, which accounted for more than 17.9 million deaths 
+globally in 2019, and the number of CVD related fatalities would rise to 
+over 23.6 million by 2030 [ ]. The signicance of public health 
+2
+* Corresponding author. Department of Clinical Pharmacy, Medical and Pharmacy Research Laboratory, Dongguan Songshan Lake Central Hospital, Dongguan 
+Third People s Hospital, Afliated Dongguan Shilong People s Hospital of Southern Medical University, No. 1, Huangzhou Xianglong Road of Shilong Town, 
+’
+’
+Dongguan, Guangdong, 523326, China. 
+E-mail address: haohaihuang@hotmail.com (H. Huang).  
+Contents lists available at ScienceDirect 
+Diabetes 
+Metabolic Syndrome:  
+& 
+Clinical Research 
+Reviews 
+& 
+journal homepage: www.elsevier.com/locate/dsx 
+https://doi.org/10.1016/j.dsx.2023.102909 
+Received 28 June 2023; Received in revised form 23 October 2023; Accepted 14 November 2023   
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+2
+necessitates prioritizing primary and secondary prevention for cardio-
+vascular diseases, along with the delay of occurrence and progression of 
+CVD related issues due to its health and nancial burden on society. 
+Previous evidences have shown that controlling the CVD risk factors 
+(CVDRFs), such as inappropriate diet, inammation, type 2 diabetes 
+(T2D), obesity, hypertension, insulin resistance, and dyslipidemia, can 
+decrease or prevent the CVD development [
+]. Abundant of evidence 
+3 5
+–
+suggests that the prevention and management of CVD can be controlled 
+through dietary modications or nutraceutical therapies [
+]. 
+6 8
+–
+Long-chain n-3 fatty acids, including eicosapentaenoic acid (EPA) as 
+well as docosahexaenoic acid (DHA), have been proved to lower circu-
+lating lipid levels and the risk of cardiovascular events [ ,
+]. 
+9 10
+Krill oil (KO), an edible oil extracted from krill (Euphausia superba), 
+is natural sources of n-3 polyunsaturated fatty acids. It is abundant in 
+phospholipids, avonoids, EPA, astaxanthin, DHA, vitamins, trace ele-
+ments, as well as other substances [
+]. In KO, over 80% of EPA and 
+11
+DHA are found in the phosphatidylcholine form [
+]. The advantage of 
+12
+KO supplementation encompasses the provision of not only EPA and 
+DHA, but also choline, an essential component for the synthesis of 
+neurotransmitters 
+(acetylcholine) 
+and 
+phospholipids 
+[
+,
+]. 
+12 13
+Numerous studies have found that KO supplementation has various 
+health benets for hyperlipidemia, chronic inammation, premenstrual 
+syndrome, osteosarcoma, rheumatoid arthritis, metabolic syndrome, 
+nonalcoholic fatty liver disease, and atherosclerosis [
+]. The pre-
+13 17
+–
+vious systematic review and meta-analysis conducted by Ursoniu et al. 
+[
+] including only 7 eligible trials with 662 participants showed that 
+18
+KO supplementation can reduce low-density lipoprotein cholesterol and 
+triglycerides in humans. However, the relationship of KO consumption 
+with other cardiovascular risk factors in body composition, glycemic 
+indices, and inammation were not evaluated in the study. Moreover, 
+owing to the small sample sizes, different supplementation dosages, and 
+diverse underlying health states, the clinical evidence and the recom-
+mendation s strength for KO on each CVDRFs has remained unclear. 
+’
+Here, we were aimed to quantitatively assess the precise effective-
+ness of daily KO supplement on CVDRFs related to lipid prole, blood 
+pressure, body composition, glycemic indices, and inammation in 
+humans through a comprehensive review of the current available liter-
+ature as well as a meta-analysis of available randomized controlled trials 
+(RCTs). 
+2. Methods 
+2.1. Strategy for literature search 
+We conducted the design, implementation, and reporting complying 
+with the Preferred Reporting Items for Systematic Reviews and Meta- 
+Analyses (PRISMA) guidelines. Firstly, two authors (H.H. and D.L.) 
+carried out the keyword-based search in Cochrane Central Register of 
+Controlled Trials (CENTRAL), PubMed, as well as EMBASE through 
+March 2023, to nd all eligible RCTs in human subjects regarding the 
+clinical effectiveness of krill oil supplementation on CVDRFs. The 
+following Medical Subjects Headings (MeSH) and free-text terms were 
+used: ( krill oil
+OR euphausiaceae
+OR euphausia superba ) AND 
+“
+” 
+“
+” 
+“
+”
+( cardiovascular risk OR cardiovascular disease OR CVD OR car-
+“
+” 
+“
+” 
+“
+” 
+“
+diovascular event
+OR atherosclerosis
+OR coronary artery disease
+” 
+“
+” 
+“
+” 
+OR acute coronary event
+OR ischemic heart disease
+OR endothe-
+“
+” 
+“
+” 
+“
+lial OR 
+” 
+“
+” 
+overweight OR “
+” 
+obesity OR “
+” 
+waist circumference OR “body 
+mass index
+OR coronary heart disease
+OR myocardial infarct
+OR 
+” 
+“
+” 
+“
+” 
+“
+” 
+“
+” 
+“
+” 
+blood pressure
+OR arterial pressure
+OR C-reactive protein
+OR 
+“
+” 
+“
+” 
+“
+” 
+“
+” 
+inammatory
+OR lipid
+OR triglycerides
+OR cholesterol
+OR 
+“
+” 
+hypertension OR “insulin resistance” OR “insulin sensitivity ). Related 
+”
+reviews and references cited by the included papers were also screened 
+to nd more relevant papers. 
+2.2. Study selection criteria and data extraction 
+The Patient, Intervention, Comparators, Outcome, and Study Design 
+(PICOS) approach were employed to select eligible studies for pooling 
+(
+). Data were retrieved by two researchers (G.Z. and B.H.). Non- 
+Table 1
+agreements were resolved by a third researcher (D.L.). The following 
+characteristics of included studies were extracted:  
+• Publication data: rst author, year of publication, and country in 
+which the trial was carried out.  
+• Participants
+characteristics
+’ 
+: mean age, health condition, and 
+gender.  
+• Study characteristics: Enrolled and completed patient number, KO 
+dosage and formulation, control treatment type, intervention dura-
+tion, details of the study design.  
+• Study outcomes: The primary outcomes were triglycerides (TG), 
+high-density lipoprotein cholesterol (HDL-C), low-density lipopro-
+tein cholesterol (LDL-C), as well as total cholesterol (TC). Secondary 
+outcomes included C-reactive protein (CRP), waist circumference 
+(WC), body weight (BW), hip circumference (HC), body mass index 
+(BMI), insulin, homeostatic model assessment of insulin resistance 
+(HOMA-IR), fasting blood glucose (FBG), HbA1c, diastolic blood 
+pressure (DBP), as well as systolic blood pressure (SBP). Baseline and 
+post-treatment means together with standard deviations (SDs) of 
+primary outcomes or their difference between baseline and post- 
+treatment were captured in these enrolled studies. Based on the 
+Cochrane Handbook for Systematic Reviews of Interventions, SDs 
+were estimated using the standard error (SE) or 95% condence in-
+tervals (CIs) when they were not directly available [
+]. The same 
+19
+variable published in various units across studies would be translated 
+to data in identical units. For trials with several intervention groups 
+(i.e., different dosages of intervention), all the experimental groups 
+would be grouped together and compared with the control group, 
+respectively. Lastly, endpoint data from the same cohort would be 
+collected from the report with the greatest follow-up duration or the 
+most substantial sample size. 
+2.3. Quality assessment 
+We applied the Cochrane risk-of-bias tool for RCTs. Criteria, such as 
+incomplete outcome data, blinding of outcome assessment, random 
+sequence generation, selective reporting, blinding of participants and 
+personnel, as well as allocation concealment, were applied to evaluate 
+the characteristics
+quality. According to the suggestions from the 
+’ 
+Cochrane Handbook, a qualitative degree (no, yes, or unclear) was 
+assigned for each item, and judgment of each included study was labeled 
+Table 1 
+PICOS criteria for inclusion of studies.  
+Parameter 
+Description 
+Population (P) 
+Adults participants (age 18 years) with healthy or otherwise 
+>
+Intervention (I) 
+Subjects needed to have specically ingested krill oil supplementation. Intervention duration of at least 2 weeks 
+Comparator (C) 
+Placebo interventions or other oil products interventions 
+Outcomes (O) 
+The study provided sufcient data on at least one of the cardiovascular health outcomes, included cardiovascular disease risk factors related to lipid prole, blood 
+pressure, body composition, glycemic indices, and inammation 
+Study design (S) 
+Original randomized controlled trials with a parallel or crossover design  
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+3
+with unclear , high , or low risk of bias [
+]. 
+“
+” “
+”
+“
+” 
+19
+2.4. Statistical analysis 
+DerSimonian-Laird random-effects model were used to calculate the 
+95% CIs as well as the weighted mean difference (WMD) for continuous 
+outcomes. The I2 index and the Q test evaluated the heterogeneity be-
+tween trials. I2 scores 50% indicated moderate to high heterogeneity 
+≥
+[
+]. A conventional analysis of sensitivity was conducted by removing 
+20
+one study each time to examine whether the overall results relied on 
+individual studies. Then, we carried out analysis of pre-specied sub-
+group to explore the overall effects of KO in CVDRFs and the probable 
+causes of heterogeneity, including study design (crossover 
+parallel 
+vs. 
+design), baseline BMI ( 28 
+28 kg/m
+<
+vs. ≥
+2), KO dose ( 3 
+3 g/d), 
+<
+vs. ≥
+and the intervention duration ( 8 
+8 weeks). The publication bias 
+<
+vs. ≥
+probability was examined using the asymmetry of Egger s weighted 
+’
+regression statistics, Begg s rank correlation, as well as funnel plot [
+, 
+’
+21
+22]. We used a random-effects meta-regression analysis on the basis of 
+the restricted maximum likelihood (REML) to determine if the duration 
+and amount of KO supplementation were related to the heterogeneity 
+source [
+]. Subgroup analyses, meta-regression, as well as publication 
+23
+bias assessment were carried out only for lipid prole considering small 
+numbers of studies for the secondary outcomes (n 
+5). Grading of 
+≤
+Recommendations Assessment, Development, and Evaluation (GRADE) 
+approach was adopted for the evaluation of the quality of evidences for 
+every metabolic and cardiovascular biomarker. The evidence quality 
+was classied into very low, low, moderate, and high [
+]. RevMan (v. 
+24
+12.0) and STATA (v. 5.0) were applied for all statistical analyses. 
+Two-sided comparisons were applied in all analyses unless stated 
+otherwise. A signicant difference was set as a 
+0.05. 
+P <
+3. Results 
+3.1. Trials identication and selection 
+Based on the search strategy, 163 records were initially searched out. 
+Four additional ones were found by screening the reference lists. Eighty 
+records were excluded for duplication analysis, and after reviewing the 
+titles or abstracts or full text, 19 publications were excluded for various 
+reasons, such as reviews, or meta-analyses and systematic review, 
+studies that did not provide adequate data for the outcomes, did not 
+report the primary outcomes, bioavailability study, or used mixture of 
+KO and other nutrients. The work conducted by Berge et al. [
+] were 
+25
+grouped into 4 treatment arms (0.5 g/d, 1 g/d, 2 g/d, 4 g/d), and the 
+work conducted by Ramprasath et al. [
+] were grouped into 2 treat-
+26
+ment arms (1.5 g/d, 3 g/d). Finally, 14 publications (18 treatment arms) 
+composed of 1458 participants were encompassed in the current 
+meta-analysis to evaluate KO s effects on cardiovascular health [
+]. 
+’
+25 38
+–
+Flowchart of the selection strategy are shown in 
+. 
+Fig. 1
+3.2. Subjects and study characteristics 
+The publication date of the included trials ranged from 2009 to 2022. 
+Researchers from eight countries performed these studies: the United 
+Kingdom (n 
+1) [
+], Norway (n 
+3) [
+,
+,
+], Brazil (n 
+1) [
+], 
+=
+27
+=
+25 33 38
+=
+28
+USA (n 
+2) [
+,
+], Japan (n 
+1) [
+], Canada (n 
+2) [
+,
+], 
+=
+29 30
+=
+37
+=
+26 32
+Finland (n 
+1) [
+], as well as Australia (n 
+2) [
+,
+]. The study 
+=
+34
+=
+35 36
+conducted by Mozaffarian et al. [
+] enrolling the participants at US, 
+31
+Canadian, and Mexican centers. In each trial, the number of participants 
+ranged from 10 to 520, and 1458 individuals were nally included for 
+data pooling. Two studies included only female subjects [
+,
+], twelve 
+28 36
+included both genders [
+,
+,
+,
+]. The average age ranged 
+25 27
+–
+29 35
+–
+37 38
+from 28.23 to 71.1, and the BMI values ranged between 23.67 and 32.95 
+kg/m2. Healthy subjects were enrolled in six studies [
+,
+,
+,
+,
+, 
+26 27 32 33 36
+38
+28 30
+], and overweight subjects were enrolled in 2 studies [
+,
+]. Other 
+trials were carried out among participants with various diseases, 
+including T2D (n 
+1) [
+], hypertension (n 
+1) [
+], hypercholes-
+=
+29
+=
+34
+terolemic (n 
+2) [
+,
+], and knee osteoarthritis or knee pain (n 
+2) 
+=
+25 31
+=
+[
+,
+]. The doses of KO administered ranged from 0.5 to 5 g/day. The 
+35 37
+control interventions included mixed vegetable oil, olive oil, mineral oil 
+capsule, cornstarch, corn oil, high-oleic sunower oil, maize starch, or 
+safower oil. The intervention duration varied between 4 and 26 weeks. 
+Seven studies used a parallel-group design [
+,
+,
+,
+,
+,
+,
+], and 
+25 27 28 31 33 37 38
+others used a crossover design [
+,
+,
+,
+,
+]. Thirteen trials 
+26 29 30 32 34 36
+–
+explored the role of KO in lipid prole [
+,
+], three in BP [
+, 
+25 27
+–
+29 38
+–
+26
+27 33
+27 29 30 33 36
+,
+], ve in glycemic indices [
+,
+,
+,
+,
+], three in body 
+composition [
+], and two in inammatory markers [
+,
+]. Study 
+26 28
+–
+27 30
+characteristics and the main participants information are presented in 
+’ 
+Table 2. 
+Fig. 2 summarized the Cochrane Collaboration tool s risk of bias 
+’
+assessment, with an unknown risk in 10 studies [
+,
+,
+,
+, 
+25 26 28 30 33
+–
+36 38
+27 29 34 35
+–
+], and a low risk in 4 studies [
+,
+,
+,
+]. Thus, of the studies 
+analyzed, 4 were deemed to be of high quality , whereas the rest were 
+“
+”
+categorized as fair quality . 
+“
+”
+3.3. Primary outcome: effects of KO supplementation on lipid prole 
+Pooled results of a random-effects model suggested that KO supple-
+mentation decreased the levels of TC (WMD, 
+4.18 mg/dL; 95% CI, 
+−
+−
+−
+=
+7.44 to 0.93; P 
+0.01; I2 =
+−
+0%), LDL-C (WMD, 3.76 mg/dL; 95% 
+CI, 6.47 to 1.06; 
+0.006; I
+−
+−
+P =
+2 =
+−
+0%), as well as TG (WMD, 10.76 
+mg/dL; 95% CI, −16.84 to −4.69; P = 0.0005; I2 = 85%) with statistical 
+signicance. However, the overall analysis showed that KO did not 
+affect HDL-C (WMD, 0.12 mg/dL; 95% CI: −1.09 to 1.34; P = 0.84; I2 =
+0%). A forest plot for the impacts of KO on lipid prole is shown in Fig. 3. 
+Subgroup analyses were also performed to provide further insight 
+into the impact of KO on lipid prole parameter in various pre-dened 
+subgroups. 
+summarized the results of subgroup analysis. In 
+Table 3 
+terms of intervention durations, signicant effects on TC (WMD, 4.35 
+−
+Fig. 1. Flow diagram for identication of relevant studies. 
+Pubmed, 
+; 
+Embase, 
+http://www.ncbi.nlm.nih.gov/pubmed/
+http://www. 
+embase.com/home
+https://www.cochranelibrary.com/
+; Cochrane Library, 
+# 
+The work conducted by Berge et al. were separated into 4 treatment arms (0.5 
+g/d, 1 g/d, 2 g/d, 4 g/d), and the work conducted by Ramprasath et al. were 
+separated into 2 treatment arms (1.5 g/d, 3 g/d). 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+4
+mg/dL; 95% CI, −7.78 to −0.92; P = 0.01), LDL-C (WMD, −3.68 mg/dL; 
+95% CI, −6.97 to −0.39; P = 0.03) and HDL-C (WMD, 2.27 mg/dL; 95% 
+CI, 0.16 to 4.38; P = 0.04) were found in subjects with the consumption 
+of KO for 8 weeks; In contrast, a reduction in TG (WMD, 
+<
+−13.99 mg/ 
+dL; 95% CI, 21.7 to 
+6.28; 
+0.0004) was found in those with the 
+−
+−
+P =
+consumption of KO for ≥8 weeks with statistical signicance. In terms of 
+dose, supplementation of KO decreased TC (WMD, 
+3.95 mg/dL; 95% 
+−
+CI, 7.91 to 0.06; 
+0.04) and TG (WMD, 
+12.06 mg/dL; 95% CI, 
+−
+−
+P =
+−
+−
+−
+=
+20.75 to 
+3.38; P 
+0.007) in trials with daily KO dose 3 g/d with 
+<
+statistical signicance; a reduction in LDL (WMD, −4.30 mg/dL; 95% CI, 
+−
+−
+=
+−
+7.97 to 
+0.62; P 
+0.02) and TG (WMD, 
+8.18 mg/dL; 95% CI, 
+−12.67 to −3.69; P = 0.0004) were also observed in those with daily KO 
+dose 
+3 g with statistical signicance. In terms of baseline BMI, the 
+≥
+supplementation of KO decreased TC (WMD, 
+6.71 mg/dL; 95% CI: 
+−
+Table 2 
+Characteristics of study populations, type of interventions, and study designs in the included trials.  
+Study 
+Study 
+design 
+Location 
+Sample size 
+(enrolment/ 
+completed) 
+Sex 
+(M/ 
+F) 
+Study participants 
+Mean 
+age2 
+BMI 
+(kg/ 
+m2) 
+Intervention form 
+Dose 
+(g/d) 
+Duration 
+(week) 
+Outcomes 
+Treatment 
+Group 
+Control Group 
+Alkhedhairi 
+et al. [
+] 
+27
+R, DB, 
+P 
+United 
+Kingdom 
+102/94 
+41/ 
+53 
+Healthy older adults 
+71.1 
+25.85 
+Krill oil 
+capsules 
+Mixed vegetable 
+oil 
+4 
+24 
+TC, LDL- 
+C, HDL-C, 
+TG, FBG, 
+Insulin, 
+CRP, BW, 
+SBP, DBP 
+Berge et al. 
+(2014) 
+[
+] 
+25
+R, DB, 
+P, PC 
+Norway 
+300/267 
+184/ 
+83 
+Adults with 
+borderline high or 
+high triglyceride 
+levels 
+44.04 
+29.6 
+Krill oil 
+capsules 
+Olive oil 
+0.5, 
+1, 2, 
+4 
+12 
+TC, LDL- 
+C, HDL-C, 
+TG 
+Lobo et al. 
+[
+] 
+28
+DB, P, 
+PC 
+Brazil 
+38/26 
+0/26 
+Overweight Women 
+NA 
+31.05 
+Krill oil 
+capsules 
+Mineral oil 
+capsule 
+3 
+8 
+BMI, WC 
+Lobraico 
+et al. [
+] 
+29
+R, DB, 
+C, PC 
+USA 
+48/47 
+31/ 
+16 
+Participants with 
+type 2 diabetes 
+64.8 
+30.5 
+Krill oil 
+capsules 
+Olive oil 
+1 
+4 
+TC, LDL- 
+C, HDL-C, 
+TC, FBG, 
+HbA1c, 
+HOMA-IR 
+Maki et al. 
+[
+] 
+30
+R, DB, 
+C 
+USA 
+50/50 
+8/42 
+Overweight and 
+obese men and 
+women 
+48.4 
+32.95 
+Krill oil 
+capsules 
+Olive oil 
+2 
+4 
+TC, LDL- 
+C, HDL-C, 
+TG, FBG, 
+Insulin, 
+HOMA- 
+IR, CRP 
+Mozaffarian 
+et al. [
+] 
+31
+R, DB, 
+P, PC 
+US, 
+Canada, 
+Mexico 
+520/520 
+339/ 
+181 
+Patients With Severe 
+Hypertriglyceridemia 
+54.9 
+31.5 
+Novel ω-3 
+Krill Oil 
+Agent 
+Cornstarch 
+4 
+26 
+LDL-C, 
+HDL-C, 
+TG 
+Ramprasath 
+et al. [
+] 
+32
+R, DB, 
+C, PC 
+Canada 
+24/24 
+12/ 
+12 
+Healthy individuals 
+28.23 
+23.76 
+Krill oil 
+capsules 
+Corn oil 
+0.6 
+4 
+TC, LDL- 
+C, HDL-C, 
+TG 
+Ramprasath 
+et al. [
+] 
+26
+R, DB, 
+C, PC 
+Canada 
+24/20 
+11/9 
+Healthy participants 
+NA 
+23.67 
+LPH krill 
+oil 
+capsules 
+HPL krill 
+oil 
+capsules 
+Corn oil 
+1.5, 
+3 
+4 
+TC, LDL- 
+C, HDL-C, 
+TG, SBP, 
+DBP, BW, 
+BMI, WC, 
+HC 
+Rundblad 
+et al. [
+] 
+33
+R, P 
+Norway 
+26/24 
+12/ 
+12 
+Healthy subjects 
+NA 
+27.2 
+Krill oil 
+capsules 
+High-oleic 
+sunower oil 
+4 
+8 
+TC, LDL- 
+C, HDL-C, 
+TG, SBP, 
+DBP, 
+FBG, 
+HbA1c, 
+BMI 
+Sarkkinen 
+et al. [
+] 
+34
+R, DB, 
+C, PC 
+Finland 
+35/35 
+18/ 
+17 
+Subjects with mildly 
+or moderately 
+elevated blood 
+pressure 
+55.4 
+28 
+Krill oil 
+capsules 
+Maize starch 
+4 
+8 
+LDL-C, 
+HDL-C, 
+TG 
+Stonehouse 
+et al. [
+] 
+35
+R, DB, 
+C, PC 
+Australia 
+235/221 
+106/ 
+129 
+Adults with mild to 
+moderate knee 
+osteoarthritis 
+55.9 
+28.3 
+Krill oil 
+capsules 
+Mixed vegetable 
+oil 
+1 
+24 
+TC, LDL- 
+C, HDL-C, 
+TG 
+Sung et al. 
+[
+] 
+36
+R, C 
+Australia 
+17/10 
+0/10 
+Healthy women 
+28.5 
+25.8 
+Krill oil 
+capsules 
+Olive oil 
+5 
+4 
+TC, LDL- 
+C, HDL-C, 
+TG, FBG 
+Suzuki et al. 
+[
+] 
+37
+R, DB, 
+P, PC 
+Japan 
+50/47 
+6/41 
+Adults with mild 
+kneepain 
+64.7 
+23.85 
+Krill oil 
+capsules 
+Safower oil 
+2 
+4 
+TC, LDL- 
+C, HDL-C, 
+TG 
+Ulven et al. 
+[
+] 
+38
+R, P 
+Norway 
+86/73 
+27/ 
+59 
+Healthy volunteers 
+40.4 
+23.75 
+Krill oil 
+capsules 
+No 
+supplementation 
+3 
+7 
+TC, LDL- 
+C, HDL-C, 
+TG 
+NA, not available; M, male; F, female; R, randomized; PC, placebo-controlled; DB, double-blind; P, parallel; C, crossover; TC, total cholesterol; LDL-C, low-density 
+lipoprotein cholesterol; HDL-C, high-density lipoprotein cholesterol; TG, triglycerides; SBP, systolic blood pressure; DBP, diastolic blood pressure; FBG, fasting blood 
+glucose; HOMA-IR, homeostatic model assessment of insulin resistance; BW, body weight; BMI, Body Mass Index; WC, waist circumference; HC, hip circumference; 
+CRP, C-reactive protein. 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+5
+−
+−
+=
+−
+11.49 to 
+1.93; P 
+0.006), LDL-C (WMD, 
+5.43 mg/dL; 95% CI, 
+−
+−
+=
+−
+9.65 to 
+1.22; P 
+0.01) and TG (WMD, 
+7.47 mg/dL; 95% CI, 
+−
+−
+=
+14.64 to 
+0.30; P 
+0.04) in subjects with baseline BMI 
+28 kg/ 
+<
+m2with statistical signicance; a reduction in TG (WMD, −12.15 mg/dL; 
+95% CI, 
+19.82 to 
+4.48; 
+0.002) was also observed in those with 
+−
+−
+P =
+baseline BMI 28 kg/m
+≥
+2 with statistical signicance. In terms of study 
+design, supplementation with KO in trials with crossover design showed 
+a considerable reduction in TC (WMD, 4.73 mg/dL; 95% CI, 8.53 to 
+−
+−
+−
+=
+−
+−
+0.94; P 
+0.01) and LDL-C (WMD, 
+4.88 mg/dL; 95% CI, 
+8.77 to 
+−
+=
+−
+0.98; P 
+0.01); a reduction in TG (WMD, 
+15.68 mg/dL; 95% CI, 
+−
+−
+=
+23.29 to 
+8.08; P 
+0.00001) was observed in trials using a parallel 
+design with statistical signicance. 
+3.4. Secondary outcomes: effects of KO supplementation on blood 
+pressure, glycemic indices, body composition as well as inammatory 
+markers 
+Table 4 outlines data of secondary outcomes. For the markers of 
+blood pressure, the pooled results from the random-effects model proved 
+that KO intervention did not affect SBP (WMD, 1.07 mmHg; 95% CI, 
+−
+=
+1.40 to 3.54; P 
+0.40; I2 = 10%) as well as DBP (WMD, 1.48 mmHg; 
+95% CI, −0.24 to 3.20; P = 0.09; I2 = 10%). For the markers of glycemic 
+indices, KO did not appear to signicantly alter the levels of FBG (WMD, 
+−
+−
+=
+0.08 mg/dL; 95% CI, 
+0.33 to 0.17; P 
+0.53; I2 = 64%), insulin 
+(WMD, 0.24 μU/mL; 95% CI, −2.13 to 2.60; P = 0.85; I2 = 0%), HbA1c 
+(WMD, 
+0.01; 95% CI, 
+0.20 to 0.18; 
+0.93; I
+−
+−
+P =
+2 = 0%) as well as 
+HOMA-IR (WMD, 
+0.07; 95% CI, 0.96 to 0.83; 
+0.88; I
+−
+−
+P =
+2 = 40%). 
+For the markers of body composition, KO intake did not affect the BW 
+(WMD, −0.14 kg; 95% CI, −0.60 to 0.32; P = 0.55; I2 = 0%), BMI (WMD, 
+−0.09 kg/m2; 95% CI, 
+0.27 to 0.10; 
+0.35; I
+−
+P =
+2 = 0%), WC (WMD, 
+−
+−
+=
+0.09 cm; 95% CI, 
+0.57 to 0.38; P 
+0.69; I2 = 0%), as well as HC 
+(WMD, 0.29 cm; 95% CI, 
+0.16 to 0.75; 
+0.20; I
+−
+P =
+2 = 0%). We also 
+evaluated the effects of KO ingestion on inammation markers, such as 
+CRP. The present result shown that KO supplementation was not related 
+to a signicant decrease in CRP (WMD,-0.21 mg/L; 95% CI, 
+1.38 to 
+−
+0.96; 
+0.73; I
+P =
+2 = 0%). 
+3.5. Clinical safety evaluation 
+In the included trials, only a few cases with mild to moderate 
+gastrointestinal symptoms, such as atulence, heartburn and diarrhea 
+were found. The absence of serious adverse events following KO con-
+sumption suggested a high level of tolerance and safely. 
+3.6. Sensitivity analyses 
+The result s robustness was veried using the leave-one-out method 
+’
+based on sensitivity analyses. The pooled results or overall effect size for 
+lipid proles remained solid and were not sensitive to any individual 
+study (Supporting materials 
+). Additionally, after employing the 
+Fig. S1
+xed-effects model, the analysis of sensitivity revealed that the com-
+bined effects of KO on lipid proles did not signicantly change. 
+3.7. Meta-regression between doses and duration of KO intake and lipid 
+prole 
+The correlation of changes in lipid prole with KO dosage (g/day) 
+and duration (weeks) were evaluated in this study. No obvious differ-
+ences were observed between the KO duration and the inuence on TG, 
+HDL-C, LDL-C, as well as TC (
+). Meanwhile, the KO amount 
+Fig. 4
+consumed per day was not related to changes in TG, HDL-C, TC, as well 
+as LDL-C (
+). 
+Fig. 5
+3.8. GRADE evidence prole assessment 
+The GRADE proles for the clinical evidence of KO supplementation 
+on blood lipids, BP, glycemic indices, inammatory markers, and BW 
+management are presented in Supporting materials 
+. In the 
+Table S1
+GRADE Working Group evidence level rates, we found low quality for 
+HOMA-IR; moderate quality for TG, SBP, DBP, FBG, Insulin, HbA1c, BW, 
+BMI, WC, HC, and CRP; and high quality for TC, LDL-C, and HDL-C. 
+Fig. 2. Quality assessment of the included studies. Labeling an item as 
+“Question mark indicated an unclear or unknown risk of bias; Labeling an item 
+” 
+as negative sign indicated an high risk of bias; Labeling an item as positive 
+“
+” 
+“
+sign indicated an low risk of bias. 
+” 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+6
+Fig. 3. Forest plot illustrating the weighted mean difference of krill oil on blood lipids with a random effects model. TC, total cholesterol; LDL-C, low-density li-
+poprotein cholesterol; HDL-C, high-density lipoprotein cholesterol; TG, triglycerides. 
+Table 3 
+Subgroup analyses of TC, LDL-C, HDL-C and TG stratied by previously dened study characteristics.  
+Variables 
+Arms 
+TC (mg/dL) 
+Arms 
+LDL-C (mg/dL) 
+Arms 
+HDL-C (mg/dL) 
+Arms 
+TG (mg/dL) 
+WMD 
+(95% 
+CI)1 
+P 
+I2 
+(%) 
+WMD 
+(95% 
+CI)1 
+P 
+I2 
+(%) 
+WMD (95% 
+CI)1 
+P 
+I2 
+(%) 
+WMD 
+(95% 
+CI)1 
+P 
+I2 
+(%) 
+Duration 
+≥
+−
+8 weeks 
+7 
+2.63 
+( 12.94 
+−
+to 7.68) 
+0.62 
+0 
+9 
+3.92 
+−
+( 8.72 
+−
+to 0.89) 
+0.11 
+1 
+9 
+0.94 
+−
+( 2.43 to 
+−
+0.55) 
+0.21 
+0 
+9 
+13.99 
+−
+( 21.70 
+−
+to 6.28) 
+−
+0.0004* 
+92 
+＜8 
+weeks 
+8 
+4.35 
+−
+( 7.78 to 
+−
+−0.92) 
+0.01* 
+0 
+8 
+3.68 
+−
+( 6.97 
+−
+to 
+−0.39)* 
+0.03 
+0 
+8 
+2.27 
+(0.16 4.38) 
+–
+0.04* 
+0 
+8 
+5.32 
+−
+( 12.30 
+−
+to 1.66) 
+0.13 
+0 
+Dose 
+≥
+−
+3 g/day 
+6 
+4.63 
+( 10.45 
+−
+to 1.19) 
+0.12 
+0 
+8 
+4.30 
+−
+( 7.97 
+−
+to 
+−0.62) 
+0.02* 
+0 
+8 
+0.11 
+−
+( 1.95 to 
+−
+1.72) 
+0.90 
+0 
+8 
+8.18 
+−
+( 12.67 
+−
+to 3.69) 
+−
+0.0004* 
+20 
+＜3 g/ 
+day 
+9 
+3.98 
+−
+( 7.91 to 
+−
+−0.06) 
+0.04* 
+0 
+9 
+3.13 
+−
+( 7.14 
+−
+to 0.88) 
+0.13 
+0 
+9 
+0.31 ( 1.32 
+−
+to 1.94) 
+0.71 
+0 
+9 
+12.06 
+−
+( 20.75 
+−
+to 3.38) 
+−
+0.007* 
+89 
+Baseline BMI 
+≥28 kg/ 
+m2 
+7 
+2.00 
+−
+( 6.44 to 
+−
+2.44) 
+0.38 
+0 
+9 
+2.31 
+−
+( 6.19 
+−
+to 1.57) 
+0.24 
+0 
+9 
+0.14 
+−
+( 1.68 to 
+−
+1.40) 
+0.86 
+0 
+9 
+12.15 
+−
+( 19.82 
+−
+to 4.48) 
+−
+0.002* 
+92 
+＜28 kg/ 
+m2 
+8 
+6.71 
+−
+( 11.49 
+−
+to 1.93) 
+−
+0.006* 
+0 
+8 
+5.43 
+−
+( 9.65 
+−
+to 
+−1.22) 
+0.01* 
+11 
+8 
+0.57 ( 1.60 
+−
+to 2.75) 
+0.61 
+11 
+8 
+7.47 
+−
+( 14.64 
+−
+to 0.30) 
+−
+0.04* 
+0 
+Study Design 
+Crossover 
+7 
+4.73 
+−
+( 8.53 to 
+−
+−0.94) 
+0.01* 
+0 
+8 
+4.88 
+−
+( 8.77 
+−
+to 
+−0.98) 
+0.01* 
+0 
+8 
+2.32 ( 0.01 
+−
+to 4.65) 
+0.05 
+0 
+8 
+3.87 
+−
+( 7.85 to 
+−
+0.12) 
+0.06* 
+0 
+Parallel 
+8 
+2.66 
+−
+( 8.98 to 
+−
+3.66) 
+0.41 
+0 
+9 
+2.58 
+−
+( 6.95 
+−
+to 1.78) 
+0.25 
+14 
+9 
+0.70 
+−
+( 2.13 to 
+−
+0.73) 
+0.34 
+0 
+9 
+15.68 
+−
+( 23.29 
+−
+to 8.08) 
+−
+0.00001* 
+89 
+TG, triglycerides; HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein cholesterol; TC, total cholesterol; WMD, weighted mean differences; CI, 
+condence interval; BMI, body mass index; *Indicates a signicant result. 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+7
+3.9. Publication bias assessment 
+Based on the funnel plots, we did not discover any signicant pub-
+lication bias in the lipid prole outcomes (
+). Furthermore, 
+Fig. 6
+consistent results were obtained using the tests of Begg rank correlation 
+and Egger linear regression (P > 0.05) (Supporting materials Table S2). 
+4. Discussion 
+According to the literature from RCTs and epidemiology, natural 
+dietary products and nutraceutical therapies signicantly affect CVD 
+prevention and atherosclerosis-mediated cardiovascular events for 
+many reasons, such as poor adherence to medications, drug contrain-
+dications, various side effects, or individual preference for natural or 
+alternative therapies [
+,
+]. In the present study, we summarized the 
+39 40
+available scientic data on the benecial effects of KO ingestion on the 
+biomarkers associated with CVD risk acquired in RCTs. For statistical 
+pooling, we included 14 trials (18 treatment arms) with 1458 in-
+dividuals, and found that KO positively affects TC, LDL-C as well as TG. 
+Despite of that, compared to control group, the HDL-C, SBP, DBP, FBG, 
+Insulin, HOMA-IR, BW, BMI, WC, HC, and CRP are not changed after KO 
+supplementation treatment. KO demonstrated a favorable tolerability 
+prole, showing no substantial difference in adverse events between KO 
+and control treatments. According to our subgroup analysis, KO intake 
+dramatically suppressed TC, LDL-C as well as TG levels in the following 
+subgroups: KO < 3 g/d, mean BMI < 28 kg/m2, duration <8 weeks, and 
+crossover design. In addition, the subgroup analysis ndings showed 
+that KO consumption lowered TG levels in trials with duration 
+8 
+≥
+weeks, dose
+3 g/d, and parallel design with statistical signicance. Our 
+≥
+ndings may provide novel insight that could be integrated into dietary 
+strategies aimed at preventing atherosclerosis development, promoting 
+cardiovascular health in human beings. 
+Hypercholesterolemia is a prognostic factor for atherosclerotic heart 
+disease. The escalated LDL-cholesterol levels may cause plaque forma-
+tion through macrophage foam cells induced by LDL-cholesterol 
+oxidation, resulting in atherosclerosis [
+]. As a result, the mainte-
+41
+nance of proper cellular function together with the prevention of 
+atherosclerotic cardiovascular disease is dependent on cholesterol ho-
+meostasis [
+]. Epidemiological and prospective studies have robustly 
+42
+established the favorable impact of LDL-C reduction, as evidenced by a 
+proportional decrease in cardiovascular disease events corresponding to 
+each 1% decrease in LDL-C levels [
+]. In accordance with the updated 
+43
+guidelines from the National Cholesterol Education Program (NCEP) 
+regarding cholesterol testing and management, the primary objective of 
+drug therapy prioritizes progressively lower LDL-C levels for the treat-
+ment of cholesterol and prevention of cardiovascular disease [
+]. As 
+43
+evidenced by our meta-analysis, KO might be used as an adjunct to 
+pharmacological therapy in patients with dyslipidemia. Although the 
+exact mechanisms responsible for the lipid-lowering impacts of KO 
+remain obscure. Several mechanisms underlying the antihyperlipidemic 
+impact of KO were as follows: First, KO can reduce the synthesis of 
+cholesterols by reducing the activity of HMG-CoA reductase through 
+Table 4 
+Effect of KO supplementation on secondary outcomes.  
+Outcomes 
+No. of treatment arms 
+No. of patients 
+WMD (95% CI) 
+P Value 
+I2, % 
+P Value of Heterogeneity 
+SBP 
+4 
+206 
+1.07 ( 1.40 to 3.54) 
+0.40 
+10 
+0.34 
+−
+DBP 
+4 
+206 
+1.48 ( 0.24 to 3.20) 
+0.09 
+0 
+0.76 
+−
+BW 
+4 
+208 
+0.14 ( 0.60 to 0.32) 
+0.55 
+0 
+0.54 
+−
+−
+BMI 
+4 
+130 
+0.09 ( 0.27 to 0.10) 
+0.35 
+0 
+0.76 
+−
+−
+WC 
+3 
+103 
+0.09 ( 0.57 to 0.38) 
+0.69 
+0 
+0.40 
+−
+−
+HC 
+2 
+80 
+0.29 ( 0.16 to 0.75) 
+0.20 
+0 
+0.70 
+−
+FBG 
+5 
+290 
+0.08 ( 0.33 to 0.17) 
+0.53 
+64 
+0.02 
+−
+−
+Insulin 
+2 
+152 
+0.24 ( 2.13 to 2.60) 
+0.85 
+0 
+0.46 
+−
+HbA1c 
+2 
+118 
+0.01 ( 0.20 to 0.18) 
+0.93 
+0 
+0.77 
+−
+−
+HOMA-IR 
+2 
+144 
+0.07 ( 0.96 to 0.83) 
+0.88 
+40 
+0.20 
+−
+−
+CRP 
+3 
+176 
+0.21 ( 1.38 to 0.96) 
+0.73 
+0 
+0.58 
+−
+−
+TG, triglycerides; HDL-C, high-density lipoprotein cholesterol; LDL-C, low-density lipoprotein cholesterol; TC, total cholesterol; SBP, systolic blood pressure; DBP, 
+diastolic blood pressure; FBG, fasting blood glucose; HOMA-IR, homeostatic model assessment of insulin resistance; BW, body weight; BMI, Body Mass Index; WC, 
+waist circumference; HC, hip circumference; CRP, C-reactive protein; WMD, weighted mean differences; CI, condence interval. 
+Fig. 4. Meta-regression plots of the association between mean changes in lipid proles and duration of supplementation with krill oil. The size of each circle is 
+inversely proportional to the variance of change. 
+Fig. 5. Meta-regression plots of the association between mean changes in lipid proles and dose of supplementation with krill oil. The size of each circle is inversely 
+proportional to the variance of change. 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+8
+phosphorylation of AMPK [
+,
+]. Second, KO supplementation can 
+44 45
+lower serum TC or LDL-C level in cases with hypercholesterolemia via 
+increasing LDL-C absorption into tissue and through cholesterol esteri-
+cation [
+]. Finally, KO treatment has a potential in increasing the 
+46
+fecal output of cholesterol and bile acid, resulting in increased choles-
+terol excretion based on the blockade of reabsorption and promotion of 
+bile excretion [
+]. 
+47
+Some investigators also found that dietary or supplementation with 
+KO prevents weight gain in an obese animal model and improves the 
+metabolic syndromes from insulin resistance by inhibiting the hepatic 
+steatosis and the gene expressions involving glucose production 
+[
+]. KO reduced blood glucose levels by boosting glucokinase ac-
+48 50
+–
+tivity for glucose consumption and decreasing glucose-6-phosphatase 
+and phosphoenolpyruvate carboxykinase activity for gluconeogenesis 
+[
+]. The effects of KO on the change of BP, glycemic indices, and body 
+51
+composition have been inconsistent and have remained not fully 
+analyzed. Thus, the role of KO consumption in BP, glycemic indices, and 
+body composition related outcomes were examined, turning out with no 
+signicant results. 
+Two previous systematic review and meta-analysis reported the role 
+of KO supplements in the concentrations of plasma lipid [
+,
+]. The 
+18 52
+previous study conducted by Ursoniu et al. [
+] including 7 eligible 
+18
+trials with 662 participants showed that KO supplementation can reduce 
+LDL-C and TG in humans. Another network meta-analysis conducted by 
+Kim et al. [
+] revealed that KO was associated with signicantly lower 
+52
+TG levels than control supplements. However, the net differences in 
+LDL-C, TG, HDL-C, as well as TG were not obviously different in the 
+groups of krill oil and sh oil. Compared to the previous meta-analyses, 
+our current meta-analysis was the most recent, critical, in-depth, 
+comparative investigation, which typically redened and strengthened 
+earlier study conclusions. First, we included 7 recent published RCT (14 
+compared with 7) with 796 additional participants (662 compared with 
+1458) for the present analysis, yielding greater statistical power to our 
+study. Second, this is the rst meta-analysis to evaluate evidence from 
+RCTs on the role of KO supplementation in other cardiovascular risk 
+factors related to body composition, glycemic indices, and inamma-
+tion. Moreover, differences in the interventions used and inconsistency 
+in the effect and effect size observed across studies contribute to the 
+indirectness of evidence, which can be partly attributed to lenient in-
+clusion criteria. To better assess the robustness of the available evidence 
+and to make more objective conclusions from the results, we performed 
+several subgroup analyses to investigate the effects of KO intervention in 
+terms of study design, baseline BMI, intervention duration, and KO dose. 
+Third, we performed the analyses of sensitivity and publication bias to 
+obtain more objective decisions and did not nd substantial publication 
+bias. The dose or time response of KO consumption was examined 
+through linear meta-regression. Finally, we used REML-based dose-res-
+ponse analysis to nd an optimal duration and dosage for KO inter-
+vention. Additionally, we conducted the criteria of GRADE to evaluate 
+the clinical evidence s overall body and the recommendation s strength 
+’
+’
+for each outcome, different from previous studies. 
+5. Limitation 
+Although the present meta-analysis provides useful implications for 
+clinical practice, some certain limitations that should be mentioned. 
+First, a majority of the included trials carried out in relatively heterog-
+enous populations, including healthy participants, subjects with hy-
+pertension, hypercholesterolemic, and knee osteoarthritis or knee pain. 
+Thus, since we did not have access to the original data from the studies 
+reviewed, it was not possible to fully establish the impact of KO on 
+cardiovascular disease risk factors in different populations through 
+subgroup analyses. Second, only a small number of trials were available 
+for some secondary outcomes such as HC, WC, Insulin, HbA1c, HOMA- 
+IR and CRP. Therefore, these ndings must be interpreted cautiously, 
+and further more large-scale, high-quality clinical studies are required to 
+reach more condent conclusions. Third, the recruited subjects could 
+have various background habits of consumptions, medications, and 
+lifestyles which may affect the lipid prole, blood pressure, and other 
+CVD risk factors signicantly in individuals. Finally, we found signi-
+cant heterogeneity among trials for the TG outcome (I2 = 85%). How-
+ever, sensitivity, meta-regression, and a priori subgroup analyses did not 
+completely solve the sources of heterogeneity. 
+6. Conclusions 
+KO supplementation could signicantly improve lipid metabolism by 
+decreasing the TC, LDL-C and TG levels. However, KO supplementation 
+show no benecial effect in SBP, DBP, FBG, Insulin, HbA1c, HOMA-IR, 
+BW, BMI, WC, HC, or CRP. The effects of KO on lipid markers were 
+affected by the trial design, supplement dosage, baseline BMI, and 
+intervention duration. Our subgroup analyses showed that supplemen-
+tation of kril oil decreased TC and TG in trials with daily KO dose <3 g/ 
+d. Moreover, a reduction in LDL-C and TG were also observed in those 
+with daily KO dose 
+3 g. Our ndings might help healthcare practi-
+≥
+tioners and the general public better comprehend the evidence on the 
+CVD preventive benets of KO supplementation. It should be noted that 
+although certain benecial lipid-modifying effects were observed after 
+KO supplementation, in future, studies should pay attention to re-
+lationships of KO intake with the incidence of CVD events or all-cause 
+mortality. Additionally, researches on a standardize KO supplementa-
+tion protocol, including the dosing regimen and duration of adminis-
+tration, are also of necessity. 
+Statement of signicance 
+Evidence regarding the potential role of krill oil (KO) supplementa-
+tion on cardiovascular health in humans are inconsistent. The present 
+updated meta-analysis was the most recent, critical, in-depth compara-
+tive investigation, which systematically analyze published clinical evi-
+dence and evaluate of the effects of KO supplementation in preventing or 
+treating cardiovascular disease (CVD) in humans. The pooled result 
+showed that KO supplementation could signicantly improve lipid 
+metabolism by decreasing the total cholesterol, low-density lipoprotein 
+cholesterol, and triglycerides levels. The present ndings might help 
+healthcare practitioners and the general public better comprehend the 
+Fig. 6. Funnel plot demonstrating publication bias in the studies reporting the impact of krill oil on lipid proles.  
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+9
+evidence on the CVD preventive benets of KO supplementation. 
+Credit authorship contribution statement 
+H. H.: Conception and design of the study, acquisition of data, 
+analysis and interpretation of data, drafted the manuscript, discussed 
+the idea of the meta-analysis, submitted the paper.; D.L. and B. H.: 
+Completed the database searches and selected, reviewed the articles and 
+extracted the data; G.Z. and Y.C.: Reviewed and extracted the data, and 
+performed the data analyses, All authors read and approved the nal 
+manuscript. 
+Funding 
+This work was supported by the Traditional Medicine Research 
+Program of Guangdong Province under Grant (No. 20211410); Medical 
+Scientic Research Foundation of Guangdong Province under Grant 
+(No. A2021356). 
+Declaration of competing interest 
+The authors declare that they have no known competing nancial 
+interests or personal relationships that could have appeared to inuence 
+the work reported in this paper. 
+Appendix A. Supplementary data 
+Supplementary data to this article can be found online at https://doi. 
+org/10.1016/j.dsx.2023.102909. 
+References 
+[1] Widmer RJ, Flammer AJ, Lerman LO, Lerman A. The Mediterranean diet, its 
+components, and cardiovascular disease. Am J Med 2015;128(3):229 38. 
+–
+https:// 
+doi.org/10.1016/j.amjmed.2014.10.014. 
+[2] Smith Jr SC, Collins A, Ferrari R, Holmes Jr DR, Logstrup S, McGhie DV, Ralston J, 
+Sacco RL, Stam H, Taubert K, et al. Our time: a call to save preventable death from 
+cardiovascular disease (heart disease and stroke). Circulation 2012;126(23): 
+2769 75. 
+. 
+–
+https://doi.org/10.1161/CIR.0b013e318267e99f
+[3] Piepoli MF, Hoes AW, Agewall S, Albus C, Brotons C, Catapano AL, Cooney MT, 
+Corr`a U, Cosyns B, Deaton C, et al. European guidelines on cardiovascular disease 
+prevention in clinical practice: the sixth joint task force of the European society of 
+cardiology and other societies on cardiovascular disease prevention in clinical 
+practice (constituted by representatives of 10 societies and by invited experts) 
+Developed with the special contribution of the European association for 
+cardiovascular prevention 
+rehabilitation (EACPR). Eur Heart J 2016;37(29): 
+& 
+2315 81. 
+. 2016. 
+–
+https://doi.org/10.1093/eurheartj/ehw106
+[4] Yusuf S, Hawken S, Ounpuu S, Dans T, Avezum A, Lanas F, McQueen M, Budaj A, 
+Pais P, Varigos J, et al. Effect of potentially modiable risk factors associated with 
+myocardial infarction in 52 countries (the INTERHEART study): case-control study. 
+Lancet 2004;364(9438):937 52. 
+–
+https://doi.org/10.1016/s0140-6736(04)17018- 
+9. 
+[5] Hong KN, Fuster V, Rosenson RS, Rosendorff C, Bhatt DL. How low to go with 
+glucose, cholesterol, and blood pressure in primary prevention of CVD. J Am Coll 
+Cardiol 2017;70(17):2171 85. 
+. 
+–
+https://doi.org/10.1016/j.jacc.2017.09.001
+[6] Huang H, Liao D, Zou Y, Chi H. The effects of chitosan supplementation on body 
+weight and body composition: a systematic review and meta-analysis of 
+randomized controlled trials. Crit Rev Food Sci Nutr 2020;60(11):1815 25. 
+–
+https://doi.org/10.1080/10408398.2019.1602822. 
+[7] Huang H, Zhou G, Pu R, Cui Y, Liao D. Clinical evidence of dietary supplementation 
+with sesame on cardiovascular risk factors: an updated meta-analysis of 
+randomized controlled trials. Crit Rev Food Sci Nutr 2022;62(20):5592 602. 
+–
+https://doi.org/10.1080/10408398.2021.1888689. 
+[8] Tierney AC, Rumble CE, Billings LM, George ES. Effect of dietary and supplemental 
+lycopene on cardiovascular risk factors: a systematic review and meta-analysis. 
+Adv Nutr 2020;11(6):1453 88. 
+. 
+–
+https://doi.org/10.1093/advances/nmaa069
+[9] Djuricic I, Calder PC. Pros and cons of long-chain omega-3 polyunsaturated fatty 
+acids in cardiovascular health. Annu Rev Pharmacol Toxicol 2023;63:383 406. 
+–
+https://doi.org/10.1146/annurev-pharmtox-051921-090208. 
+[10] Abdelhamid AS, Brown TJ, Brainard JS, Biswas P, Thorpe GC, Moore HJ, 
+Deane KH, AlAbdulghafoor FK, Summerbell CD, Worthington HV, et al. Omega-3 
+fatty acids for the primary and secondary prevention of cardiovascular disease. 
+Cochrane Database Syst Rev 2018;11(11):CD003177. https://doi.org/10.1002/ 
+14651858.CD003177.pub4. 
+[11] Ambati RR, Phang SM, Ravi S, Aswathanarayana RG. Astaxanthin: sources, 
+extraction, stability, biological activities and its commercial applications a review. 
+–
+Mar Drugs 2014;12(1):128 52. 
+. 
+–
+https://doi.org/10.3390/md12010128
+[12] Araujo P, Zhu H, Breivik JF, Hjelle JI, Zeng Y. Determination and structural 
+elucidation of triacylglycerols in krill oil by chromatographic techniques. Lipids 
+2014;49(2):163 72. 
+. 
+–
+https://doi.org/10.1007/s11745-013-3855-6
+[13] Ulven SM, Holven KB. Comparison of bioavailability of krill oil versus sh oil and 
+health effect. Vasc Health Risk Manag 2015;11:511 24. 
+–
+https://doi.org/10.2147/ 
+vhrm.s85165. 
+[14] Deutsch L. Evaluation of the effect of Neptune Krill Oil on chronic inammation 
+and arthritic symptoms. J Am Coll Nutr 2007;26(1):39 48. 
+–
+https://doi.org/ 
+10.1080/07315724.2007.10719584. 
+[15] Ishida N, Yamada H, Hirose M. Euphausia pacica (North Pacic krill): review of 
+chemical features and potential benets of 8-HEPE against metabolic syndrome, 
+dyslipidemia, NAFLD, and atherosclerosis. Nutrients 2021;13(11). https://doi.org/ 
+10.3390/nu13113765. 
+[16] Su X, Tanalgo P, Bustos M, Dass CR. The effect of krill oil and n-3 polyunsaturated 
+fatty acids on human osteosarcoma cell Proliferation and migration. Curr Drug 
+Targets 2018;19(5):479 86. 
+–
+https://doi.org/10.2174/ 
+1389450116666150107152206. 
+[17] Tou JC, Jaczynski J, Chen YC. Krill for human consumption: nutritional value and 
+potential health benets. Nutr Rev 2007;65(2):63 77. 
+–
+https://doi.org/10.1111/ 
+j.1753-4887.2007.tb00283.x. 
+[18] Ursoniu S, Sahebkar A, Serban MC, Antal D, Mikhailidis DP, Cicero A, Athyros V, 
+Rizzo M, Rysz J, Banach M. Lipid-modifying effects of krill oil in humans: 
+systematic review and meta-analysis of randomized controlled trials. Nutr Rev 
+2017;75(5):361 73. 
+. 
+–
+https://doi.org/10.1093/nutrit/nuw063
+[19] Higgins JPT, L´opez-L´opez JA, Becker BJ, Davies SR, Dawson S, Grimshaw JM, 
+McGuinness LA, Moore THM, Rehfuess EA, Thomas J, et al. Synthesising 
+quantitative evidence in systematic reviews of complex health interventions. BMJ 
+Global Health 2019;4(Suppl 1):e000858. https://doi.org/10.1136/bmjgh-2018- 
+000858. 
+[20] Higgins JP, Thompson SG, Deeks JJ, Altman DG. Measuring inconsistency in meta- 
+analyses. BMJ 2003;327(7414):557 60. 
+–
+https://doi.org/10.1136/ 
+bmj.327.7414.557. 
+[21] Begg CB, Mazumdar M. Operating characteristics of a rank correlation test for 
+publication bias. Biometrics 1994;50(4):1088 101
+–
+. 
+[22] Egger M, Davey Smith G, Schneider M, Minder C. Bias in meta-analysis detected by 
+a simple, graphical test. BMJ 1997;315(7109):629 34. 
+–
+https://doi.org/10.1136/ 
+bmj.315.7109.629. 
+[23] Morton SC, Adams JL, Suttorp MJ, Shekelle PG. Meta-regression approaches: what, 
+why, when, and how? Rockville MD. 2004. 
+[24] Guyatt GH, Oxman AD, Vist GE, Kunz R, Falck-Ytter Y, Alonso-Coello P, 
+Schünemann HJ. GRADE: an emerging consensus on rating quality of evidence and 
+strength of recommendations. BMJ 2008;336(7650):924 6. 
+–
+https://doi.org/ 
+10.1136/bmj.39489.470347.AD. 
+[25] Berge K, Musa-Veloso K, Harwood M, Hoem N, Burri L. Krill oil supplementation 
+lowers serum triglycerides without increasing low-density lipoprotein cholesterol 
+in adults with borderline high or high triglyceride levels. Nutr Res 2014;34(2): 
+126 33. 
+. 
+–
+https://doi.org/10.1016/j.nutres.2013.12.003
+[26] Ramprasath VR, Eyal I, Zchut S, Shafat I, Jones PJ. Supplementation of krill oil 
+with high phospholipid content increases sum of EPA and DHA in erythrocytes 
+compared with low phospholipid krill oil. Lipids Health Dis 2015;14:142. https:// 
+doi.org/10.1186/s12944-015-0142-y. 
+[27] Alkhedhairi SA, Aba Alkhayl FF, Ismail AD, Rozendaal A, German M, MacLean B, 
+Johnston L, Miller AA, Hunter AM, Macgregor LJ, et al. The effect of krill oil 
+supplementation on skeletal muscle function and size in older adults: a randomised 
+controlled trial. Clin Nutr 2022;41(6):1228 35. 
+–
+https://doi.org/10.1016/j. 
+clnu.2022.04.007. 
+[28] Lobo PCB, Roriz LN, Siqueira JM, Giglio BM, Marini ACB, Corgosinho FC, 
+Schincaglia RM, Pimentel GD. Krill oil supplementation does not change waist 
+circumference and sagittal abdominal diameter in overweight women: a Pilot 
+balanced, double-blind, and placebo-controlled clinical trial. Int J Environ Res Publ 
+Health 2022;19(20). 
+. 
+https://doi.org/10.3390/ijerph192013574
+[29] Lobraico JM, DiLello LC, Butler AD, Cordisco ME, Petrini JR, Ahmadi R. Effects of 
+krill oil on endothelial function and other cardiovascular risk factors in participants 
+with type 2 diabetes, a randomized controlled trial. BMJ Open Diabetes Res Care 
+2015;3(1):e000107. 
+. 
+https://doi.org/10.1136/bmjdrc-2015-000107
+[30] Maki KC, Reeves MS, Farmer M, Griinari M, Berge K, Vik H, Hubacher R, Rains TM. 
+Krill oil supplementation increases plasma concentrations of eicosapentaenoic and 
+docosahexaenoic acids in overweight and obese men and women. Nutr Res 2009; 
+29(9):609 15. 
+. 
+–
+https://doi.org/10.1016/j.nutres.2009.09.004
+[31] Mozaffarian D, Maki KC, Bays HE, Aguilera F, Gould G, Hegele RA, Moriarty PM, 
+Robinson JG, Shi P, Tur JF, et al. Effectiveness of a novel ω-3 krill oil agent in 
+patients with severe hypertriglyceridemia: a randomized clinical trial. JAMA Netw 
+Open 2022;5(1):e2141898. https://doi.org/10.1001/ 
+jamanetworkopen.2021.41898. 
+[32] Ramprasath VR, Eyal I, Zchut S, Jones PJ. Enhanced increase of omega-3 index in 
+healthy individuals with response to 4-week n-3 fatty acid supplementation from 
+krill oil versus sh oil. Lipids Health Dis 2013;12:178. https://doi.org/10.1186/ 
+1476-511x-12-178. 
+[33] Rundblad A, Holven KB, Bruheim I, Myhrstad MC, Ulven SM. Effects of krill oil and 
+lean and fatty sh on cardiovascular risk markers: a randomised controlled trial. 
+J Nutr Sci 2018;7:e3. 
+. 
+https://doi.org/10.1017/jns.2017.64
+[34] Sarkkinen ES, Savolainen MJ, Taurio J, Marvola T, Bruheim I. Prospective, 
+randomized, double-blinded, placebo-controlled study on safety and tolerability of 
+H. Huang et al.                                                                                                                                                                                                                                  
+
+Diabetes & Metabolic Syndrome: Clinical Research & Reviews 17 (2023) 102909
+10
+the krill powder product in overweight subjects with moderately elevated blood 
+pressure. Lipids Health Dis 2018;17(1):287. https://doi.org/10.1186/s12944-018- 
+0935-x. 
+[35] Stonehouse W, Benassi-Evans B, Bednarz J, Vincent AD, Hall S, Hill CL. Krill oil 
+improved osteoarthritic knee pain in adults with mild to moderate knee 
+osteoarthritis: a 6-month multicenter, randomized, double-blind, placebo- 
+controlled trial. Am J Clin Nutr 2022;116(3):672 85. 
+–
+https://doi.org/10.1093/ 
+ajcn/nqac125. 
+[36] Sung HH, Sinclair AJ, Lewandowski PA, Su XQ. Postprandial long-chain n-3 
+polyunsaturated fatty acid response to krill oil and sh oil consumption in healthy 
+women: a randomised controlled, single-dose, crossover study. Asia Pac J Clin Nutr 
+2018;27(1):148 57. 
+. 
+–
+https://doi.org/10.6133/apjcn.092017.03
+[37] Suzuki Y, Fukushima M, Sakuraba K, Sawaki K, Sekigawa K. Krill oil improves mild 
+knee joint pain: a randomized control trial. PLoS One 2016;11(10):e0162769. 
+https://doi.org/10.1371/journal.pone.0162769. 
+[38] Ulven SM, Kirkhus B, Lamglait A, Basu S, Elind E, Haider T, Berge K, Vik H, 
+Pedersen JI. Metabolic effects of krill oil are essentially similar to those of sh oil 
+but at lower dose of EPA and DHA, in healthy volunteers. Lipids 2011;46(1):37 46. 
+–
+https://doi.org/10.1007/s11745-010-3490-4. 
+[39] Momtazi-Borojeni AA, Katsiki N, Pirro M, Banach M, Rasadi KA, Sahebkar A. 
+Dietary natural products as emerging lipoprotein(a)-lowering agents. J Cell Physiol 
+2019;234(8):12581 94. 
+. 
+–
+https://doi.org/10.1002/jcp.28134
+[40] Georgia-Eirini D, Athina S, Wim VB, Christos K, Theodoros C. Natural products 
+from mediterranean diet: from anti-hyperlipidemic agents to dietary epigenetic 
+modulators. Curr Pharmaceut Biotechnol 2019;20(10):825 44. 
+–
+https://doi.org/ 
+10.2174/1573407215666190628150921. 
+[41] Guijarro C, Cosín-Sales J. LDL cholesterol and atherosclerosis: the evidence. Clín 
+Invest Arterioscler 2021;33(Suppl 1):25 32. 
+–
+https://doi.org/10.1016/j. 
+arteri.2020.12.004. 
+[42] Duan Y, Gong K, Xu S, Zhang F, Meng X, Han J. Regulation of cholesterol 
+homeostasis in health and diseases: from mechanisms to targeted therapeutics. 
+Signal Transduct Targeted Ther 2022;7(1):265. https://doi.org/10.1038/s41392- 
+022-01125-5. 
+[43] Expert Panel on detection, evaluation, and treatment of high blood cholesterol in 
+adults. Executive summary of the third report of the National cholesterol education 
+Program (NCEP) expert Panel on detection, evaluation, and treatment of high 
+blood cholesterol in adults (adult treatment Panel III). JAMA 2001;285(19): 
+2486 97. 
+. 
+–
+https://doi.org/10.1001/jama.285.19.2486
+[44] Yang G, Lee J, Lee S, Kwak D, Choe W, Kang I, Kim SS, Ha J. Krill oil 
+supplementation improves dyslipidemia and lowers body weight in mice fed a 
+high-fat diet through activation of AMP-activated protein kinase. J Med Food 2016; 
+19(12):1120 9. 
+. 
+–
+https://doi.org/10.1089/jmf.2016.3720
+[45] Kim OK, Yun JM, Kim D, Park SJ, Lee C, Go EB, Kim JS, Park SY, Lee J. Krill oil 
+inhibits cholesterol synthesis and stimulated cholesterol excretion in 
+hypercholesterolemic rats. Mar Drugs 2022;20(10). https://doi.org/10.3390/ 
+md20100609. 
+[46] Tillander V, Bj rndal B, Burri L, Bohov P, Skorve J, Berge RK, Alexson SE. Fish oil 
+ø
+and krill oil supplementations differentially regulate lipid catabolic and synthetic 
+pathways in mice. Nutr Metabol 2014;11:20. https://doi.org/10.1186/1743-7075- 
+11-20. 
+[47] Guo P, Xue M, Teng X, Wang Y, Ren R, Han J, Zhang H, Tian Y, Liang H. Antarctic 
+krill oil ameliorates liver injury in rats exposed to alcohol by regulating bile acids 
+metabolism and gut microbiota. J Nutr Biochem 2022;107:109061. https://doi. 
+org/10.1016/j.jnutbio.2022.109061. 
+[48] Hwang SM, Kim YU, Kim JK, Chun YS, Kwon YS, Ku SK, Song CH. Preventive and 
+therapeutic effects of krill oil on obesity and obesity-induced metabolic syndromes 
+in high-fat diet-fed mice. Mar Drugs 2022;20(8). https://doi.org/10.3390/ 
+md20080483. 
+[49] Xiang X, Zhou X, Wang W, Zhou Y, Zhou X, Deng S, Zheng B, Wen Z. Effect of 
+Antarctic krill phospholipid (KOPL) on high fat diet-induced obesity in mice. Food 
+Res Int 2021;148:110456. 
+. 
+https://doi.org/10.1016/j.foodres.2021.110456
+[50] Tandy S, Chung RW, Wat E, Kamili A, Berge K, Griinari M, Cohn JS. Dietary krill oil 
+supplementation reduces hepatic steatosis, glycemia, and hypercholesterolemia in 
+high-fat-fed mice. J Agric Food Chem 2009;57(19):9339 45. 
+–
+https://doi.org/ 
+10.1021/jf9016042. 
+[51] Sun D, Zhang L, Chen H, Feng R, Cao P, Liu Y. Effects of Antarctic krill oil on lipid 
+and glucose metabolism in C57BL/6J mice fed with high fat diet. Lipids Health Dis 
+2017;16(1):218. 
+. 
+https://doi.org/10.1186/s12944-017-0601-8
+[52] Kim MG, Yang I, Lee HS, Lee JY, Kim K. Lipid-modifying effects of krill oil vs sh 
+oil: a network meta-analysis. Nutr Rev 2020;78(9):699 708. 
+–
+https://doi.org/ 
+10.1093/nutrit/nuz102. 
+H. Huang et al.                                                                                                                                                                                                                                  

@@ -1,0 +1,715 @@
+Clinical research
+Corresponding author:
+Arrigo F.G. Cicero MD, PhD
+Medical and Surgical 
+Sciences Department 
+Sant’Orsola-Malpighi 
+University Hospital
+U.O. Medicina Interna Borghi
+Via Albertoni 15
+40138 Bologna, Italy
+Phone: ++39 0516362224
+Fax: ++39 516826125
+E-mail: arrigo.cicero@unibo.it
+Medical and Surgical Sciences Department, University of Bologna, Bologna, Italy
+Submitted: 25 February 2015
+Accepted: 23 March 2015
+Arch Med Sci 2016; 12, 3: 507–512
+DOI: 10.5114/aoms.2016.59923
+Copyright © 2016 Termedia & Banach
+Lipid-lowering and anti-inflammatory effects of omega 3 
+ethyl esters and krill oil: a randomized, cross-over, 
+clinical trial
+Arrigo F.G. Cicero, Martina Rosticci, Martino Morbini, Marcella Cagnati, Elisa Grandi,  
+Angelo Parini, Claudio Borghi 
+A b s t r a c t
+Introduction: Polyunsaturated fatty acids (PUFAs) derived from different 
+sources could have different lipid-lowering effects in humans. The main aim 
+of our study was to compare the short-term triglyceride-lowering efficacy of 
+krill oil and purified omega 3 ethyl ester PUFAs in mildly overweight hyper-
+triglyceridemic subjects.
+Material and methods: This double-blind, randomized clinical trial was car-
+ried out in 25 moderately hypertriglyceridemic subjects (TG = 150–500 mg/
+dl). After a  4-week run-in, participants were allocated to treatment with 
+similar pills containing omega 3 ethyl ester PUFAs 1000 mg twice a day vs. krill 
+oil 500 mg twice a day. After 4 weeks of treatment, participants were asked 
+to observe a 4-week wash-out period, and they were then assigned to the 
+alternative treatment for a further period of 4 weeks. 
+Results: Although both PUFA sources were able to improve TG plasma 
+levels, esterified omega 3 PUFAs were more efficacious than krill oil (p < 
+0.05). Nonetheless, only krill oil treatment was able to significantly improve 
+high-density lipoprotein cholesterol and apolipoprotein AI levels, compared 
+to both baseline (p < 0.05) and end of treatment with esterified omega 3 
+PUFAs (p < 0.05) values. Both treatments were able to significantly re-
+duce high-sensitivity C-reactive protein (hs-CRP) levels from the baseline 
+(p < 0.05), but krill oil improved it more efficaciously than esterified omega 3 
+PUFAs (p < 0.05). 
+Conclusions: Krill oil has lipid-lowering effects comparable with those ob-
+tained through a 4-fold higher dose of purified omega 3 ethyl ester PUFAs 
+in mildly overweight hypertriglyceridemic subjects, while more efficaciously 
+reducing hs-CRP. 
+Key words: krill oil, eicosapentaenoic acid, docosahexaenoic acid, omega 3 
+fatty acids, hyperlipidemia, inflammation.
+Introduction
+Polyunsaturated essential fatty acids (PUFAs), and in particular the 
+omega 3 PUFAs eicosapentaenoic acid (EPA) and docosahexaenoic acid 
+(DHA), have several metabolic and pharmacological effects potentially 
+useful in the prevention or management of a large number of human 
+chronic diseases [1, 2]. Given this potential role in therapy, the finding of 
+new sources of omega 3 PUFAs is always a matter of interest [3].
+
+Arrigo F.G. Cicero, Martina Rosticci, Martino Morbini, Marcella Cagnati, Elisa Grandi, Angelo Parini, Claudio Borghi  
+508
+Arch Med Sci 3, June / 2016
+An alternative source of omega 3 PUFAs is the 
+krill (Euphausia superba), a small crustacean that 
+lives in the Antarctic Ocean and contains many 
+types of long-chain PUFAs. Krill and fish oil differ 
+in their composition: krill oil is comprised of phos-
+pholipids (constituting 30–65%) and triglycerides, 
+while fish oil contains only triglycerides. The pri-
+mary phospholipid in krill oil is phosphatidylcho-
+line, with 40% of the total fatty acids attached to 
+the phosphatidylcholine (PC) being EPA and DHA 
+[4]. This composition promotes the efficiency of 
+absorption of fatty acids into the blood, justifying 
+the high bioavailability of omega 3 PUFAs taken 
+in this form [4]. Krill oil also contains various po-
+tent antioxidants, including vitamins A and E, and 
+astaxanthin, whose capacity of absorption of ox-
+ygen radicals proved to be 34 times higher than 
+that of coenzyme Q10, a strong antioxidant agent, 
+and 48 times higher than that of fish oil [5].
+Beyond some preliminary evidence [6], it is not 
+fully clear what advantages the higher bioavail-
+ability of krill oil could bring in terms of lipid-low-
+ering efficacy, in particular when compared with 
+purified omega 3 ethyl ester PUFAs.
+In this context, the main aim of our study was 
+to comparatively evaluate the short-term tri-
+glyceride-lowering efficacy of krill oil and purified 
+omega 3 ethyl ester PUFAs in mildly overweight 
+hypertriglyceridemic subjects.
+Material and methods
+Study design
+This double-blind, randomized clinical trial was 
+carried out in 25 moderately hypertriglyceridem-
+ic subjects, non-smokers, pharmacologically un-
+treated, in primary prevention for cardiovascular 
+diseases, consecutively enrolled in the ambulatory 
+service of cardiovascular disease prevention in the 
+Medical and Surgical Sciences Department of the 
+University of Bologna.
+Inclusion criteria were: age between 18 and 70 
+years, and fasting plasma triglyceride (TG) level 
+between 150 and 500 mg/dl, confirmed at least in 
+two sequential blood samples before signing the 
+consent form.
+Exclusion criteria were:
+– Personal history of cardiovascular disease or risk 
+equivalents;
+– LDL-cholesterolemia > 190 mg/dl or TG > 500 
+mg/dl;
+– Type 2 diabetes;
+– Obesity (body mass index (BMI) > 30 kg/m2);
+– Actual or previous (last 3 months) use of lipid- 
+lowering drugs or nutraceuticals, or drugs affect-
+ing lipid metabolism (in particular, oral cortico-
+steroids, immunosuppressants, full dosed thia-
+zides and β-blockers);
+– Known thyroid, liver, renal or muscle diseases;
+– Previous intolerance to fish oil extracts.
+Smokers were excluded from the trial in or-
+der to reduce the possible effect of smoking on 
+high-sensitivity C-reactive protein (hs-CRP) levels.
+At the enrollment visit, participants were given 
+standard behavioral and qualitative dietary sugges-
+tions to correct unhealthy habits. Standard diet ad-
+vice was given by a dietitian and/or specialist doc-
+tor. Dietitians and/or specialist doctors periodically 
+provided instructions on dietary intake recording 
+procedures as part of a behavior modification pro-
+gram, and later used the subject’s food diaries for 
+counseling. In particular, participants were instruct-
+ed to follow general indications of a Mediterranean 
+diet, avoiding excessive intake of simple sugars and 
+sweet foods, alcohol, dairy products and red meat 
+derived products during the study, and maintaining 
+overall constant dietary habits. Participants were 
+also generically encouraged to increase their physi-
+cal activity by walking briskly for 20 to 30 min, 3 to 
+5 times per week, or by cycling. 
+Treatments
+After 4 weeks of diet modification and advice 
+to increase physical activity (run-in period), at 
+baseline participants were allocated to treatment 
+with similar pills containing omega 3 ethyl ester 
+PUFAs 1000 mg twice a day vs. krill oil 500 mg twice 
+a day to be taken once a day, at evening before the 
+meal (kindly provided by Erbozeta S.r.l., San Ma-
+rino, RSM). Each pill of omega 3 ethyl ester PUFAs 
+1000 mg contained at least 85% of EPA and DHA, 
+with a EPA/DHA ratio of 0.9–1.5; each krill oil pill in-
+cluded EPA 75 mg and DHA 45 mg. As it was a cross-
+over trial, after 4 weeks of treatment, participants 
+were asked to observe a 4-week wash-out period, 
+and they were then assigned to the alternative 
+treatment for a further period of 4 weeks. Clinical 
+and laboratory data were obtained at the baseline, 
+at the end of the first treatment period, after the 
+wash-out, and again after the second treatment 
+period. Randomization was done using drawing 
+of envelopes containing randomization codes pre-
+pared by an independent statistician and specific 
+software. The envelopes were then further mixed 
+and distributed to the investigators, who assigned 
+the randomization code to the enrolled subjects in 
+a progressive way. A copy of the code was provid-
+ed only to the person responsible for performing 
+the statistical analysis.
+Throughout the study, we instructed partici-
+pants to take the new product’s first dose on the 
+day after they received it in a blinded box. At the 
+same time, all unused products were retrieved for 
+the inventory. Product compliance was assessed 
+by counting the number of product doses returned 
+at the time of specified clinic visits.
+
+Lipid-lowering and anti-inflammatory effects of omega 3 ethyl esters and krill oil: a randomized, cross-over, clinical trial 
+Arch Med Sci 3, June / 2016
+509
+Assessments
+All plasma parameters were obtained after a 12-
+hour overnight fast. Venous blood samples were 
+drawn by a nurse in all participants between 8:00 
+a.m. and 9:00 a.m. Plasma used was obtained by 
+addition of Na2EDTA (1 mg = ml) and centrifuged 
+at 3,000 g for 15 min at 4.0°C. Immediately after 
+centrifugation, plasma samples were frozen and 
+stored at –80°C for no more than 3 months. The 
+following parameters were evaluated via standard-
+ized methods [7]: total cholesterol (TC), high-den-
+sity lipoprotein cholesterol (HDL-C), TG, non HDL-C, 
+apolipoprotein B (apoB), apolipoprotein AI (apoAI), 
+glucose, creatinine, liver transaminases and cre-
+atinine phosphokinase (CPK). All measurements 
+were centrally performed in the laboratory of our 
+department. LDL cholesterol (LDL-C) was estimat-
+ed with the Friedewald formula.
+High-sensitivity C-reactive protein (hs-CRP)
+was also measured using latex-enhanced immu-
+nonephelometric assays on a BN II analyzer (Dade 
+Behring, Newark, Delaware, USA). The intra-as-
+say and inter-assay coefficients of variation (CVs) 
+were 5.7 and 1.3%, respectively [8].
+Statistical analysis
+Data were analyzed using intention to treat by 
+means of the Statistical Package for the Social 
+Sciences (SPSS) 19.0, version for Windows. Nor-
+mally distributed baseline characteristics of the 
+population were compared using Student’s t-test 
+and χ2 test followed by Fisher’s exact test for cate-
+gorical variables. Two-way analyses of variance for 
+cross-over design were used to assess the effect 
+of treatment during the consumption of esterified 
+omega 3 PUFAs and krill oil. All data are expressed 
+as means and SD. To verify the basic assumptions 
+of cross-over design, besides the evaluation of the 
+period effect, the presence of a carryover effect 
+was excluded. A p level of < 0.05 was considered 
+significant for all tests.
+Results
+At the baseline, the enrolled participants had 
+similar BMI and lipid pattern, and were age and 
+sex matched. The baseline characteristics of par-
+ticipants assigned to the two different types of 
+treatment (esterified omega 3 PUFAs-krill oil or 
+krill oil-esterified omega 3 PUFAs) were similar, 
+and no significant differences were observed re-
+garding the parameters studied (Table I). No par-
+ticipant dropped out from the study because of 
+adverse events, and compliance with the treat-
+ment was almost total in both groups and treat-
+ment periods.
+From the randomization visit to the end of the 
+study, the enrolled subjects maintained overall 
+a  similar dietary pattern, without a  significant 
+change in total energy, total cholesterol and total 
+saturated fatty acid intake.
+The main results of the trial are shown in Table II. 
+Comparing the effects of the two tested treat-
+ments, both PUFA sources were able to lower TG 
+plasma levels, but esterified omega 3 PUFAs were 
+more efficacious than krill oil (p < 0.05). In con-
+trast, only krill oil treatment was able to signifi-
+cantly improve HDL-C and apoAI level, both com-
+pared to baseline (p < 0.05) and end of treatment 
+with esterified omega 3 PUFAs (p < 0.05) values. 
+Compared to the baseline values, non-HDL cho-
+lesterol improved only after krill oil treatment 
+(p < 0.05), and not after treatment with esterified 
+omega 3 PUFAs. Finally, both treatments were 
+able to significantly reduce hs-CRP levels from the 
+baseline (p < 0.05), but krill oil improved hs-CRP 
+more efficaciously than esterified omega 3 PUFAs 
+(p < 0.05).
+No significant difference was detected compar-
+ing pre- and post-treatment values as regards TC, 
+LDL-C, ApoB, fasting plasma glucose (FPG), creat-
+inine, liver transaminases and CPK in each of the 
+treatment groups.
+Discussion
+The therapeutic value of omega 3 PUFAs, main-
+ly (but not only) found in fish oils, EPA and DHA, 
+has been extensively studied in a wide variety of 
+disease conditions, first of all in cardiovascular 
+disease. In fact, PUFAs have a  large number of 
+pharmacological properties that justify their di-
+etary supplementation in a considerable number 
+of human diseases [9, 10].
+The significant difference in efficacy observed 
+in various conditions depends of course on the 
+wide variation in baseline omega 3 PUFAs status 
+in study participants (often even not tested) [11], 
+the use of inappropriate dosage and the possible 
+wrong ratio between EPA and DHA. On the other 
+hand, it seems that the difference in efficacy with 
+equal dosages could be at least partly be related 
+to the large discrepancy in quality of the product 
+and to the bioavailability of the omega 3 PUFAs. 
+In particular, the contrasting results observed 
+with supplementation of omega 3 PUFAs in car-
+diovascular disease prevention or treatment have 
+been attributed to the fact that the serum level 
+of omega 3 PUFAs is more strongly linked to the 
+clinical outcome than to the omega 3 PUFA dose 
+used [12, 13]. In this context, testing the different 
+metabolic effects of omega 3 PUFAs with different 
+bioavailability could be of relevant interest [3].
+In our study, we observed that 1000 mg/day of 
+krill oil has lipid-lowering effects comparable with 
+those achieved through a higher dose of purified 
+omega 3 ethyl ester PUFAs in mildly overweight 
+
+Arrigo F.G. Cicero, Martina Rosticci, Martino Morbini, Marcella Cagnati, Elisa Grandi, Angelo Parini, Claudio Borghi  
+510
+Arch Med Sci 3, June / 2016
+hypertriglyceridemic subjects, being slightly less 
+efficacious in terms of triglyceride reduction, but 
+significantly improving the HDL cholesterol level. 
+These data are partly in agreement with those al-
+ready known from previous studies [6, 14], even 
+if the results are hardly comparable because of 
+the use of different dosages and omega 3 formu-
+lations. 
+Even if the marine omega 3 PUFAs are known 
+to exert a significant anti-inflammatory effect [15], 
+the higher reduction in hs-CRP observed during 
+krill oil treatment is also compatible with the an-
+ti-inflammatory effects previously observed in an-
+other short-term clinical trial where similar krill oil 
+dosages were tested [16]. The anti-inflammatory 
+effect of krill oil could be due to its direct antiox-
+idant action, but also to its modulating effect on 
+endocannabinoid metabolism [17].
+Moreover, the formulation we tested at the dos-
+es prescribed have similar cost per day of therapy.
+Table I. Main characteristics of the investigated parameters at baseline in patients treated with the tested krill oil 
+or esterified omega 3 PUFAs
+Parameter
+Esterified omega 3 PUFAS
+(n = 12; M = 7, F = 6) 
+Krill oil
+(n = 13; M = 7, F = 6)
+Mean
+SD
+Mean
+SD
+Age [years]
+50.3
+5.6
+51.1
+6.5
+Total energy intake [kcal]
+2264
+131
+2318
+149
+Fat dietary intake (% of total energy)
+27.8
+3.0
+27.4
+2.9
+Saturated fat intake (fat dietary intake  
+(% on total energy))
+9.1
+1.1
+9.2
+0.9
+Protein intake (% of total energy)
+17.7
+2.1
+18.3
+1.9
+Carbohydrate intake (% of total energy)
+51.3
+4.2
+52.1
+4.4
+Cholesterol intake [mg]
+179.1
+9.2
+177.8
+9.8
+BMI [kg/m2]
+27.6
+1.7
+27.9
+1.2
+SBP [mm Hg]
+135.1
+5.7
+135.0
+5.5
+DBP [mm Hg]
+85.6
+4.0
+83.3
+5.5
+PP [mm Hg]
+49.4
+4.7
+51.6
+5.2
+MAP [mm Hg]
+110.4
+4.3
+109.2
+4.9
+TC [mg/dl]
+194.6
+14.1
+187.0
+12.8
+HDL-C [mg/dl]
+39.5
+6.7
+39.8
+8.1
+LDL-C [mg/dl]
+94.2
+15.4
+97.1
+13.8
+TG [mg/dl]
+369.2
+26.8
+362.4
+27.7
+Non-HDL-C [mg/dl]
+165.3
+26.5
+161.2
+34.5
+ApoAI [mg/dl]
+115.5
+17.2
+120.4
+17.9
+ApoB [mg/dl]
+111.1
+12.3
+114.0
+13.5
+FPG [mg/dl]
+92.1
+7.7
+95.3
+9.38
+Creatinine [mg/dl]
+1.1
+0.1
+1.05
+0.13
+CPK [U/l]
+121.6
+37.0
+131.6
+26.9
+AST [U/l]
+21.3
+4.9
+21.2
+4.8
+ALT [U/l]
+24.5
+5.1
+23.6
+5.4
+hs-CRP [mg/l]
+1.97
+0.35
+2.15
+0.43
+BMI – body mass index, SBP – systolic blood pressure, DBP – diastolic blood pressure, PP – pulse pressure, MAP – mean arterial pressure, 
+TC – total cholesterol, LDL-C – low-density lipoprotein cholesterol, HDL-C – high-density lipoprotein cholesterol, TG – triglycerides, Apo – 
+apolipoprotein, FPG – fasting plasma glucose, CPK – creatine-phosphokinase, AST – aspartate transaminase, ALT – alanine transaminase, 
+hs-CRP – high-sensitivity C-reactive protein. Descriptive values reported as mean and standard deviation. The subjects were cross-matched 
+for all the tested variables.
+
+Lipid-lowering and anti-inflammatory effects of omega 3 ethyl esters and krill oil: a randomized, cross-over, clinical trial 
+Arch Med Sci 3, June / 2016
+511
+Our observations, combined with those of oth-
+er authors showing positive effects of krill oil on 
+cognitive functions [18] and on prevention of fatty 
+acid accumulation in the liver [19], support the in-
+terest in extending the knowledge of the possible 
+usefulness of this natural product in the manage-
+ment of cardiovascular disease risk [20]. Overall, 
+our data suggest the need to intensify research 
+on the pleiotropic effects of krill oil, especially in 
+association with other preventive drugs such as 
+antidiabetics or statins [21, 22].
+Of course, our pilot study has some relevant lim-
+itations. The first is the small patient sample, even 
+though the study strength is improved by a cross-
+over design where participants are all treated with 
+both placebo and active treatment. Another lim-
+itation is the short duration of the study. A longer 
+trial would not have been considered ethical as 
+a  preliminary report, considering that the use of 
+ethyl-ester omega 3 fatty acids in the participants 
+enrolled in our trial is supported by a large and con-
+sistent literature. Also, we did not dose the plasma 
+level of EPA and DHA, deducing our conclusion from 
+the observed changes in hematochemical parame-
+ters. Finally, efficacy data were based on a relatively 
+low number of laboratory parameters, and not on 
+instrumental ones (as for instance flow-mediat-
+ed vasodilation or pulse wave velocity). However, 
+the study duration was too short to observe any 
+anatomical change in vessel structures, while the 
+considered laboratory parameters are validated 
+biomarkers of vascular stress.
+In conclusion, based on our data, a nutraceuti-
+cal containing krill oil 1000 mg/day has lipid-low-
+ering effects comparable with those achieved 
+through a higher dose of purified omega 3 ethyl 
+ester PUFAs in mildly overweight hypertriglycer-
+idemic subjects, being slightly less efficacious in 
+terms of triglyceride reduction but significantly 
+improving the HDL cholesterol level and more ef-
+ficaciously reducing hs-CRP. These results have to 
+be confirmed in larger patient samples and longer 
+studies.
+Further trials are needed to evaluate the long-
+term efficacy and tolerability profile of krill oil in 
+frail patients, such as hypercholesterolemic elder-
+ly [23] and statin-intolerant ones [24].
+Acknowledgments 
+This trial has been approved by the local ethics 
+committee and has therefore been performed in 
+accordance with the ethical standards laid down 
+in the 1964 Declaration of Helsinki and its lat-
+er amendments. All persons involved in the trial 
+signed an informed consent form prior to their in-
+clusion in the study. 
+Table II. Changes in the investigated parameters after esterified omega 3 PUFAs and krill oil treatment (cumulative 
+data comparing pre-/post-treatment phases; *p < 0.05 vs. esterified omega 3 PUFAs)
+Δ (T1–T0)
+Esterified omega 3  
+PUFAS (n = 25) 
+Krill oil (n = 25)
+Mean
+SD
+P vs. baseline
+Mean
+SD
+P vs. baseline
+Δ TC [mg/dl]
+–2.1
+3.4
+0.397
+–3.8
+4.1
+0.078
+Δ HDL-C [mg/dl]
++1.4
+4.9
+0.156
++4.5*
+2.1
+0.039
+Δ LDL-C [mg/dl]
+–1.9
+3.8
+0.462
+–3.7
+3.9
+0.111
+Δ TG [mg/dl]
+–72.8
+28.9
+0.001
+–55.7*
+18.3
+0.003
+Δ Non-HDL-C [mg/dl]
+–3.1
+3.8
+0.069
+–8.1*
+4.7
+0.009
+Δ ApoAI [mg/dl]
++11.1
+20.9
+0.060
++19.4
+15.1
+0.049
+Δ ApoB [mg/dl]
+–2.8
+8.8
+0.958
+–2.6
+5.45
+0.529
+Δ FPG [mg/dl]
++1.9
+8.5
+0.665
++2.2
+11.4
+0.758
+Δ Creatinine [mg/dl]
+–0.07
+0.21
+0.087
+–0.03
+0.14
+0.317
+Δ CPK [U/l]
++6.8
+34.35
+0.569
++4.4
+44.3
+0.668
+Δ AST [U/l]
++4.5
+11.7
+0.363
++2.2
+4.8
+0.133
+Δ ALT [U/l]
++5.4
+14.7
+0.360
++1.1
+10.0
+0.581
+Δ hs-CRP [mg/l]
+–0.14
+0.07
+0.030
+–0.35*
+0.12
+< 0.001
+TC – total cholesterol, LDL-C – low-density lipoprotein cholesterol, HDL-C – high-density lipoprotein cholesterol, TG – triglycerides, Apo – 
+apolipoprotein, FPG – fasting plasma glucose, CPK – creatine-phosphokinase, AST – aspartate transaminase, ALT – alanine transaminase, 
+hs-CRP – high-sensitivity C-reactive protein. A  two-way analysis of variance for crossover design was used to assess the effects of 
+treatment during treatment with esterified omega 3 PUFAs or krill oil (*p < 0.05 vs. esterified omega 3 PUFAs). All the data are expressed 
+as mean and SD.
+
+Arrigo F.G. Cicero, Martina Rosticci, Martino Morbini, Marcella Cagnati, Elisa Grandi, Angelo Parini, Claudio Borghi  
+512
+Arch Med Sci 3, June / 2016
+Conflict of interest
+The authors declare no conflict of interest.
+R e f e r e n c e s
+1.	Cicero AF, De Sando V, Parini A, Borghi C. Polyunsaturat-
+ed fatty acids application in internal medicine: beyond 
+the established cardiovascular effects. Arch Med Sci 
+2012; 8: 784-93.
+2.	Cicero AF, Ertek S, Borghi C. Omega-3 polyunsaturated 
+fatty acids: their potential role in blood pressure pre-
+vention and management. Curr Vasc Pharmacol 2009; 
+7: 330-7.
+3.	Cicero AF, Morbini M, Borghi C. Do we need “new” ome-
+ga 3 polyunsaturated fatty acids formulations? Exp Opin 
+Pharmacother 2014; 4: 1-4.
+4.	Ramprasath VR, Eyal I, Zchut S, Jones PJH. Enhanced in-
+crease of omega 3 index in healthy individuals with re-
+sponse to 4 week n-3 fatty acid supplementation from 
+krill oil versus fish oil. Lipids Health Dis 2013; 12: 178.
+5.	Naguib YM. Antioxidant activities of astaxanthin and re-
+lated carotenoids. J Agric Food Chem 2000; 48: 1150-4. 
+6.	Ulven SM, Kirkhus B, Lamglait A, et al. Metabolic effects 
+of krill oil are essentially similar to those of fish oil but 
+at lower dose of EPA and DHA, in healthy volunteers. 
+Lipids 2011; 46: 37-46.
+7.	Cicero AF, Derosa G, Parini A, et al. Red yeast rice im-
+proves lipid pattern, high-sensitivity C-reactive protein, 
+and vascular remodeling parameters in moderately hy-
+percholesterolemic Italian subjects. Nutr Res 2013; 33: 
+622-8.
+8.	Rifai N, Tracy RP, Ridker PM. Clinical efficacy of an au-
+tomated high-sensitivity C-reactive protein assay. Clin 
+Chem 1999; 45: 2136-41.
+9.	Derosa G, Limas CP, Macías PC, Estrella A, Maffioli P. 
+Dietary and nutraceutical approach to type 2 diabetes. 
+Arch Med Sci 2014; 10: 336-44.
+10.	Mariscalco G, Sarzi Braga S, Banach M, et al. Preopera-
+tive n-3 polyunsatured fatty acids are associated with 
+a  decrease in the incidence of early atrial fibrillation 
+following cardiac surgery. Angiology 2010; 61: 643-50.
+11.	Banach M, Serban C, Aronow WS, et al. Lipid, blood 
+pressure and kidney update 2013. Int Urol Nephrol 
+2014; 46: 947-61.
+12.	Superko HR, Superko AR, Lundberg GP, et al. Omega-3 
+fatty acid blood levels clinical significance update. Curr 
+Cardiovasc Risk Rep 2014; 8: 407. 
+13.	Ghasemifard S, Turchini GM, Sinclair AJ. Omega-3 long 
+chain fatty acid “bioavailability”: a review of evidence 
+and methodological considerations. Prog Lipid Res 
+2014; 56C: 92-108.
+14.	Bunea R, El Farrah K, Deutsch L. Evaluation of the effects 
+of neptune krill oil on the clinical course of hyperlipid-
+emia. Alt Med Rev 2004; 9: 420-8.
+15.	Calder PC. Marine omega-3 fatty acids and inflamma-
+tory processes: effects, mechanisms and clinical rele-
+vance. Biochim Biophys Acta 2015; 1851: 469-84.
+16.	Deutsch L. Evaluation of the effect of Neptune Krill Oil 
+on chronic inflammation and arthritic symptoms. J Am 
+Coll Nutr 2007; 26: 39-48.
+17.	Banni S, Carta G, Murru E, et al. Krill oil significantly de-
+creases 2-arachidonoylglycerol plasma levels in obese 
+subjects. Nutr Metab 2011; 8: 7.
+18.	Konagai C, Yanagimoto K, Hayamizu K, Han L, Tsuji T, 
+Koga Y. Effects of krill oil containing n-3 polyunsatu-
+rated fatty acids in phospholipid form on human brain 
+function: a randomized controlled trial in healthy elderly 
+volunteers. Clin Interv Aging 2013; 8: 1247-57.
+19.	Ferramosca A, Zara V. Modulation of hepatic steatosis 
+by dietary fatty acids. World J Gastroenterol 2014; 20: 
+1746-55.
+20.	Cicero AF, Colletti A. Krill oil: evidence of a new source 
+of polyunsaturated fatty acids with high bioavailability. 
+Clin Lipidol 2015; 10: 1-4.
+21.	Sikora J, Kostka B, Marczyk I, Krajewska U, Chałubiń- 
+ski M, Broncel M. Effect of statins on platelet function 
+in patients with hyperlipidemia. Arch Med Sci 2013; 9: 
+622-8.
+22.	Guardado-Mendoza R, Prioletta A, Jiménez-Ceja LM, So-
+sale A, Folli F. The role of nateglinide and repaglinide, 
+derivatives of meglitinide, in the treatment of type 2 
+diabetes mellitus. Arch Med Sci 2013; 9: 936-43.
+23.	Aronow WS. Lipid-lowering therapy in older persons. 
+Arch Med Sci 2015; 11: 43-56.
+24.	Banach M, Rizzo M, Toth PP, et al. Statin intolerance – 
+an attempt at a unified definition. Position paper from 
+an International Lipid Expert Panel. Arch Med Sci 2015; 
+11: 1-23.

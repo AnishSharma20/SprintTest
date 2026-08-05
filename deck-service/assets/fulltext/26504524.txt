@@ -1,0 +1,954 @@
+Effects of krill oil on endothelial
+function and other cardiovascular risk
+factors in participants with type 2
+diabetes, a randomized controlled trial
+Jessika M Lobraico, Lauren C DiLello, Amber D Butler, Marie Elena Cordisco,
+Joann R Petrini, Ramin Ahmadi
+To cite: Lobraico JM,
+DiLello LC, Butler AD, et al.
+Effects of krill oil on
+endothelial function and
+other cardiovascular risk
+factors in participants with
+type 2 diabetes, a
+randomized controlled trial.
+BMJ Open Diabetes Research
+and Care 2015;3:e000107.
+doi:10.1136/bmjdrc-2015-
+000107
+Received 3 April 2015
+Revised 27 August 2015
+Accepted 3 September 2015
+Department of Research,
+Western Connecticut Health
+Network, Danbury Hospital,
+Danbury, Connecticut, USA
+Correspondence to
+Jessika M Lobraico;
+Jessika.Lobraico@wchn.org
+ABSTRACT
+Objective: The purpose of this trial was to evaluate
+the effect of krill oil supplementation, a source of ω-3
+fatty acids, on cardiovascular disease risk factors and
+blood glucose control among participants with type 2
+diabetes.
+Research design and methods: A randomized,
+double-blind controlled cross-over trial was employed.
+Outcomes assessed were: endothelial function, blood
+lipids, glucose, glycated hemoglobin, serum antioxidant
+level, C peptide, and calculated Homeostatic Model
+Assessment of Insulin Resistance (HOMA-IR) scores.
+Participants were randomized to either krill oil or olive oil
+supplementation for 4 weeks, underwent a 2-week
+washout period, and then crossed to the other
+supplementation for 4 weeks. All participants were then
+offered an additional 17 weeks of krill supplementation.
+Testing occurred at 3 time points: baseline, after first
+supplementation, and after second supplementation.
+Testing also occurred after an optional 17 weeks of krill oil
+supplementation. Difference scores were calculated for
+each participant in both sequences (ie, differences in
+outcome measures in the first and second period of the
+sequence). The mean and SD of the scores in the 2
+sequence groups were used to test for differences
+between treatment effects at a significance level of p<0.05.
+Results: A total of 47 participants were included in the
+initial cross-over study. Participants who received krill oil
+for 4 weeks had an improvement in their endothelial
+function and a reduction in blood C peptide levels and
+HOMA scores as compared with the olive oil. A total of 34
+participants completed the additional 17-week
+supplementation period. When compared with their
+respective baseline measures, these participants had a
+statistically significant improvement in endothelial function
+and blood high-density lipoprotein (HDL).
+Conclusions: Krill oil may lead to moderate improvement
+of cardiovascular risks, specifically endothelial dysfunction
+and HDL in patients with type 2 diabetes.
+Trial registration number: Registered with
+ClinicalTrials.gov: NCT02091193.
+INTRODUCTION
+The
+American
+Heart
+Association
+(AHA)
+recommends
+a
+daily
+intake
+of
+at
+least
+1000 mg of ω-3 fatty acids to minimize risk
+factors associated with cardiovascular disease
+(CVD), even for patients at high risk of
+developing CVD.1 The published recommen-
+dations predated the commercial availability
+of krill oil, a supplement similar in compos-
+ition to ﬁsh oil. Krill oil is produced from
+small oceanic crustaceans at the base of the
+food chain (krill) that primarily ingest algae
+rich in ω-3 fatty acids. The oils produced by
+krill are thought to be a less polluted and
+more pure source of ω-3 fatty acids, notably
+eicosapentaenoic acid (EPA) and docosahex-
+aenoic acid (DHA), compared with other
+ﬁsh oils.2 EPA and DHA are the primary fatty
+acids that contribute toward improved car-
+diovascular health.3
+Key messages
+▪Krill oil supplementation helps to reduce cardio-
+vascular risk factors in patients with type 2
+diabetes.
+▪Four weeks of krill oil supplementation improved
+endothelial function, reduced C peptide levels,
+and improved insulin resistance as calculated by
+HOMA in patients with type 2 diabetes.
+▪Serum
+high-density
+lipoprotein
+significantly
+increased
+to
+more
+optimal
+levels
+following
+17 weeks of krill oil supplementation.
+▪This study was designed as a randomized,
+double-blind trial with a cross-over design.
+▪The daily dose of krill oil used in this trial was
+1000 mg. Are the results of this study dose
+dependent or could an increase or decrease in
+the dosage offer the same, better, or worse
+results?
+▪What mechanism is responsible for the improve-
+ment and maintenance of endothelial function
+after both short-term and long-term krill oil
+supplementation?
+▪How would a larger study with a longer term
+supplementation period (greater than 4 weeks)
+with krill oil compared with olive oil further
+impact cardiovascular risk factors in patients
+with type 2 diabetes?
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+1
+Open Access
+Research
+
+While both krill and ﬁsh oils possess ω-3 fatty acids,
+the fatty acids in ﬁsh oil are attached to either triglycer-
+ides or ethyl esters which reportedly produce a high
+abundance of ω-3 fatty acids in whole blood.4 However,
+it has been suggested that krill oil has better bioavailabil-
+ity because the ω-3 fatty acids, speciﬁcally EPA and DHA,
+are attached to phospholipids and multiple reports have
+shown superior absorption in the intestines and further
+increased phospholipid-bound ω-3 fatty acid plasma and
+red blood cell levels.4–6 Krill oil also contains astax-
+anthin, an antioxidant, which may reduce the presence
+of free radicals, free oxygen, and inﬂammation in
+humans.7 8 Oxidative stress and inﬂammation are known
+contributors to atherosclerosis, endothelial dysfunction,
+and overall CVD risk.8 Therefore, despite the great
+abundance of ω-3 fatty acids available in ﬁsh oil, the
+delivery of fatty acids and presence of astaxanthin in
+krill oil may provide superior health beneﬁts and meets
+the AHA recommendations of 1000 mg of ω-3 fatty acid
+consumption.
+Patients with type 2 diabetes have a high incidence of
+CVD and often have traditional cardiovascular risk
+factors like hyperlipidemia, elevated blood glucose,
+insulin resistance, and hypertension.3
+9 Risk factors
+including endothelial dysfunction, oxidative stress, and
+inﬂammation have also been reported.3
+9 Identifying
+opportunities for prevention of CVD progression in
+patients with type 2 diabetes is critically important and
+may be underappreciated. The purpose of this study was
+to evaluate the effect of krill oil supplementation on
+CVD risk and blood glucose control among patients
+with type 2 diabetes.
+RESEARCH DESIGN AND METHODS
+Trial design
+In a randomized, double-blind trial using a cross-over
+design, the effect of krill oil (Prograde Inc, Lutz,
+Florida, USA) as compared with olive oil was evaluated
+in participants with type 2 diabetes. A cross-over design
+involves two treatments which are consecutively adminis-
+tered in each patient recruited for the study.10 In our
+study, all participants received baseline testing for key
+outcome measures. They were randomized to either two
+pure krill oil capsules daily containing 1000 mg of ω-3
+fatty acids for 4 weeks or two olive oil capsules for
+4 weeks, followed by a 2-week washout period, and then
+the
+groups
+were
+crossed
+for
+4 weeks.
+Study
+visits
+occurred at baseline (T0), after completion of the ﬁrst
+supplementation period (T1), and after completion of
+the second supplementation period (T2; ﬁgure 1) at the
+Western
+Connecticut
+Health
+Network
+Biomedical
+Research Institute, Danbury, Connecticut, USA.
+Following the cross-over trial, participants were invited
+to participate in an additional 17-week krill oil supple-
+mentation period and return for assessment after com-
+pletion of the long-term supplementation period.
+All participants received a phone call at the midpoint
+of each round of supplementation to evaluate compli-
+ance and adverse effects. Research staff requested that
+participants bring their supplement bottles to their
+study visits to further assess subject compliance, and any
+changes in medication throughout the course of the
+study were documented.
+This study was approved by the Biomedical Research
+Alliance of New York Institutional Review Board. Written
+informed consent was obtained from all participants
+prior to the start of the trial after the experimental
+protocol had been explained to them in detail. This trial
+was registered at ClinicalTrials.gov (NCT02091193).
+Trial population
+Participants were enrolled in the trial between June
+2012
+and
+December
+2013.
+Recruitment
+methods
+included medical provider referrals, newspaper adver-
+tisements, and ﬂyers distributed throughout the greater
+Danbury, Connecticut area. Inclusion criteria included
+adults with a diagnosis of type 2 diabetes and on stable
+oral glucose-lowering agents and/or insulin that could
+be conﬁrmed by a healthcare provider. Patients were
+Figure 1
+Cross-over study flow.
+2
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+Cardiovascular and metabolic risk
+
+excluded from the study if they were less than 18 years
+of age, were pregnant or lactating, had a blood coagula-
+tion disorder or used oral anticoagulants other than
+aspirin, had a seafood allergy, or consumed ﬁsh oil or
+krill oil supplements within 2 weeks of the start of the
+study. The trial protocol was reviewed with all eligible
+participants and written consent was obtained from each
+participant. Each participant’s baseline medical and
+social history, including duration of diagnosis with type 2
+diabetes and other cardiovascular risk factors, were
+documented at the time of enrolment.
+Trial visits and laboratory procedures
+The endothelial function of participants was tested at
+each visit using an Food and Drug Administration
+(FDA)-approved
+device,
+the
+EndoPAT2000
+(Itamar
+Medical
+Inc,
+Franklin,
+Massachusetts,
+USA).
+The
+EndoPAT2000 is a non-invasive method to assess periph-
+eral
+arterial
+tonometry
+(PAT)
+in
+the
+ﬁngers.11
+Endothelial function testing was conducted in a quiet,
+temperature-controlled room following the manufac-
+turer’s recommendations. Each participant was placed in
+a supine position and the PAT sensors were placed on
+the same ﬁnger of the left and right hands. A sphygmo-
+manometer cuff was placed on the participant’s non-
+dominant arm and the dominant arm acted as the
+control. Measurement included a 5 min baseline or
+basal recording of PAT, 5 min of brachial artery occlu-
+sion in the non-dominant arm by inﬂating the blood
+pressure cuff, and 5 min of a reactive hyperemia meas-
+urement for a total of 15 min of testing. Brachial artery
+occlusion was achieved by inﬂating the sphygmomanom-
+eter cuff to at least 60 mm Hg over the patient’s systolic
+blood pressure (with a minimum of 200 mm Hg and a
+maximum of 260 mm Hg). The Reactive Hyperemia
+Index (RHI) was automatically analyzed and calculated
+using EndoPAT2000 software, V.3.4.4. An RHI above 1.67
+represents moderate risk of endothelial dysfunction and
+above 2.0 indicates low risk of endothelial dysfunction.
+Patients with an RHI below 1.67 are high risk for endo-
+thelial dysfunction.
+Fasting blood (8 h minimum) specimens were col-
+lected from participants using venipuncture at the base-
+line visit (T0), at the end point of each treatment (T1
+and T2) and following the 17-week supplementation
+period if they chose to participate. The specimens were
+used to determine the glycated hemoglobin (HbA1c),
+glucose, total cholesterol (TC), low-density lipoprotein
+(LDL), high-density lipoprotein (HDL), and non-HDL
+cholesterol. Serum for lipid proﬁles, glucose, total anti-
+oxidant capacity, and C peptide measurements were col-
+lected in BD Vacutainer Serum Separator Tubes (SST).
+Serum was then stored in microcentrifuge tubes at −80°
+C until it was thawed for analysis. HbA1c analysis was
+performed with whole blood using a self-contained
+bench-top
+immunoassay
+(Seimens
+DCA
+Vantage,
+Siemens Medical Solutions USA, Malvern, Pennsylvania,
+USA). Lipid proﬁles and glucose were measured using
+50 μL of
+serum
+loaded
+onto
+a room
+temperature
+Cholestech Lipid Proﬁle and Glucose cassette (Alere
+San Diego, Inc, San Diego, California, USA). The cas-
+sette was then loaded onto the Cholestech LDX analyzer
+(Alere San Diego, Inc) following product protocols.
+Total antioxidant capacity and C peptide measure-
+ments were performed at the Western Connecticut
+Health Network Biomedical Research Institute using
+commercially available ELISA kits and their speciﬁed
+protocols (Abcam, Cambridge, Massachusetts, USA, and
+Mercodia, Inc, Winston Salem, North Carolina, USA,
+respectively). Homeostatic Model Assessments of Insulin
+Resistance
+(HOMA2-IR)
+were
+calculated
+using
+the
+HOMA2-IR (V.2.2.3, University of Oxford) calculator
+using measured glucose and C peptide values. The
+University of Oxford’s HOMA2-IR calculator allows for C
+peptide to be used in calculations instead of insulin
+because generally, C peptide is produced in equal
+amounts to insulin. C peptide is also more stable with a
+longer half-life than insulin, ensuring accurate measure-
+ment following a freeze-thaw cycle.12 13
+Power calculation and randomization
+The cross-over design used in this study maximizes
+sample size as each participant serves as his/her own
+control. An estimation of the difference in endothelial
+function between the participants receiving krill oil and
+olive oil was used to calculate a sample size that would
+detect a reduction in cardiovascular risk factor measures
+with an α of 0.05 and a power of 80%. This required a
+sample size of 50 participants. Participants were block
+randomized by research coordinators to two equal
+groups using a computer-generated list prior to the start
+of enrollment.14 The allocation between the two groups
+determined whether the subject ﬁrst received krill oil
+capsule supplements or olive oil capsule supplements.
+Both supplements were blinded to the trial coordinators
+and the participants until the completion of the trial.
+Participants were assigned their group on sequential
+enrollment and the randomized group placement.
+Calculations and statistical analysis
+The efﬁcacy of olive oil and krill oil was assessed on the
+basis of within-participant differences between the two
+treatments with regard to the outcome variables. The
+described procedure assumes normality of the distribu-
+tions to be analyzed.
+To separate treatment effects from period effects, treat-
+ment effects were computed separately in the two
+sequence groups. In order for the procedure to be valid,
+we had to check the assumption of negligible carry-over
+effects by conducting a pretest of the data conceived by
+Wellek and Blettner.10 For this test, the sum of the values
+measured in both periods were calculated for each par-
+ticipant and compared across the two sequence groups
+by means of a test of independent samples.10 Once we
+conﬁrmed that there was negligible carry-over effect, the
+difference between treatment effects was assessed by
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+3
+Cardiovascular and metabolic risk
+
+means of a standard t test for independent samples using
+the intraindividual differences between values measured
+in both periods (difference scores).
+Outcomes following the optional 17-week supplemen-
+tation period were compared with the respective baseline
+measures and analyzed using the t test. Statistical signiﬁ-
+cance for this study was deﬁned at p<0.05. Analyses were
+conducted manually and using SAS V.9.3 software.
+RESULTS
+Baseline characteristics
+A total of 48 participants were recruited to the trial and
+1 patient was lost to follow-up. The mean age of partici-
+pants was 64.8 years (range 47–84 years) and 66% were
+male. Twenty-two participants (46.8%) received insulin
+therapy throughout the study, and 15 of those 22 partici-
+pants also received oral glucose-lowering agents. The
+remaining 25 participants only received oral glucose-
+lowering agents. There were no reported changes in
+medications or doses throughout the course of this
+study. The demographics and baseline characteristics of
+participants are shown in table 1.
+The results of the pretest to check for the assumption
+of negligible carry-over effects showed no evidence of
+relevant carry-over effects. Data for both krill and olive
+oil supplementation periods were pooled for statistical
+analysis of the differences between treatment effects.
+Effect of supplementation on end point measures
+The primary end point, endothelial function, as mea-
+sured by the EndoPAT RHI for krill oil was statistically
+signiﬁcantly higher than that of the olive oil (p=0.025,
+table 2). In addition, there was a statistically signiﬁcant
+reduction in C peptide among participants when receiv-
+ing krill oil compared with olive oil (p=0.029). However,
+on further analysis, there was not a reduction of C
+peptide
+among
+participants
+who
+received
+insulin
+therapy (p=0.136), but the reduction of C peptide in
+those that received only oral glucose-lowering agents was
+still observed (p=0.034). There was an observed reduc-
+tion of insulin resistance based on the HOMA-IR score
+of participants after receiving krill oil compared with
+olive oil (p=0.019). While there was a decrease in TC
+during
+the
+cross-over
+portion
+of
+the
+trial
+that
+approached signiﬁcance, LDL, HDL, glucose, HbA1c,
+and the antioxidant capacity of the participants’ serum
+did not reach statistical signiﬁcance.
+Comorbidities and other factors
+Of the 47 participants, 72% also had a diagnosis of
+hypertension, 74% had a diagnosis of dyslipidemia, and
+81% were taking a prescribed statin for lipid lowering.
+Further, 62% of participants had a diagnosis of type 2
+diabetes, hypertension, and dyslipidemia. There were no
+signiﬁcant changes in trial measures after supplementa-
+tion when participants were analyzed based on the
+number of diagnosed comorbidities.
+Seventeen-week krill oil supplementation
+Of the 47 study participants, 34 completed an additional
+17-week krill oil supplementation period before return-
+ing for a ﬁnal assessment visit. On average, participants
+received the extended period supplementation for 17.4
+±1.6 weeks with variability due to a participant’s availabil-
+ity to return for a ﬁnal follow-up visit. The results for
+17 weeks of krill oil supplementation compared with
+baseline are provided in table 3.
+The mean EndoPAT RHI for the 17-week krill oil sup-
+plementation was statistically signiﬁcantly higher than
+the mean baseline for this group (p=0.04), and there
+was a statistically signiﬁcant increase in HDL (p=0.002).
+While a reduction of C peptide was observed after
+4 weeks, this observation was not observed after 17 weeks
+of krill oil supplementation (p=0.599). Further, when C
+peptide was analyzed by grouping insulin therapy and
+oral glucose-lowering agents separately, there was no stat-
+istically
+signiﬁcant
+change
+observed.
+Similarly,
+HOMA2-IR scores were not statistically signiﬁcantly dif-
+ferent from the baseline (p=0.874).
+DISCUSSION
+Our investigation has shown that krill oil supplementa-
+tion in patients with type 2 diabetes reduces some cardio-
+vascular risk factors by improving endothelial function
+and increasing serum HDL. C peptide and insulin
+Table 1
+Demographics and baseline characteristics of
+participants (n=47)
+Parameter
+Mean±SD
+Age (years)
+64.8±8.8
+Body weight (kg)
+93.1±19.1
+Height (m)
+1.7±0.1
+BMI (kg/m2)
+30.5±6.9
+Total cholesterol (mg/dL)
+153.7±32.6
+HDL (mg/dL)
+44.6±13.7
+LDL (mg/dL)
+78.7±28.4
+TG (mg/dL)
+155.6±95.3
+Glucose (mg/dL)
+144.2±51.5
+HbA1c (mmol/mol (%))
+62.4 (7.9)±17.2 (1.6)
+C peptide (ng/mL)
+0.897±0.47
+Per cent of
+participants
+Male
+66.0
+Ethnicity
+Caucasians
+87.2
+African-American
+6.4
+Hispanic
+4.3
+Asian
+2.1
+Comorbidities
+Dyslipidemia
+74.5
+Hypertension
+73.9
+Received insulin therapy
+43.6
+BMI, body mass index; HbA1c, glycated hemoglobin; HDL,
+high-density lipoprotein; LDL, low-density lipoprotein; TG,
+triglycerides.
+4
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+Cardiovascular and metabolic risk
+
+resistance were also reduced after 4 weeks of supplemen-
+tation, but was not observed after 17 weeks of supplemen-
+tation. However, on further analysis, a reduction of C
+peptide in patients receiving insulin therapy was not
+observed, but was in patients receiving oral glucose-
+lowering
+agents
+after
+4 weeks
+of
+supplementation.
+Because CVD is the most common cause of death in
+people with type 2 diabetes, both providers and patients
+seek solutions to minimize cardiovascular risk factors and
+increase lifespan in this high-risk population.15 The
+reduction of traditionally measured risk factors, such as
+high cholesterol and hypertension, or those less often
+measured, such as endothelial dysfunction, can typically
+be achieved by pharmacological or lifestyle interventions.
+Endothelial function has been shown to be impaired in
+patients with type 2 diabetes and is further exacerbated
+when these patients also have hypertension.16 Our
+sample was at high risk for endothelial dysfunction and
+CVD, as approximately three out of four participants had
+both type 2 diabetes and hypertension.16–19
+Based on the cross-over results, krill oil supplementa-
+tion may improve endothelial function better than olive
+oil. The mechanism for this improvement could be
+attributed to the bioavailability and structure of ω-3 fatty
+acids in krill oil and its ability to reduce inﬂammation or
+other
+physiological
+properties,
+but
+would
+require
+further studies to characterize the mechanism.20
+Insulin resistance may contribute to the development
+of endothelial dysfunction and is common among parti-
+cipants with type 2 diabetes.21 In addition, HOMA
+Table 2
+Four weeks krill oil versus olive oil supplementation
+Measure
+Krill oil
+Mean±SD
+Olive oil
+Mean±SD
+p Value
+EndoPAT (RHI)
+2.04±0.52
+1.83±0.56
+0.025*
+HbA1c (%)
+7.6±1.5
+7.7±1.6
+0.300
+TC (mg/dL)
+152.2±30.9
+147.5±30.6
+0.078
+HDL (mg/dL)
+47.34±13.54
+46.35±15.53
+0.528
+Triglycerides (mg/dL)
+145.80±97.62
+139.56±88.16
+0.567
+LDL (mg/dL)
+76.36±18.36
+72.27±23.48
+0.194
+Non-HDL (mg/dL)
+102.40±33.35
+102.56±32.44
+0.948
+TC/HDL
+3.41±1.07
+3.43±1.15
+0.817
+Glucose (mg/dL)
+143.41±49.07
+145.87±57.37
+0.723
+C peptide (ng/mL)
+0.822±0.39
+0.933±0.47
+0.029*
+With insulin therapy
+0.673±0.36
+0.782±0.47
+0.136
+Without insulin therapy
+0.951±0.37
+1.095±0.43
+0.034*
+HOMA-IR
+2.30±0.91
+2.64±1.23
+0.019*
+Total antioxidant capacity (nM)
+97.55±11.81
+98.26±10.16
+0.431
+*Significant; p<0.05.
+HbA1c, glycated hemoglobin; HDL, high-density lipoprotein; HOMA-IR, Homeostatic Model Assessment of Insulin Resistance; LDL,
+low-density lipoprotein; RHI, Reactive Hyperemia Index; TC, total cholesterol.
+Table 3
+Seventeen-week supplementation with krill oil relative to baseline
+Measure
+Baseline
+Mean±SD
+Krill oil
+Mean±SD
+p Value
+EndoPAT (RHI)
+1.90±0.54
+2.16±0.73
+0.041*
+HbA1c (%)
+7.5±1.1
+7.4±1.2
+0.388
+TC (mg/dL)
+146.38±29.04
+152.56±27.41
+0.242
+HDL (mg/dL)
+43.48±14.10
+49.09±15.63
+0.002*
+Triglycerides (mg/dL)
+148.18±96.35
+144.82±73.79
+0.815
+LDL (mg/dL)
+76.64±27.70
+75.04±23.82
+0.754
+Non-HDL (mg/dL)
+103.97±30.39
+104±29.01
+0.995
+TC/HDL
+3.57±1.15
+3.31±1.11
+0.166
+Glucose (mg/dL)
+141.60±42.89
+139.58±43.44
+0.782
+C peptide (ng/mL)
+0.909±0.49
+0.940±0.49
+0.599
+HOMA-IR
+2.40±1.37
+2.38±1.34
+0.874
+Total antioxidant capacity (nM)
+101.53±16.15
+98.35±10.87
+0.178
+*Significant; p<0.05.
+HbA1c, glycated hemoglobin; HDL, high-density lipoprotein; HOMA-IR, Homeostatic Model Assessment of Insulin Resistance; LDL,
+low-density lipoprotein; RHI, Reactive Hyperemia Index; TC, total cholesterol.
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+5
+Cardiovascular and metabolic risk
+
+estimated insulin resistance, when measured as cohorts
+and not individually, may be suggestive of CVD risk in
+patients with type 2 diabetes.21 22 A signiﬁcant reduction
+of HOMA2-IR, or insulin resistance, in participants
+receiving krill oil during the initial cross-over supple-
+mentation
+period
+was
+observed.
+While
+HOMA2-IR
+cannot be used to make generalized statements about
+insulin resistance on an individual basis, it is useful
+when evaluating the effect of a supplement or treatment
+in a population.11 23 Insulin activates intracellular signal-
+ing pathways that are critical to maintaining a healthy
+endothelium. Insulin resistance may contribute to deﬁ-
+ciencies in the signaling pathway and result in impaired
+maintenance of the endothelium, such as oxidative
+stress, inﬂammatory, and thrombotic effects.16 In brief,
+krill oil’s observed reduction of insulin resistance or
+HOMA2-IR may provide a short-term mechanism to
+maintain healthy endothelium, but may not be respon-
+sible for the overall improvement of endothelial func-
+tion observed in this trial and may only apply to patients
+who are not receiving insulin therapy. In addition,
+future studies should consider other methods to evalu-
+ate insulin resistance to conﬁrm this ﬁnding due to
+HOMA2-IR’s existing limitations around the interpret-
+ation of individual results.
+A
+signiﬁcant
+improvement
+in
+serum
+HDL
+was
+observed following 17 weeks of krill oil supplementation
+in participants with type 2 diabetes. Though this effect
+was not observed during the 4-week cross-over period of
+the trial, the sustained use of krill oil may increase the
+serum HDL in type 2 diabetes participants. An increase
+of HDL in patients with type 2 diabetes may reduce the
+risk for CVD, especially when patients are diagnosed
+with other comorbidities causing an increased risk of
+CVD, like hypertension or dyslipidemia (73.9% and
+74.5%
+of
+participants
+enrolled,
+respectively).8
+The
+observed improvement of EndoPAT and HDL after
+17 weeks suggests that future studies should consider
+supplementation periods longer than 4 weeks.
+This study included a free-living design allowing the
+participants to control their diets (including other fatty
+ﬁsh consumption) and activity to simulate krill oil con-
+sumption and its potential effect in patients in the
+uncontrollable world.4 To be able to compare partici-
+pants despite their differences in lifestyles, participants
+acted as their own controls for comparison and none
+reported any changes in their diet or level of activity
+throughout the duration of the study. The krill oil still
+displayed signiﬁcant improvement in endothelial func-
+tion and blood HDL levels, despite the variability
+between subject lifestyles and clinical histories. Our
+results
+suggest
+that
+krill
+oil
+supplementation
+may
+provide similar beneﬁts to patients outside of this clin-
+ical study regardless of lifestyle differences. These results
+are a conservative estimate and thus, if the diets of parti-
+cipants were restricted and they were placed on an exer-
+cise regimen, the effect of krill oil supplementation
+could be even greater.
+Further, olive oil contains a plant-derived ω-3 fatty acid
+called α-linolenic acid (ALA) which is known to have
+strong health beneﬁts.24 The dose of ALA in olive oil
+consumed by participants in this study was 8 mg/day
+and is below the minimum dosage of ω-3 fatty acids
+recommended by the AHA to reduce the risk of devel-
+oping CVD. While using olive oil in the cross-over
+design may appear as a limitation, the margin of
+improvement when comparing the results of olive oil
+and krill oil actually narrows. This suggests that if some-
+thing more benign were used instead, like water, the
+improvement of cardiovascular risk factors may have
+been even greater after supplementation with krill oil.
+This study also sought to evaluate krill oil’s effect on
+glucose control. HbA1c represents a patient’s glucose
+control over the 2–3 months prior to testing. Thus, while
+the 4 weeks in the cross-over design was not long enough
+to evaluate krill oil’s effect on glucose control, 17 weeks is
+sufﬁcient time and there was no signiﬁcant improvement.
+Additional longitudinal studies must be performed to
+conﬁrm our ﬁnding that krill oil reduces some cardio-
+vascular risks in patients with type 2 diabetes. Unlike
+other similar studies, this study did not measure partici-
+pants’ blood pressures at each time point, despite the
+high proportion of patients with hypertension in this
+study.3 4 Future studies should include methods to better
+evaluate insulin resistance and include blood pressure
+measurements. Krill oil supplementation should also be
+compared with the effect of prescription ω-3-acid ethyl
+esters products, like Lovaza, as krill oil supplementation
+may be a less expensive option for some patients. It is
+also important to note that the US FDA does not
+require approval for supplements, so thorough investiga-
+tion of supplement effects on patients is important.25
+Acknowledgements The authors of the trial wish to acknowledge Joseph
+Belsky, MD for his help with trial implementation, Tannaz Sedghi, Kyaw Sint,
+MPH and Mahshid Mohammadi, MD for their statistical expertise, and Kara
+Crowley, MS for her support and assistance.
+Contributors JML, ADB, JRP, and RA were responsible for conception and
+trial design. JML, LCD, ADB, and MEC were responsible for recruitment and
+trial visits. JML was responsible for the coordination of the trial. JML, LCD,
+and ADB performed sample analysis, and JML, ADB, and JRP were
+responsible for statistical analysis. JML, JRP, and RA undertook data
+interpretation. JML and JRP were responsible for writing the manuscript.
+Finally, all authors critically reviewed the manuscript.
+Funding This work was supported by Prograde, Inc (Lutz, Florida, USA).
+Prograde, Inc provided the krill oil and olive oil supplements and funding for
+the study.
+Competing interests None declared.
+Ethics approval Biomedical Research Alliance of New York (BRANY).
+Provenance and peer review Not commissioned; externally peer reviewed.
+Data sharing statement Data may be shared on request.
+Open Access This is an Open Access article distributed in accordance with
+the Creative Commons Attribution Non Commercial (CC BY-NC 4.0) license,
+which permits others to distribute, remix, adapt, build upon this work non-
+commercially, and license their derivative works on different terms, provided
+the original work is properly cited and the use is non-commercial. See: http://
+creativecommons.org/licenses/by-nc/4.0/
+6
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+Cardiovascular and metabolic risk
+
+REFERENCES
+1.
+Kris-Etherton PM, Harris WS, Appel LJ. Fish consumption, fish oil,
+omega-3 fatty acids, and cardiovascular disease. Circulation
+2002;106:2747–57.
+2.
+Deutsch L. Evaluation of the effect of Neptune Krill Oil on chronic
+inflammation and arthritic symptoms. J Am Coll Nutr 2007;26:39–48.
+3.
+Lorber D. Importance of cardiovascular disease risk management in
+patients with type 2 diabetes mellitus. Diabetes Metab Syndr Obes
+2014;7:169–83.
+4.
+Schuchardt JP, Schneider I, Meyer H, et al. Incorporation of EPA
+and DHA into plasma phospholipids in response to different
+omega-3 fatty acid formulations- a comparative bioavailability study
+of fish oil vs. krill oil. Lipids Health Dis 2011;10:145.
+5.
+Laidlaw M, Cockerline CA, Rowe WJ. A randomized clinical trial to
+determine the efficacy of manufacturers’ recommended doses of
+omega-3 fatty acids from different sources in facilitating
+cardiovascular disease risk reduction. Lipids Health Dis 2014;13:99.
+6.
+Ramprasath VR, Eyal I, Zchut S, et al. Enhanced increase of
+omega-3 index in healthy individuals with response to 4-week n-3
+fatty acid supplementation from krill oil versus fish oil. Lipids Health
+Dis 2013;12:1784.
+7.
+Backes JM, Howard PA. Krill oil for cardiovascular risk protection: is
+it for real? Hosp Pharm 2014;49:907–12.
+8.
+Fasset RG, Coombes JS. Astaxanthin in cardiovascular health and
+disease. Molecules 2012;17:2030–48.
+9.
+Ji L, Hu D, Pan C, et al. Primacy of the 3B approach to control risk
+factors for cardiovascular disease in type 2 diabetes patients. Am J
+Med 2013;126:925.e11–22.
+10.
+Wellek S, Blettner M. On the proper use of the cross-over design in
+clinical trials: part 18 of a series on evaluation of scientific
+publications. Dtsch Arztebl Int 2012;109:276–81.
+11.
+Hamburg N, Keyes M, Larson M, et al. Cross-sectional relations of
+digital vascular function to cardiovascular risk factors in the
+Framingham Heart Trial. Circulation 2008;117:2467–74.
+12.
+Jones AG, Hattersley AT. The clinical utility of C-peptide
+measurement in the care of patients with diabetes. Diabet Med
+2013;30:803–17.
+13.
+Polonsky KS, Licinio-Paixao J, Given BD, et al. Use of biosynthetic
+human C-peptide in the measurement of insulin secretion rates in
+normal volunteers and type I diabetic patients. J Clin Invest
+1986;77:98–105.
+14.
+Research Randomizer. http://www.randomizer.org (accessed 11 Jun
+2012).
+15.
+Wallace TM, Levy JC, Matthews DR. Use and abuse of HOMA
+modeling. Diabetes Care 2004;27:1487–95.
+16.
+Zhang P. Cardiovascular disease in diabetes. Eur Rev Med Pharcol
+Sci 2014;18:2205–14.
+17.
+Roberts AC, Porter KE. Cellular and molecular mechanisms of
+endothelial dysfunction in diabetes. Diabetes Vasc Dis Res
+2013;10:472–82.
+18.
+Moerland M, Kales AJ, Schrier L, et al. Evaluation of the EndoPAT
+as a tool to assess endothelial function. Int J Vasc Med
+2012;2012:904141.
+19.
+Wilk G, Osmenda G, Matusik P, et al. Endothelial function
+assessment in atherosclerosis. Pol Arch Med Wewn
+2013;123:443–52.
+20.
+Bruno RM, Penno G, Daniele G, et al. Type 2 diabetes mellitus
+worsens arterial stiffness in hypertensive patients through
+endothelial dysfunction. Diabetologia 2012;55:1847–55.
+21.
+Pearson TA, Blair SN, Daniels SR, et al. AHA guidelines for primary
+prevention of cardiovascular disease and stroke: 2002 update:
+consensus panel guide to comprehensive risk reduction for adult
+patients without coronary or other atherosclerotic vascular diseases.
+American Heart Association Science Advisory and Coordinating
+Committee. Circulation 2002;106:388–91.
+22.
+Lombardo MF, Iacopino P, Cuzzola M, et al. Type 2 diabetes
+mellitus impairs the maturation of endothelial progenitor cells and
+increases the number of circulating endothelial cells in peripheral
+blood. Cytometry Part A 2012;81A:856–64.
+23.
+Bonora E, Formentini G, Calcaterra F, et al. HOMA-estimated
+insulin resistance is an independent predictor of cardiovascular
+disease in type 2 diabetic subjects. Diabetes Care
+2002;25:1135–41.
+24.
+Fleming JA, Kris-Etherton PM. The evidence for α-linolenic acid and
+cardiovascular disease benefits: comparisons with eicosapentaenoic
+acid and docosahexaenoic acid. Adv Nutr 2014;5:863S–76S.
+25.
+Dietary Supplements. 5 May 2014. http://www.fda.gov/Food/
+DietarySupplements/default.html
+BMJ Open Diabetes Research and Care 2015;3:e000107. doi:10.1136/bmjdrc-2015-000107
+7
+Cardiovascular and metabolic risk

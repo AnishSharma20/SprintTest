@@ -1,0 +1,1230 @@
+148                                                                                                                         Asia Pac J Clin Nutr 2018;27(1):148-157 
+Original Article 
+ 
+Postprandial long-chain n-3 polyunsaturated fatty acid 
+response to krill oil and fish oil consumption in healthy 
+women: a randomised controlled, single-dose, crossover 
+study 
+ 
+Hyunsin H Sung BSc (Hon)1, Andrew J Sinclair PhD2,3, Paul A Lewandowski PhD2,  
+Xiao Q Su PhD1 
+ 
+1Centre for Chronic Disease, College of Health and Biomedicine, Victoria University, Melbourne, Australia 
+2School of Medicine, Deakin University, Geelong, Australia 
+3Department of Nutrition, Dietetics and Food, Monash University, Nottinghill, Australia 
+ 
+ 
+Background and Objectives: Krill oil (KO) and fish oil (FO) are good sources of health-benefiting long chain n-
+3 polyunsaturated fatty acids (LC n-3 PUFA), EPA and DHA. There are conflicting outcomes on the bioavailabil-
+ity of LC n-3 PUFA from KO compared with FO. This study investigated the postprandial incorporation of LC n-
+3 PUFA into plasma lipids following consumption of 5 capsules of KO or FO in comparison with olive oil (OO) 
+control in healthy women. Methods and Study Design: 10 women (aged 18-45 years) consumed a high-fat (15 g) 
+breakfast, supplemented with 5 g of KO, FO, or OO in a random order with a minimum seven-day washout peri-
+od between the supplementations. The LC n-3 PUFA content in KO was 907 mg compared with 1441 mg in FO. 
+Blood samples were collected in the fasting state and for the next 5 hours after test meal consumption on an 
+hourly basis. Results: Significant increases in plasma EPA concentrations were observed starting at 2 h after KO 
+and FO consumption (p<0.05). There were no significant changes in either DHA or DPA between the three 
+groups. The increases in plasma EPA concentrations were similar between the KO and FO groups (p>0.05). Con-
+clusions: The lower dose (31%) of EPA from KO led to a similar plasma EPA concentration as in the FO group, 
+suggesting that EPA from KO may be more efficiently incorporated into plasma. This may be related to the high 
+content of phospholipids and free fatty acids in KO. 
+ 
+Key Words: krill oil, fish oil, LC n-3 PUFA, EPA, postprandial response 
+ 
+ 
+ 
+INTRODUCTION 
+The long-chain omega-3 polyunsaturated fatty acids (LC 
+n-3 PUFA) eicosapentaenoic acid (EPA, C20:5n-3) and 
+docosahexaenoic acid (DHA, C22:6n-3) have been rec-
+ommended for cardiovascular disease prevention.1,2 LC n-
+3 PUFA reduce plasma triglycerides,3 inflammatory 
+cytokines and C-reactive protein levels.4,5 EPA and DHA 
+have different biological functions.6,7 EPA directly com-
+petes with arachidonic acid (AA, 20:4n-6) in relation to 
+the production of anti- and pro-inflammatory lipid media-
+tors including eicosanoids, resolvins, and maresins.8 
+Moreover, EPA-derived eicosanoids are associated with 
+anti-platelet aggregation and vasodilation.9 DHA plays an 
+essential role in the development of the central nervous 
+system and visual function.10 Another LC n-3 PUFA is 
+DPA, although to date there are limited health benefits, it 
+has shown positive effects on platelet function in vivo.11 
+Although these LC fatty acids can be synthesised via en-
+zymatic desaturation and elongation from alpha-linolenic 
+acid, (ALA, 18:3n-3), the conversion rate from ALA in 
+humans is very low (approx. 5% for EPA and <0.5% for 
+DHA).12-14 Therefore, humans largely rely on dietary 
+sources, especially seafood such as oily fish (mackerel,  
+ 
+ 
+tuna, salmon, herring) and shellfish for these important 
+fatty acids.15,16 It has been well reported that the level of 
+EPA and/or DHA in the plasma and erythrocytes can be 
+increased following the consumption of seafood or sup-
+plementation with marine oils.17-20 
+Human consumption of fish-derived food products has 
+increased steadily, and the global capture of fish will be-
+come unsustainable in the future. Krill, a shrimp-like ma-
+rine zooplankton, has been identified as an alternative 
+source due to its wide and abundant distribution.15 The 
+main commercially available krill oil is extracted from 
+Antarctic krill (Euphausia superba), living in the South-
+ern Ocean, and it has become an important source of LC 
+n-3 PUFA in the last decade.15 In krill oil, EPA and DHA  
+ 
+Corresponding Author: Assoc/Prof Xiao Q Su, Centre for 
+Chronic Disease, College of Health and Biomedicine, Victoria 
+University, P.O. Box 14428, Melbourne, VIC 8001, Australia. 
+Tel: +61-3-99192318; Fax: +61-3-99192645 
+Email: xiao.su@vu.edu.au 
+Manuscript received 05 July 2017. Initial review completed 16 
+July 2017. Revision accepted 26 July 2017. 
+doi: 10.6133/apjcn.092017.03 
+
+                                                              Postprandial n-3 PUFA response to krill oil                                                        149                      
+are found in the phospholipid fraction (predominantly 
+phosphatidylcholine), free fatty acids, and in the triglycer-
+ides (TAG) whereas in fish oil they are mainly in 
+TAG.15,21,22 Previous studies have suggested that LC n-3 
+PUFA from phospholipids (PL) may lead to a more effi-
+cient incorporation of these fatty acids into plasma and 
+erythrocytes compared with those esterified to TAG.17,23 
+There are three postprandial studies, which have inves-
+tigated the short-term incorporation of LC n-3 PUFA into 
+the plasma from krill oil compared with fish oil.17,24,25 
+Schuchardt et al17 and Yurko-Mauro et al24 compared krill 
+oil with re-esterified fish oil TAG or ethyl-esters fish oil 
+while Kohler et al25 compared krill oil with krill meal and 
+fish oil over 72 hours. The results from these studies are 
+not consistent. Kohler et al25 found a significantly higher 
+incorporation of EPA and DHA into the plasma phospho-
+lipids from krill oil compared with fish oil. In contrast, 
+neither Schuchardt et al17 nor Yurko-Mauro et al24 ob-
+served a significantly higher incorporation of EPA and 
+DHA into plasma phospholipids from krill oil. These lat-
+ter two studies reported substantial variability between 
+participants, which limited their capacity to detect signifi-
+cant differences between the study oils. There are also 
+three longer-term studies, which have compared the bioa-
+vailability of LC n-3 PUFA from krill oil with fish 
+oil.18,24,26 The only study which reported a significantly 
+higher incorporation of EPA from krill oil versus fish oil 
+was that of Ramprasath et al.26 Therefore, the information 
+available from the literature is not consistent with regards 
+to the bioavailability of EPA (and DHA) from krill oil in 
+comparison with fish oil. The term “bioavailability” is 
+often used in these studies, however true bioavailability 
+measures the rate and extent to which a drug/compound 
+reaches the systemic circulation.27 In a nutrition context, 
+the term bioavailability is similar to digestibility which 
+refers to how much of a given nutrient is retained in the 
+body; this implies that faecal losses have been estimated 
+which is rarely or never the case in n-3 PUFA studies.28 
+It has also been reported that there are gender-specific 
+differences in the contribution of LC n-3 PUFA in differ-
+ent tissues. Compared with men, women tend to have a 
+higher omega-3 index,29 and also a significantly higher 
+level of both AA and DHA in the total plasma and plasma 
+phospholipids.30 Women have also been found to respond 
+to n-3 supplementation differently to men.31 Furthermore, 
+the influence of age on the gender differences in the fatty 
+acid composition has been observed.30  Available studies, 
+which have compared the efficacy of krill oil and fish oil, 
+have either focused only on male participants or mixed 
+gender cohorts, and typically with a wide age range. The 
+data from those studies have been conflicting with large 
+inter-participant variabilities.17,24,25 The aim of this study 
+was to compare the postprandial bioavailability (incorpo-
+ration) of equal amounts of krill oil with fish oil in 
+healthy young women. This is the first postprandial study 
+to compare krill oil with fish oil supplementation in 
+young women, which also included a control (olive oil) 
+treatment. All participants were recruited from a narrow 
+age group (18-45 years) to minimise variations between 
+participants. We investigated the effect of a single same 
+dose of krill oil in comparison with fish oil on postpran-
+dial plasma fatty acid composition, and plasma and chy-
+lomicron lipid levels. This study will provide useful in-
+formation on how young women respond acutely to krill 
+oil supplementation. 
+ 
+METHODS 
+Study participants 
+Ten healthy women aged between 18–45 years within 
+BMI 20–30 (kg/m2), who had not experienced menopause, 
+were recruited by emails to all Victoria University staff 
+and students, and flyer advertisements via the Victoria 
+University Nutritional Therapy Teaching Clinic, the gen-
+eral public, community centres, and local medical prac-
+tices. Participants were screened for their suitability for 
+the postprandial study using a medical questionnaire and 
+anthropometric measurements prior to enrolling into the 
+study. Participants were excluded if they were cigarette 
+smokers; pregnant or lactating; or had heart, liver, kidney 
+or inflammatory bowel disease; diabetes; or medications 
+interfering with lipid metabolism or lowering blood lipids; 
+allergy to fish or seafood; or had consumed oily fish more 
+than twice a week or supplements including omega-3 
+fatty acids in the past four weeks prior to the study. 
+ 
+Study design 
+This study was conducted in accordance with the ethical 
+principles outlined in the Declaration of Helsinki and the 
+protocol was approved by the Ethics Committee of Victo-
+ria University Human Research (HRE 14-040). The writ-
+ten informed consent was obtained from all participants 
+prior to the study. This trial was registered with the Aus-
+tralian and New Zealand Clinical Trial Registry (ACTRN 
+12615000620527). The study was a randomised crossover 
+design with three test meals supplemented with different 
+oils consumed in a randomised order with seven days 
+wash-out period between the test meals (Figure 1). Dur-
+ing the study period, all participants were instructed to 
+maintain their habitual diet and not to consume 
+fish/seafood or omega-3 fortified foods more than twice a 
+week. 
+Prior to the study day, the participants were required to 
+consume a low-fat dinner such as pasta, and avoid drink-
+ing alcohol and strenuous physical activity, and fast for 
+approximately 10 h overnight. On the study day, stand-
+ardised procedures were performed where the participants 
+arrived at the clinic between 7 a.m. and 9 a.m. and a fast-
+ing blood sample (0 h, 10 mL) was collected via intrave-
+nous cannulation by a qualified practitioner. The partici-
+pants then consumed a single test meal (breakfast), which 
+consisted of 150 g of fresh mashed potato mixed with 15 
+g of olive oil, together with 5 × 1 g capsules of krill oil or 
+5 × 1 g capsules of fish oil with 250 mL of water. Krill oil 
+and fish oil are very different in colour, smell, and taste 
+so for this trial both oils were provided as capsules rather 
+than as oils in order to provide a degree of blinding to the 
+trial. For the control treatment, the participants consumed 
+5 g of olive oil added into the mashed potato in place of 
+the five capsules (1 g each) of the krill oil or fish oil. It 
+was recognized that the 5 g of krill oil and fish oil do not 
+contain identical amounts of LC n-3 PUFA, but it was 
+deemed that was preferable to maintain the test oils as 
+blinded a fashion as possible, and minimise the partici-
+pants withdrawing from the trial owing to smell and taste 
+
+150                                                 HH Sung, AJ Sinclair, PA Lewandowski and XQ Su 
+considerations. All participants finished the test meal, 
+including the capsules, within 15 min and they were only 
+allowed to drink water during the intervention period of 5 
+h. After the test meal consumption, postprandial blood 
+samples (10 mL) were collected at every hour for 5 h, 
+thus making a total of six blood samples per participant 
+per test meal. 
+ 
+Study oils 
+The study oils including krill oil and fish oil capsules 
+(both products from Swisse Wellness Pty Ltd., Melbourne, 
+VIC, Australia) were purchased from the local pharmacy. 
+The fatty acid profile of these oils was analysed using the 
+gas chromatography (GC) prior to the commencement of 
+intervention. The participants consumed study oils 5 × 1 g 
+krill oil capsules or 5 × 1 g fish oil capsules, which equat-
+ed to a total EPA, DPA, and DHA intakes of 907 mg for 
+the krill oil and 1441 mg for fish oil, as shown in Table 1. 
+The equal number of oil capsules was provided with the 
+intention of having participants blinded. The single cap-
+sule fill weight was 1054 mg for krill oil and 1063 mg for 
+fish oil, and these values were used to calculate the EPA, 
+DPA, and DHA contents. As expected, the olive oil was 
+rich in oleic acid (79%) and devoid of LC n-3 PUFA. The 
+krill oil and fish oil were typical of such oils, as reported 
+in the literature, and contained 18% and 29% of total LC 
+n-3 PUFA, respectively. 
+ 
+Dietary assessment 
+Dietary records using a 24 h recall form were analysed to 
+identify the LC n-3 PUFA intake using FoodWorks ver-
+sion 8 (Xyris software, Brisbane, QLD, Australia) with 
+NUTTAB 2010 and AUSNUT 2013 based on Australian 
+Food Composition Database. LC n-3 PUFA intake of 
+each participant was monitored throughout the study pe-
+riod using a 24 h dietary recall each time when the partic-
+Table 1. LC n-3 PUFA in study oils 
+ 
+ 
+Krill oil 
+Fish oil 
+Per capsule 
+5 capsules 
+Per capsule 
+5 capsules 
+LA (18:2n-6), mg 
+13.3 (0.2)  
+67  
+11.9 (0.2)  
+60  
+ALA (18:3n-3), mg 
+7.2 (0.2)  
+36  
+6.6 (0.1)  
+33  
+AA (20:4n-6), mg 
+6.6 (0.5)  
+33  
+14.7 (0.8)  
+74  
+EPA (20:5n-3), mg 
+108.4 (1.4)  
+542  
+157.3 (2.6)  
+786  
+DPA (22:5n-3), mg 
+13.4 (1.0)  
+67  
+36.3 (5.0)  
+182  
+DHA (22:6 n-3), mg 
+59.5 (0.8)  
+298  
+94.6 (2.7)  
+473  
+Total LC n-3 PUFA, mg
+181.3  
+907  
+288.2  
+1441  
+ 
+AA: arachidonic acid; ALA: alpha linoleic acid; EPA: eicosapentaenoic acid; DHA: docosahexaenoic acid; DPA: docosapentaenoic acid; 
+LA: linoleic acid. 
+Values are expressed as mean (±SE) of five randomly chosen oil capsules mixed together and analysed six times using GC. The total LC 
+n-3 PUFA represents the sum of EPA, DHA, and DPA. 
+ 
+ 
+Figure 1. Flow chart of study design. Each participant, in a random order, received each of the three treatments (olive oil, krill oil, or fish 
+oil). There was a seven-day washout between each test meal.  
+ 
+
+                                                              Postprandial n-3 PUFA response to krill oil                                                        151                      
+ipant visited the clinic. 
+ 
+Identification of lipids in dietary oils 
+The lipid classes of test oils were analysed using thin-
+layer chromatography (TLC) on silica gel 60 plates 
+(Merck, Darmstadt, Germany) together with a standard 
+(Nu-Chek Prep Inc., C18-5A) using the solvent mixture 
+petroleum ether: diethyl ether: acetic acid (85:15:2, v/v/v). 
+The solvent was allowed to equilibrate for at least 20 min 
+prior to use. The samples were spotted on silica gel 60 
+TLC plates and allowed to develop to within 2 cm of the 
+top of TLC plate. The plates were removed and air-dried, 
+then sprayed with a solution of dichlorofluorescein in 
+methanol (0.05%) and viewed under a UV light.32 The 
+only major lipid classes observed in olive oil and fish oil 
+were TAG, with a minor band in the sterol region in the 
+case of fish oil; in contrast, the krill oil had an obvious 
+band in TAG region, a weak band in the free fatty acid 
+(FFA) region, and a distinct band at the origin which is 
+where phospholipids remain in this solvent system (data 
+not shown). 
+ 
+Plasma fatty acid analysis 
+Modified transesterification method of Lepage and Roy33 
+was used in this study. Briefly, 200 µL blood samples 
+were mixed with an internal standard, heneicosanoic acid, 
+C21:0 (Nu-Chek Prep, Inc., Elysian, MN, USA) in meth-
+anol: toluene (4:1 (v/v)) and then reacted with 200 µL of 
+acetyl chloride for 1 h at 100 °C to form fatty acid methyl 
+ester (FAME). Then 5 mL of 6% potassium carbonate 
+(K2CO3) in distilled water was added and the blend was 
+thoroughly vortexed prior to centrifugation at 3000 × g 
+for 10 min to separate the layers. The toluene-rich layer 
+was removed and evaporated to dryness under nitrogen 
+gas, and the FAME was then dissolved in petroleum spirit. 
+The resulting FAME was separated by GC (Varian Star 
+3400Cx, Agilent Technologies, CA, USA) equipped with 
+an SGE BPX 70 capillary column (60 m × 0.25 mm in-
+ternal diameter, 0.25 μm film thickness) (SGE Analytical 
+Science, Melbourne, Australia), and a flame ionization 
+detector (FID). 2 µL of samples were injected in splitting 
+mode (1:10) with helium as the carrier gas. The FAME 
+was identified by comparison with a standard FAME 
+mixture, GLC reference standard 403 (Nu-Chek Prep, 
+Inc., Elysian, MN, USA). 
+ 
+Lipid fractions of plasma 
+Total lipids were extracted from plasma as described by 
+Ghasemifard et al34 and then TAG and phospholipid were 
+isolated by thin layer chromatography (TLC). In brief, 
+700 µL of plasma was mixed with 3.5 mL of dichloro-
+methane: methanol (2:1, v/v) containing 0.01 mg butylat-
+ed hydroxytoluene and reference internal lipid standards, 
+triheptadecanoin, C17:0 (NuChek Prep, Inc., Elysian, MN, 
+USA) and 1, 2-diheptadecanoyl-sn-glycero-3-
+phosphocholine, C17:0 (Avanti Polar Lipids, Alabaster, 
+AL, USA). Isolated TAG and PL fractions from the TLC 
+plates were transmethylated with 5% H2SO4 in methanol 
+prior to fatty acid methyl ester (FAME) analysis by GC as 
+described above. Due to time constraint, samples from 
+four of the 10 participants were randomly chosen for 
+analysis of lipid fractions to assess the impact of krill oil, 
+fish oil, and olive oil. 
+ 
+Isolation of plasma and chylomicrons 
+EDTA blood samples were centrifuged at 3000× g at 4 °C 
+for 10 min to obtain plasma. 2.7 mL of the EDTA plasma 
+was overlaid with 2.4 mL saline solution (density =1.006 
+kg/L) to obtain chylomicron. Fractions were spun using 
+ultracentrifugation at 36,000× g at 22 °C for 30 min 
+(Sigma 3-30K).35,36 The top layer (approx. 1.5 mL) was 
+aspirated to remove the chylomicron fraction. All plasma 
+and chylomicron samples were aliquoted into cryotubes 
+and kept at −80 °C until further analysis. 
+ 
+Plasma lipid profiles and blood glucose 
+The concentration of total cholesterol, TAG, low-density 
+lipoprotein (LDL), and high-density lipoprotein (HDL) in 
+plasma, and the concentration of total cholesterol and 
+TAG in the isolated chylomicron were measured using a 
+Thermo Fisher Indiko™ auto-biochemistry analyser by 
+enzymatic colorimetric methods using commercially 
+available kits (CHOL, Triglycerides, Glucose HK, HDL 
+A B) as per the manufacturer’s instructions (Thermo 
+Fisher Scientific Inc., Melbourne, VIC, Australia). 
+ 
+Statistical analysis 
+The power calculation to determine the minimum number 
+of participants to detect a difference in plasma LC n-3 
+PUFA, plasma TAG based on a previous postprandial 
+study19 was 6, using a two tailed t-test at the 5% signifi-
+cance level for a power of 90%. Data were expressed as 
+means ± standard error of the mean (SE) except for par-
+ticipant characteristics (mean±standard deviation). All 
+data were analysed using SPSS version 22 and GraphPad 
+Prism version 6.04. Distributions of data were also ana-
+lysed for normality prior to data analysis. Postprandial 
+plasma fatty acids were analysed to determine the signifi-
+cant effects of oil consumption on changes from baseline 
+by time, test meal, and interaction between the time and 
+test meal using two-way analysis of variance (ANOVA) 
+for repeated measures, and post-hoc analysis was under-
+taken using the Tukey test. The net incremental area un-
+der the curve from baseline (net iAUC) over the post-
+prandial period was calculated using the trapezoid rule 
+and comparison between the net iAUC of test meals was 
+performed using one-way ANOVA for repeated measures 
+and the Tukey test for post-hoc comparison. p<0.05 was 
+considered significant. 
+ 
+RESULTS 
+Participant characteristics and intake of dietary LC n-3 
+PUFA at baseline 
+The 10 healthy women who completed the crossover 
+study with three test meals had a mean age of 28.5±9.3 
+years, systolic blood pressure (113±10.9 mmHg) and di-
+astolic blood pressure (70.8±9.9 mmHg) with a BMI of 
+25.8±3.6 (kg/m2). All participants completed a 24 h die-
+tary recall on each study day, which was analysed using 
+FoodWorks version 8. The daily intake of LC n-3 PUFA 
+from the 24 h recall was 106±91.0 mg. There was no sig-
+nificant difference in LC n-3 PUFA intakes from food for 
+each participant between the study days. 
+ 
+
+152                                                 HH Sung, AJ Sinclair, PA Lewandowski and XQ Su 
+Plasma fatty acid composition 
+The participant’s baseline concentrations of EPA, DHA 
+or DPA in plasma were not significantly different among 
+the three test meals. EPA concentrations significantly 
+rose after krill oil and fish oil consumption compared 
+with olive oil consumption and reached steady state by 2 
+h as shown in Figure 2. There was a significant difference 
+in EPA concentrations between krill oil and fish oil con-
+sumption at 4 h. As expected, no significant changes in 
+the proportion of EPA were observed following olive oil 
+consumption. 
+There were no consistent increases in DHA following 
+krill oil and fish oil consumption (Figure 2). There was a 
+significant difference between krill oil and olive oil at 5 h 
+(p=0.010), and between fish oil and olive at 1 h (p<0.01) 
+and 5 h (p=0.027). There was a significant difference in 
+DHA between krill oil and fish oil at 2 h (p=0.040). The 
+proportions of DPA after krill oil and fish oil consump-
+tion were not significantly different from each other or 
+from olive oil, apart from at 5 h of krill oil consumption 
+which was significantly greater in comparison with olive 
+oil (p=0.026). 
+There were no significant effects of diet intervention on 
+the concentration of plasma AA between three test meals. 
+The concentrations of plasma AA showed significant dif-
+ferences between krill oil and fish oil consumption at 3 h 
+(p=0.043). The concentrations of linoleic acid (LA) and 
+oleic acid (OA) after krill oil and fish oil consumption 
+were not significantly different from each other or from 
+olive oil. There was one exception at 2 h with fish oil 
+consumption resulting in significantly greater concentra-
+tions in comparison with olive oil (p=0.039). 
+The postprandial net iAUC values of EPA in both krill 
+oil and fish oil groups were significantly different from 
+the olive oil group (p=0.010 and p=0.017, respectively), 
+however, there was no significant difference between krill 
+oil and fish oil groups (p=0.850) (Figure 2). While the net 
+iAUC for the fish oil group was not significantly different 
+from the krill oil, the fish oil group had a 12% higher val-
+ue than the krill oil group (p>0.05). The net iAUC values 
+for the total n-3 PUFA (EPA, DPA, and DHA) were sig-
+nificantly greater after krill oil and fish oil consumption 
+compared with olive oil consumption (p<0.001), however 
+there was no significant difference between krill oil and 
+fish oil groups (p=0.980) (Figure 2). 
+ 
+Plasma fatty acid composition in TAG and PL 
+The plasma LC PUFA in TAG and PL fractions from four 
+ 
+ 
+Figure 2. Postprandial changes in plasma oleic acid and polyunsaturated fatty acid concentrations after consuming test meals containing 
+krill oil, fish oil or olive oil (control). (A) plasma EPA; (B) plasma DPA; (C) plasma DHA; (D) plasma AA; (E) plasma OA; (F) plasma 
+LA; (G) net incremental area under the curve (net iAUC) of plasma EPA; (H) net iAUC of plasma DHA; (I) net iAUC of total LC n-3 
+PUFA including EPA, DHA, and DPA. Values are expressed as mean ± SEM for 10 participants. # and * in graphs (A) and (C), indicate 
+significant differences between fish oil (#) or krill oil (*) and olive oil (p<0.05) consumptions. Different superscripts in graphs G-I 
+represent significant difference among the test meal consumptions. AA, arachidonic acid; EPA, eicosapentaenoic acid; DPA, 
+docosapentaenoic acid; DHA, docosahexaenoic acid; LA, linoleic acid; OA, oleic acid.
+
+                                                              Postprandial n-3 PUFA response to krill oil                                                        153                      
+randomly selected participants, were analysed and the 
+data are shown in Figure 3. In the fish oil group for plas-
+ma TAG, there was a trend (non-significant) for the EPA 
+and DHA to increase with time (data not shown). This 
+was reflected in the net iAUC (panels A and B Figure 3). 
+In the krill oil group for plasma PL fraction, there was a 
+trend for both EPA and DHA to increase with time (data 
+not shown). This was reflected in the net iAUC (panels C 
+and D Figure 3).  
+ 
+Postprandial plasma and chylomicron lipids 
+The baseline total cholesterol, TAG, HDL, LDL, and glu-
+cose in plasma and chylomicron were not significantly 
+different between test meals (Tables 2 and 3). There were 
+no significant effects of the test meals on plasma lipids 
+and glucose, although there were significant time effects 
+on all parameters (cholesterol, TAG, LDL, HDL, and 
+glucose) in plasma, and cholesterol and TAG in chylomi-
+cron (Table 2 and Table 3). Plasma TAG increased after 1 
+to 3 h consumption for all three test meals, however these 
+changes were not statistically significant (Table 2). There 
+were also no significant effects of the test meals on chy-
+lomicron lipids and glucose (only cholesterol and TAG 
+presented in Table 3) except for fish oil consumption, 
+which resulted in significantly higher TAG at 1 and 2 h 
+(p<0.05). By 4 h, the TAG in chylomicron had returned to 
+the baseline. The net iAUC values of changes in lipids 
+and glucose in plasma and chylomicron were also not 
+significantly different between the test meals (data not 
+shown). 
+DISCUSSION 
+This crossover study investigated the postprandial LC n-3 
+PUFA responses to krill oil and fish oil consumption in 
+healthy women, in a randomised crossover design. In 
+order to maintain the participants being blinded to which 
+treatment they were taking, the study design provided 
+either 5 capsules (5 g) of krill oil or 5 capsules (5 g) of 
+fish oil to participants. This design resulted in a 31% low-
+er dose of EPA and 37% lower dose of total LC n-3 
+PUFA dose from krill oil than fish oil in the breakfast 
+meal (542 mg EPA and 907 mg LC n-3 PUFA from krill 
+oil versus 786 mg EPA and 1441 mg LC n-3 PUFA from 
+fish oil). 
+The main finding from this study was that the plasma 
+EPA rose to the similar extent after krill oil and fish oil 
+consumption (Figure 2). Neither DHA nor DPA showed 
+significant elevations over the course of the study. Other 
+postprandial studies comparing the effects of krill oil and 
+fish oil have shown that in the first 72 hours, the EPA 
+incorporation into plasma lipids occurred more efficiently 
+compared with DHA.24 While there is no clear explana-
+tion for this result, apart from differences in the turnover 
+rates of EPA and DHA in plasma lipid fractions, the in-
+crease in EPA over the 5-hour postprandial period at the 
+present study is consistent with those studies. It is unlike-
+ly that the EPA arose from endogenous ALA metabolism. 
+Firstly, the EPA content of the capsules was 15 to 21 
+times greater than the ALA content. Secondly, the ratio of 
+LA to ALA in the breakfast meal was greater than 16:1, 
+making it unlikely that ALA was significantly metabo-
+ 
+ 
+ 
+Figure 3. Postprandial changes in EPA and DHA composition in plasma TAG and PL after consuming test meals containing krill oil, fish 
+oil or olive oil (control) (pilot data). (A) Net incremental area under the curve (Net iAUC) of EPA in TAG; (B) Net iAUC of DHA in 
+TAG; (C) Net iAUC of EPA in PL; (D) Net iAUC of DHA in PL. Values of net iAUC from baseline are expressed as % of TAG or PL 
+fatty acids * hour (mean ± SEM) for 4 participants. There were no significant differences observed between krill oil and fish oil 
+consumption over the 5-hour postprandial period. TAG, triglyceride; PL, phospholipids 
+
+154                                                 HH Sung, AJ Sinclair, PA Lewandowski and XQ Su 
+lised to EPA in this study. 
+There are a number of possible explanations why a 
+31% lower dose of EPA from krill oil compared with fish 
+oil could result in a similar concentration of plasma EPA. 
+Firstly, while there was a 12% higher net iAUC for EPA 
+in the fish oil group, this was not significantly different to 
+the krill oil group. It is possible that with a higher number 
+of participants a significant difference might have been 
+found in the study. Secondly, in krill oil, it has been re-
+ported that EPA is mainly found in the free fatty acids 
+and phospholipids (phosphatidycholine and phosphatidyl-
+ethanolamine) compared with fish oils where the EPA is 
+in the TAG.22 The digestion and absorption of fatty acids 
+from PL and TAG do not follow identical pathways, as 
+reported in previous studies.37-39 These authors proposed 
+that dietary phospholipids might be transported into the 
+bloodstream, following digestion and absorption, in chy-
+lomicrons, HDL or as lyso-phospholipids bound to albu-
+min. In contrast, dietary TAG fatty acids are mostly 
+transported via chylomicrons, followed by uptake in the 
+liver and redistribution of the TAG fatty acids into differ-
+ent lipids of exported lipoproteins (very low-density lipo-
+proteins, etc.).37-39 There have been no available studies 
+looking at these different digestion and absorption possi-
+bilities for LC n-3 PUFA from krill oil, however we sug-
+gest that over the time of 5 h postprandial period, the 
+EPA from the krill oil lipids may be more efficiently di-
+gested and absorbed than EPA from fish oil TAG, result-
+ing in a similar short-term EPA concentration (bioavaila-
+bility) in plasma lipids. 
+Krill oil also contains a higher level of free fatty acids 
+(FFA) compared with fish oil.22 FFA have been shown to 
+result in an increased apparent bioavailability compared 
+with esterified forms of LC n-3 PUFA.28 While no mech-
+anisms have been established, it has been suggested the 
+reason is that pancreatic lipase has a significantly reduced 
+efficiency towards hydrolysis of EPA and DHA from fish 
+oils.40 Thus, both the free fatty acids and phospholipids 
+from krill oil might contribute to the increased short-term 
+uptake of EPA into plasma lipids compared with fish oil, 
+which might help to explain the present results. 
+In the current study, we examined EPA, DPA, and 
+DHA levels in plasma TAG and PL in four of the partici-
+pants and these preliminary data revealed that EPA from 
+krill oil was mainly taken up in the PL fraction while 
+EPA from fish oil was found mainly in the TAG fraction, 
+highlighting that in the postprandial period EPA from oils 
+rich in TAG (fish oil) or rich in PL and FFA (krill oil) are 
+not incorporated into plasma lipids in the same manner. It 
+is possible that such differences might contribute to an 
+explanation of why a 31% lower EPA dose from krill oil 
+might lead to the similar total plasma concentration of 
+EPA over the 5 h postprandial period in this study. Fur-
+ther studies are required to understand the fate and rate 
+Table 2. Postprandial changes in plasma lipids and glucose
+ 
+mmol/L 
+Test meal
+Time 0
+Time 1 
+Time 2 
+Time 3 
+Time 4 
+Time 5 
+p value 
+Cholesterol
+Olive oil 
+5.1 (0.2)
+4.9 (0.2)
+4.8 (0.2)*
+4.8 (0.2)*
+4.8 (0.2)* 
+4.8 (0.2) 
+Time 
+0.042
+Fish oil 
+4.8 (0.2)
+4.7 (0.2)
+4.7 (0.2) 
+4.7 (0.2) 
+4.8 (0.2) 
+4.8 (0.2) 
+Meal 
+0.428
+  
+Krill oil 
+4.9 (0.2)
+4.9 (0.2)
+4.7 (0.2) 
+4.9 (0.2) 
+4.9 (0.2) 
+4.9 (0.2) 
+Interaction 0.213
+TAG 
+Olive oil 
+0.9 (0.1)
+1.0 (0.2)
+1.0 (0.2) 
+1.0 (0.2) 
+1.0 (0.2) 
+0.9 (0.2) 
+Time 
+0.005
+Fish oil 
+1.0 (0.1)
+1.2 (0.2)
+1.2 (0.2) 
+1.1 (0.2) 
+1.0 (0.1) 
+0.9 (0.1) 
+Meal 
+0.477
+Krill oil 
+1.0 (0.1)
+1.2 (0.2)
+1.1 (0.2) 
+1.1 (0.2) 
+1.0 (0.1) 
+0.9 (0.1) 
+Interaction 0.628
+LDL 
+Olive oil 
+3.3 (0.2)
+3.1 (0.1)*
+3.0 (0.1)*
+3.1 (0.1)*
+3.1 (0.1)* 
+3.1 (0.2) 
+Time 
+0.000
+Fish oil 
+3.0 (0.1)
+2.8 (0.1)
+2.8 (0.1) 
+2.9 (0.1) 
+3.0 (0.2) 
+3.0 (0.2) 
+Meal 
+0.096
+  
+Krill oil 
+3.0 (0.1)
+3.0 (0.1)
+2.9 (0.1) 
+3.0 (0.2) 
+3.1 (0.1) 
+3.1 (0.1) 
+Interaction 0.069
+HDL 
+Olive oil 
+1.4 (0.1)
+1.3 (0.1)
+1.3 (0.1)*
+1.3 (0.1)*
+1.3 (0.1)* 
+1.3 (0.1)* 
+Time 
+0.000
+Fish oil 
+1.4 (0.1)
+1.4 (0.1)*
+1.3 (0.1)*
+1.3 (0.1)*
+1.4 (0.1)* 
+1.4 (0.1) 
+Meal 
+0.227
+Krill oil 
+1.4 (0.1)
+1.4 (0.1)
+1.3 (0.1) 
+1.4 (0.1) 
+1.3 (0.1) 
+1.4 (0.1) 
+Interaction 0.801
+Glucose 
+Olive oil 
+5.4 (0.1)
+6.0 (0.4)
+5.2 (0.2) 
+4.9 (0.1) 
+5.0 (0.1) 
+5.0 (0.1) 
+Time 
+0.000
+Fish oil 
+5.4 (0.2)
+5.8 (0.2)
+5.2 (0.2) 
+5.2 (0.2) 
+5.2 (0.1) 
+5.1 (0.1) 
+Meal 
+0.674
+  
+Krill oil 
+5.4 (0.1)
+6.1 (0.4)*
+5.4 (0.1) 
+5.1 (0.1) 
+5.1 (0.1) 
+5.0 (0.1) 
+Interaction 0.540
+ 
+TAG: triglycerides; LDL: low-density lipoprotein cholesterol; HDL: high-density lipoprotein cholesterol. 
+Values are expressed as mean (±SE) for 10 women.  
+*Significant difference (p<0.05) compared with the baseline for each test meal.  
+ 
+ 
+Table 3. Postprandial changes in chylomicron lipids 
+ 
+mmol/L 
+Test meal 
+Time 0 
+Time 1 
+Time 2 
+Time 3 
+Time 4 
+Time 5 
+p value 
+Cholesterol
+Olive oil 
+2.2 (0.2)
+2.1 (0.2) 
+2.2 (0.1) 
+2.3 (0.2)
+2.1 (0.2)
+2.4 (0.1)
+Time 
+0.555
+Fish oil 
+2.1 (0.2)
+2.3 (0.1) 
+2.3 (0.2) 
+2.1 (0.1)
+2.0 )0.5)
+2.2 (0.1)
+Meal 
+0.107
+  
+Krill oil 
+2.4 (0.1)
+2.4 (0.1) 
+2.4 (0.2) 
+2.3 (0.2)
+2.3 (0.2)
+2.4 (0.1)
+Interaction
+0.870
+TAG 
+Olive oil 
+0.4 (0.1)
+0.7 (0.1) 
+0.6 (0.1) 
+0.7 (0.1)
+0.5 (0.1)
+0.6 (0.1)
+Time 
+0.001
+Fish oil 
+0.6 (0.2)
+0.9 (0.2)*
+0.8 (0.2)*
+0.7 (0.1)
+0.6 (0.1)
+0.5 (0.1)
+Meal 
+0.541
+Krill oil 
+0.6 (0.1)
+0.8 (0.1) 
+0.7 (0.1) 
+0.7 (0.1)
+0.6 (0.1)
+0.5 (0.1)
+Interaction
+0.254
+ 
+TAG: triglycerides. 
+Values are expressed as mean (±SE) for 10 women.  
+*Significant difference (p<0.05) compared with the baseline for each test meal.  
+ 
+
+                                                              Postprandial n-3 PUFA response to krill oil                                                        155                      
+of incorporation of LC n-3 PUFA from dietary PL. 
+These data over the 5-hour postprandial period do not 
+mean that studies conducted over longer periods such as 
+4+ weeks would yield the same results. For example, it 
+has been reported that short-term (postprandial studies) 
+may reveal different effects compared with longer-term 
+studies (weeks), in terms of incorporation of LC n-3 
+PUFA into plasma lipid fractions. Studies by Sadou et 
+al42 and Cook et al43 reported that uptake of LC n-3 
+PUFA into plasma lipids in the postprandial period (<12 h) 
+did not mirror the data after more than four weeks of 
+PUFA ingestion. Sadou et al41 found that at 8 h, the EPA 
+level in plasma PL was only 67% of the plasma TAG 
+EPA levels, while at 30 days the plasma PL EPA levels 
+were 329% of the TAG EPA value. Cook et al42 showed 
+that significant differences in uptake of LC n-3 PUFA 
+between plasma PL and TAG fractions observed at 12 h 
+postprandially were not evident after two weeks, at which 
+time incorporation of LC n-3 PUFA into plasma phospha-
+tidylcholine was not significantly different between plas-
+ma TAG and PL fractions. A possible explanation is that 
+the plasma levels of a fatty acid in short-term (postpran-
+dial state) are a function of absorption efficiency and tis-
+sue uptake or metabolism. In longer-term, the plasma 
+level of fatty acids is governed by these factors as well as 
+by the incorporation into tissues and turnover of the LC 
+n-3 PUFA. The n-3 index is regarded as the most reliable 
+marker of LC n-3 PUFA in tissue stores, and it has been 
+reported to be inversely associated with the cardio-
+metabolic risks.43 Further long term studies measuring the 
+n-3 index are highly recommended in order to better un-
+derstand the potential health benefits of krill oil consump-
+tion. 
+In the present study, the plasma EPA reached a plateau 
+(steady state) at 3 h, however Schuchardt et al17 showed 
+that EPA concentrations in plasma PL increased steadily 
+from the baseline up to 8 h postprandially for both krill 
+oil and fish oil groups. Kohler et al25 reported similar 
+findings, in that EPA levels rose after krill oil or fish oil 
+consumption, and that the Tmax for plasma TAG EPA 
+was approximately 10 h and for plasma TAG DHA was 
+approximately 20 h. In contrast, in their study, the Tmax 
+for plasma PL EPA was between 16 h and 25 h, while 
+that for plasma PL DHA was between 48 h and 55 h. This 
+indicates that studies of short duration, such as the present 
+study, do not necessarily give sufficient information to 
+make adequate comparisons between krill oil and fish oil, 
+since the Tmax values for EPA were reported to be be-
+tween 10 h and 20 h in plasma lipid fractions.26 In the 
+future, studies of a longer duration should be considered. 
+However, such studies are likely to be less controlled and 
+have significant practical issues such as what foods 
+should be allowed to consume for subsequent meals after 
+the test breakfast (lunch, dinner, etc.).  
+The data from Kohler et al25 also indicated differences 
+in the incorporation of LC n-3 PUFA between krill oil 
+and fish oil in the plasma PL and TAG fractions. They 
+found that over the 72 h of the study, there was a signifi-
+cantly greater (1.5 times, p<0.003) incremental area under 
+the curve (iAUC) for EPA plus DHA in plasma PL after 
+krill oil consumption compared with fish oil consumption, 
+whereas the iAUC for EPA plus DHA was not different 
+between the two oils in plasma TAG. The present study 
+also showed a trend for increased net iAUC for LC n-3 
+PUFA in plasma PL for krill oil compared with fish oil, 
+although the results are limited by the small number of 
+participants. A higher incorporation of EPA into plasma 
+PL from krill oil consumption compared with fish oil 
+consumption has been reported by Kohler et al.17, 25 Con-
+sistently, Lemaitre-Delaunay et al44 have reported differ-
+ential labelling of plasma lipid fractions over a 6 h period 
+for 13C-DHA administered in phosphatidylcholine form 
+or TAG form. Those data support the idea that PUFA 
+bound to PL or TAG are not digested, absorbed, and sub-
+sequently metabolised via identical pathways. 
+In the present study and those by Kohler et al25 and 
+Schuchardt et al,17 it was clear that there was considerable 
+variability between the individual responses of partici-
+pants to the treatments. It appears from the literature that 
+the inter-participant variability in response to the treat-
+ments occurs in both genders and different age groups. 
+The present study included young women, while the 
+study of Schuchardt et al17 focused on young male partic-
+ipants, and that of Kohler et al25 looked at the older male 
+and female participants. Ghasemifard et al28 reviewed in 
+detail the factors which could influence the apparent bio-
+availability of LC n-3 PUFA. These included matrix of 
+the food, fat content of the test meal, age, gender, dose 
+rate, absorption efficiency (faecal loss), and body weight 
+of the participants. Typically, in studies comparing krill 
+oil and fish oil, these factors are not controlled for and 
+presumably contribute to the inter-participant variability.  
+The present study has strengths in that it was a random-
+ised crossover postprandial study conducted in a con-
+trolled location, which included a control group (olive oil) 
+and was conducted with women participants who were all 
+of a similar age. Nonetheless, that we have not studied 
+men is a limitation. The single gender design was intend-
+ed to minimise variations between participants. Available 
+studies have either not been gender-specific or of men 
+with large inter-participant variations. The present study, 
+with its focus on young women, was more likely to pro-
+vide useful information on fatty acid bioavailability from 
+krill compared with fish oil. However, it is acknowledged 
+that the study had several limitations which included be-
+ing a short time frame (5 h), having a small number of 
+participants (n=10), with participants not totally blinded 
+to test meals (capsule contents have a different colour), 
+and the dose of total LC n-3 PUFA for krill oil being 37% 
+lower than for fish oil. It is possible that the small partici-
+pant number has obscured the differences between krill 
+oil and fish oil supplementations. Further studies with a 
+larger number of participants are required to determine 
+whether there is a significant difference in the postprandi-
+al plasma EPA concentrations between the consumption 
+of two marine oils. It is also important to analyse the lipid 
+fractions in plasma using novel approaches, such as lip-
+idomics, in order to assess the incorporation of the LC n-3 
+fatty acids into the very large number of molecular spe-
+cies of different lipids which exist in plasma.45 It is worth 
+noting that, as discussed by Ghasemifard et al,28 a higher 
+plasma concentration does not necessarily equate to a 
+higher ‘bioavailability’, since for true bioavailability the 
+faecal losses must be determined. Despite this, most stud-
+
+156                                                 HH Sung, AJ Sinclair, PA Lewandowski and XQ Su 
+ies comparing krill oil and fish oil use the term bioavaila-
+bility. 
+ 
+Conclusions 
+In this study, we have found that, in young women, 5 g of 
+krill oil supplementation resulted in similarly high plasma 
+EPA concentrations to the same amount of fish oil over a 
+5-hour postprandial period, despite krill oil containing 
+31% lower EPA than the fish oil. This is relevant to con-
+sumers who are likely choose to consume an equal num-
+ber of capsules of krill oil or fish oil rather than choose 
+the dose of LC n-3 PUFA. These results suggest that EPA 
+from krill oil may be more efficiently incorporated into 
+plasma due to the high content of phospholipids and free 
+fatty acids in this oil. Further large long-term studies are 
+warranted to determine the impact of krill oil supplemen-
+tation on long-term tissue stores and the consequential 
+clinical benefits in comparison with fish oil. 
+ 
+ACKNOWLEDGEMENTS 
+The authors wish to thank Maxine Bonham, Monash University, 
+for her assistance with plasma lipid analysis and Giovanni 
+Turchini and NuSea laboratory, Deakin University, for the anal-
+ysis of the study oils. The authors also thank Patrick McLaugh-
+lin, Kim-Tiu Teng, and Shaan Naughton for their advice on 
+statistical analyses. Finally, we wish to acknowledge and thank 
+our participants for their participation. 
+ 
+AUTHOR DISCLOSURES 
+The authors declare no conflict of interest. 
+ 
+REFERENCES 
+1. Sekikawa A, Doyle MF, Kuller LH. Recent findings of long-
+chain n-3 polyunsaturated fatty acids (LCn-3 PUFAs) on 
+atherosclerosis 
+and 
+coronary 
+heart 
+disease 
+(CHD) 
+contrasting studies in Western countries to Japan. Trends 
+Cardiovasc Med. 2015;25:717-23. doi: 10.1016/j.tcm.2015. 
+03.001. 
+2. Eilat-Adar S, Sinai T, Yosefy C, Henkin Y. Nutritional 
+recommendations for cardiovascular disease prevention. 
+Nutrients. 2013;5:3646-83.  
+3. Leslie MA, Cohen DJ, Liddle DM, Robinson LE, Ma DW. 
+A review of the effect of omega-3 polyunsaturated fatty 
+acids on blood triacylglycerol levels in normolipidemic and 
+borderline hyperlipidemic individuals. Lipids Health Dis. 
+2015;14:53. doi: 10.1186/s12944-015-0049-7. 
+4. Haghiac M, Yang XH, Presley L, Smith S, Dettelback S, 
+Minium J et al. Dietary omega-3 fatty acid supplementation 
+reduces inflammation in obese pregnant women: a 
+randomized double-blind controlled clinical trial. PLoS One. 
+2015;10:e0137309. doi: 10.1371/journal.pone.0137309. 
+5. Calder PC. Marine omega-3 fatty acids and inflammatory 
+processes: effects, mechanisms and clinical relevance. 
+Biochim Biophys Acta. 2015;1851:469-84. doi: 10.1016/j. 
+bbalip.2014.08.010. 
+6. Cottin S, Sanders T, Hall W. The differential effects of EPA 
+and DHA on cardiovascular risk factors. Proc Nutr Soc. 
+2011;70:215-31. doi: 10.1017/S0029665111000061. 
+7. Mozaffarian D, Wu JHY. Omega-3 fatty acids and 
+cardiovascular disease: effects on risk factors, molecular 
+pathways, and clinical events. J Am Coll Cardiol. 2011;58: 
+2047-67. doi: 10.1016/j.jacc.2011.06.063. 
+8. Calder PC. Polyunsaturated fatty acids and inflammatory 
+processes: new twists in an old tale. Biochimie. 2009;91: 
+791-5. doi: 10.1016/j.biochi.2009.01.008. 
+9. Mickleborough TD, Tecklenburg SL, Montgomery GS, 
+Lindley MR. Eicosapentaenoic acid is more effective than 
+docosahexaenoic 
+acid 
+in 
+inhibiting 
+proinflammatory 
+mediator production and transcription from LPS-induced 
+human asthmatic alveolar macrophage cells. Clin Nutr. 2009; 
+28:71-7.  
+10. Crawford MA, Bazinet RP, Sinclair AJ. Fat intake and CNS 
+functioning: ageing and disease. Ann Nutr Metab. 2009;55: 
+202-28. doi: 10.1159/000229003. 
+11. Kaur G, Guo XF, Sinclair AJ. Short update on 
+docosapentaenoic acid: a bioactive long-chain n-3 fatty acid. 
+Curr Opin Clin Nutr Metab Care. 2016;19:88-91. doi: 10. 
+1097/mco.0000000000000252. 
+12. Brenna JT, Salem N, Jr., Sinclair AJ, Cunnane SC. Alpha-
+Linolenic acid supplementation and conversion to n-3 long-
+chain polyunsaturated fatty acids in humans. Prostaglandins 
+Leukot Essent Fatty Acids. 2009;80:85-91. doi: 10.1016/j. 
+plefa.2009.01.004     
+13. Plourde M, Cunnane SC. Extremely limited synthesis of 
+long chain polyunsaturates in adults: implications for their 
+dietary essentiality and use as supplements. Appl Physiol 
+Nutr Metab. 2007;32:619-34. doi: 10.1139/H07-034. 
+14. Mozaffarian D, Wu JH. Omega-3 fatty acids and 
+cardiovascular disease: effects on risk factors, molecular 
+pathways, and clinical events. J Am Coll Cardiol. 2011;58: 
+2047-67. doi: 10.1016/j.jacc.2011.06.063. 
+15. Tou JC, Jaczynski J, Chen Y-C. Krill for human 
+consumption: nutritional value and potential health benefits. 
+Nutr Rev. 2007;65:63-77. doi: 10.1111/j.1753-4887.2007. 
+tb00283.x. 
+16. Food Standards Australia New Zealand. AUSNUT 2011-13 
+food nutrient database. 2015 [cited 2017/02/15]; Available 
+from: http://www.foodstandards.gov.au/science/monitoring 
+nutrients/ausnut/ausnutdatafiles/Pages/foodnutrient.aspx. 
+17. Schuchardt JP, Schneider I, Meyer H, Neubronner J, von 
+Schacky C, Hahn A. Incorporation of EPA and DHA into 
+plasma phospholipids in response to different omega-3 fatty 
+acid formulations–a comparative bioavailability study of 
+fish oil vs. krill oil. Lipids Health Dis. 2011;10:145. doi: 10. 
+1186/1476-511X-10-145. 
+18. Maki KC, Reeves MS, Farmer M, Griinari M, Berge K, Vik 
+H et al. Krill oil supplementation increases plasma 
+concentrations of eicosapentaenoic and docosahexaenoic 
+acids in overweight and obese men and women. Nutr Res. 
+2009;29:609-15. doi: 10.1016/j.nutres.2009.09.004. 
+19. Kagan ML, West AL, Zante C, Calder PC. Acute 
+appearance of fatty acids in human plasma–a comparative 
+study between polar-lipid rich oil from the microalgae 
+Nannochloropsis oculata and krill oil in healthy young males. 
+Lipids Health Dis. 2013;12:102. doi: 10.1186/1476-511X-
+12-102. 
+20. Purcell R, Latham SH, Botham KM, Hall WL, Wheeler-
+Jones CP. High-fat meals rich in EPA plus DHA compared 
+with DHA only have differential effects on postprandial 
+lipemia and plasma 8-isoprostane F2alpha concentrations 
+relative to a control high-oleic acid meal: a randomized 
+controlled trial. Am J Clin Nutr. 2014;100:1019-28. doi: 10. 
+3945/ajcn.114.091223. 
+21. Winther B, Hoem N, Berge K, Reubsaet L. Elucidation of 
+phosphatidylcholine composition in krill oil extracted from 
+Euphausia superba. Lipids. 2011;46:25-36. doi: 10.1007/ 
+s11745-010-3472-6. 
+22. Kutzner L, Ostermann AI, Konrad T, Riegel D, Hellhake S, 
+Schuchardt JP,  Schebb NH. Lipid class specific quantitative 
+analysis of n-3 polyunsaturated fatty acids in food 
+supplements. J Agric Food Chem. 2016;65:139-47. doi: 10. 
+1021/acs.jafc. 6b03745. 
+
+                                                              Postprandial n-3 PUFA response to krill oil                                                        157                      
+23. Skorve J, Hilvo M, Vihervaara T, Burri L, Bohov P, 
+Tillander V et al. Fish oil and krill oil differentially modify 
+the liver and brain lipidome when fed to mice. Lipids Health 
+Dis. 2015;14:88. doi: 10.1186/s12944-015-0086-2. 
+24. Yurko-Mauro K, Kralovec J, Bailey-Hall E, Smeberg V, 
+Stark JG, Salem N. Similar eicosapentaenoic acid and 
+docosahexaenoic acid plasma levels achieved with fish oil or 
+krill 
+oil 
+in 
+a 
+randomized 
+double-blind 
+four-week 
+bioavailability study. Lipids Health Dis. 2015;14:99. doi: 10. 
+1186/s12944-015-0109-z. 
+25. Kohler A, Sarkkinen E, Tapola N, Niskanen T, Bruheim I. 
+Bioavailability of fatty acids from krill oil, krill meal and 
+fish oil in healthy subjects-a randomized, single-dose, cross-
+over trial. Lipids Health Dis. 2015;14:19. doi: 10.1186/ 
+s12944-015-0015-4. 
+26. Ramprasath VR, Eyal I, Zchut S, Jones PJ. Enhanced 
+increase of omega-3 index in healthy individuals with 
+response to 4-week n-3 fatty acid supplementation from krill 
+oil versus fish oil. Lipids Health Dis. 2013;12:178.  
+27. Kwan KC. Oral bioavailability and first-pass effects. Drug 
+Metab Dispos. 1997;25:1329-36.  
+28. Ghasemifard S, Turchini GM, Sinclair AJ. Omega-3 long 
+chain fatty acid “bioavailability”: a review of evidence and 
+methodological considerations. Prog Lipid Res. 2014;56:92-
+108. doi: 10.1016/j.plipres.2014.09.001. 
+29. Howe PR, Buckley JD, Murphy KJ, Pettman T, Milte C, 
+Coates AM. Relationship between erythrocyte omega-3 
+content and obesity is gender dependent. Nutrients. 2014;6: 
+1850-60. doi: 10.3390/nu6051850. 
+30. Lohner S, Fekete K, Marosvolgyi T, Decsi T. Gender 
+differences in the long-chain polyunsaturated fatty acid 
+status: systematic review of 51 publications. Ann Nutr 
+Metab. 2013;62:98-112. doi: 10.1159/000345599. 
+31. Childs CE, Kew S, Finnegan YE, Minihane AM, Leigh-
+Firbank EC, Williams CM et al. Increased dietary alpha-
+linolenic acid has sex-specific effects upon eicosapentaenoic 
+acid status in humans: re-examination of data from a 
+randomised, placebo-controlled, parallel study. Nutr J. 2014; 
+13:113. doi: 10.1186/1475-2891-13-113. 
+32. Christie WW. Isolation, Separation, Identification and 
+Structural Analysis of Lipids. 3rd ed. United Kingdom: The 
+Oily Press; 2003. 
+33. Lepage G, Roy C. Direct transesterification of all classes of 
+lipids in a one-step reaction. J Lipid Res. 1986;27:114-20.  
+34. Ghasemi Fard S, Linderborg KM, Turchini GM, Sinclair AJ. 
+Comparison of the bioavailability of docosapentaenoic acid 
+(DPA, 22:5n-3) and eicosapentaenoic acid (EPA, 20:5n-3) 
+in the rat. Prostaglandins Leukot Essent Fatty Acids. 2014; 
+90:23-6. doi: 10.1016/j.plefa.2013.10.001. 
+35. Tholstrup T, Vessby B, Sandstrom B. Difference in effect of 
+myristic and stearic acid on plasma HDL cholesterol within 
+24 h in young men. Eur J Clin Nutr. 2003;57:735-42. 10. 
+1038/sj.ejcn.1601605. 
+36. Bonham MP, Linderborg KM, Dordevic A, Larsen AE, 
+Nguo K, Weir JM et al. Lipidomic profiling of chylomicron 
+triacylglycerols in response to high fat meals. Lipids. 2013; 
+48:39-50.  
+37. Küllenberg D, Taylor LA, Schneider M, Massing U. Health 
+effects of dietary phospholipids. Lipids Health Dis. 2012; 
+11:1-16.  
+38. Lusis AJ, Fogelman AM, Fonarow GC. Genetic basis of 
+atherosclerosis: Part I. Circulation. 2004;110:1868-73. doi: 
+10.1161/01.cir.0000143041.58692.cc. 
+39. Zierenberg O, Grundy SM. Intestinal absorption of 
+polyenephosphatidylcholine in man. J Lipid Res. 1982;23: 
+1136-42.  
+40. Lawson LD, Hughes BG. Human absorption of fish oil fatty 
+acids as triacylglycerols, free acids, or ethyl esters. Biochem 
+Biophys Res Commun. 1988;152:328-35. doi: 10.1016/S000 
+6-291X(88)80718-6. 
+41. Sadou H, Léger CL, Descomps B, Barjon J-N, Monnier L, 
+de Paulet AC. Differential incorporation of fish-oil 
+eicosapentaenoate and docosahexaenoate into lipids of 
+lipoprotein fractions as related to their glyceryl esterification: 
+a short-term (postprandial) and long-term study in healthy 
+humans. Am J Clin Nutr. 1995;62:1193-200.  
+42. Cook CM, Hallaråker H, Sæbø PC, Innis SM, Kelley KM, 
+Sanoshy KD, Berger A, Maki KC. Bioavailability of long 
+chain 
+omega-3 
+polyunsaturated 
+fatty 
+acids 
+from 
+phospholipid-rich herring roe oil in men and women with 
+mildly elevated triacylglycerols. Prostaglandins Leukot 
+Essent Fatty Acids. 2016;11:17-24. doi: 10.1016/j.plefa. 
+2016.01.007. 
+43. von Schacky C, Harris WS. Cardiovascular benefits of 
+omega-3 fatty acids. Cardiovasc Res. 2007;73:310-5. doi: 10. 
+1016/j.cardiores.2006.08.019. 
+44. Lemaitre-Delaunay D, Pachiaudi C, Laville M, Pousin J, 
+Armstrong 
+M, 
+Lagarde 
+M. 
+Blood 
+compartmental 
+metabolism of docosahexaenoic acid (DHA) in humans after 
+ingestion 
+of 
+a 
+single 
+dose 
+of 
+[13C]DHA 
+in 
+phosphatidylcholine. J Lipid Res. 1999;40:1867-74.  
+45. Meikle PJ, Barlow CK, Mellett NA, Mundra PA, Bonham 
+MP, Larsen A et al. Postprandial Plasma Phospholipids in 
+Men Are Influenced by the Source of Dietary Fat. J Nutr. 
+2015;145:2012-8. doi: 10.3945/jn.115.210104. 
+ 

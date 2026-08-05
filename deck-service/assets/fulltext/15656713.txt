@@ -1,0 +1,952 @@
+Page 420                                                           Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004
+Krill Oil                                               Original Research
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+Abstract
+OBJECTIVE: To assess the effects of krill oil
+on blood lipids, specifically total cholesterol,
+triglycerides, low-density lipoprotein (LDL), and
+high-density lipoprotein (HDL). METHODS: A
+multi-center, three-month, prospective,
+randomized study followed by a three-month,
+controlled follow-up of patients treated with 1
+g and 1.5 g krill oil daily. Patients with
+hyperlipidemia able to maintain a healthy diet
+and with blood cholesterol levels between 194
+and 348 mg/dL were eligible for enrollment in
+the trial. A sample size of 120 patients (30
+patients/group) was randomly assigned to one
+of four groups. Group A received krill oil at a
+body mass index (BMI)-dependent daily
+dosage of 2-3 g daily. Patients in Group B were
+given 1-1.5 g krill oil daily, and Group C was
+given 
+fish 
+oil 
+containing 
+180 
+mg
+eicosapentaenoic acid (EPA) and 120 mg
+docosahexaenoic acid (DHA) per gram of oil
+at a dose of 3 g daily. Group D was given a
+placebo containing microcrystalline cellulose.
+The krill oil used in this study was Neptune Krill
+Oil (NKO‚), provided by Neptune Technologies
+& Bioresources, Laval, Quebec, Canada.
+OUTCOME MEASURES: Primary parameters
+tested (baseline and 90-day visit) were total
+blood cholesterol, triglycerides, LDL, HDL, and
+glucose. RESULTS: Krill oil 1-3 g/day (BMI-
+dependent) was found to be effective for the
+reduction of glucose, total cholesterol,
+triglycerides, LDL, and HDL, compared to both
+fish oil and placebo. CONCLUSIONS: The
+Evaluation of the Effects of
+Neptune Krill Oil on the Clinical Course
+of Hyperlipidemia
+Ruxandra Bunea, MD; Khassan El Farrah, MD, MSc;
+Luisa Deutsch, MD
+results of the present study demonstrate within
+high levels of confidence that krill oil is effective
+for the management of hyperlipidemia by
+significantly reducing total cholesterol, LDL,
+and triglycerides, and increasing HDL levels.
+At lower and equal doses, krill oil was
+significantly more effective than fish oil for the
+reduction of glucose, triglycerides, and LDL
+levels.
+(Altern Med Rev 2004;9(4):420-428)
+Introduction
+The balance of polyunsaturated essential
+fatty acids (PUFAs) in the body is critical for the
+maintenance of healthy cell membranes and hor-
+mone regulation. During the last few decades the
+fatty acid content of the U.S. diet has shifted so it
+now contains much higher levels of omega-6 and
+less omega-3 fatty acids. When long-chain omega-
+6 fatty acids predominate in the phospholipids of
+cell membranes, the production of pro-inflamma-
+tory type-2 prostaglandins (PGs) and type-4
+leukotrienes (LTs) are encouraged; whereas, the
+presence of omega-3 fatty acids promotes the pro-
+duction of anti-inflammatory PGs and LTs.1,2
+Ruxandra Bunea, MD – Assistant Professor, Department of
+Internal Medicine, McGill University; Riverview Medical
+Center, Montreal, Quebec, Canada.
+Correspondence address: 1586 Ave des Pins O. #302,
+Montreal, Quebec, Canada H3G 1B4.
+Khassan El Farrah, MD, MSc – JSS Medical Research,
+Montreal, Quebec, Canada.
+Luisa Deutsch, MD – JSS Medical Research, Montreal,
+Quebec, Canada.
+
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004                                                              Page 421
+Original Research                                               Krill Oil
+Omega-6 fatty acids, mainly arachidonic
+acid, have been shown to initiate an inflamma-
+tory process by triggering a flux of inflammatory
+PGs and LTs.3,4 Omega-3 fatty acids, mainly
+eicosapentaenoic acid (EPA) and docosahexaenoic
+acid (DHA), compete with the omega-6 species
+for the enzyme prostaglandin synthetase. Omega-
+3 fatty acids trigger secretion of less potent 5-se-
+ries LTs and anti-inflammatory PGs of the 3 se-
+ries (PE3, PI3 and thromboxanes-A3).4-9 Conse-
+quently, supplementation with EPA and DHA pro-
+motes the production of less potent PGs and LTs,
+resulting in a decrease in the formation of inflam-
+matory mediators.10-13
+The exact mechanism of action by which
+omega-3 fatty acids favorably modify cardiovas-
+cular disease and associated disorders is not yet
+fully confirmed. Evidence suggests an increased
+intake of EPA and DHA results in an increase of
+EPA and DHA in tissue, cellular lipids, and circu-
+latory lipids.14 In parallel, they result in a simulta-
+neous reduction of omega-6 fatty acids in the
+body.14 This fatty acid shift is predominantly
+marked in cell membrane-bound phospholipids
+and results in alteration of the physicochemical
+properties of cell membranes. This favorably
+modifies cellular functions, including cell signal-
+ing, gene expression, biosynthetic processes, and
+eicosanoid formation.15
+Human studies have revealed the ability
+of EPA and DHA to significantly reduce circulat-
+ing levels of blood triglyceride and very low-den-
+sity lipoprotein (VLDL), which have been asso-
+ciated with increased risk of cardiovascular dis-
+ease.16,17
+Krill oil is extracted from Antarctic krill,
+Euphausia superba, a zooplankton crustacean rich
+in phospholipids carrying long-chain omega-3
+PUFAs, mainly EPA and DHA. Krill oil also con-
+tains various potent antioxidants, including vita-
+mins A and E, astaxanthin, and a novel flavonoid
+similar to 6,8-di-c-glucosylluteolin, but with two
+or more glucose molecules and one aglycone.
+Krill oil has a unique biomolecular pro-
+file of phospholipids naturally rich in omega-3
+fatty acids and diverse antioxidants significantly
+different from the usual profile of fish oils. The
+association between phospholipids and long-chain
+omega-3 fatty acids highly facilitates the passage
+of fatty acid molecules through the intestinal wall,
+increasing bioavailability and ultimately improv-
+ing the omega-3:omega-6 fatty acid ratio.18,19
+Materials and Methods
+A 12-week, double-blind, randomized
+trial was conducted comparing krill oil to high EPA
+and DHA (3:2 ratio) fish oil and placebo. Eligible
+patients were 18-85 years and had at least a six-
+month diagnosis of mildly high to very high blood
+cholesterol (193.9-347.9 mg/dL) and triglyceride
+levels (203.8-354.4 mg/dL). Patients with famil-
+ial hypercholesterolemia, severely high cholesterol
+(>349 mg/dL), pregnancy, known or suspected
+allergy to fish or seafood, known alcohol or drug
+abuse within the previous year, known
+coagulopathy or receiving anticoagulant therapy,
+or co-morbidity that would interfere with study
+results were excluded from the study.
+Enrolled patients were randomly assigned
+to one of four groups:
+▲ Group A: Krill oil (2-3 g once daily)
+   Body Mass Index (BMI) < 30 – 2 g/day
+   BMI > 30 – 3 g/day
+▲ Group B: Krill oil (1-1.5 g once daily)
+   BMI < 30 – 1 g/day
+   BMI > 30 – 1.5 g/day
+   Follow-up 500 mg/day for 90 days
+▲ Group C: Fish oil (3:2) containing 180 mg
+   EPA and 120 mg DHA per gram (3 g
+   once daily)
+▲ Group D: placebo (3 g once daily)
+Patients were allowed to continue lipid-
+lowering medications at the usual daily dose and
+asked to report any change in dosage. Natural
+health products were discontinued for a two-week
+washout period prior to study initiation and there-
+after for the study duration. Patients were asked
+to record concomitant medications taken daily.
+
+Page 422                                                           Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004
+Krill Oil                                              Original Research
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+ The primary parameters tested were
+blood glucose, cholesterol, triglycerides, low-den-
+sity lipoprotein (LDL), and high-density lipopro-
+tein (HDL). Fasting blood lipids and glucose were
+analyzed at baseline as well as 30 and 90 days
+after study initiation for all groups, and at 180 days
+for the 30 patients in Group B.
+Statistical
+Rationale
+and Analysis
+A sample
+size of 120 pa-
+tients (30 pa-
+tients/group) pro-
+vided 90-percent
+power to detect a
+1 5 - p e r c e n t
+change in total
+cholesterol from
+baseline to three
+months.
+Within-
+group differences
+r e f l e c t i n g
+changes over time
+for the same pa-
+tient were as-
+sessed for statisti-
+cal significance
+with the Paired
+Student’s t-test.
+Between-group
+differences were
+assessed 
+with
+planned compari-
+sons of one-way
+analysis of vari-
+ance.
+Results
+One-hun-
+dred-twenty patients with a mean age of 51 years
+(standard deviation 9.46) and ranging between 25
+and 75 years were enrolled in the trial. BMI, a
+tool indicating weight status in adults, was calcu-
+lated according to the metric formula ([weight in
+kilograms/(height in centimeters) x (height in cen-
+timeters)] x 10,000).20,21 Of the 120 patients en-
+rolled, 30 (25%) had moderate-to-severe obesity,
+with a BMI higher than 30. Sixty-four (53%) sub-
+jects were overweight, and 26 (22%) were nor-
+mal weight, with a BMI between 25 and 30 and
+lower than 25, respectively. Women had a higher
+Table 1.   Results of Krill Oil (1.0 g/day) on Lipids
+235.83
+167.78
+57.22
+120.50
+204.12
+114.05
+82.35
+107.21
+-13.44%
+-32.03%
+43.92%
+-11.03%
+0.000
+0.000
+0.000
+0.114
+1.0 g Krill Oil
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+Table 2.   Results of Krill Oil (1.5 g/day) on Lipids
+231.19
+164.74
+58.76
+126.70
+199.49
+105.93
+83.89
+111.64
+-13.71%
+-35.70%
+42.76%
+-11.89%
+0.000
+0.000
+0.000
+0.113
+1.5 g Krill Oil
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+
+Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004                                                              Page 423
+Original Research                                               Krill Oil
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+mean 
+BMI
+(28.2±5.1) com-
+pared to men
+(25.4±3.9) (p<0.001).
+A m o n g
+the 60 patients in
+the two groups re-
+ceiving krill oil,
+42 (70%) had a
+BMI of 30 or less.
+In Group A, 19
+patients received
+2 g krill oil daily
+and the remaining
+11 received 3 g
+daily. In Group B,
+23 patients were
+treated with a
+daily dose of 1 g
+krill oil and 7 with
+1.5 g. All patients
+in Group B con-
+tinued for an addi-
+tional 90 days
+with a mainte-
+nance dose of 500
+mg krill oil daily.
+Baseline
+analysis of demo-
+graphic criteria,
+laboratory data in-
+cluding total cho-
+lesterol and trig-
+lyceride levels,
+comorbidity, and
+c o n c o m i t a n t
+medication at baseline showed no significant dif-
+ferences among the four groups (p=0.102-0.850).
+After 12 weeks of treatment, patients re-
+ceiving 1 or 1.5 g krill oil daily had a 13.4-per-
+cent and 13.7-percent decrease in mean total cho-
+lesterol, from 236 mg/dL and 231 mg/dL to 204
+mg/dL (p=0.000) and 199 mg/dL (p=0.000), re-
+spectively (Tables 1 and 2). The group of patients
+treated with 2 or 3 g krill oil showed a significant
+respective reduction in mean total cholesterol of
+18.1 and 18 percent. Levels were reduced from a
+baseline of 247 mg/dL and 251 mg/dL to 203 mg/
+dL (p=0.000) and 206 mg/dL (p=0.000), corre-
+spondingly (Tables 3 and 4). In comparison, people
+receiving 3 g fish oil had a mean reduction in to-
+tal cholesterol of 5.9 percent, from a baseline 231
+mg/dL to 218 mg/dL (p=0.000) (Table 5). Those
+enrolled in the placebo group showed a 9.1-per-
+cent increase in mean total cholesterol, from 222
+mg/dL to 242 mg/dL (p=0.000) (Table 6).
+Table 3.   Results of Krill Oil (2.0 g/day) on Lipids
+247.42
+182.86
+51.03
+160.37
+202.58
+114.43
+79.25
+116.07
+-18.13%
+-37.42%
+55.30%
+-27.62%
+0.000
+0.000
+0.000
+0.025
+2 g Krill Oil
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+Table 4.   Results of Krill Oil (3.0 g/day) on Lipids
+250.52
+172.81
+64.18
+152.77
+205.67
+105.16
+102.45
+112.27
+-17.90%
+-39.15%
+59.64%
+-26.51%
+0.000
+0.000
+0.000
+0.028
+3 g Krill Oil
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+
+Page 424                                                           Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004
+Krill Oil                                              Original Research
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+An analogous effect on LDL levels was
+observed in all groups. Krill oil at a daily dose of
+1 g, 1.5 g, 2 g, or 3 g achieved significant reduc-
+tions of LDL of 32, 36, 37, and 39 percent, re-
+spectively (p=0.000). Baseline levels were de-
+creased in the krill oil 1-g/day group from 168
+mg/dL to 114 mg/dL, in the 1.5-g/day group from
+165 mg/dL to 106 mg/dL, and in the 2- and 3-g/
+day groups from 183 mg/dL and 173 mg/dL to
+114 mg/dL and 105 mg/dL, respectively. The labo-
+ratory results of patients treated daily with 3 g fish
+oil did not achieve a significant reduction in LDL
+(4.6%), 
+with
+blood levels de-
+creased from 122
+mg/dL at baseline
+to 118 mg/dL
+(p=0.141) after 12
+weeks. Patients
+receiving placebo
+showed a nega-
+tive effect, with a
+13-percent in-
+crease in LDL
+levels, from 137
+mg/dL to 154 mg/
+dL (p=0.000).
+HDL was
+significantly in-
+creased in all pa-
+tients receiving
+krill oil (p=0.000)
+or 
+fish 
+oil
+(p=0.002). HDL
+levels increased
+from 57.2 mg/dL
+to 82.4 mg/dL
+(44% change) at
+krill oil 1 g/day;
+58.8 mg/dL to
+83.9 mg/dL (43%
+increase) for krill
+oil 1.5 g/day; 51
+mg/dL to 79.3
+mg/dL (55% in-
+crease) at krill oil
+2 g/day; and from
+64.2 mg/dL to
+102.5 mg/dL (59% increase) at a daily krill oil
+dose of 3 g. Fish oil taken at 3 g/day increased
+HDL from 56.6 mg/dL to 59.03 mg/dL (4.2% in-
+crease). No significant decrease of HDL (p=0.850)
+was observed within the placebo group, with lev-
+els of HDL remaining almost stable, 56.8 mg/dL
+to 56.7 mg/dL.
+Krill oil taken 1 g/day reduced blood
+triglycerides by a non-significant 11 percent, from
+120.5 mg/dL to 107.2 mg/dL (p=0.114). A daily
+dose of 1.5 g krill oil resulted in a non-significant
+Table 6.   Results of Placebo on Lipids
+221.91
+136.47
+56.83
+143.53
+242.01
+154.25
+56.70
+129.36
+9.06%
+13.03%
+4.00%
+-9.88%
+0.000
+0.000
+0.850
+0.215
+Placebo
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+Table 5.   Results of Fish Oil (3.0 g/day) on Lipids
+231.15
+121.67
+56.64
+140.87
+217.55
+117.83
+59.03
+136.44
+-5.88%
+-4.56%
+4.22%
+-3.15%
+0
+0.141
+0.002
+0.239
+3 g Fish Oil
+Time (d)/mg/dL
+0.00
+90.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+
+Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004                                                              Page 425
+Original Research                                               Krill Oil
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+1 1 . 9 - p e r c e n t
+reduction 
+of
+triglycerides,
+from 122.7 mg/dL
+to 112 mg/dL
+( p = 0 . 1 1 3 ) .
+Subjects achieved
+a 
+significant
+reduction 
+of
+triglycerides at
+daily doses of 2 g
+and 3 g daily krill
+oil – 28 percent
+(p=0.025) and 27
+percent (p=0.0228)
+– decreasing from
+baseline levels of
+160.4 mg/dL and
+152.8 mg/dL to 116.1 mg/dL and 112.3 mg/dL,
+respectively. Fish oil at 3 g/day did not achieve a
+significant reduction of triglycerides (3.2%),
+decreasing from 140.9 mg/dL to 136.4 mg/dL
+(p=0.239). Interestingly patients in the placebo
+group experienced a 9.8-percent decrease in
+triglycerides (p=0.215).
+Blood glucose levels were reduced by 6.3
+percent, from 105 mg/dL to 98 mg/dL (p=0.025),
+in patients receiving 1 g and 1.5 g krill oil daily,
+and 5.6 percent, from 92 mg/dL to 88 mg/dL
+(p=0.011), in those receiving 2 g and 3 g krill oil
+daily. A daily dose of 3 g fish oil reduced blood
+glucose by 3.3 percent, from 90 mg/dL to 87 mg/
+dL (p=0.275). Placebo treatment resulted in a non-
+significant blood glucose increase of 0.1 percent,
+from 92 mg/dL to 93 mg/dL (p=0.750).
+The between-group comparison showed
+1 g and 1.5 g krill oil daily was significantly more
+effective than 3 g fish oil in reducing glucose and
+LDL, whereas 2 g and 3 g krill oil demonstrated a
+significantly greater reduction of glucose, triglyc-
+erides, and LDL compared to 3 g fish oil. Both
+fish oil and krill oil performed significantly better
+than placebo for the regulation of glucose, trig-
+lycerides, total cholesterol, and HDL.
+As mentioned previously, patients receiv-
+ing 1 g and 1.5 g daily krill oil continued for an-
+other 12 weeks with a lower maintenance dose of
+0.5 g krill oil daily (Table 7). These patients main-
+tained a mean total cholesterol level of 192.5 mg/
+dL, a reduction of 19 percent (p=0.000) from
+baseline. LDL was further reduced from baseline
+by 44 percent, a reduction from 233 mg/dL to
+107.5 mg/dL (p=0.000). A moderate decrease in
+HDL was seen, from 36 percent increase at 90 days
+to 33 percent after 180 days of treatment, which
+was still a significant increase from baseline
+(p=0.000). Triglycerides were slightly decreased
+further to a reduction of 25 percent from baseline
+(p=0.000), compared to the 12-percent reduction
+observed after 90 days of treatment. Blood glu-
+cose decreased by 6.6 percent from baseline
+(p=0.20), versus the 6.3-percent decrease at 90
+days.
+Discussion
+Arteriosclerosis is the generic term for a
+number of diseases in which arterial walls become
+thickened and lose elasticity, with atherosclerosis
+being considered the most important. With its ef-
+fects on the brain, heart, kidneys, and other vital
+organs and extremities, and despite medical ad-
+vancements, atherosclerotic heart disease and
+stroke combined remain the number one cause of
+morbidity and mortality in the United States,
+Canada, and most Western countries.22
+Table 7.   Effect of a Lower Maintenance Dose of Krill Oil on Lipids
+235.83
+167.78
+57.22
+120.50
+192.53
+107.47
+77.71
+89.89
+18.90%
+44.40%
+33.40%
+25.40%
+0.000
+0.000
+0.000
+0.025
+0.5 g Krill Oil
+Time (d)/mg/dL
+0.00
+180.00
+% Change
+p-value
+Total Cholesterol
+LDL
+HDL
+Triglycerides
+
+Page 426                                                           Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004
+Krill Oil                                              Original Research
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+In the United States, cardiovascular dis-
+ease has a mortality rate of 39.9 percent for males
+and 43.7 percent for females, a 15-21 percent dif-
+ference from malignant disease, which ranks sec-
+ond.22 It is estimated that 59.7 million Americans
+have one or more forms of cardiovascular dis-
+ease.22 Of the population with self-reported heart
+disease, 56-64 percent report restricted activity,
+23-37 percent require one or more disability days
+per week, and 28-34 percent are unemployed be-
+cause of disability or illness.22 The primary lesion
+of atherosclerosis is the fatty streak, which even-
+tually evolves into a fibrous plaque. Numerous
+randomized trials have proven that lowering se-
+rum cholesterol slows or reverses progression of
+coronary artery disease (CAD) and reduces coro-
+nary events.22-29
+A daily intake of 1-3 g EPA and DHA or
+3-9 g fish oil is currently recommended to reduce
+the risk of cardiovascular diseases.22,23 Neverthe-
+less, epidemiological studies evaluating the effects
+of fish oil on coronary heart disease are contra-
+dictory, ranging from reverse associations to vir-
+tually no effect to a beneficial effect.30-33 One is-
+sue in the efficacy of EPA/DHA may be the
+bioavailability of these fatty acids.
+A recent study demonstrated in vivo PUFA
+bioavailability depends on several factors, such
+as the type of lipids in which they are esterified,
+their physical state; i.e., lipid solution or colloidal
+particle systems, and the presence of co-ingested
+lipids.18 In vivo PUFA absorption was evaluated
+by fatty acid analysis of thoracic lymph of duct-
+cannulated rats after intragastric feeding of dietary
+fats.19 Evidence demonstrates oral essential fatty
+acid supplementation in the form of phospholip-
+ids is more effective than triglycerides in increas-
+ing concentrations of long-chain PUFAs in liver
+and brain.18,19 DHA is better absorbed when de-
+livered by liposomes than by fish oil (relative lym-
+phatic absorption equal to 91 percent and 65 per-
+cent after liposome and fish oil administration,
+respectively). The best bioavailability of DHA
+delivered by liposomes is revealed by an increase
+in DHA proportions in both lymphatic
+triacylglycerols and phospholipids, compared to
+a fish oil diet.18,19
+Krill oil is a complex combination of
+multiple active ingredients with synergistic bio-
+activity. The exact mechanism of action for krill
+oil’s lipid-lowering effects is not yet entirely clear.
+However, krill oil’s unique biomolecular profile
+of omega-3 (EPA/DHA) fatty acids already incor-
+porated into phospholipids has exhibited a lipid-
+lowering effect on the level of the small intestine,
+which distinguishes krill oil from other known
+lipid-lowering principals.18,19 Werner et al demon-
+strated essential fatty acids in the form of phos-
+pholipids were superior to essential fatty acids as
+triglycerides in significantly decreasing the satu-
+rated fatty acid ratios of liver triglycerides and
+phospholipids (each p < 0.05), while significantly
+increasing the phospholipid concentrations of the
+long-chain PUFAs (p < 0.05).19
+LDL oxidation is believed to increase ath-
+erosclerosis through high serum LDL levels in-
+ducing LDL particles to migrate into subendothe-
+lial space. The process by which LDL particles
+are oxidized begins with lipid peroxidation, fol-
+lowed by fragmentation to short-chain aldehydes.
+At the same time, lecithin is converted to lyso-
+lecithin, a selective chemotactic agent for mono-
+cytes, which become macrophages that ingest oxi-
+dized LDL. The new macrophage becomes en-
+gorged with oxidized LDL cholesteryl esters and
+becomes a foam cell. Groups of foam cells form a
+fatty streak, the earliest indication of atheroscle-
+rosis.34,35
+The unique molecular composition of krill
+oil, with its abundance of phospholipids and anti-
+oxidants, may explain the significant effect of krill
+oil for blood lipid regulation. In comparison to
+fish oil, krill oil significantly lowered blood lip-
+ids at lower doses.
+The effect of fish oil on cardiovascular
+disease is tempered by the presence of methyl-
+mercury in many fish.33 In fact, the U.S. Food and
+Drug Administration has advised pregnant women
+and women who may become pregnant not to eat
+swordfish, king mackerel, tilefish, shark, or fish
+from locally contaminated areas.36 Therefore, it
+may be prudent to obtain these essential fatty ac-
+ids via supplementation. Krill oil, and most fish
+oil concentrates, are molecularly distilled to re-
+move heavy metals.
+
+Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004                                                              Page 427
+Original Research                                               Krill Oil
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+Conclusion
+Atherosclerotic cardiovascular disease is
+a major health problem in the Western world, with
+CAD being the leading cause of mortality in the
+United States. Extensive observational
+epidemiologic data strongly associate high CAD
+risk to elevated total and LDL cholesterol and low
+levels of HDL cholesterol. Extensive clinical trial
+evidence has established that favorably altering
+dyslipidemias produces clear improvements in
+CAD end points.15-17
+The results of this clinical trial demon-
+strate that daily doses of 1-3 g krill oil are signifi-
+cantly more effective than 3 g EPA/DHA fish oil
+in the management of hyperlipidemia. Further-
+more, a maintenance dose of 500 mg krill oil is
+significantly effective for long-term regulation of
+blood lipids. The unique molecular composition
+of krill oil, which is rich in phospholipids, omega-
+3 fatty acids, and diverse antioxidants, surpasses
+the profile of fish oils and offers a superior ap-
+proach toward the reduction of risk for cardiovas-
+cular disease.
+References
+1.
+Horrobin DF. The role of essential fatty acids
+and prostaglandins in the premenstrual
+syndrome. J Reprod Med 1983;28:465-468.
+2.
+Simopoulos AP. Omega-3 fatty acids in health
+and disease and in growth and development.
+Am J Clin Nutr 1991;54:438-463.
+3.
+Alvin PE, Litt IF. Current status of the etiology
+and management of dysmenorrhea in adoles-
+cence. Pediatrics 1982;70:516-525.
+4.
+Cameron IT, Fraser IS, Smith SK. Clinical
+Disorders of the Endometrium and Menstrual
+Cycle. Oxford, United Kingdom: Oxford
+University Press; 1998:359.
+5.
+Drevon CA. Marine oils and their effects. Nutr
+Rev 1992;50:38-45.
+6.
+Hansen HS. Dietary essential fatty acids and in
+vivo prostaglandin production in mammals.
+World Rev Nutr Diet 1983;42:102-134.
+7.
+Endres S, Ghorbani R, Kelley VE, et al. The
+effect of dietary supplementation with n-3
+polyunsaturated fatty acids on the synthesis of
+interleukin-1 and tumor necrosis factor by
+mononuclear cells. N Engl J Med
+1989;320:265-271.
+8.
+Hansen HS, Olsen SF. Dietary (n-3)-fatty
+acids, prostaglandins and prolonged gestation
+in humans. Prog Clin Biol Res 1988;282:305-
+317.
+9.
+Lee TH, Mencia-Huerta JM, Shih C, et al.
+Effects of exogenous arachidonic,
+eicosapentaenoic and docosahexaenoic acids
+on the generation of 5-lipoxygenase pathway
+products by ionophore-activated human
+neutrophils. J Clin Invest 1984;74:1922-1933.
+10.
+Deutch B. Menstrual pain in Danish women
+correlated with low n-3 polyunsaturated fatty
+acid intake. Eur J Clin Nutr 1995;49:508-516.
+11.
+Deutch B. Painful menstruation and low intake
+of n-3 fatty acids. Ugeskr Laeger
+1996;158:4195-4198. [Article in Danish]
+12.
+Harel Z, Biro FM, Kottenhahn RK, Rosenthal
+SL. Supplementation with omega-3 polyun-
+saturated fatty acids in the management of
+dysmenorrhea in adolescents. Am J Obstet
+Gynecol 1996;174:1335-1338.
+13.
+Salem N Jr, Niebylski CD. The nervous system
+has an absolute molecular species requirement
+for proper function. Mol Membr Biol
+1995;12:131-134.
+14.
+Dewailly E, Blanchet C, Lemieux S, et al. n-3
+Fatty acids and cardiovascular disease risk
+factors among the Inuit of Nunavik. Am J Clin
+Nutr 2001;74:464-473.
+15.
+Holub BJ. Clinical nutrition: 4. Omega-3 fatty
+acids in cardiovascular care. CMAJ
+2002;166:608-615.
+16.
+Harris WS. Fish oils and plasma lipid and
+lipoprotein metabolism in humans: a critical
+review. J Lipid Res 1989;30:785-807.
+17.
+Jeppesen J, Hein HO, Suadicani P, Gyntelberg
+F. Triglyceride concentration and ischemic
+heart disease: an eight-year follow-up in the
+Copenhagen Male Study. Circulation
+1998;97:1029-1036.
+18.
+Cansell M, Moussaoui N, Denizot A, Combe
+N. Influence of the physicochemical form of
+polyunsaturated fatty acids on their in vivo
+bioavailability; 94th Annual AOCS Meeting &
+Expo PHO1: Phospholipids for Improving
+Bioavailability Chair: Michael Schneider,
+Consultant, Germany.
+19.
+Werner A, Havinga R, Kuipers F, Verkade HJ.
+Treatment of EFA deficiency with dietary
+triglycerides or phospholipids in a murine
+model of extrahepatic cholestasis. Am J
+Physiol Gastrointest Liver Physiol
+2004;286:G822-G832.
+
+Page 428                                                           Alternative Medicine Review  ◆  Volume 9, Number 4 ◆ 2004
+Krill Oil                                              Original Research
+Copyright©2004 Thorne Research, Inc. All Rights Reserved. No Reprint Without Written Permission
+20.
+Health and Welfare Canada. Promoting
+Healthy Weights: A Discussion Paper. Minister
+of Supply and Services Canada: Ottawa,
+Ontario. 1988
+21.
+Garrow JS, Webster J. Quetelet’s index (W/
+H2) as a measure of fatness. Int J Obes
+1985;9:147-153.
+22.
+Krauss RM, Eckel RH, Howard B, et al. AHA
+Dietary Guidelines: revision 2000: A statement
+for healthcare professionals from the Nutrition
+Committee of the American Heart Association.
+Stroke 2000;31:2751-2766.
+23.
+de Lorgeril M, Salen P, Martin JL, et al.
+Mediterranean diet, traditional risk factors, and
+the rate of cardiovascular complications after
+myocardial infarction: final report of the Lyon
+Diet Heart Study. Circulation 1999;99:779-
+785.
+24.
+Guallar E, Aro A, Jimenez FJ, et al. Omega-3
+fatty acids in adipose tissue and risk of
+myocardial infarction: the EURAMIC study.
+Arterioscler Thromb Vasc Biol 1999;19:1111-
+1118.
+25.
+Kromhout D, Bosschieter EB, de Lezenne
+Coulander C. The inverse relation between fish
+consumption and 20-year mortality from
+coronary heart disease. N Engl J Med
+1985;312:1205-1209.
+26.
+Daviglus ML, Stamler J, Orencia AJ, et al.
+Fish consumption and the 30-year risk of fatal
+myocardial infarction. N Engl J Med
+1997;336:1046-1053.
+27.
+Hu FB, Bronner L, Willett WC, et al. Fish and
+omega-3 fatty acid intake and risk of coronary
+heart disease in women. JAMA
+2002;287:1815-1821.
+28.
+Ascherio A, Rimm EB, Stampfer MJ, et al.
+Dietary intake of marine n-3 fatty acids, fish
+intake, and the risk of coronary disease among
+men. N Engl J Med 1995;332:977-982.
+29.
+Morris MC, Manson JE, Rosner B, et al. Fish
+consumption and cardiovascular disease in the
+Physicians’ Health Study: a prospective study.
+Am J Epidemiol 1995;142:166-175.
+30.
+Gillum RF, Mussolino M, Madans JH. The
+relation between fish consumption, death from
+all causes, and incidence of coronary heart
+disease: the NHANES I Epidemiologic
+Follow-up Study. J Clin Epidemiol
+2000;53:237-244.
+31.
+Wood DA, Riemersma RA, Butler S, et al.
+Linoleic and eicosapentaenoic acids in adipose
+tissue and platelets and risk of coronary heart
+disease. Lancet 1987;1:177-183.
+32.
+Guallar E, Hennekens CH, Sacks FM, et al. A
+prospective study of plasma fish oil levels and
+incidence of myocardial infarction in U.S.
+male physicians. J Am Coll Cardiol
+1995;25:387-394.
+33.
+Salonen JT, Seppanen K, Nyyssonen K, et al.
+Intake of mercury from fish, lipid
+peroxidation, and the risk of myocardial
+infarction and coronary, cardiovascular, and
+any death in eastern Finnish men. Circulation
+1995;91:645-655.
+34.
+Bruckert E, Giral P, Tellier P. Perspectives in
+cholesterol-lowering therapy: the role of
+ezetimibe, a new selective inhibitor of intesti-
+nal cholesterol absorption. Circulation
+2003;107:3124-3128.
+35.
+Cuchel M, Schwab US, Jones PJ, et al. Impact
+of hydrogenated fat consumption on endog-
+enous cholesterol synthesis and susceptibility
+of low-density lipoprotein to oxidation in
+moderately hypercholesterolemic individuals.
+Metabolism 1996;45:241-247.
+36.
+Center for Food Safety and Applied Nutrition.
+Consumer advisory: an important message for
+pregnant women and women of childbearing
+age who may become pregnant about the risks
+of mercury in fish. College Park, MD: Food
+and Drug Administration, March 2001.
+(Accessed November 1, 2002).

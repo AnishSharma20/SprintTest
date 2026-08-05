@@ -1,0 +1,866 @@
+nutrients
+Article
+Plasma Kinetics of Choline and Choline Metabolites
+after A Single Dose of SuperbaBoostTM Krill Oil or
+Choline Bitartrate in Healthy Volunteers
+Yvonne Mödinger 1, Christiane Schön 1
+, Manfred Wilhelm 2
+and Petter-Arnt Hals 3,*
+1
+BioTeSys GmbH, Schelztorstraße 54–56, 73728 Esslingen, Germany; y.moedinger@biotesys.de (Y.M.);
+c.schoen@biotesys.de (C.S.)
+2
+Department of Mathematics, Natural and Economic Sciences, Ulm University of Applied Sciences,
+Albert-Einstein-Allee 55, 89081 Ulm, Germany; manfred.wilhelm@thu.de
+3
+Aker BioMarine Antarctic AS, Oksenøyveien 10, 1327 Lysaker, Norway
+*
+Correspondence: petter-arnt.hals@akerbiomarine.com; Tel.: +47-241-30-000
+Received: 14 August 2019; Accepted: 18 October 2019; Published: 22 October 2019
+
+
+Abstract: As an essential nutrient, the organic water-soluble compound choline is important for
+human health. Choline is required for numerous biological processes, including the synthesis of
+neurotransmitters, and it is an important prerequisite for structural integrity and the functioning of
+cells. A choline-rich diet provides crucial choline sources, yet additional choline dietary supplements
+might be needed to fully meet the body’s requirements. Dependent on the structure of choline in
+diﬀerent sources, absorption and metabolism may diﬀer and strongly impact the bioavailability of
+circulating choline. This study in healthy volunteers aimed to compare the pharmacokinetics of free
+choline and of selected choline metabolites between the single dose intake of phosphatidylcholine,
+present in SuperbaBoostTM krill oil, and choline bitartrate salt. Results demonstrate that albeit free
+choline levels in plasma were comparable between both choline sources, peak choline concentration
+was reached signiﬁcantly later upon intake of SuperbaBoostTM. Moreover, the occurrence of choline
+metabolites diﬀered between the study products. Levels of the biologically important metabolites
+betaine and dimethylglycine (DMG) were higher, while levels of trimethylamine N-oxide (TMAO)
+were substantially lower upon intake of SuperbaBoostTM compared to choline bitartrate.
+Keywords: choline; pharmacokinetics; Antarctic krill; phosphatidylcholine; SuperbaBoost; choline
+bitartrate; betaine; dimethylglycine; trimethylamine N-oxide
+1. Introduction
+Choline is an essential water-soluble nutrient, which can be formed by de novo synthesis but
+needs to be additionally obtained via the diet to meet the body’s requirements [1]. Choline and its
+metabolites play a key role in various mammalian biological processes [2]. They serve as components
+of structural lipoproteins and membrane lipids and thus promote structural integrity and the signaling
+functions of cells. Furthermore, choline serves as a precursor of the neurotransmitter acetylcholine,
+which is crucial for brain function [3]. Choline was oﬃcially recognized as an essential nutrient by the
+Institute of Medicine (IOM) in 1998.
+Choline absorption and metabolism in the gut strongly depends on its biochemical formulation,
+as well as on the present gut microbiota [4]. An estimated 90% of the US population is not meeting
+the choline intake recommendations of 550 mg/day for men and 425 mg/day for women, as issued
+by the Institute of Medicine [1,5,6]. More recently, the European Food and Safety Authority (EFSA)
+recommended a slightly lower adequate intake (AI) of 400 mg choline per day for all adults. Still,
+the average choline intake of healthy adults in the EU (370 mg/day) remains below this level [7].
+Nutrients 2019, 11, 2548; doi:10.3390/nu11102548
+www.mdpi.com/journal/nutrients
+
+Nutrients 2019, 11, 2548
+2 of 15
+Low intake levels of choline may lead to fatigue and muscle dysfunction and can impair brain function
+and memory. In the long term, lacking choline can increase the risk of neurological disorders like
+Alzheimer’s disease [8,9]. In severe cases, choline deﬁciency promotes kidney necrosis and fatty
+liver disease [10,11], and a deﬁciency in phosphatidylcholine in the gut mucus layer is discussed
+as a causative factor for ulcerative colitis [12]. Furthermore, ﬁndings in rodents show that choline
+deﬁciency can promote heart dysfunction [13]. Also, pregnant women should ensure adequate levels
+of choline due to its importance in fetal development [14].
+Thus, suitable choline dietary supplements are required where choline is well absorbed and is
+available in the circulation in meaningful amounts. Krill oil is an acknowledged dietary supplement
+to provide omega-3 fatty acids, but it is increasingly recognized to also be a useful source of the
+phospholipid phosphatidylcholine, and thus also for choline [15,16]. SuperbaBoostTM krill oil is the
+major marine oil on the market with high concentrations of phosphatidylcholine. SuperbaBoostTM
+contains particularly high levels of phospholipids (≥56%), out of which phosphatidylcholine makes up
+the major share (approximately 90%). In the intestinal tract, phosphatidylcholine may either be absorbed
+intact or after hydrolysis by phospholipase D, by which free choline is liberated from the structure [17].
+In contrast, free choline is immediately available from the commonly supplemented choline salts,
+such as choline bitartrate or choline chloride, without the need for an enzymatic conversion step.
+Besides being available as free choline for various requirements of the body, choline from choline
+supplements is further converted into diﬀerent metabolites. Betaine is an oxidation product of free
+choline and is important, for the formation of the essential amino acid methionine, among others [18].
+Dimethylglycine (DMG) is a metabolite of betaine and serves as an important source of the amino
+acid glycine and of methyl groups for biochemical reactions [19]. Trimethylamine N-oxide (TMAO) is
+metabolized in the host liver from trimethylamine (TMA) [20], which is, in turn, primarily generated
+from dietary choline, betaine, l-carnitine, and its metabolite, y-butyrobetaine, by the action of gut
+microbiota [21–24]. Recent ﬁndings implicate that TMAO is not merely a non-functional waste product
+of choline metabolism, but emerges as a risk factor and prognostic marker in the development and
+outcome of many diseases and disorders, including renal disease [23], cardiovascular disease [22,25–29],
+colorectal cancer [30], type II diabetes and neurological disorders [31]. Moreover, high TMAO levels
+seem to be related to inﬂammation, for instance by activating the NLRP3 inﬂammasome [32–34],
+or by correlating with elevated plasma tumor necrosis factor (TNF)-α levels in an otherwise healthy
+population [35].
+Circulating TMAO levels show high inter- and intra-individual variation and are determined by a
+number of inﬂuencing factors [6,31,36]. As such, TMAO levels appear to increase with age [37,38],
+and are inﬂuenced by kidney function, especially by the activity of hepatic ﬂavin monooxygenases.
+Of note, the diet also plays a key role in TMAO formation by impacting the gut microbial ﬂora [4].
+Western or high fat diets where shown to increase plasma TMAO levels [6,31,39,40], while there is
+reduced TMA production from l-carnitine in vegetarians [41]. Furthermore, intake of antibiotics,
+especially broad-spectrum antibiotics, can almost completely suppress TMA and TMAO production,
+but levels return back to normal within one month after withdrawal of the antibiotic [22,27].
+Overall, bioavailability data of choline from diﬀerent sources are rather limited and do not
+provide a full picture, including further metabolites which can exert independent physiologic eﬀects.
+In this context, TMAO formation in particular is evolving as a topic of high interest. Previous studies
+have already demonstrated that phosphatidylcholine is only limitedly converted to undesirable
+trimethylamines in contrast to choline salts [21,42,43]; however, less is known regarding the other
+metabolites. Further, these studies did not investigate TMAO formation after phosphatidylcholine
+intake in form of krill oil, or, in particular, in the form of SuperbaBoostTM. Since SuperbaBoostTM is
+discussed as a suitable choline source, circulating levels of choline and choline metabolites, especially
+TMAO, remain to be investigated.
+Thus, the aim of the current study was to investigate the kinetics of choline and the generation of
+choline metabolites from two diﬀerent choline sources. Concentration and plasma kinetics of choline
+
+Nutrients 2019, 11, 2548
+3 of 15
+and its metabolites betaine, DMG and TMAO were investigated after intake of SuperbaBoostTM krill oil
+and choline bitartrate.
+The study was performed in a randomized cross-over design with an additional control group
+receiving ﬁsh oil containing comparable amounts of the omega-3 fatty acids eicosapentaenoic acid
+(EPA) and docosahexaenoic acid (DHA) present in the SuperbaBoostTM krill oil product, but no choline.
+In ﬁsh oil, however, EPA and DHA are bound to triglycerides, while they are mainly bound to
+phospholipids in krill oil. The ﬁsh oil control group allowed the estimation of potential confounding
+factors by standardized meals or by other regulatory mechanisms such as the circadian rhythm. In a
+study by Park et al., endogenous choline levels increased during the daytime in between meals, but
+not immediately after food intake, suggesting that additional mechanisms like the circadian rhythm
+may inﬂuence circulating choline levels [44].
+2. Materials and Methods
+2.1. Study Subjects
+The study cohort consisted of 18 healthy males and females (1:1), where 12 subjects received the
+study products and 6 subjects received the control product (Figure 1). All included subjects were
+recruited between October and November 2018. Overall, 24 subjects, aged 18–65 years with a body
+mass index (BMI) of 18–30 kg/m2, were screened for eligibility. Subjects were excluded from study
+participation in case of a relevant history of any medical disorder potentially interfering with the study
+(e.g., malabsorption, chronic gastro-intestinal diseases, heavy depression, diabetes, etc.), in case of a
+regular intake of drugs or dietary supplements interfering with the study (e.g., omega-3 fatty acids,
+krill oil, etc.), in case of drug, alcohol, or medication abuse, or in case of pregnancy and breastfeeding.
+In addition, reasons for non-inclusion were low hemoglobin, platelet and leukocyte levels, as well
+as markers of liver damage exceeding the normal limit unless related to primary disease. Study
+participants had a low habitual consumption of fatty ﬁsh and seafood, not exceeding a frequency of
+twice per month. Medications for the treatment of chronic diseases that did not aﬀect the metabolism
+of the study product were permitted.
+ 
+Figure 1. Flow chart of subject recruitment and included study subjects. ITT: intention-to-treat.
+
+Nutrients 2019, 11, 2548
+4 of 15
+Subjects gave written informed consent to participate in the study prior to screening evaluations.
+Ethical approval was obtained from the Institutional Review Board (IRB) of Landesärztekammer
+Baden-Württemberg with the approval code F-2018-076. The study was conducted in accordance with
+the guidelines set forth by the International Council for Harmonisation of Technical Requirements
+for Pharmaceuticals for Human Use (ICH), the guidelines for Good Clinical Practice (GCP), and the
+Declaration of Helsinki regarding the treatment of human subjects in a study. The present study was
+registered with the German Clinical Trials Register (DRKS; ID: DRKS00015828).
+2.2. Study Design
+The study was performed as a randomized, placebo-controlled, monocentric, two-way cross-over
+pharmacokinetic study. In total, 18 healthy volunteers took part in the study, where 12 subjects received
+the study products and 6 subjects received the placebo control product. The study was conducted at
+the study site of BioTeSys GmbH (Esslingen, Germany). Blood sampling was performed at two kinetic
+intervention days, over a time period of 24 h each, after a single dose of the study products. There
+was a wash-out phase of 14 days between the kinetic days. Blood samples were taken before (0 h),
+and 0.5 h, 1 h, 2 h, 4 h, 8 h, 12 h and 24 h after intake of the study products to obtain concentration-time
+proﬁles of free choline and its metabolites in plasma. During the kinetic days, ﬂuid and calorie intake
+was standardized and meals with low choline content were served. In addition, subjects were asked to
+adhere to a diet poor in choline three days prior to the kinetic days and to consume a standardized
+dinner on the evening before the kinetic days.
+2.3. Intervention
+The investigational product was SuperbaBoostTM krill oil (#1198530200, Aker BioMarine Antarctic
+AS, Lysaker, Norway), a choline source with phosphatidylcholine. The product was administrated
+orally as a single dose provided in softgel capsules containing in total 8 g SuperbaBoostTM krill oil,
+equivalent to 572 mg choline. Choline bitartrate (#CHB:C18060079, ZeinPharma®, Nauheim, Germany)
+was used as a reference product that was similarly administered orally as a single dose provided in
+capsules (vegetable ﬁber), containing a total of 620 mg choline according to an actual analysis certiﬁcate.
+Fish oil (#L14006818:12, Omega-3 Seeﬁschöl 100, Doppelherz®, Queisser Pharma, Flensburg, Germany)
+was used as placebo. Six grams of ﬁsh oil contained 1800 mg of the omega-3 fatty acids EPA and
+DHA, a dose comparable to the EPA and DHA content (1840 mg) in 8 g of SuperbaBoostTM krill oil.
+The intake of study products occurred under supervision of the study personnel. Manufacturing of the
+study products was carried out in compliance with Good Manufacturing Practice (GMP) conditions
+and all ingredients and capsules were of food grade quality and met European food regulations.
+SuperbaBoostTM krill oil capsules were provided by Aker BioMarine. Capsules containing choline
+bitartrate or ﬁsh oil were obtained commercially.
+2.4. Sample Collection, Processing and Analysis
+Venous blood samples were taken at screening and study visits at the study site of BioTeSys
+GmbH (Esslingen, Germany). Samples were analyzed the same day or the next day for safety and
+blood routine parameters (diﬀerentiated hemogram and clinical laboratory) at an accredited laboratory
+(Synlab Medizinisches Versorgungszentrum, Leinfelden-Echterdingen, Germany). Blood samples
+were centrifuged at 3000× g for 10 min at 4 ◦C. Plasma aliquots were taken and stored at −80 ◦C
+until analysis of choline and its metabolites, which was performed by HPLC-MS/MS at Bevital AS
+(Bevital AS, Bergen, Norway) in a high throughput, low-volume, multianalyte fashion, as described by
+Holm et al. [45].
+2.5. Methods for Safety (Adverse Events, Concomitant Medication and Tolerability)
+During the study intervention, the subjects documented any adverse events (AEs) and concomitant
+medication in diaries. Tolerability of the study products was assessed at the end of the kinetic days.
+
+Nutrients 2019, 11, 2548
+5 of 15
+2.6. Data Analysis and Statistics
+All statistical tests were performed two-sided. A p-value < 0.05 was considered as statistically
+signiﬁcant. Non-normality was evaluated with the Shapiro–Wilk test using a signiﬁcance level of 0.10.
+Plasma concentrations of the analytes and their increase over time were analyzed using ANOVA with
+repeated measures or Friedman test, if appropriate. To allow direct comparison of free choline from the
+diﬀerent sources, SuperbaBoostTM and choline bitartrate, data sets were dose adjusted for free choline,
+but not for the metabolites betaine, DMG and TMAO. This takes into account that the choline content of
+the SuperbaBoostTM product was 8.4% lower than the choline bitartrate product. All concentration–time
+curves show baseline-corrected values. Pharmacokinetic parameters were individually calculated
+based on the plasma concentration–time curves. The area under the observed concentration–time
+curve (AUC) above baseline, within 12 h (AUC0-12 h) and within 24 h (AUC0–24 h) were calculated
+by applying the trapezoidal rule with the y-axis deﬁned by choline plasma concentration, and the
+x-axis deﬁned by sampling time points. After log transformation, AUC0-12 h, AUC0–24 h and peak
+concentration (Cmax) were evaluated using a linear mixed model, taking into account sequence, period,
+and product. Diﬀerences between the time to reach maximum concentration (Tmax) were evaluated
+by the Wilcoxon rank sum test using the intra-individual diﬀerences between the outcomes in both
+periods as the raw data with consideration of the cross-over analysis by strict separation of treatment
+eﬀects from period eﬀects.
+Descriptive comparison of ﬁsh oil uptake pattern with the uptake pattern from SuperbaBoostTM
+or choline bitartrate were evaluated by pairwise comparison using Student t-test or Wilcoxon rank
+sum test, if appropriate. Statistical evaluation, summary tables and graphs were generated using
+GraphPad Prism software (GraphPad Software, La Jolla, CA, USA) and SAS v9.3 statistical software
+(SAS Institute, Cary, NC, USA).
+3. Results
+3.1. Subject Characteristics
+Descriptive demographic data of the study cohort are summarized in Table 1. Brieﬂy, the study
+cohort, receiving either SuperbaBoostTM or choline bitartrate and consisting of a total of 12 subjects,
+was a healthy, non-smoking study group with an average age of 43.3 years (95% conﬁdence interval
+(CI): 34.0–52.6) and a BMI of 23.6 kg/m2 (95% CI: 21.8–25.3) (Table 1). Vital signs, blood routine
+parameters and baseline levels of choline and choline metabolites were within normal range. Nine out
+of 12 subjects (75%) reported to be regularly physically active; two of the subjects followed a vegetarian
+diet, while no study subjects were vegans. Subjects reported to either never consume ﬁsh (n = 1),
+to consume ﬁsh less than once per month (n = 8), or to consume ﬁsh once or twice per month (n = 3).
+Table 1. Demographic and baseline data of the study cohort.
+Variable
+Mean
+95% CI
+Age (years)
+43.3
+34.0–52.6
+BMI (kg/m2)
+23.6
+21.8–25.3
+Systolic BP (mmHg)
+128.5
+117.6–139.4
+Diastolic BP (mmHg)
+78.5
+72.6–84.4
+Hemoglobin (g/dL)
+14.2
+13.4–14.9
+Cholesterol (mg/dL)
+180.5
+155.1–205.9
+HDL (mg/dL)
+60
+51.6–68 4
+LDL (mg/dL)
+112 2
+86.3–138
+AST (U/L)
+21.6
+19.6–23.6
+ALT (U/L)
+24.2
+20.3–28
+Choline (baseline) (µmol/L)
+9.6
+8.5–10.6
+Betaine (baseline) (µmol/L)
+33.8
+28.5–39.1
+
+Nutrients 2019, 11, 2548
+6 of 15
+Table 1. Cont.
+Variable
+Mean
+95% CI
+DMG (baseline) (µmol/L)
+3.4
+3–3.8
+TMAO (baseline) (µmol/L)
+2.1
+1.4–2.8
+Abbreviations:
+CI: conﬁdence interval; BP: blood pressure; BMI: body mass index; HDL: high-density
+lipoprotein; LDL: low-density lipoprotein; AST: aspartate aminotransferase; ALT: alanine aminotransferase;
+DMG: dimethylglycine; TMAO: trimethylamine N-oxide.
+3.2. Choline Pharmacokinetics Upon Intake of The Single-Dosed Choline Sources Phosphatidylcholine and
+Choline Bitartrate
+To investigate the plasma concentration of choline and its metabolites betaine, DMG and TMAO
+over time, blood measurements were performed at 0 h, 0.5 h, 1 h, 2 h, 4 h, 8 h, 12 h and 24 h post-dosing.
+Choline concentrations in plasma upon intake of choline bitartrate, SuperbaBoostTM and ﬁsh oil
+are shown in Figure 2. Plasma concentrations of free choline were baseline-corrected and linearly
+dose-adjusted to allow for direct comparison of pharmacokinetic endpoints. Both study products
+showed a comparable uptake proﬁle of choline after single dose intake, however, with on average
+slightly higher choline levels and a faster metabolism upon SuperbaBoostTM intake in comparison
+to choline bitartrate. Both study products resulted in a signiﬁcant increase of choline concentration
+up to the 8 h time point (p < 0.0001). After Cmax was reached, choline levels declined steadily and
+signiﬁcantly in the choline bitartrate and SuperbaBoostTM groups, resulting in below baseline levels
+24 h post-dosing. No increase in choline levels was observed in the ﬁsh oil group, except for a slight
+elevation between the 4 h and 8 h time points, followed by a steady decline to below-baseline levels
+after 24 h, comparable to choline levels after intake of the study products.
+Figure 2. Plasma concentration–time curve of choline. Values are baseline-corrected and dose-adjusted.
+Choline bitartrate: n = 12; SuperbaBoostTM: n = 12; ﬁsh oil: n = 6.
+Pharmacokinetic parameters of choline upon intake of the study and control products are
+summarized in Table 2. AUC0–24 h, AUC0–12 h and Cmax of free choline were comparable between choline
+bitartrate and SuperbaBoostTM, but significantly higher compared to fish oil. Tmax was significantly
+longer upon intake of SuperbaBoostTM in comparison to choline bitartrate.
+
+Nutrients 2019, 11, 2548
+7 of 15
+Table 2. Pharmacokinetic parameters of choline.
+Variable
+Mean 1
+95% CI 1
+p-Value 2
+AUC0–12 h ((µmol/L)*h) (SB)
+26.07
+19.72–32.42
+0.2966
+AUC0–12 h ((µmol/L)*h) (CB)
+23.28
+13.61–32.95
+AUC0–24 h ((µmol/L)*h) (SB)
+29.57
+21.26–37.87
+0.4144
+AUC0–24 h ((µmol/L)*h) (CB)
+30.36
+12.88–47.85
+Cmax (µmol/L) (SB)
+4.21
+3.43–4.99
+0.2690
+Cmax (µmol/L) (CB)
+3.67
+2.82–4.51
+Tmax (h) (SB)
+4.17
+2.9–5.43
+0.0076
+Tmax (h) (CB)
+2.67
+2.04–3.29
+Abbreviations: SB: SuperbaBoostTM; CB: choline bitartrate; CI: conﬁdence interval; AUC: area under the curve; Cmax:
+peak concentration; Tmax: time to reach maximum concentration. 1 Dose-adjusted values; 2 Diﬀerence between
+study products SB and CB.
+3.3. Pharmacokinetic Characteristics of the Choline Metabolites Betaine, Dimethylglycine (DMG) and
+Trimethylamine Oxide (TMAO) Upon Choline Intake
+Betaine is an important derivate of choline. Pharmacokinetic evaluations of betaine therefore allow
+for detailed metabolic characterizations of diﬀerent choline sources and choline dietary supplements.
+Betaine plasma concentrations upon intake of the study products are shown in Figure 3. All values
+were baseline-corrected. A signiﬁcant betaine increase over time was observed in all study groups
+(p < 0.0001). The betaine concentration–time curve was slightly higher when choline was provided
+as phosphatidylcholine in SuperbaBoostTM compared to choline bitartrate, and both curves were
+signiﬁcantly elevated compared to the ﬁsh oil group.
+Figure 3. Plasma concentration–time curve of betaine. Values are baseline-corrected. Choline bitartrate:
+n = 12; SuperbaBoostTM: n = 12; ﬁsh oil: n = 6.
+Pharmacokinetic parameters of betaine upon intake of the study and control products are shown
+in Table 3. AUC0–24 h and AUC0–12 h of free betaine were slightly higher, and Cmax was signiﬁcantly
+higher upon intake of SuperbaBoostTM compared to choline bitartrate. Additionally, Cmax levels of
+betaine in both study groups were signiﬁcantly elevated compared to those in the ﬁsh oil placebo
+group. No diﬀerence was observed regarding the Tmax of betaine, neither between both study products,
+nor between the study and placebo products.
+
+Nutrients 2019, 11, 2548
+8 of 15
+Table 3. Pharmacokinetic parameters of betaine.
+Variable
+Mean
+95% CI
+p-Value 1
+AUC0–12 h ((µmol/L)*h) (SB)
+185.8
+154–217.6
+0.0641
+AUC0–12 h ((µmol/L)*h) (CB)
+168.4
+137.4–199.4
+AUC0–24 h ((µmol/L)*h) (SB)
+317.1
+255.3–378.9
+0.2394
+AUC0–24 h ((µmol/L)*h) (CB)
+286.9
+229.0–344.8
+Cmax (µmol/L) (SB)
+22.55
+18.62–26.48
+0.0122
+Cmax (µmol/L) (CB)
+18.87
+15.31–22.42
+Tmax (h) (SB)
+7.67
+6.93–8.40
+1.0
+Tmax (h) (CB)
+7.67
+6.36–8.98
+1 Diﬀerence between study products SB and CB.
+DMG is a choline metabolite that is generated from betaine by donation of a methyl group to
+homocysteine. Thus, this metabolite can serve as a measure for the contribution of choline to one-carbon
+metabolism, a key biochemical pathway that provides the carbon units required for critical cellular
+processes. Highly signiﬁcant increases of DMG were observed upon intake of both SuperbaBoostTM
+(p < 0.0001) and choline bitartrate (p < 0.0001), while this was not the case for ﬁsh oil (p = 0.1091),
+as shown in Figure 4. All values were baseline-corrected. Interestingly, in some subjects, DMG levels
+were highest 24 h after product intake.
+Figure 4. Plasma concentration–time curve of DMG. Values are baseline-corrected. Choline bitartrate:
+n = 12; SuperbaBoostTM: n = 12; ﬁsh oil: n = 6.
+AUC0–12 h and AUC0–24 h of DMG were increased by trend upon intake of SuperbaBoostTM
+compared to choline bitartrate (Table 4). Correspondingly, Cmax was also increased upon intake of
+SuperbaBoostTM compared to choline bitartrate, and values of both study products were signiﬁcantly
+higher compared to ﬁsh oil. No diﬀerences were observed regarding Tmax levels of DMG, neither
+between the two choline sources, nor in comparison to the ﬁsh oil group.
+The gut ﬂora-dependent metabolite TMAO is formed from orally ingested choline and betaine.
+As its generation is associated with adverse cardiac and renal outcomes, among others, TMAO
+pharmacokinetic analyses are important measures to characterize choline metabolism from choline
+sources. TMAO plasma concentrations upon intake of the study products are shown in Figure 5.
+All values were baseline-corrected. There was a signiﬁcant increase in TMAO levels after intake of
+both SuperbaBoostTM (p < 0.0001) and choline bitartrate (p < 0.0001), although TMAO was increased to
+a much higher extent upon choline bitartrate than upon SuperbaBoostTM. No TMAO increase was
+observed in the ﬁsh oil group (p = 0.1633).
+
+Nutrients 2019, 11, 2548
+9 of 15
+Table 4. Pharmacokinetic parameters of DMG.
+Variable
+Mean
+95% CI
+p-Value 1
+AUC0–12 h ((µmol/L)*h) (SB)
+6.75
+3.99–9.51
+0.0890
+AUC0–12 h ((µmol/L)*h) (CB)
+5.17
+2.55–7.78
+AUC0–24 h ((µmol/L)*h) (SB)
+15.79
+10.11–21.46
+0.1546
+AUC0–24 h ((µmol/L)*h) (CB)
+12.74
+7.13–18.35
+Cmax (µmol/L) (SB)
+1.22
+0.81–1.61
+0.1614
+Cmax (µmol/L) (CB)
+0.95
+0.64–1.27
+Tmax (h) (SB)
+12.0
+8.25–15.75
+0.9336
+Tmax (h) (CB)
+13.33
+8.21–18.45
+1 Diﬀerence between study products SB and CB.
+Figure 5. Plasma concentration–time curve of TMAO. Values are baseline-corrected. Choline bitartrate:
+n = 12; SuperbaBoostTM: n = 12; ﬁsh oil: n = 6.
+Pharmacokinetic parameters of TMAO upon intake of the study and control products are shown
+in Table 5. Of note, AUC0–12 h, AUC0–24 h and Cmax levels were signiﬁcantly higher upon intake of
+choline bitartrate compared to SuperbaBoostTM. Tmax levels, on the other hand, were comparable
+between both choline sources.
+Table 5. Pharmacokinetic parameters of TMAO.
+Variable
+Mean
+95% CI
+p-Value 1
+AUC0–12 h ((µmol/L)*h) (SB)
+10.06
+4.19–15.92
+<0.0001
+AUC0–12 h ((µmol/L)*h) (CB)
+104.3
+59.8–148.8
+AUC0–24 h ((µmol/L)*h) (SB)
+25.41
+11.76–39.06
+<0.0001
+AUC0–24 h ((µmol/L)*h) (CB)
+288.3
+231.8–362.8
+Cmax (µmol/L) (SB)
+2.24
+1.17–3.30
+<0.0001
+Cmax (µmol/L) (CB)
+28.99
+20.36–37.63
+Tmax (h) (SB)
+12.0
+9.35–14.65
+0.7884
+Tmax (h) (CB)
+11.67
+8.91–14.42
+1 Diﬀerence between study products SB and CB.
+3.4. Safety Assessment
+The tolerability of both study products was very good and only minor reports such as a ﬁshy
+aftertaste after capsule intake were documented. No clinically relevant ﬁndings were documented
+
+Nutrients 2019, 11, 2548
+10 of 15
+during the course of the study. No serious adverse events (SAEs) occurred. During the kinetic days,
+adverse events not related to study product intake were reported by two subjects, one of whom
+reported a headache on both kinetic days. The other subject reported headache on the kinetic day after
+SuperbaBoostTM intake.
+4. Discussion
+In the present study, the absorption pattern and pharmacokinetic pattern of free choline from
+SuperbaBoostTM krill oil and choline bitartrate were investigated. In SuperbaBoostTM, choline is bound in
+a lipid-soluble form as phosphatidylcholine, while it is present as a water-soluble salt structure in choline
+bitartrate. Results show that free choline levels in plasma were comparable between SuperbaBoostTM
+and choline bitartrate, but peak choline concentrations were reached signiﬁcantly later upon intake of
+SuperbaBoostTM compared to choline bitartrate. Moreover, levels of the choline metabolites betaine
+and DMG were higher, while levels of TMAO were lower upon intake of SuperbaBoostTM compared to
+choline bitartrate.
+The dependency between choline intake and circulating levels of free choline and its metabolites is
+concealed by homeostatic regulations and rapid tissue uptake [46,47]. Thus, concentrations of choline
+and its metabolites are usually within a narrow range. In the literature, endogenous free fasting
+choline levels under physiological conditions range between 7–12 µmol/L [2,44,47,48], which could be
+conﬁrmed in the present study with a mean choline concentration of 9.6 µmol/L before product intake.
+Moreover, baseline values were highly comparable within all groups and within the two kinetic days.
+It is well known that choline levels are inﬂuenced by nutrition, and choline sources depend on the
+diet [6], In a normal Western diet, choline can be obtained from eggs, liver, soybeans and pork [6,18],
+where choline is present primarily as phosphatidylcholine. It was shown that the consumption of a
+small breakfast led to 25–30% higher choline levels compared to the fasting condition [45], and that a
+high choline-containing diet resulted in an up to two-fold increase in plasma choline [49]. In a recent
+study by Cho et al., eggs were provided as a choline source, which contained comparable amounts of
+choline (479 mg) as the herein investigated study products (choline bitartrate: 620 mg; SuperbaBoostTM:
+572 mg). Cho et al. reported a 1.6-fold increase in free choline after consumption of the egg meal,
+in comparison to the fruit control meal [47]. Correspondingly, the choline increase in the current study
+upon supplement intake was comparable (choline bitartrate: 1.35-fold; SuperbaBoostTM: 1.48-fold).
+To control for confounding factors of food, subjects of the present study adhered to a diet low in
+choline three days before the study intervention and consumed standardized meals during the kinetic
+days. In addition, a parallel study arm was included, whose subjects underwent a single kinetic dose
+after the intake of ﬁsh oil as a placebo control that was devoid of choline. Of note, we observed a minor
+increase in choline levels in the placebo group after the 4 h time point; thus, the standardized lunch
+served after four hours could have contributed to this elevation. However, no such eﬀect was seen
+in the study groups receiving choline supplements. In addition, by implementing the control group,
+we were able to exclude possible circadian rhythm-dependent variations in choline levels, in contrast to
+Park et al., who observed a slight elevation of free choline levels in the afternoon during a 12 h-lasting
+observation of endogenous choline levels [44].
+Krill oil is increasingly recognized as a useful source of phosphatidylcholine [15,16], in addition
+to its acknowledged role in providing the omega-3 fatty acids EPA and DHA. In a former study,
+phosphatidylcholine was shown to raise plasma choline levels more eﬃciently compared to ingestion
+of free choline as choline chloride [50,51]. In the current study we observed a signiﬁcant increase of
+choline after single doses of both phosphatidylcholine and the reference product choline bitartrate;
+however, phosphatidylcholine was not more eﬃcient, since there were no signiﬁcant diﬀerences in the
+pharmacokinetic endpoints AUC and Cmax. This discrepancy compared to the former study could be
+due to possible diﬀerences in the bioavailability of the chosen choline salts. However, to the best of
+our knowledge, choline bitartrate and choline chloride bioavailability has not been directly compared
+to date. Still, the uptake proﬁle of free choline in the current study indicated a slower increase upon
+
+Nutrients 2019, 11, 2548
+11 of 15
+phosphatidylcholine (SuperbaBoostTM) intake compared to choline bitartrate. This diﬀerence in Tmax
+between the study products could result from the structural diﬀerences between the choline forms
+and from the associated diﬀerences in absorption and metabolism. Phosphatidylcholine and/or its
+isoforms may be absorbed intact and can also be hydrolyzed into phosphatidic acid and free choline
+by phospholipase D [17]. Due to this conversion step, it supposedly takes longer to obtain free choline
+from phosphatidylcholine compared to choline bitartrate, where free choline from the salt structure
+is more rapidly available. Our ﬁndings are in agreement with former ﬁndings showing that choline
+levels after choline chloride reached peak levels earlier and were reduced to baseline earlier than after
+phosphatidylcholine intake, where levels remained elevated for 12 h [50].
+After intake, choline is extensively transformed into diﬀerent metabolites, such as betaine.
+Betaine is an oxidation product of free choline and serves as substrate in the betaine–homocysteine
+methyltransferase reaction, which links choline and betaine to folate-dependent one-carbon metabolism.
+Thus, choline and folate levels are closely interconnected, and deﬁciencies in either of these compounds
+might aggravate the nutrition status of the counterpart [52–55]. Therefore, betaine is an important
+choline metabolite, but is also present itself in various foods such as cereals, spinach, quinoa or noodles.
+Betaine can be further metabolized to DMG, which is a crucial methyl group donor for many biochemical
+reactions in the body. Both metabolites are usually present in plasma prior to a choline challenge from
+supplements. Respective mean values in plasma of diﬀerent healthy cohorts are reported to range
+between 30–39 µmol/L (betaine) and 2.5–4.0 µmol/L (DMG) [45,48,56]. Comparable betaine and DMG
+levels were measured in the current study cohort under baseline conditions (Table 1). Substantial
+amounts of the ingested choline were converted into betaine and DMG, raising the pre-challenge levels
+both upon choline bitartrate intake and upon phosphatidylcholine intake from krill oil. Similar results
+were presented in a recent study by Bjørndal and colleagues, showing that krill oil supplementation
+signiﬁcantly induced fasting plasma levels of choline, betaine and DMG [57]. As a study limitation,
+the authors named the missing placebo control devoid in phosphatidylcholine but containing omega-3
+fatty acids in similar amounts as the krill oil product. This control group was included in the present
+study, conﬁrming that the pharmacokinetic eﬀects were attributable to phosphatidylcholine only,
+without confounding inﬂuences by omega-3 fatty acids.
+The extent of the betaine (choline bitartrate: 1.5-fold; SuperbaBoostTM: 1.88-fold) and DMG
+(choline bitartrate: 1.31-fold; SuperbaBoostTM: 1.35-fold) increase observed in the present study was
+comparable to earlier results by Cho et al., with 1.2-fold and 1.3-fold increases, respectively [47]. Of note,
+we demonstrated diﬀerences in the pharmacokinetic parameters AUC0–12 h and Cmax of betaine, which
+were higher after intake of SuperbaBoostTM compared to choline bitartrate. Also, the AUC0-12 h of
+DMG was slightly higher upon SuperbaBoostTM compared to choline bitartrate. However, these
+diﬀerences in both betaine and DMG were not conﬁrmed for AUC0-24 h. Again, a delayed conversion
+from phosphatidylcholine to free choline could have contributed to higher and longer maintained
+levels of choline metabolites in the circulation in comparison to a faster choline metabolism upon
+choline bitartrate intake. Moreover, plasma phosphatidylcholine levels after SuperbaBoostTM intake
+were not measured in the current study, but could have served as some kind of depot from which
+further betaine and DMG was generated, in contrast to choline bitartrate.
+On the other hand, possible diﬀerences between the study products in regard to the Tmax of betaine
+and DMG might have been missed due to the limited sampling times between 4 and 12 hours after
+dosing. Of note, a slight elevation in betaine levels after breakfast, and a more substantial elevation
+after lunch, was observed in the ﬁsh oil control group, which could have been due to the betaine
+content in the served oatmeal and noodles, respectively. Thus, similar lunch-mediated eﬀects on
+betaine levels in the study groups cannot be excluded. Yet, Cmax levels were signiﬁcantly elevated
+in the study groups compared to the control group (choline bitartrate: p = 0.0042; SuperbaBoostTM:
+p = 0.0002).
+The most prominent diﬀerence observed between phosphatidylcholine and choline bitartrate
+was observed in regard to TMAO plasma levels after intake of the study products. Substantially
+
+Nutrients 2019, 11, 2548
+12 of 15
+higher TMAO concentrations were measured after intake of the choline bitartrate salt, compared to
+phosphatidylcholine from SuperbaBoostTM. This ﬁnding was recently conﬁrmed in healthy young
+adults, where krill oil supplementation resulted in increased choline and betaine but not TMAO
+levels [58]. TMAO is a metabolite of TMA, which is generated primarily by the action of gut microbiota
+from dietary choline, betaine, l-carnitine and its metabolite y-butyrobetaine [21–24]. In addition,
+TMAO is a major osmolyte in ﬁsh and other seafoods and is detectable in low levels in healthy
+people, as also demonstrated in this study. A recent meta-analysis of 11 studies demonstrated that
+elevated TMAO levels, higher than levels ranging from 5 to 70 µmol/L, were associated with the risk
+of cardiovascular disease [59]. The fasting concentrations of TMAO in our study (mean TMAO: 2.1
+µmol/L) were below this range, and currently there are no studies to link short-termed elevated TMAO
+levels after a choline bolus to cardiovascular risks.
+5. Conclusions
+The objective of the current study was to compare the plasma kinetics of choline and its turnover
+into choline derivatives upon intake of two diﬀerent choline sources: phosphatidylcholine from krill
+oil (SuperbaBoostTM) and choline bitartrate. Although the plasma concentration vs. time proﬁles of
+free choline itself were comparable between both choline sources, a distinct rate of choline metabolism
+to its derivatives (betaine, DMG and TMAO) was observed. While betaine and DMG levels were
+somewhat elevated following phosphatidylcholine intake compared to choline bitartrate, the inverse
+pattern was observed regarding TMAO plasma levels, which were higher upon choline bitartrate
+intake than phosphatidylcholine. These data clearly indicate that choline metabolism by the gut
+microbiome, and thus TMAO generation, varies considerably depending on the provided choline
+source. Besides being an acknowledged source for omega-3 fatty acids [60], this study clearly conﬁrmed
+that SuperbaBoostTM krill oil is also an adequate source for choline and for its metabolites betaine and
+DMG, without elevating TMAO levels.
+Author Contributions: Conceptualization, C.S. and P.-A.H.; methodology, C.S. and M.W.; validation, Y.M. and
+C.S.; investigation, Y.M. and C.S.; data curation, Y.M. and C.S.; writing—original draft preparation, Y.M. and C.S.;
+writing—review and editing, P.-A.H. and M.W.; visualization, Y.M., C.S., and M.W.; supervision, C.S.; project
+administration, C.S. and P.-A.H.; statistical analysis: C.S. and M.W.
+Funding: This research received no external funding.
+Acknowledgments: The authors would like to thank all study subjects for taking part in this study. The authors
+further thank coworkers of BEVITAL for sample analysis, and coworkers of BioTeSys GmbH for support with the
+study conduct.
+Conﬂicts of Interest: Y.M. and C.S. are employees of the contract research organization BioTeSys GmbH. M.W. is
+an independent statistician supporting data analysis. P.-A.H is an employee of Aker BioMarine Antarctic AS. The
+study was sponsored by Aker BioMarine Antarctic AS, Norway. The sponsors were involved in the discussions
+on the study design and on the outcome measures prior to study start. Study conduction, data collection and
+analysis, as well as drafting the publication was independently undertaken by BioTeSys GmbH and M.W. The
+authors from BioTeSys GmbH and M.W. declare no conﬂicts of interest regarding the publication of this paper.
+References
+1.
+Zeisel, S.H.; da Costa, K.-A. Choline: An essential nutrient for public health. Nutr. Rev. 2009, 67, 615–623.
+[CrossRef]
+2.
+Zeisel, S.H. Choline: An essential nutrient for humans. Nutrition 2000, 16, 669–671. [CrossRef]
+3.
+Ueland, P.M. Choline and betaine in health and disease. J. Inherit. Metab. Dis. 2011, 34, 3–15. [CrossRef]
+4.
+Romano, K.A.; Vivas, E.I.; Amador-Noguez, D.; Rey, F.E. Intestinal microbiota composition modulates choline
+bioavailability from diet and accumulation of the proatherogenic metabolite trimethylamine-N-oxide. mBio
+2015, 6, e02481. [CrossRef] [PubMed]
+5.
+Wallace, T.C.; Fulgoni, V.L. Assessment of Total Choline Intakes in the United States. J. Am. Coll. Nutr. 2016,
+35, 108–112. [CrossRef] [PubMed]
+
+Nutrients 2019, 11, 2548
+13 of 15
+6.
+Wiedeman, A.M.; Barr, S.I.; Green, T.J.; Xu, Z.; Innis, S.M.; Kitts, D.D. Dietary Choline Intake: Current State
+of Knowledge Across the Life Cycle. Nutrients 2018, 10, 1513. [CrossRef] [PubMed]
+7.
+EFSA Panel on Dietetic Products, Nutrition and Allergies. Dietary Reference Values for choline. EFSA J.
+2016, 14, 158. [CrossRef]
+8.
+Francis, P.T. The interplay of neurotransmitters in Alzheimer’s disease. CNS Spectr. 2005, 10, 6–9. [CrossRef]
+9.
+Igarashi, M.; Ma, K.; Gao, F.; Kim, H.-W.; Rapoport, S.I.; Rao, J.S. Disturbed choline plasmalogen and
+phospholipid fatty acid concentrations in Alzheimer’s disease prefrontal cortex. J. Alzheimers Dis. 2011, 24,
+507–517. [CrossRef]
+10.
+Sherriﬀ, J.L.; O’Sullivan, T.A.; Properzi, C.; Oddo, J.-L.; Adams, L.A. Choline, Its Potential Role in Nonalcoholic
+Fatty Liver Disease, and the Case for Human and Bacterial Genes. Adv. Nutr. 2016, 7, 5–13. [CrossRef]
+11.
+Corbin, K.D.; Zeisel, S.H. Choline metabolism provides novel insights into nonalcoholic fatty liver disease
+and its progression. Curr. Opin. Gastroenterol. 2012, 28, 159–165. [CrossRef]
+12.
+Stremmel, W.; Hanemann, A.; Ehehalt, R.; Karner, M.; Braun, A. Phosphatidylcholine (lecithin) and the
+mucus layer: Evidence of therapeutic eﬃcacy in ulcerative colitis? Dig. Dis. 2010, 28, 490–496. [CrossRef]
+[PubMed]
+13.
+Strilakou, A.A.; Lazaris, A.C.; Perelas, A.I.; Mourouzis, I.S.; Douzis, I.C.; Karkalousos, P.L.; Stylianaki, A.T.;
+Pantos, C.I.; Liapi, C.A. Heart dysfunction induced by choline-deﬁciency in adult rats: The protective role of
+L-carnitine. Eur. J. Pharmacol. 2013, 709, 20–27. [CrossRef] [PubMed]
+14.
+Radziejewska, A.; Chmurzynska, A. Folate and choline absorption and uptake: Their role in fetal development.
+Biochimie 2019, 158, 10–19. [CrossRef] [PubMed]
+15.
+Le Grandois, J.; Marchioni, E.; Zhao, M.; Giuﬀrida, F.; Ennahar, S.; Bindler, F. Investigation of natural
+phosphatidylcholine sources:
+Separation and identiﬁcation by liquid chromatography-electrospray
+ionization-tandem mass spectrometry (LC-ESI-MS2) of molecular species. J. Agric. Food Chem. 2009,
+57, 6014–6020. [CrossRef]
+16.
+Winther, B.; Hoem, N.; Berge, K.; Reubsaet, L. Elucidation of phosphatidylcholine composition in krill oil
+extracted from Euphausia superba. Lipids 2011, 46, 25–36. [CrossRef]
+17.
+Li, Z.; Vance, D.E. Phosphatidylcholine and choline homeostasis. J. Lipid Res. 2008, 49, 1187–1194. [CrossRef]
+18.
+Zeisel, S.H.; Mar, M.-H.; Howe, J.C.; Holden, J.M. Concentrations of choline-containing compounds and
+betaine in common foods. J. Nutr. 2003, 133, 1302–1307. [CrossRef]
+19.
+Ueland, P.M.; Holm, P.I.; Hustad, S. Betaine: A key modulator of one-carbon metabolism and homocysteine
+status. Clin. Chem. Lab. Med. 2005, 43, 1069–1075. [CrossRef]
+20.
+Baker, J.R.; Chaykin, S. The biosynthesis of trimethylamine-N-oxide. J. Biol. Chem. 1962, 237, 1309–1313.
+[CrossRef]
+21.
+Zeisel, S.H.; Wishnok, J.S.; Blusztajn, J.K. Formation of methylamines from ingested choline and lecithin.
+J. Pharmacol. Exp. Ther. 1983, 225, 320–324. [PubMed]
+22.
+Wang, Z.; Klipfell, E.; Bennett, B.J.; Koeth, R.; Levison, B.S.; Dugar, B.; Feldstein, A.E.; Britt, E.B.; Fu, X.;
+Chung, Y.-M.; et al. Gut ﬂora metabolism of phosphatidylcholine promotes cardiovascular disease. Nature
+2011, 472, 57–63. [CrossRef] [PubMed]
+23.
+Tang, W.H.W.; Wang, Z.; Kennedy, D.J.; Wu, Y.; Buﬀa, J.A.; Agatisa-Boyle, B.; Li, X.S.; Levison, B.S.; Hazen, S.L.
+Gut microbiota-dependent trimethylamine N-oxide (TMAO) pathway contributes to both development of
+renal insuﬃciency and mortality risk in chronic kidney disease. Circ. Res. 2015, 116, 448–455. [CrossRef]
+[PubMed]
+24.
+Kaysen, G.A.; Johansen, K.L.; Chertow, G.M.; Dalrymple, L.S.; Kornak, J.; Grimes, B.; Dwyer, T.; Chassy, A.W.;
+Fiehn, O. Associations of Trimethylamine N-Oxide with Nutritional and Inﬂammatory Biomarkers and
+Cardiovascular Outcomes in Patients New to Dialysis. J. Ren. Nutr. 2015, 25, 351–356. [CrossRef] [PubMed]
+25.
+Trøseid, M.; Ueland, T.; Hov, J.R.; Svardal, A.; Gregersen, I.; Dahl, C.P.; Aakhus, S.; Gude, E.; Bjørndal, B.;
+Halvorsen, B.; et al. Microbiota-dependent metabolite trimethylamine-N-oxide is associated with disease
+severity and survival of patients with chronic heart failure. J. Intern. Med. 2015, 277, 717–726. [CrossRef]
+[PubMed]
+26.
+Wang, Z.; Tang, W.H.W.; Buﬀa, J.A.; Fu, X.; Britt, E.B.; Koeth, R.A.; Levison, B.S.; Fan, Y.; Wu, Y.;
+Hazen, S.L. Prognostic value of choline and betaine depends on intestinal microbiota-generated metabolite
+trimethylamine-N-oxide. Eur. Heart J. 2014, 35, 904–910. [CrossRef] [PubMed]
+
+Nutrients 2019, 11, 2548
+14 of 15
+27.
+Tang, W.H.W.; Wang, Z.; Levison, B.S.; Koeth, R.A.; Britt, E.B.; Fu, X.; Wu, Y.; Hazen, S.L. Intestinal microbial
+metabolism of phosphatidylcholine and cardiovascular risk. N. Engl. J. Med. 2013, 368, 1575–1584. [CrossRef]
+28.
+Tang, W.H.W.; Hazen, S.L. Microbiome, trimethylamine N-oxide, and cardiometabolic disease. Transl. Res.
+2017, 179, 108–115. [CrossRef]
+29.
+Heianza, Y.; Ma, W.; Manson, J.E.; Rexrode, K.M.; Qi, L. Gut Microbiota Metabolites and Risk of Major
+Adverse Cardiovascular Disease Events and Death: A Systematic Review and Meta-Analysis of Prospective
+Studies. J. Am. Heart Assoc. 2017, 6. [CrossRef]
+30.
+Bae, S.; Ulrich, C.M.; Neuhouser, M.L.; Malysheva, O.; Bailey, L.B.; Xiao, L.; Brown, E.C.; Cushing-Haugen, K.L.;
+Zheng, Y.; Cheng, T.-Y.D.; et al. Plasma choline metabolites and colorectal cancer risk in the Women’s Health
+Initiative Observational Study. Cancer Res. 2014, 74, 7442–7452. [CrossRef]
+31.
+Janeiro, M.H.; Ramírez, M.J.; Milagro, F.I.; Martínez, J.A.; Solas, M. Implication of Trimethylamine N-Oxide
+(TMAO) in Disease: Potential Biomarker or New Therapeutic Target. Nutrients 2018, 10, 1398. [CrossRef]
+[PubMed]
+32.
+Yue, C.; Yang, X.; Li, J.; Chen, X.; Zhao, X.; Chen, Y.; Wen, Y. Trimethylamine N-oxide prime NLRP3
+inﬂammasome via inhibiting ATG16L1-induced autophagy in colonic epithelial cells. Biochem. Biophys. Res.
+Commun. 2017, 490, 541–551. [CrossRef] [PubMed]
+33.
+Sun, X.; Jiao, X.; Ma, Y.; Liu, Y.; Zhang, L.; He, Y.; Chen, Y. Trimethylamine N-oxide induces inﬂammation
+and endothelial dysfunction in human umbilical vein endothelial cells via activating ROS-TXNIP-NLRP3
+inﬂammasome. Biochem. Biophys. Res. Commun. 2016, 481, 63–70. [CrossRef] [PubMed]
+34.
+Chen, M.-L.; Zhu, X.-H.; Ran, L.; Lang, H.-D.; Yi, L.; Mi, M.-T. Trimethylamine-N-Oxide Induces Vascular
+Inﬂammation by Activating the NLRP3 Inﬂammasome Through the SIRT3-SOD2-mtROS Signaling Pathway.
+J. Am. Heart Assoc. 2017, 6. [CrossRef] [PubMed]
+35.
+Rohrmann, S.; Linseisen, J.; Allenspach, M.; von Eckardstein, A.; Müller, D. Plasma Concentrations
+of Trimethylamine-N-oxide Are Directly Associated with Dairy Food Consumption and Low-Grade
+Inﬂammation in a German Adult Population. J. Nutr. 2016, 146, 283–289. [CrossRef] [PubMed]
+36.
+Velasquez, M.T.; Ramezani, A.; Manal, A.; Raj, D.S. Trimethylamine N-Oxide: The Good, the Bad and the
+Unknown. Toxins 2016, 8, 326. [CrossRef]
+37.
+Li, T.; Chen, Y.; Gua, C.; Li, X. Elevated Circulating Trimethylamine N-Oxide Levels Contribute to Endothelial
+Dysfunction in Aged Rats through Vascular Inﬂammation and Oxidative Stress. Front. Physiol. 2017, 8, 350.
+[CrossRef]
+38.
+Randrianarisoa, E.; Lehn-Stefan, A.; Wang, X.; Hoene, M.; Peter, A.; Heinzmann, S.S.; Zhao, X.; Königsrainer, I.;
+Königsrainer, A.; Balletshofer, B.; et al. Relationship of Serum Trimethylamine N-Oxide (TMAO) Levels with
+early Atherosclerosis in Humans. Sci. Rep. 2016, 6, 26745. [CrossRef]
+39.
+Boutagy, N.E.; Neilson, A.P.; Osterberg, K.L.; Smithson, A.T.; Englund, T.R.; Davy, B.M.; Hulver, M.W.;
+Davy, K.P. Short-term high-fat diet increases postprandial trimethylamine-N-oxide in humans. Nutr. Res.
+2015, 35, 858–864. [CrossRef]
+40.
+Sun, G.; Yin, Z.; Liu, N.; Bian, X.; Yu, R.; Su, X.; Zhang, B.; Wang, Y. Gut microbial metabolite TMAO
+contributes to renal dysfunction in a mouse model of diet-induced obesity. Biochem. Biophys. Res. Commun.
+2017, 493, 964–970. [CrossRef]
+41.
+Koeth, R.A.; Wang, Z.; Levison, B.S.; Buﬀa, J.A.; Org, E.; Sheehy, B.T.; Britt, E.B.; Fu, X.; Wu, Y.; Li, L.; et al.
+Intestinal microbiota metabolism of L-carnitine, a nutrient in red meat, promotes atherosclerosis. Nat. Med.
+2013, 19, 576–585. [CrossRef] [PubMed]
+42.
+de La Huerga, J.; Popper, H. Urinary excretion of choline metabolites following choline administration in
+normals and patients with hepatobiliary diseases. J. Clin. Investig. 1951, 30, 463–470. [CrossRef] [PubMed]
+43.
+De La Huerga, J.; Popper, H. Factors inﬂuencing choline absorption in the intestinal tract. J. Clin. Investig.
+1952, 31, 598–603. [CrossRef] [PubMed]
+44.
+Park, S.-Y.; Choi, S.-U.; Lee, K.-H.; Yang, J.-B.; Cho, S.-W.; Ro, J.; Kim, H.; Khadka, P.; Lee, J.; Cho, C.-W.
+Discriminative Measurement and Pharmacokinetic Evaluation of Choline Alphoscerate against Endogenous
+Choline in Human. Bull. Korean Chem. Soc. 2015, 36, 2089–2094. [CrossRef]
+45.
+Holm, P.I.; Ueland, P.M.; Kvalheim, G.; Lien, E.A. Determination of choline, betaine, and dimethylglycine in
+plasma by a high-throughput method based on normal-phase chromatography-tandem mass spectrometry.
+Clin. Chem. 2003, 49, 286–294. [CrossRef]
+
+Nutrients 2019, 11, 2548
+15 of 15
+46.
+Lever, M.; Sizeland, P.C.M.; Frampton, C.M.; Chambers, S.T. Short and long-term variation of plasma glycine
+betaine concentrations in humans. Clin. Biochem. 2004, 37, 184–190. [CrossRef]
+47.
+Cho, C.E.; Taesuwan, S.; Malysheva, O.V.; Bender, E.; Yan, J.; Caudill, M.A. Choline and one-carbon metabolite
+response to egg, beef and ﬁsh among healthy young men: A short-term randomized clinical study. Clin. Nutr.
+Exp. 2016, 10, 1–11. [CrossRef]
+48.
+Midttun, Ø.; Kvalheim, G.; Ueland, P.M. High-throughput, low-volume, multianalyte quantiﬁcation of
+plasma metabolites related to one-carbon metabolism using HPLC-MS/MS. Anal. Bioanal. Chem. 2013, 405,
+2009–2017. [CrossRef]
+49.
+Zeisel, S.H.; Growdon, J.H.; Wurtman, R.J.; Magil, S.G.; Logue, M. Normal plasma choline responses to
+ingested lecithin. Neurology 1980, 30, 1226–1229. [CrossRef]
+50.
+Wurtman, R.J.; Hirsch, M.J.; Growdon, J.H. Lecithin consumption raises serum-free-choline levels. Lancet
+1977, 2, 68–69. [CrossRef]
+51.
+Jäger, R.; Purpura, M.; Kingsley, M. Phospholipids and sports performance. J. Int. Soc. Sports Nutr. 2007, 4, 5.
+[CrossRef] [PubMed]
+52.
+Compher, C.W.; Kinosian, B.P.; Stoner, N.E.; Lentine, D.C.; Buzby, G.P. Choline and vitamin B12 deﬁciencies
+are interrelated in folate-replete long-term total parenteral nutrition patients. J. Parenter. Enter. Nutr. 2002,
+26, 57–62. [CrossRef] [PubMed]
+53.
+Kim, Y.I.; Miller, J.W.; Da Costa, K.A.; Nadeau, M.; Smith, D.; Selhub, J.; Zeisel, S.H.; Mason, J.B. Severe
+folate deﬁciency causes secondary depletion of choline and phosphocholine in rat liver. J. Nutr. 1994, 124,
+2197–2203. [CrossRef] [PubMed]
+54.
+Niculescu, M.D.; Zeisel, S.H. Diet, methyl donors and DNA methylation: Interactions between dietary folate,
+methionine and choline. J. Nutr. 2002, 132, S2333–S2335. [CrossRef] [PubMed]
+55.
+Jacob, R.A.; Jenden, D.J.; Allman-Farinelli, M.A.; Swendseid, M.E. Folate nutriture alters choline status of
+women and men fed low choline diets. J. Nutr. 1999, 129, 712–717. [CrossRef] [PubMed]
+56.
+Allen, R.H.; Stabler, S.P.; Savage, D.G.; Lindenbaum, J. Metabolic abnormalities in cobalamin (vitamin B12)
+and folate deﬁciency. FASEB J. 1993, 7, 1344–1353. [CrossRef] [PubMed]
+57.
+Bjørndal, B.; Bruheim, I.; Lysne, V.; Ramsvik, M.S.; Ueland, P.M.; Nordrehaug, J.E.; Nygård, O.K.; Berge, R.K.
+Plasma choline, homocysteine and vitamin status in healthy adults supplemented with krill oil: A pilot
+study. Scand. J. Clin. Lab. Investig. 2018, 78, 527–532. [CrossRef]
+58.
+Berge, R.K.; Ramsvik, M.S.; Bohov, P.; Svardal, A.; Nordrehaug, J.E.; Rostrup, E.; Bruheim, I.; Bjørndal, B.
+Krill oil reduces plasma triacylglycerol level and improves related lipoprotein particle concentration, fatty
+acid composition and redox status in healthy young adults—A pilot study. Lipids Health Dis. 2015, 14, 163.
+[CrossRef]
+59.
+Qi, J.; You, T.; Li, J.; Pan, T.; Xiang, L.; Han, Y.; Zhu, L. Circulating trimethylamine N-oxide and the risk of
+cardiovascular diseases: A systematic review and meta-analysis of 11 prospective cohort studies. J. Cell. Mol.
+Med. 2018, 22, 185–194. [CrossRef]
+60.
+Burri, L.; Hoem, N.; Monakhova, Y.B.; Diehl, B.W.K. Fingerprinting Krill Oil by 31 P, 1 H and 13 C NMR
+Spectroscopies. J. Am. Oil Chem. Soc. 2016, 93, 1037–1049. [CrossRef]
+© 2019 by the authors. Licensee MDPI, Basel, Switzerland. This article is an open access
+article distributed under the terms and conditions of the Creative Commons Attribution
+(CC BY) license (http://creativecommons.org/licenses/by/4.0/).

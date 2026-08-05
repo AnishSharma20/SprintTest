@@ -1,0 +1,1290 @@
+A Randomized, Double-Masked,
+Placebo-Controlled Clinical Trial of Two
+Forms of Omega-3 Supplements for
+Treating Dry Eye Disease
+Laura A. Deinema, BOptom,1 Algis J. Vingrys, PhD, BScOptom,1 Chinn Yi Wong, BSc(Hons), BBMed,2
+David C. Jackson, PhD, BSc(Hons),2 Holly R. Chinnery, PhD, BSc(Hons),1 Laura E. Downie, PhD, BOptom1
+Purpose:
+To assess the efﬁcacy of 2 forms of oral long-chain omega-3 (u-3) essential fatty acid (EFA)
+supplements, phospholipid (krill oil) and triacylglyceride (ﬁsh oil), for treating dry eye disease (DED).
+Design:
+Randomized, double-masked, placebo-controlled clinical trial.
+Participants:
+This study was conducted at a single site and involved 60 participants with mild to moderate
+DED who were randomized (1:1:1) to 1 of 3 groups: placebo (olive oil), krill oil, or ﬁsh oil supplements.
+Methods:
+Participants received 1 of the 3 interventions: placebo (olive oil 1500 mg/day), krill oil (945 mg/day
+eicosapentaenoic acid [EPA], þ 510 mg/day docosahexaenoic acid [DHA]), or ﬁsh oil (1000 mg/day EPA þ 500
+mg/day DHA) for 90 days, with monthly study visits.
+Main Outcome Measures:
+Primary outcome measures were mean change in (1) tear osmolarity and (2) DED
+symptoms (Ocular Surface Disease Index [OSDI] score) between days 1 and 90. Secondary outcomes included
+mean change in key clinical signs (tear stability, tear production, ocular surface staining, bulbar and limbal
+redness, tear volume, anterior blepharitis, meibomian gland capping) and tear inﬂammatory cytokine levels.
+Results:
+In total, 54 participants completed the study. At day 90, tear osmolarity was reduced from baseline
+with both krill oil (mean  standard error of the mean: 18.64.5 mOsmol/l; n ¼ 18; P < 0.001) and ﬁsh oil
+(19.83.9 mOsmol/l; n ¼ 19; P < 0.001) supplements, compared with placebo (1.54.4 mOsmol/l; n ¼ 17).
+OSDI score was signiﬁcantly reduced at day 90 relative to baseline in the krill oil group only, compared with
+placebo (18.62.4 vs. 10.53.3; P ¼ 0.02). At day 90, there were also relative improvements in tear breakup
+time and ocular bulbar redness, compared with placebo, for both forms of u-3 EFAs. Basal tear levels of the
+proinﬂammatory cytokine interleukin 17A were signiﬁcantly reduced in the krill oil group, compared with placebo,
+at day 90 (27.110.9 vs. 46.530.4 pg/ml; P ¼ 0.02).
+Conclusions:
+A moderate daily dose of both forms of long-chain u-3 EFAs, for 3 months, resulted in reduced
+tear osmolarity and increased tear stability in people with DED. Omega-3 EFAs in a predominantly phospholipid
+form (krill oil) may confer additional therapeutic beneﬁt, with improvements in DED symptoms and lower basal tear
+levels of interleukin 17A, relative to placebo. Ophthalmology 2017;124:43-52 ª 2016 by the American Academy of
+Ophthalmology
+Supplemental material is available at www.aaojournal.org.
+Dry eye disease (DED) is a highly prevalent, multifactorial
+disease of the tear ﬁlm and ocular surface that results in eye
+pain and impaired vision.1 The mainstay of DED therapy,
+involving instillation of lubricant eye drops to provide
+temporary symptomatic relief, is supportive rather than
+therapeutic. Inﬂammation is a core mechanism in the
+pathogenesis of DED.2 Various factors, including tear
+hyperosmolarity
+and
+instability,2
+contribute
+to
+the
+inﬂammatory response, which underwrites the chronic
+irritation and pain experienced by DED sufferers.3
+Two main classes of topical anti-inﬂammatory agents,
+corticosteroids and immunomodulators, are currently used
+for DED management.4 Corticosteroids target ocular surface
+inﬂammation,5 but their potential long-term adverse effects,
+including cataract and steroid-induced glaucoma, limit their
+use to the acute control of exacerbations. Topical cyclo-
+sporin A, a fungal antimetabolite that inhibits interleukin
+(IL)-2einduced activation of lymphocytes,6 is established to
+be safe, but there remains a need for large randomized
+controlled trials to clarify its clinical efﬁcacy.7
+Another avenue for altering the inﬂammatory status of
+the eye is through modulating systemic cytokine production
+with dietary intervention, in particular with omega-3 (u-3)
+essential fatty acids (EFAs).8 EFAs, which are essential to
+human health, must be ingested from dietary sources. The
+ratio of consumed u-3 to omega-6 (u-6) EFAs is a
+43
+ª 2016 by the American Academy of Ophthalmology
+Published by Elsevier Inc.
+http://dx.doi.org/10.1016/j.ophtha.2016.09.023
+ISSN 0161-6420/16
+
+determinant of the inﬂammatory status of the body.9
+Whereas most eicosanoids derived from the u-6 fatty acid
+pathway
+are
+proinﬂammatory,
+u-3
+EFAs
+bias
+prostaglandin metabolism toward the production of anti-
+inﬂammatory eicosanoids, which limit and resolve inﬂam-
+mation. In modern Western diets, the ratio of u-6 to u-3
+intake is typically 15:1, whereas an ideal ratio is considered
+4:1.10 Increasing systemic u-3 EFA levels through dietary
+intervention, to lower the u-6 to u-3 ratio, can therefore
+yield systemic anti-inﬂammatory beneﬁts.
+The Women’s Health Study, involving over 32 000
+women, reported an association between a low dietary
+intake of u-3 EFAs and DED in women.11 A 30% reduction
+in the risk of DED was found with each additional gram of
+u-3 EFAs consumed per day.11 Fish oil is a well-known
+source of long-chain u-3 EFAs (eicosapentaenoic acid
+[EPA] and docosahexaenoic acid [DHA]). As summarized
+in a recent systematic review and meta-analysis of this
+topic,12 oral supplementation with ﬁsh oil has undergone
+preliminary investigation for treating DED13e16; however,
+further evidence is required to substantiate these ﬁndings.
+Most clinical trials to date have been categorized with a high
+risk of bias, as they were not double-masked and/or had
+study design limitations.12 Furthermore, the effect of krill oil
+supplementation for treating human ocular disease has not
+been investigated.
+Krill oil derives from Antarctic krill, a zooplankton
+crustacean. Unlike ﬁsh oil, where the u-3 EFAs are stored
+as triacylglycerides, in krill oil a major component of the
+EPA and DHA are esteriﬁed in phospholipid form; this
+potentially inﬂuences their tissue distribution and bioavail-
+ability.17 Krill oil also contains the carotenoid antioxidant
+astaxanthin, which improves its stability.18
+The major aim of this randomized, double-masked, pla-
+cebo-controlled clinical trial was to assess the efﬁcacy of 2
+forms of long-chain u-3 EFA supplements, phospholipid
+(krill oil) and triacylglyceride (ﬁsh oil), for treating DED
+over a 3-month intervention period.
+Methods
+This research project was conducted in accordance with the tenets
+of the Declaration of Helsinki and was approved by the University
+of Melbourne Human Research Ethics Committee (Health Sciences
+subcommittee). All participants provided written informed consent
+to participate. The clinical trial was prospectively registered
+on
+the
+Australian
+New
+Zealand
+Clinical
+Trials
+Registry
+(ACTRN12614001019695). Both eyes were tested for all clinical
+parameters; however, analyses are based on the eye with higher
+baseline (day 1) osmolarity.
+Participants
+The study was conducted at the University of Melbourne eye care
+clinic (Victoria, Australia), a community-based optometry clinic.
+Participant inclusion and exclusion criteria (Table S1, available at
+www.aaojournal.org) were designed to recruit adults with clinical
+signs and symptoms of mild to moderate DED. Enrollment
+commenced on October 29, 2014, and was completed on August
+18, 2015. The trial was completed on November 24, 2015, when
+the
+ﬁnal
+participant
+completed
+his
+or
+her
+day
+90
+visit.
+Participants using topical lubricant eye drops at baseline (day 1)
+were allowed to continue using these throughout the study. At
+each study visit, the investigator questioned participants with
+regard to how frequently they had used lubricant eye drops over
+the past month. There was no signiﬁcant change to the frequency
+of eye drop utilization, compared with baseline, in any of the
+intervention arms over the study duration (data not shown).
+Study Design
+This was a randomized, double-masked, placebo-controlled clin-
+ical trial. Participants were assigned to 1 of 3 intervention arms:
+placebo (olive oil, 1500 mg/day), krill oil (945 mg/day EPA þ 510
+mg/day DHA), or ﬁsh oil (1000 mg/day EPA þ 500 mg/day DHA)
+for 3 months. To achieve these doses, participants were instructed
+to consume 5 capsules per day, with or without food, at least 2
+hours before or after any other medications.
+The olive oil supplement was manufactured for the study (BJP
+Laboratories, Queensland, Australia). Olive oil is an appropriate
+inert control for u-3 EFA investigations19; its main constituent
+(oleic acid, an u-9 monounsaturated fatty acid) does not affect
+the levels of polyunsaturated EFAs incorporated within the body.
+The u-3 EFA supplements are commercially available products
+(krill oil: Nutra-Life OceanClean red krill oil, Auckland, New
+Zealand; ﬁsh oil: Caruso’s Natural Health UltraMAX ﬁsh oil,
+Sydney, New South Wales, Australia).
+Participants attended 4 visits (day 1, day 307, day 607, and
+day 907) and were instructed to maintain their current dietary
+habits. The approximate dietary intake of u-3 EFAs was deter-
+mined by asking participants about their consumption of u-3erich
+foods over the preceding month. Participants were asked to
+quantify the approximate serving size (25, 50, 100, 150 g) and
+frequency of consumption of foods (including ﬁsh, oils, nuts,
+seeds, and spreads) containing greater than 1000 mg of combined
+EPA, DHA, docosapentaenoic acid, and a-linolenic acid per 100-g
+edible portion (Australia New Zealand Food Authority, 2011;
+Nutrient Data Laboratory and Beltsville Human Nutrition Research
+Centre, 2011). At subsequent visits, participants were questioned
+about changes to their diet or medications and about compliance
+with taking the study supplements.
+Compliance was assessed by participants returning supplement
+containers with unused capsules at each follow-up visit for counting
+by an independent researcher. Acceptable participant compliance
+(for data inclusion) was deﬁned, as in other nutraceutical trials,20 as
+75% capsule consumption, based on capsule counts.
+Sample Size Calculation
+A target sample size of 16 participants per arm was calculated
+based on having 90% power, at a 2-tailed signiﬁcance level of
+0.05, to detect at 25% change from baseline in Ocular Surface
+Disease Index (OSDI) score, assuming a standard deviation of
+30%. An additional 4 participants per group were included to allow
+for up to 20% participant attrition, giving a recruitment target of 20
+per group (60 participants in total).
+Randomization
+A 1:1:1 allocation ratio was used to randomize participants to 1 of
+the 3 intervention arms. An independent data manager generated a
+participant randomization sequence using a random number
+generator in Microsoft Excel (2007; Microsoft Corporation, Red-
+mond, WA). This randomization schedule was provided to an in-
+dependent
+compounding
+pharmacist
+(Dartnell’s
+Pharmacy,
+Victoria, Australia), who repackaged the study supplements into
+identical, opaque containers using the randomization schedule.
+Supplement containers were labeled with the appropriate partici-
+pant randomization code (from 001 to 060). Eligible participants
+Ophthalmology
+Volume 124, Number 1, January 2017
+44
+
+were sequentially enrolled by a masked research optometrist
+(L.A.D.), who dispensed the investigational product labeled with
+the appropriate code.
+Masking
+Participants were masked to treatment allocation, as achieved by all
+investigational products being dispensed in identical opaque con-
+tainers; all participants also consumed the same number of capsules
+per day. All study personnel, including the principal investigator
+(L.E.D.), clinical outcome assessor (L.A.D.), laboratory outcome
+assessors (C.Y.W., D.C.J.), and co-investigators (H.R.C., A.J.V.),
+were masked to participant allocation. Following completion of all
+participant visits, data were analyzed only with knowledge of the
+simple randomization code (i.e., group A, B, or C allocation). Full
+unmasking of treatment allocation by the independent data man-
+ager only occurred after statistical analyses were complete.
+Procedures
+Unless otherwise speciﬁed, all procedures were performed at each
+study visit. The full schedule of assessments, including the order of
+testing, is provided in Table S2 (available at www.aaojournal.org).
+Symptom Assessment. Dry eye symptoms were quantiﬁed on a
+scale from 0 (none) to 100 (maximum), using the validated,
+12-item OSDI (Allergan, Inc, Irvine, CA),21 which assesses
+symptoms of ocular discomfort, effects on visual function, and
+the impact of environmental triggers.
+Visual Acuity. Noncycloplegic subjective spherocylindrical
+refraction was performed and monocular distance best-corrected
+visual acuity (BCVA) was reported as a logarithm of the mini-
+mal angle of resolution.
+Tear Osmolarity. Tear osmolarity was measured bilaterally
+from the inferior lateral tear meniscus using the TearLab system
+(TearLab Corp, San Diego, CA). The instrument was calibrated
+according to the manufacturer’s instructions. Room temperature
+was maintained between 20C and 24C.22 Participants using
+lubricant eye drops were instructed not to instill these for at least
+2 hours before examination; adherence to this instruction was
+conﬁrmed before taking measurements. The same diagnostic pen
+was used for all assessments. Right eyes were measured ﬁrst.
+Meniscometry. Tear volume was quantiﬁed using tear meniscus
+height (TMH), measured both en face (using anterior eye photog-
+raphy) and in cross section (using optical coherence tomography).
+Three repeat measures were recorded and averaged per eye.
+The Keratograph 5M (K5; Oculusoptikgerate GmbH, Wetzlar,
+Germany) was used to capture 3 photographs of the anterior eye
+under infrared illumination. ImageJ software (version 1.47v; Na-
+tional Institutes of Health, Bethesda, MD) was used to measure the
+en face TMH, deﬁned as the length of a vertical line spanning from
+the top of the inferior tear meniscus to the eyelid margin. Mea-
+surements were taken either side of any eyelid abnormalities and as
+close to the center of the eyelid as possible.
+An image of the inferior, central tear meniscus was captured
+using a 6.0-mm vertical B-scan with a 3-dimensional optical
+coherence tomography (Topcon Corporation, Itabashi-Ku, Japan).
+Cross-sectional TMH was measured as the length of a line drawn
+through the tear meniscus edge, beginning at the cornea and ending
+at the eyelid margin, using ImageJ software.
+Basal Tear Collection and Cytokine Analyses. Basal tears,
+w4 to 5 ml/eye, were collected by capillary ﬂow from the inferior
+lateral meniscus using microcapillary tubes (MicroCaps; Drum-
+mond
+Scientiﬁc
+Company,
+Broomall,
+PA),
+as
+previously
+described.23 Flow rate was monitored to exclude potential dilution
+effects resulting from reﬂex tearing. Only samples with a ﬂow rate
+<2 mL/minute were used. Tear samples were stored at 80C for
+subsequent analysis of cytokine concentrations. Levels of IL-2, IL-
+4, IL-6, IL-10, IL-17A, interferon (IFN)-g, and tumor necrosis
+factor a were determined using a Cytometric Bead Array Human
+Th1/Th2/Th17 kit (BD Biosciences, San Jose, CA), according to
+the manufacturer’s instructions, with the exception that samples
+were diluted 1 in 8.333 in a ﬁnal volume of 25 ml, and a total of 1
+ml of each capture bead was used in 25 ml of tear sample. Samples
+were analyzed on a Becton Dickinson FACSCanto II ﬂow cy-
+tometer (Franklin Lakes, NJ) and data analyzed using Becton
+Dickinson FCAP Array software.
+Tear Stability. Noninvasive tear breakup time (NITBUT) was
+quantiﬁed using the tear ﬁlm surface quality breakup time
+parameter of the E300 corneal topographer (Medmont Pty Ltd,
+Victoria, Australia). We previously showed this measure to have
+high repeatability (coefﬁcient of variation: 9.4%), as well as high
+sensitivity and speciﬁcity for diagnosing DED (82% and 94%,
+respectively), when using the shortest tear ﬁlm surface quality
+breakup time of 3 repeat measures.24
+Sodium ﬂuorescein (NaFl) tear breakup time (TBUT) was
+measured using Dry Eye test strips (Amcon Laboratories, St.
+Louis, MO). The strip was moistened using nonpreserved saline
+and applied to the superior bulbar conjunctiva. One minute after
+instillation, NaFl TBUT was measured at the slit-lamp bio-
+microscope under cobalt blue illumination and a Wratten 12
+yellow-barrier ﬁlter. Participants were asked to gently blink twice
+and then to hold their eyes open for as long as possible. The time
+between the second blink and the appearance of the ﬁrst dark spot
+in the precorneal ﬁlm was noted. Three NaFl TBUTs were recor-
+ded for each eye and averaged.
+Slit-Lamp Examination. The anterior eye was examined at the
+slit-lamp biomicroscope for the degree of anterior blepharitis,
+meibomian gland (MG) capping, bulbar redness, and limbal
+redness, using the validated Efron scales.25 Each parameter was
+assigned a grade, from 0.0 to 4.0, using increments of 0.1. For
+bulbar and limbal redness, the nasal and temporal regions were
+graded separately and averaged.
+Corneal and conjunctival staining were assessed using an
+established methodology.26 Corneal NaFl staining was examined at
+the slit lamp using cobalt blue illumination and a Wratten 12
+yellow-barrier ﬁlter, 2 minutes after instillation of NaFl. The de-
+gree of corneal staining was assessed in each eye with the 5-point
+Oxford scale,26 using grading increments of 0.1. Nasal and
+temporal conjunctival lissamine green (LG) staining was assessed
+using the Oxford scale, 1 minute after instillation of LG
+(GreenGlo; Sigma Pharmaceuticals, North Liberty, IA).
+Tear Production. The Schirmer test was performed, with
+topical anesthesia, as a measure of basal tear production. One drop
+of 0.5% proxymetacaine hydrochloride (Alcon Laboratories, New
+South Wales, Australia) was instilled into the lower conjunctival
+sac. After 4 minutes, the folded end of a sterile Schirmer strip
+(Optitech Eyecare, Allahabad, India) was placed between the
+middle and lateral third of the inferior eyelid margin. Participants
+were instructed to close their eyes in a dimly lit room, and the strip
+wetting (in millimeters) was recorded after 5 minutes.
+Intraocular Pressure. Intraocular pressure (IOP) was measured
+using a Perkins applanation tonometer (Clement Clarke, Harlow,
+United Kingdom) immediately following instillation of 1 drop of
+0.5% proxymetacaine hydrochloride and NaFl dye.
+Pregnancy Testing. For female subjects of self-reported child-
+bearing potential, a 20-ml urine sample was tested with an Instalert
+pregnancy test (Innovacon, Inc, San Diego, CA) at days 1 and 90.
+Outcome Measures
+Prespeciﬁed primary outcome measures were mean change be-
+tween days 1 and 90 for (1) symptoms, quantiﬁed using OSDI
+Deinema et al
+ Krill Oil and Fish Oil for Dry Eye Disease
+45
+
+score; and (2) tear osmolarity in the eye having higher osmolarity
+at baseline.
+Secondary outcomes were mean change from baseline (day 1)
+at days 30, 60, and 90 for tear ﬁlm stability (measured using NaFl
+TBUT and NITBUT), bulbar and limbal redness, ocular surface
+staining, tear production, tear volume, anterior blepharitis, MG
+capping, and basal tear levels of inﬂammatory cytokines.
+Safety was assessed by documenting adverse events. In addi-
+tion, the safety end points were mean change in BCVA and IOP
+between days 1 and 90.
+Statistical Analyses
+Data relating to participant demographics and baseline clinical
+characteristics were analyzed using GraphPad Prism (version 6.01;
+GraphPad Software, San Diego, CA) with the Mann-Whitney,
+Kruskal-Wallis, c2, 1-way analysis of variance, or unpaired t tests
+with Welch correction, as appropriate. Analyses were performed on
+the eye having highest tear osmolarity at the day 1 visit, as an
+established objective indicator of disease severity.27 Data normality
+was assessed using the D’Agostino & Pearson omnibus test. Where
+there was a statistically signiﬁcant difference between groups, Tukey
+or Dunn post hoc analyses were performed.
+Intergroup comparisons were analyzed using GenStat (16th
+edition; VSN International, Hemel Hempstead, United Kingdom).
+Repeated measures analysis of covariance was used to assess for
+differences in the post-treatment means between groups (i.e., the
+main effect of group) at each time point (days 30, 60, and 90), with
+the baseline (day 1) values used as a covariate. Where there was a
+statistically signiﬁcant main effect, a post hoc analysis was un-
+dertaken using the Fisher least signiﬁcant difference for compari-
+son between group means. For all analyses, an a level of 0.05 was
+adopted for statistical signiﬁcance. Unless otherwise speciﬁed, data
+are expressed as mean  standard error of the mean.
+A post hoc analysis was also performed, combining the 2 active
+intervention arms (ﬁsh oil and krill oil) into a single group (a long-
+chain u-3 EFA treatment group; n ¼ 37) and comparing changes
+in outcome measures with placebo (n ¼ 17) at day 90. Repeated
+measures analysis of covariance was used to assess for differences in
+the post-treatment means at day 90, with baseline values used as a
+covariate.
+Results
+Participants
+Of 108 potential participants screened for eligibility, 60 met the
+eligibility criteria and enrolled in the clinical trial; 54 completed the
+study (i.e., 90% participant retention). Of the 6 participants who
+did not complete the study, 3 were from the placebo group; 1
+discontinued after day 1 as her employment situation changed and
+2 participants were lost to follow-up after day 30. One participant
+withdrew from the krill oil group after day 1, following self-
+reported surgical intervention by an ophthalmologist overseas,
+and another participant was lost to follow-up after day 1. One
+participant in the ﬁsh oil arm was lost to follow-up after day 1.
+Baseline participant demographics and clinical data for each study
+group are provided in Table 3. At day 1, there was no signiﬁcant
+difference between groups for age, gender, ethnicity, or the primary
+outcome measures of OSDI score and tear osmolarity. Baseline
+values for secondary clinical outcome measures were also similar
+between the study groups, except for NaFl TBUT, which was
+relatively shorter in the krill oil group (Table 3). The combined
+EPA þ DHA dietary intake of participants at baseline was similar
+across all intervention groups (placebo: 135.034.2 mg/day, ﬁsh
+oil: 160.332.7 mg/day, krill oil: 178.944.7 mg/day). None of the
+participants reported major changes to their intake of foods
+containing high levels of u-3 fatty acids throughout the study.
+There was a high level of treatment ﬁdelity, as measured by
+returned capsule counts. Compliance was 94%1%, 93%2%, and
+93%2% for the placebo, ﬁsh oil, and krill oil groups, respectively.
+All participants exceeded the prespeciﬁed, minimum level of
+compliance; no data were excluded from analysis on these grounds.
+Primary Outcome Measures
+Tear Osmolarity. As shown in Figure 1A, at the primary end
+point (day 90), tear osmolarity was reduced from day 1 with
+both ﬁsh oil (19.84.5 mOsmol/l, n ¼ 19; P < 0.001) and
+krill
+oil
+(18.63.9
+mOsmol/l,
+n
+¼
+18;
+P
+<
+0.001)
+supplementation, compared with placebo (1.54.4 mOsmol/l;
+n ¼ 17). The ﬁsh oil group also showed a signiﬁcant reduction
+in tear osmolarity compared with placebo at day 60 (18.45.1
+mOsmol/l, n ¼ 19 vs. 4.54.6 mOsmol/l, n ¼ 17; P ¼ 0.006).
+Ocular Surface Disease Index. Figure 1B shows changes to
+OSDI score. At day 90, OSDI was reduced, relative to day 1, in the
+krill oil group, compared with placebo (18.62.4, n ¼ 18
+vs. 10.53.3, n ¼ 17; P ¼ 0.02). Although the ﬁsh oil group
+showed a trend toward reduced symptoms compared with
+placebo over the course of the study, this did not reach statistical
+signiﬁcance at any time point.
+Secondary Outcome Measures
+Tear Film Stability. Figure 2 shows data relating to NaFl
+TBUT. The ﬁrst signiﬁcant intergroup difference was evident at
+day 60, with increases relative to day 1 in both the ﬁsh oil
+(3.71.6 seconds, n ¼ 19; P < 0.004) and krill oil (4.01.5
+seconds, n ¼ 18; P ¼ 0.02) groups, compared with placebo
+(2.81.3 seconds, n ¼ 17); this effect was maintained in both
+groups at day 90 (Fig 2A). The mean NITBUT did not alter
+signiﬁcantly between groups, over the study duration.
+Ocular Redness. Both forms of u-3 EFA supplements
+signiﬁcantly reduced bulbar redness (Fig 3). Relative to day 1, both
+the ﬁsh oil (0.20.1 units, n ¼ 19; P ¼ 0.005) and krill oil
+(0.20.1 units, n ¼ 18; P ¼ 0.009) groups had signiﬁcantly
+less bulbar redness than the placebo group (0.20.1 units;
+n ¼ 17) at day 30. At day 60, the krill oil group continued to
+show relatively decreased bulbar redness compared with the
+placebo group (0.60.1 units, n ¼ 18 vs. 0.00.2 units,
+n ¼ 17; P ¼ 0.01). Day 90 ﬁndings were similar to those at day
+30, with both the ﬁsh oil (0.30.2 units, n ¼ 19; P ¼ 0.009)
+and krill oil (0.50.2 units, n ¼ 18; P ¼ 0.004) groups having
+less redness relative to day 1, compared with placebo (0.20.2
+units, n ¼ 17). Limbal redness did not alter signiﬁcantly between
+groups, or within groups, over the study duration.
+Ocular Surface Staining. The degree of nasal LG conjunc-
+tival staining was reduced in both the ﬁsh oil (0.10.1 units,
+n ¼ 19; P ¼ 0.04) and krill oil (0.20.1 units, n ¼ 18; P ¼ 0.01)
+groups compared with placebo (0.20.2 units, n ¼ 17) at day 60.
+This reduction seemed transient, with no difference between
+groups by day 90. There were no signiﬁcant changes to either NaFl
+corneal staining or temporal LG conjunctival staining between
+groups, or within groups, over the study duration.
+Ophthalmology
+Volume 124, Number 1, January 2017
+46
+
+Other Clinical Parameters. Tear volume (quantiﬁed using
+both en face and cross-sectional TMH), Schirmer test score, and
+the degree of both anterior blepharitis and MG capping were un-
+changed between groups, and within groups, throughout the study.
+Post hoc analyses were performed, combining the 2 active
+intervention arms (ﬁsh oil and krill oil) into a single group (a long-
+chain u-3 EFA treatment group; n ¼ 37) and comparing changes
+with outcome measures with placebo (n ¼ 17) at day 90. These
+analyses (Fig S4, available at www.aaojournal.org) showed
+additional signiﬁcant effects of supplementation with u-3 EFAs
+compared with analyses involving the individual ﬁsh oil and krill
+oil arms. At day 90, u-3 EFA supplementation resulted in
+signiﬁcant relative reductions in limbal redness (0.2  0.1
+units, n ¼ 37 vs. 0.00.1 units, n ¼ 17; P ¼ 0.04; Fig S4A,
+available
+at
+www.aaojournal.org),
+NaFl
+corneal
+staining
+(0.30.2 units, n ¼ 37 vs. 0.00.1 units, n ¼ 17; P ¼ 0.03;
+Fig S4B, available at www.aaojournal.org), and MG capping
+(0.50.1 units, n ¼ 37 vs. 0.10.3 units, n ¼ 17; P ¼ 0.04;
+Fig S4C, available at www.aaojournal.org).
+Tear Inﬂammatory Cytokines. As shown in Figure 5, basal
+tear concentrations of the proinﬂammatory cytokine IL-17A were
+reduced at day 90 relative to day 1 in the krill oil group compared
+with placebo (27.110.9 pg/ml, n ¼ 18 vs. 46.530.4 pg/ml;
+P ¼ 0.02). There were no signiﬁcant intergroup differences for any
+of the other cytokines (IL-2, IL-4, IL-6, IL-10, IFN-g, or tumor
+necrosis factor a) over the study duration.
+Safety Outcomes
+At day 90, there were no signiﬁcant changes to BCVA or IOP in any
+of the study groups (Table S4, available at www.aaojournal.org).
+Table S5 (available at www.aaojournal.org) summarizes adverse
+Table 3. Baseline Participant Demographics and Clinical Characteristics of the Study Groups
+Placebo (n [ 17)
+Fish Oil (n [ 19)
+Krill Oil (n [ 18)
+P Value
+Demographics
+Age (yrs)
+46.24.5
+39.43.4
+42.33.8
+0.5
+Gender (% female)
+82
+47
+72
+0.1
+Ethnicity (% white)
+94
+84
+72
+0.2
+Primary outcome measures
+Tear osmolarity (mOsmol/l)
+327.15.0
+325.62.6
+324.81.7
+0.4
+OSDI (score/100)
+31.72.6
+363.4
+30.52.4
+0.3
+Secondary clinical outcome measures
+NaFl TBUT (sec)
+8.31.4
+8.11.1
+5.10.5*
+0.02
+NITBUT (sec)
+6.41.6
+9.21.7
+6.61.4
+0.5
+Bulbar redness (Efron score)
+2.80.2
+2.60.2
+2.70.2
+0.8
+Limbal redness (Efron score)
+1.20.1
+1.20.1
+1.10.1
+0.9
+TMH e en face (mm)
+204.623.9
+189.816.1
+182.414.5
+0.7
+TMH e cross section (mm)
+209.919.6
+218.214.7
+188.616.1
+0.7
+NaFl corneal staining (Oxford score)
+0.60.2
+0.50.1
+0.70.2
+0.8
+LG conjunctival staining e nasal (Oxford score)
+0.30.1
+0.20.1
+0.50.2
+0.6
+LG conjunctival staining e temporal (Oxford score)
+0.30.2
+0.20.1
+0.40.1
+0.4
+Anterior blepharitis (Efron score)
+0.20.1
+0.50.2
+0.60.2
+0.2
+Meibomian gland capping (Efron score)
+0.50.1
+0.60.1
+0.90.1
+0.3
+Schirmer test (mm/5 min)
+14.22.4
+10.12.2
+10.32.0
+0.3
+BCVA (logMAR)
+0.10.0
+0.10.0
+0.10.0
+0.8
+IOP (mm Hg)
+13.20.7
+13.90.5
+13.50.5
+0.4
+BCVA ¼ best-corrected visual acuity; IOP ¼ intraocular pressure; LG ¼ lissamine green; logMAR ¼ logarithm of the minimum angle of resolution; NaFl ¼
+sodium ﬂuorescein; NITBUT ¼ noninvasive tear breakup time; OSDI ¼ Ocular Surface Disease Index; TMH ¼ tear meniscus height.
+Data are expressed as mean  standard error of the mean. P values represent the main group effect.
+*Denotes a statistically signiﬁcant difference (P < 0.05).
+Figure 1. Primary outcome measures. Change in tear osmolarity (A) and Ocular Surface Disease Index (OSDI) score (B) from baseline (day 1) at days 30,
+60, and 90 in each of the study groups. Data are expressed as mean  standard error of the mean (SEM). Asterisks show statistically signiﬁcant intergroup
+differences (*P < 0.05, **P < 0.01). Arrow indicates direction of improvement.
+Deinema et al
+ Krill Oil and Fish Oil for Dry Eye Disease
+47
+
+events. There were no documented pretreatment adverse events. The
+3 interventions were generally well tolerated. Of the 53 adverse
+events noted, 51 were considered mild (i.e., awareness of
+symptoms or signs but well tolerated) and 2 were graded as
+moderate (i.e., discomfort interfering with normal activity). There
+were no serious adverse events.
+The most frequently reported adverse events were colds
+(24.5%), sore throat (11.3%), headache/migraine (11.3%), and
+gastrointestinal events (e.g., nausea, abdominal discomfort, bloat-
+ing, stomach cramps, heartburn, and gastroenteritis; 13.2%). Based
+on the principal investigator’s (L.E.D.’s) assessment, 72% were
+deemed to have no potential association with the study supple-
+ments and 28% of the adverse events were considered to be
+potentially related to the study supplements.
+Discussion
+This randomized, double-masked, controlled clinical trial
+sought to assess the efﬁcacy of krill oil (predominantly
+phospholipid u-3 EFAs) and ﬁsh oil (triacylglyceride u-3
+EFAs) supplementation for treating DED over a 3-month
+period. Moderate (w1000 mg EPA þ w500 mg DHA)
+daily doses of both forms of long-chain u-3 EFAs were
+found to signiﬁcantly reduce tear osmolarity, improve tear
+stability, and reduce ocular bulbar redness. Notably, we
+report novel data relating to the efﬁcacy of krill oil sup-
+plementation as an anti-inﬂammatory intervention for DED.
+Furthermore, our ﬁndings suggest that krill oil may confer
+additional therapeutic beneﬁts over ﬁsh oil, with improve-
+ments in DED symptoms (OSDI score) and lower basal tear
+levels of IL-17A relative to placebo at the study end point.
+The effect sizes for both primary outcomes reported in
+this trial are highly clinically signiﬁcant. This study dem-
+onstrates the beneﬁcial effects of u-3 EFA supplementation
+for reducing tear hyperosmolarity in DED. Our ﬁndings are
+similar to those recently reported by Epitropoulos et al,28
+over a 12-week intervention period in people with MG
+dysfunction, with the use of a signiﬁcantly higher daily dose
+(1680 mg EPA þ 560 mg DHA) of re-esteriﬁed u-3 EFA
+supplements, in the context of having an u-6ebased oil as a
+control. Attenuation of a season-dependent elevation in tear
+osmolarity has also been described with the consumption of
+sea buckthorn oil, containing both u-3 and u-6 EFAs, over
+3 months in women having DED.29
+Tear hyperosmolarity is a well-established feature of DED,
+being associated with ocular surface inﬂammation30 and
+leading to epithelial and/or goblet cell loss.31,32 At baseline,
+the mean  standard error of the mean tear osmolarity of the
+ﬁsh oil and krill oil groups was 3263 and 3252 mOsmol/l,
+respectively, consistent with moderate DED. At day 90, tear
+osmolarity was reduced from baseline with ﬁsh oil and krill
+oil, compared with placebo, by an average of 20 and 19
+mOsmol/l, respectively. A post-treatment tear osmolarity of
+306 mOsmol/l in both groups represents a profound
+normalization of tear tonicity (normal values27 <308
+mOsmol/l) that is markedly below the 316 mOsmol/l
+threshold for DED diagnosis.33 The reduction in tear
+osmolarity with omega-3 supplementation shows a linear
+trend over the study duration, which was not asymptotic at
+day 90 (Fig 1A). This ﬁnding suggests the potential for
+further improvement with a longer treatment period.
+The profound reduction in tear osmolarity was associated
+with clinically meaningful improvements in DED symp-
+toms, which occurred by day 90, approximately 1 month
+after the normalization of tear tonicity. The ﬁnding of
+reduced tear osmolarity preceding symptomatic improve-
+ment in patients with DED corroborates previous re-
+ports34,35 and supports the utility of tear osmolarity as a
+Figure 2. Tear stability. Change in sodium ﬂuorescein (NaFl) tear breakup
+time (TBUT) from baseline (day 1) at days 30, 60, and 90 in each of the
+study groups. Data are expressed as mean  standard error of the mean
+(SEM). Asterisks show statistically signiﬁcant intergroup differences
+(*P < 0.05). Arrow indicates direction of improvement.
+Figure 3. Ocular bulbar redness. Change in ocular bulbar redness score,
+measured using the Efron grading scale, from baseline (day 1) at days 30,
+60, and 90 in each of the study groups. Data are expressed as mean 
+standard error of the mean (SEM). Asterisks show statistically signiﬁcant
+intergroup
+differences
+(*P
+<
+0.05).
+Arrow
+indicates
+direction
+of
+improvement.
+Figure 5. Tear interleukin (IL)-17A concentrations. Change from baseline
+in basal tear IL-17A levels (picograms per milliliter) at days 30, 60, and 90
+in each of the study groups. Data are expressed as mean  standard error of
+the mean (SEM). Asterisks show statistically signiﬁcant intergroup differ-
+ences (*P < 0.05). Arrow indicates direction of improvement.
+Ophthalmology
+Volume 124, Number 1, January 2017
+48
+
+responsive parameter for monitoring therapeutic efﬁcacy in
+DED clinical trials. We attribute the observed lack of syn-
+chrony between changes to dry eye clinical signs and
+symptoms to the need for physiological improvements in
+key parameters underpinning the DED response (in partic-
+ular,
+the
+amelioration
+of
+tear
+hyperosmolarity
+and
+improvement in tear stability, which relate to the degree of
+ocular surface inﬂammation) before subjective improvement
+is evident.
+The observed attenuation of dry eye symptoms with
+short-term, long-chain u-3 EFA supplementation is in
+agreement
+with
+results
+from
+previous
+clinical
+stud-
+ies.14e16,28 At day 90, OSDI score was reduced by an
+average of 19 units from baseline with krill oil supple-
+mentation, being statistically different from the placebo
+group (which improved on average by 10.5 units). The level
+of symptomatic improvement substantially exceeds the
+OSDI minimal clinically important difference of 7.3 units
+for moderate DED,36 even in the placebo group, which did
+not demonstrate any signiﬁcant change in the objective
+outcome parameter of tear osmolarity. These ﬁndings
+emphasize the importance of placebo intervention arms in
+trials investigating therapies for DED, to control for the
+“clinical trial effect,” particularly if subjective outcome
+measures are adopted.
+Both forms of u-3 EFA supplements also conferred
+signiﬁcant improvements in tear ﬁlm stability. Because tear
+ﬁlm instability is a key pathogenic factor in DED,2 it
+follows that improving tear stability is an important
+strategy for managing DED. NaFl TBUT was increased in
+both the ﬁsh oil and krill oil groups, reaching statistical
+signiﬁcance at days 60 and 90, compared with placebo.
+On average, NaFl TBUT improved from 8.11.1 and
+5.10.5 seconds at baseline to 11.92.0 and 9.20.9
+seconds at the study end point in the ﬁsh oil and krill oil
+groups, respectively. Given that normal NaFl TBUT is 10
+seconds or longer,37 this degree of improvement is of
+major clinical signiﬁcance and exceeds the criteria for a
+clinically important difference in NaFl TBUT (change of
+at least 30%38).
+A post hoc statistical analysis, combining the 2 active
+intervention arms (ﬁsh oil and krill oil) into a single inter-
+vention group (a long-chain u-3 EFA treatment group;
+n ¼ 37), showed additional signiﬁcant improvements in
+clinical outcome measures with u-3 EFAs compared with
+placebo (n ¼ 17). Speciﬁcally, reductions in the severity of
+limbal redness, NaFl corneal staining, and MG capping were
+evident at day 90. The reduction in corneal staining most
+likely relates to the normalization of tear tonicity with u-3
+EFA
+supplementation,
+leading
+to
+a
+reduction
+in
+hyperosmolarity-induced
+ocular
+surface
+epithelial
+cell
+apoptosis.39 In contrast to our results, several previous
+clinical trials found no signiﬁcant effect
+on corneal
+staining with the use of u-3 EFA supplements.28,40,41
+Divergent ﬁndings are not unexpected, given that corneal
+ﬂuorescein staining is a relatively late-stage manifestation of
+DED42 and differences in the investigated study populations
+likely account for the apparent variations in outcomes. Our
+ﬁndings are similar to those described with the use of the
+immunomodulatory agent cyclosporin A, which was found
+to reduce conjunctival epithelial cell apoptosis and protect
+against
+a
+loss
+of
+conjunctival
+goblet
+cells
+in
+an
+experimental murine model of DED.43
+The observed reduction in MG capping with u-3 EFA
+supplementation is also not unanticipated. The level of di-
+etary u-3 EFA intake is associated with differences in the
+polar lipid pattern of MG secretions in women with Sjögren
+syndrome.44 Supplementation with short-chain omega-3
+EFAs has been shown to alter the composition of MG se-
+cretions,
+with
+corresponding
+improvements
+in
+gland
+blockage and tear stability over a 12-month treatment
+duration.40 A reduction in lid margin inﬂammation and
+improved MG expressibility has also been reported with
+the use of triacylglyceride u-3 EFAs, in association with
+lid hygiene and ocular lubricants, in patients with MG
+dysfunction.15
+Signiﬁcant reductions in ocular redness, being a marker
+of ocular inﬂammation, were imparted by both ﬁsh oil and
+krill oil. The beneﬁcial effects of u-3 EFAs on reducing
+bulbar hyperemia were ﬁrst apparent at day 30 and were
+maintained at day 90. At the study end point, bulbar redness
+was reduced, on average, by 0.30.2 and 0.50.2 Efron
+grading units in the ﬁsh oil and krill oil groups, respectively.
+Although this reduction was statistically signiﬁcant in both
+groups, only the krill oil group had a clinically signiﬁcant
+improvement (deﬁned as 0.50 Efron grading units45).
+Though no previous studies have reported reductions in
+bulbar redness with u-3 EFA supplementation alone, a
+randomized controlled study found a signiﬁcant decrease
+in conjunctival hyperemia after 6 months of combined u-
+6 and u-3 EFA supplementation.46
+It is interesting that bulbar hyperemia was the ﬁrst clin-
+ical sign to demonstrate improvement with u-3 EFA sup-
+plementation, with a signiﬁcant reduction evident at day 30
+compared with placebo. The observed decrease in ocular
+redness may relate to u-3 EFA supplementation imparting
+ocular anti-inﬂammatory effects. Indeed, topical loteprednol
+0.5%, a corticosteroid with potent anti-inﬂammatory prop-
+erties, reduces clinical markers of inﬂammation, including
+conjunctival injection, in patients with DED over a 2-week
+treatment period.47 Another possibility is that u-3 EFAs
+directly affect vascular reactivity within the conjunctival
+and/or
+episcleral
+plexi.
+Dietary
+supplementation
+with
+either krill oil or ﬁsh oil for 2 weeks has been shown to
+have
+beneﬁcial
+effects
+on
+cerebral
+blood
+ﬂow
+autoregulation in rodents.48 Further in support of this
+hypothesis
+is
+the
+ﬁnding
+of
+an
+inverse
+relationship
+between brachial artery diameter and the red blood cell
+membrane ratio of polyunsaturated to saturated fatty acid
+in patients with systemic hypertension.49
+We also report that krill oil supplementation signiﬁcantly
+decreased tear levels of the proinﬂammatory cytokine IL-
+17A. This is a notable effect that has not been previously
+reported with u-3 EFA supplementation in humans. The
+ﬁnding is, however, supported by evidence in a mouse
+transgenic model that endogenously converts u-6 into u-3
+polyunsaturated fatty acids (the fat-1 mouse), in which it has
+been shown that u-3 EFAs modulate T-helper 17 cells to
+produce lower levels of inﬂammatory factors, including IL-
+17,
+which
+provides
+protection
+against
+psoriasis-like
+Deinema et al
+ Krill Oil and Fish Oil for Dry Eye Disease
+49
+
+inﬂammation.50 It is intriguing that we did not observe this
+effect with ﬁsh oil supplementation, suggesting that it may
+relate to unique properties of krill oil, in particular its
+phospholipid form and/or the effects of the antioxidant
+astaxanthin. Topical application of astaxanthin has been
+shown to ameliorate ultraviolet-induced corneal epithelial
+damage in an acute murine model of photokeratitis.51 In
+relation to bioavailability, there is evidence for differences
+in DHA tissue accretion within the eye, depending on the
+form
+of
+consumed
+fatty
+acid
+(i.e.,
+phospholipid
+or
+triacylglyceride). In a study involving 10-week-old rats,
+incorporation of DHA into the anterior uvea, kidney, and
+brain was approximately 3-fold higher with a phospholipid
+formulation compared with a triacylglyceride form of sup-
+plementation.52 Furthermore, in a double-masked crossover
+trial involving healthy participants, krill oil was found to be
+more effective than either ﬁsh oil or placebo at decreasing
+the u-6-to-u-3 fatty acid ratio and increasing the percentage
+of EPA and DHA incorporated into erythrocyte mem-
+branes.53 Together, these ﬁndings suggest that the form of
+u-3 EFA supplementation may differentially modulate
+ocular surface inﬂammation.
+IL-17A, which is implicated in autoimmune disease and
+tissue inﬂammation,54 has been suggested to play a role in
+mediating corneal epithelial barrier disruption in DED.55
+The observed reduction in tear IL-17A levels with krill oil
+supplementation parallels the immunomodulatory effects
+imparted by topical cyclosporin A (0.01%), which decreases
+conjunctival IL-17A and IFN-g expression in experimental
+models of DED.55 Therapeutic agents aimed at speciﬁcally
+modulating T-helper 17 cells and/or IL-17 production
+have been proposed as novel strategies for dry eye ther-
+apy.56 In this respect, krill oil supplementation is arguably a
+compelling anti-inﬂammatory intervention for DED, which
+improves clinical signs and symptoms of DED in concert
+with reducing tear IL-17A, being a key proinﬂammatory
+cytokine involved in the pathogenesis of the condition.
+In this study, we did not detect any signiﬁcant changes to
+the basal levels of other tear cytokines, including IL-6 and
+IL-10, between the study groups. This ﬁnding contrasts with
+an open-label study conducted by Pinazo-Durán et al,57
+which reported decreased levels of IL-1ß, IL-6, and IL-10
+in reﬂex tears relative to baseline, following a 3-month
+intervention with long-chain u-3 EFAs combined with an-
+tioxidants. The observed differences in ﬁndings may, at least
+in part, relate to the use of divergent tear collection methods.
+In this clinical trial, we quantiﬁed cytokine levels from basal
+tears, whereas the study by Pinazo-Durán et al57 assayed
+reﬂex tear samples obtained by forced stimulation. Tear
+collection method, as well as the type of tear (i.e., basal
+vs. reﬂex) collected, inﬂuences tear composition and
+hence may underlie the apparent variation in ﬁndings.
+Differences in the study supplement formulations, in
+particular the additional incorporation of a range of
+antioxidants, including vitamins A, C, and E; zinc; and
+glutathione, in the supplement utilized by Pinazo-Durán
+et al,57 may also have contributed to a differential
+modulation of ocular surface inﬂammation.
+We
+acknowledge
+the
+limitations
+of
+this
+proof-of-
+principle study, being its sample size (n ¼ 60) and its
+undertaking at a single site. Nevertheless, the trial was un-
+dertaken in a robust manner, in strict accordance with the
+CONSORT statement,58 thus minimizing all major potential
+sources of bias.
+In conclusion, this study demonstrates the beneﬁcial ef-
+fect of long-chain u-3 EFA supplementation for reducing
+key clinical signs and symptoms of mild to moderate DED
+over a 3-month treatment duration. Our ﬁndings suggest that
+the krill oil supplementation may confer additional beneﬁts
+over ﬁsh oil. Further investigation of the therapeutic po-
+tential of krill oil for treating DED is warranted, with a
+larger, multicenter clinical trial over a longer treatment
+duration, to conﬁrm its long-term efﬁcacy and safety.
+Acknowledgments. The authors thank A/Prof Peter Keller,
+Department of Optometry and Vision Sciences, The University of
+Melbourne, for his contributions as the independent data manager
+who generated the participant randomization sequences; and
+A/Prof Graham Hepworth from the Statistical Consulting Centre,
+The University of Melbourne, for assistance with the data analyses.
+References
+1. Miljanovic B, Dana R, Sullivan DA, Schaumberg DA. Impact
+of dry eye syndrome on vision-related quality of life. Am J
+Ophthalmol. 2007;143:409-415.
+2. The deﬁnition and classiﬁcation of dry eye disease: report of the
+Deﬁnition and Classiﬁcation Subcommittee of the International
+Dry Eye WorkShop (2007). Ocul Surf. 2007;5(2):75-92.
+3. Pﬂugfelder SC, de Paiva CS, Li DQ, Stern ME. Epithelial-
+immune cell interaction in dry eye. Cornea. 2008;27(Suppl 1):
+S9-S11.
+4. Downie LE, Keller PR. A pragmatic approach to the man-
+agement of dry eye disease: evidence into practice. Optom Vis
+Sci. 2015;92(12):1189-1197.
+5. Marsh P, Pﬂugfelder SC. Topical nonpreserved methylpred-
+nisolone therapy for keratoconjunctivitis sicca in Sjogren
+syndrome. Ophthalmology. 1999;106:811-816.
+6. Matsuda S, Koyasu S. Mechanisms of action of cyclosporine.
+Immunopharmacology. 2000;47(2-3):119-125.
+7. Sacchetti M, Mantelli F, Lambiase A, et al. Systematic review
+of randomised clinical trials on topical ciclosporin A for the
+treatment of dry eye disease. Br J Ophthalmol. 2014;98(8):
+1016-1022.
+8. James MJ, Gibson RA, Cleland LG. Dietary polyunsaturated
+fatty acids and inﬂammatory mediator production. Am J Clin
+Nutr. 2000;71:343-348.
+9. Calder PC. Omega-3 polyunsaturated fatty acids and inﬂam-
+mation:
+from
+molecular
+biology
+to
+the
+clinic.
+Lipids.
+2003;383:343-352.
+10. Simopoulos AP. The importance of the ratio of omega-6/
+omega-3
+essential
+fatty
+acids.
+Biomed
+Pharmacother.
+2002;56(8):365-379.
+11. Miljanovic B, Trivedi KA, Dana MR, et al. Relation between
+dietary n-3 and n-6 fatty acids and clinically diagnosed dry eye
+syndrome in women. Am J Nutr. 2005;82:887-893.
+12. Zhu W, Wu Y, Li G, et al. Efﬁcacy of polyunsaturated fatty
+acids for dry eye syndrome: a meta-analysis of randomized
+controlled trials. Nutr Rev. 2014;72(10):662-671.
+13. Wojtowicz JC, Butovich I, Uchiyama E, et al. Pilot, pro-
+spective,
+randomized,
+double-masked,
+placebo-controlled
+Ophthalmology
+Volume 124, Number 1, January 2017
+50
+
+clinical trial of an omega-3 supplement for dry eye. Cornea.
+2011;30(3):308-314.
+14. Bhargava R, Kumar P, Kumar M, et al. A randomized
+controlled trial of omega-3 fatty acids in dry eye syndrome. Int
+J Ophthalmol. 2013;6(6):811-816.
+15. Oleñik A, Jiménez-Alfaro I, Alejandre-Alba N, Mahillo-
+Fernández I. A randomized, double-masked study to evaluate
+the effect of omega-3 fatty acids supplementation in meibo-
+mian gland dysfunction. Clin Interv Aging. 2013;8:1133-1138.
+16. Kangari H, Kangari M, Eftekhari S, et al. Short-term con-
+sumption of oral omega-3 and dry eye syndrome. Ophthal-
+mology. 2013;120(11):2191-2196.
+17. Di Marzo V, Griinari M, Carta G, et al. Dietary krill oil
+increases
+docosahexaenoic
+acid
+and
+reduces
+2-arachidonoylglycerol but not N-acylethanolamine levels in
+the brain of obese Zucker rats. Int Dairy J. 2010;20(4):231-235.
+18. Bustos R, Romo L, Yáñez K, et al. Oxidative stability of
+carotenoid pigments and polyunsaturated fatty acids in
+microparticulate diets containing krill oil for nutrition of ma-
+rine ﬁsh larvae. J Food Eng. 2003;56(2e3):289-293.
+19. Lorenz R, Weber PC, Szimnau P, et al. Supplementation with
+n-3 fatty acids from ﬁsh oil in chronic inﬂammatory bowel
+diseaseea
+randomized,
+placebo-controlled,
+double-blind
+cross-over trial. J Intern Med Suppl. 1989;731:225-232.
+20. Age-Related
+Eye
+Disease
+Study
+Research
+Group.
+A randomized, placebo-controlled, clinical trial of high-dose
+supplementation with vitamins C and E and beta carotene
+for age-related cataract and vision loss: AREDS report no. 9.
+Arch Ophthalmol. 2001;119(10):1439-1452.
+21. Schiffman RM, Christianson MD, Jacobsen G, et al. Reli-
+ability and validity of the Ocular Surface Disease Index. Arch
+Ophthalmol. 2000;118(5):615-621.
+22. Downie LE, Vingrys AJ. Accuracy of laboratory assays in
+ophthalmic practice. JAMA Ophthalmol. 2015;133(12):1480.
+23. Jackson D, Zeng W, Wong C, et al. Tear interferon-gamma as
+a biomarker for evaporative dry eye disease. Invest Oph-
+thalmol Vis Sci. 2016;57(11):4824-4830.
+24. Downie LE. Automated tear ﬁlm surface quality breakup time
+as a novel clinical marker for tear hyperosmolarity in dry eye
+disease. Invest Ophthalmol Vis Sci. 2015;56(12):7260-7268.
+25. Efron N. Grading scales for contact lens complications.
+Ophthalmic Physiol Opt. 1998;18(2):182-186.
+26. Bron AJ, Evans VE, Smith JA. Grading of corneal and
+conjunctival staining in the context of other dry eye tests.
+Cornea. 2003;22(7):640-650.
+27. Lemp MA, Bron AJ, Baudouin C, et al. Tear osmolarity in the
+diagnosis and management of dry eye disease. Am J Oph-
+thalmol. 2011;151(5):792-798.e1.
+28. Epitropoulos AT, Donnenfeld ED, Shah ZA, et al. Effect of
+oral re-esteriﬁed omega-3 nutritional supplementation on dry
+eyes. Cornea. 2016;35(9):1185-1191.
+29. Larmo PS, Järvinen RL, Setälä NL, et al. Oral sea buckthorn
+oil attenuates tear ﬁlm osmolarity and symptoms in individuals
+with dry eye. J Nutr. 2010;140:1462-1468.
+30. Luo L, Li D-Q, Pﬂugfelder SC. Hyperosmolarity-induced
+apoptosis in human corneal epithelial cells is mediated by cy-
+tochrome c and MAPK pathways. Cornea. 2007;26(4):452-460.
+31. Gilbard JP, Rossi SR, Gray KL, et al. Tear ﬁlm osmolarity and
+ocular surface disease in two rabbit models for keratoconjunc-
+tivitis sicca. Invest Ophthalmol Vis Sci. 1988;29(3):374-378.
+32. Yeh S. Apoptosis of ocular surface cells in experimentally
+induced dry eye. Invest Ophthalmol Vis Sci. 2003;44(1):124-129.
+33. Tomlinson A, Khanal S, Ramaesh K, et al. Tear ﬁlm osmo-
+larity: determination of a referent for dry eye diagnosis. Invest
+Ophthalmol Vis Sci. 2006;47(10):4309-4315.
+34. Foulks GN, Pﬂugfelder SC. New testing options for diag-
+nosing and grading dry eye disease. Am J Ophthalmol.
+2014;157(6):1122-1129.
+35. Sullivan BD, Crews LA, Sonmez B, et al. Clinical utility of
+objective tests for dry eye disease: variability over time and
+implications for clinical trials and disease management.
+Cornea. 2012;31(9):1000-1008.
+36. Miller KL, Walt JG, Mink DR, et al. Minimal clinically
+important difference for the ocular surface disease index. Arch
+Ophthalmol. 2010;128(1):94-101.
+37. Downie LE, Keller PR. A pragmatic approach to dry eye
+diagnosis: evidence into practice. Optom Vis Sci. 2015;92(12):
+1189-1197.
+38. Johnson ME, Murphy PJ. The effect of instilled ﬂuorescein
+solution volume on the values and repeatability of TBUT
+measurements. Cornea. 2005;24(7):811-817.
+39. Baudouin C, Aragona P, Messmer EM, et al. Role of hyper-
+osmolarity in the pathogenesis and management of dry eye
+disease: proceedings of the OCEAN group meeting. Ocul Surf.
+2013;11(4):246-258.
+40. Macsai MS. The role of omega-3 dietary supplementation in
+blepharitis and meibomian gland dysfunction (an AOS thesis).
+Trans Am Ophthalmol Soc. 2008;106:336-356.
+41. Kawakita T, Kawabata F, Tsuji T, et al. Effects of dietary
+supplementation with ﬁsh oil on dry eye syndrome sub-
+jects: randomized controlled trial. Biomed Res. 2013;34:
+215-220.
+42. Schargus M, Wolf F, Tony HP, et al. Correlation between tear
+ﬁlm osmolarity, dry eye disease, and rheumatoid arthritis.
+Cornea. 2014;33(12):1257-1261.
+43. Strong B, Farley W, Stern ME, Pﬂugfelder SC. Topical
+cyclosporine inhibits conjunctival epithelial apoptosis in
+experimental
+murine
+keratoconjunctivitis
+sicca.
+Cornea.
+2005;24(1):80-85.
+44. Sullivan BD, Cermak JM, Sullivan RM, et al. Correlations
+between nutrient intake and the polar lipid proﬁles of meibo-
+mian gland secretions in women with Sjogren’s syndrome. Adv
+Exp Med Biol. 2002;506(Pt A):441-447.
+45. Maldonado-Codina C, Morgan PB, Schnider CM, Efron N.
+Short-term physiologic response in neophyte subjects ﬁtted
+with hydrogel and silicone hydrogel contact lenses. Optom Vis
+Sci. 2004;81(12):911-921.
+46. Creuzot C, Passemard M, Viau S, et al. Amélioration de la
+symptomatologie chez des patients atteints de sécheresse
+oculaire et traités oralement par des acides gras polyinsaturés
+[Improvement of dry eye symptoms with polyunsaturated fatty
+acids]. J Fr Ophtalmol. 2006;29(8):868-873.
+47. Pﬂugfelder SC, Maskin SL, Anderson B, et al. A randomized,
+double-masked, placebo-controlled, multicenter comparison
+of loteprednol etabonate ophthalmic suspension, 0.5%, and
+placebo for treatment of keratoconjunctivitis sicca in patients
+with delayed tear clearance. Am J Ophthalmol. 2004;138(3):
+444-457.
+48. Sakai Y, Hashimoto M, Enkhjargal B, et al. Effects of
+Krill-derived
+phospholipid-enriched
+n-3
+fatty
+acids
+on
+Ca(2þ) regulation system in cerebral arteries from ovari-
+ectomized rats. Life Sci. 2014;100(1):18-24.
+49. Colussi G, Catena C, Dialti V, et al. The vascular response to
+vasodilators is related to the membrane content of poly-
+unsaturated fatty acids in hypertensive patients. J Hypertens.
+2015;33(5):993-1000.
+50. Qin S, Wen J, Bai XC, et al. Endogenous n-3 polyunsaturated
+fatty acids protect against imiquimod-induced psoriasis-like
+inﬂammation via the IL-17/IL-23 axis. Mol Med Rep.
+2014;9(6):2097-2104.
+Deinema et al
+ Krill Oil and Fish Oil for Dry Eye Disease
+51
+
+51. Lennikov A, Kitaichi N, Fukase R, et al. Amelioration of
+ultraviolet-induced photokeratitis in mice treated with astax-
+anthin eye drops. Mol Vis. 2012;18:455-464.
+52. Graf BA, Duchateau GS, Patterson AB, et al. Age dependent
+incorporation of 14 C-DHA into rat brain and body tissues
+after dosing various 14 C-DHA-esters. Prostaglandins Leukot
+Essent Fatty Acids. 2010;83(2):89-96.
+53. Ramprasath VR, Eyal I, Zchut S, Jones PJ. Enhanced increase
+of omega-3 index in healthy individuals with response to
+4-week n-3 fatty acid supplementation from krill oil versus ﬁsh
+oil. Lipids Health Dis. 2013;28:178-189.
+54. Chen Z, O’Shea JJ. Th17 cells: a new fate for differentiating
+helper T cells. Immunol Res. 2008;41(2):87-102.
+55. De Paiva CS, Chotikavanich S, Pangelinan SB, et al. IL-17
+disrupts corneal barrier following desiccating stress. Mucosal
+Immunol. 2009;2(3):243-253.
+56. Pﬂugfelder SC, Corrales RM, de Paiva CS. T helper cytokines
+in dry eye disease. Exp Eye Res. 2013;117:118-125.
+57. Pinazo-Durán MD, Galbis-Estrada C, Pons-Vázquez S, et al.
+Effects of a nutraceutical formulation based on the combination of
+antioxidants and omega-3 essential fatty acids in the expression of
+inﬂammation and immune response mediators in tears from pa-
+tients with dry eye disorders. Clin Interv Aging. 2013;8:139-148.
+58. Schulz KF, Altman DG, Moher D, CONSORT Group.
+CONSORT 2010 Statement: updated guidelines for reporting
+parallel group randomised trials. BMJ. 2010;340:c332.
+Footnotes and Financial Disclosures
+Originally received: July 26, 2016.
+Final revision: September 19, 2016.
+Accepted: September 19, 2016.
+Available online: November 3, 2016.
+Manuscript no. 2016-1556.
+1 Department of Optometry and Vision Sciences, The University of Mel-
+bourne, Parkville, Australia.
+2 Department of Microbiology and Immunology, Peter Doherty Institute of
+Infection and Immunity, The University of Melbourne, Parkville, Australia.
+Financial Disclosure(s):
+L.E.D.: Grant  Rebecca L. Cooper Medical Foundation, Sydney, New
+South Wales, Australia (2015) and a University of Melbourne Early Career
+Researcher grant, Parkville, Victoria, Australia (2015). The sponsors had no
+role in the design or conduct of this research.
+Author Contributions:
+Conception and design: Vingrys, Downie
+Data collection: Deinema, Wong, Jackson, Downie
+Analysis and interpretation: Deinema, Vingrys, Jackson, Chinnery, Downie
+Obtained funding: Downie
+Overall responsibility: Deinema, Vingrys, Wong, Jackson, Chinnery,
+Downie
+Abbreviations and Acronyms:
+BCVA ¼ best-corrected visual acuity; DED ¼ dry eye disease;
+DHA
+¼
+docosahexaenoic
+acid;
+EFA
+¼
+essential
+fatty
+acid;
+EPA ¼ eicosapentaenoic acid; IFN ¼ interferon; IL ¼ interleukin;
+IOP ¼ intraocular pressure; LG ¼ lissamine green; MG ¼ meibomian
+gland; NaFl ¼ sodium ﬂuorescein; NITBUT ¼ noninvasive tear breakup
+time; OSDI ¼ Ocular Surface Disease Index; TBUT ¼ tear breakup time;
+TMH ¼ tear meniscus height.
+Correspondence:
+Laura E. Downie, PhD, BOptom, Department of Optometry and Vision
+Sciences, University of Melbourne, Parkville, VIC 3010, Australia. E-mail:
+ldownie@unimelb.edu.au.
+Ophthalmology
+Volume 124, Number 1, January 2017
+52

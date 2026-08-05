@@ -16,7 +16,7 @@ export type Studie = {
   ar: string;
   forfattere: string;
   flereForfattere: boolean;
-  kategori: string;
+  kategori: string[]; // a study can belong to more than one of AKBM's 12 benefit categories
   url: string;
   doiUrl: string | null;
   summary?: Summary | null;
@@ -67,7 +67,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
 
   const kategorier = useMemo(() => {
     const m = new Map<string, number>();
-    studier.forEach((s) => m.set(s.kategori, (m.get(s.kategori) ?? 0) + 1));
+    studier.forEach((s) => s.kategori.forEach((k) => m.set(k, (m.get(k) ?? 0) + 1)));
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [studier]);
 
@@ -79,7 +79,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         s.tittel.toLowerCase().includes(q) ||
         s.tidsskrift.toLowerCase().includes(q) ||
         s.forfattere.toLowerCase().includes(q);
-      const treffKat = !valgtKategori || s.kategori === valgtKategori;
+      const treffKat = !valgtKategori || s.kategori.includes(valgtKategori);
       return treffSok && treffKat;
     });
     return list.sort((a, b) => {
@@ -232,9 +232,11 @@ function StudyCard({
   return (
     <li className="group rounded-[4px] border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
-          {s.kategori}
-        </span>
+        {s.kategori.map((k) => (
+          <span key={k} className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
+            {k}
+          </span>
+        ))}
         {q && (
           <span className={`rounded-[4px] px-2.5 py-0.5 text-xs font-semibold ${qColor}`}>
             Quality {q.score}% · {q.label}

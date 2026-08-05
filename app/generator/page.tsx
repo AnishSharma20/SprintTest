@@ -306,7 +306,7 @@ export default function ContentGenerator() {
 
   const studieKategorier = useMemo(() => {
     const m = new Map<string, number>();
-    studier.forEach((s) => m.set(s.kategori, (m.get(s.kategori) ?? 0) + 1));
+    studier.forEach((s) => s.kategori.forEach((k) => m.set(k, (m.get(k) ?? 0) + 1)));
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [studier]);
 
@@ -314,7 +314,7 @@ export default function ContentGenerator() {
     const q = studieSok.toLowerCase().trim();
     return studier.filter(
       (s) =>
-        (!studieKat || s.kategori === studieKat) &&
+        (!studieKat || s.kategori.includes(studieKat)) &&
         (!q ||
           s.tittel.toLowerCase().includes(q) ||
           s.forfattere.toLowerCase().includes(q) ||

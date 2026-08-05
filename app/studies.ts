@@ -24,31 +24,109 @@ type Esummary = {
   articleids?: { idtype: string; value: string }[];
 };
 
-// Categorise a study based on keywords in its title, mapping to PPTX benefit categories.
-export function kategori(tittel: string): string {
+// The 10 benefit categories, EXACTLY matching AKBM's product benefit grid (the PPTX "Wellness/Immune
+// Support", "Heart Support"... cards). Do not add another category — anything that doesn't fit one
+// of these belongs in the closest one (Wellness & Immune Support is the broadest/most general), not
+// a new bucket. Foundational/mechanism topics from AKBM's internal Science Archive (absorption,
+// omega-3 index) are folded into Wellness & Immune Support, since that card's own bullet list
+// already covers omega-3 index, omega-6/omega-3 balance and cell membrane fluidity.
+export const CATEGORIES = [
+  "Wellness & Immune Support",
+  "Heart Support",
+  "Liver Support",
+  "Joint Support",
+  "Brain & Dry Eye Support",
+  "Sports Performance Support",
+  "Skin Support",
+  "PMS Support",
+  "Healthy Aging Support",
+  "Weight Loss Support",
+] as const;
+
+// Hard-coded from AKBM's Science Archive PPTX, NOT inferred from title keywords — the archive is
+// ground truth for which benefit area(s) a given trial actually supports, verified PMID-by-PMID
+// against the archive's reference list. A study legitimately belongs to MULTIPLE categories (e.g.
+// Drobnic 2021 is Wellness/Immune + Sports) — this mirrors how AKBM's own science team tags it, so
+// filtering is any-match, not exclusive. Studies whose only archive placement was "Bioavailability &
+// Absorption" or "Omega-3 Index & Balance" (both retired, not one of the 10 real benefit cards) fold
+// into Wellness & Immune Support instead of being dropped from every filter.
+//
+// Two PMIDs are NOT in the archive at all (21862301 is a fish-oil-form comparison study the archive
+// never covers; 31937352 is the KARAOKE trial PROTOCOL paper, and the archive only lists completed
+// trials) — both are assigned by direct content judgment instead, noted below.
+const ARCHIVE_CATEGORIES: Record<string, string[]> = {
+  "15656713": ["Heart Support"], // Bunea 2004
+  "21042875": ["Wellness & Immune Support"], // Ulven 2010 (was: absorption only)
+  "21276269": ["Heart Support"], // Banni 2011
+  "21862301": ["Heart Support"], // not in the archive; triglyceride/statin/dyslipidemia trial
+  "24098072": ["Brain & Dry Eye Support"], // Konagai 2013
+  "24304605": ["Wellness & Immune Support"], // Ramprasath 2013 (was: omega-3 index only)
+  "24461313": ["Heart Support"], // Berge K 2013 (omega-3 index tag dropped; heart retained)
+  "25884846": ["Wellness & Immune Support"], // Kohler 2015 (was: absorption only)
+  "26328782": ["Wellness & Immune Support"], // Yurko-Mauro 2015 (was: absorption only)
+  "26407095": ["Wellness & Immune Support", "Sports Performance Support"], // Da Boit 2015
+  "26504524": ["Heart Support"], // Lobraico 2015
+  "26537218": ["Wellness & Immune Support"], // Ramprasath 2015 (was: omega-3 index only)
+  "26557185": ["Sports Performance Support"], // Skarpanska 2015
+  "26666303": ["Heart Support"], // Berge R 2015
+  "27279841": ["Wellness & Immune Support", "Heart Support"], // Cicero 2016
+  "27701428": ["Joint Support"], // Suzuki 2016
+  "27817918": ["Wellness & Immune Support", "Brain & Dry Eye Support"], // Deinema 2016
+  "28371906": ["Heart Support"], // Ursoniu 2017 meta-analysis
+  "29222893": ["Wellness & Immune Support"], // Sung 2018 (was: absorption only)
+  "29372051": ["Heart Support"], // Rundblad 2018
+  "29854443": ["Sports Performance Support"], // Georges 2018
+  "31652561": ["Liver Support"], // Modinger 2019 (absorption tag dropped; liver retained)
+  "31937352": ["Joint Support"], // KARAOKE protocol (Laslett 2020); not in the archive
+  "33015116": ["Sports Performance Support"], // Storsve 2020 (absorption tag dropped; sports retained)
+  "34444996": ["Liver Support"], // Gart 2021
+  "34959789": ["Wellness & Immune Support", "Sports Performance Support"], // Drobnic 2021 (absorption/omega-3 index tags dropped)
+  "34989797": ["Heart Support"], // Mozaffarian 2022
+  "35504165": ["Healthy Aging Support"], // Alkhedhairi 2022 (omega-3 index tag dropped)
+  "35880828": ["Joint Support", "Healthy Aging Support"], // Stonehouse 2022 (omega-3 index tag dropped)
+  "38039646": ["Heart Support"], // Huang 2023 meta-analysis
+  "39169540": ["Skin Support"], // Handeland 2024
+  "39555189": ["Sports Performance Support"], // Katare 2024
+  "39974718": ["Wellness & Immune Support"], // Pham 2024 (was: absorption only)
+  "40671417": ["Weight Loss Support"], // Alblaji 2025
+  "41933837": ["Healthy Aging Support"], // Tamargo 2026
+  "42144109": ["Wellness & Immune Support"], // Loukil 2026 (was: absorption only)
+  "17353582": ["Wellness & Immune Support", "Joint Support"], // Deutsch 2007
+  "38776073": ["Joint Support"], // KARAOKE 2024 results (Laslett); not in the archive
+};
+
+// Fallback for a study not yet added to ARCHIVE_CATEGORIES (e.g. a brand new PDF AKBM sends before
+// anyone updates the table above). Best-effort keyword match against the SAME 10 categories — never
+// invents an 11th. Prefer adding the study to ARCHIVE_CATEGORIES over relying on this.
+function fallbackCategories(tittel: string): string[] {
   const t = tittel.toLowerCase();
-  if (/(heart|cardio|lipid|cholesterol|triglycerid|blood pressure|vascular)/.test(t)) return "Heart Support";
-  if (/(liver|hepatic|fatty liver|liver function)/.test(t)) return "Liver Support";
-  if (/(joint|arthritis|osteoarthritis|knee|inflamm.*joint|rheumat)/.test(t)) return "Joint Support";
-  if (/(brain|cognit|memory|neuro|mood|depress|mental|cognitive)/.test(t)) return "Brain & Dry Eye Support";
-  if (/(eye|vision|ocular|dry eye|visual)/.test(t)) return "Brain & Dry Eye Support";
-  if (/(muscle|strength|performance|athletic|sport|recovery|endurance)/.test(t)) return "Sports Performance Support";
-  if (/(weight|obes|metabol|glucose|diabet)/.test(t)) return "Weight Loss Support";
-  if (/(skin|derma|collagen|elasticity|hydration)/.test(t)) return "Skin Support";
-  if (/(pms|menstrual|premenstrual|hormonal|cycle)/.test(t)) return "PMS Support";
-  if (/(immune|immunity|infection|antibody|immun)/.test(t)) return "Wellness & Immune Support";
-  if (/(age|aging|senescence|longevity)/.test(t)) return "Healthy Aging Support";
-  if (/(gut|microbiom|digestion|microb|intestinal)/.test(t)) return "Weight Loss Support";
-  if (/(phospholipid|absorption|bioavail|mechanism)/.test(t)) return "Mechanism of Action";
-  if (/(emulsion|oxidation|extraction|encapsul|stability|chemistry)/.test(t)) return "Bioavailability & Absorption";
-  if (/(safety|dosage|tolerabil|adverse|side effect)/.test(t)) return "Safety & Dosage";
-  return "Other Science";
+  const hits: string[] = [];
+  if (/(heart|cardio|lipid|cholesterol|triglycerid|blood pressure|vascular|hypertriglyceridemia)/.test(t)) hits.push("Heart Support");
+  if (/(liver|hepatic|nafld|fatty liver)/.test(t)) hits.push("Liver Support");
+  if (/(joint|arthritis|osteoarthritis|knee|rheumat)/.test(t)) hits.push("Joint Support");
+  if (/(cognit|memory|neuro|mood|depress|brain)/.test(t)) hits.push("Brain & Dry Eye Support");
+  if (/(eye|vision|ocular|dry eye)/.test(t)) hits.push("Brain & Dry Eye Support");
+  if (/(muscle|strength|athlet|sport|recovery|endurance|exercise|resistance training)/.test(t)) hits.push("Sports Performance Support");
+  if (/(weight loss|obesity|fasting)/.test(t)) hits.push("Weight Loss Support");
+  if (/(skin|derma|elasticity|hydration|transepidermal)/.test(t)) hits.push("Skin Support");
+  if (/(pms|menstrual|premenstrual|dysmenorrhea)/.test(t)) hits.push("PMS Support");
+  if (/(immune|immunity|inflamm|omega-3 index|omega-6|bioavailab|absorption|phospholipid|choline uptake)/.test(t)) hits.push("Wellness & Immune Support");
+  if (/(aging|ageing|older adults|elderly|senescence)/.test(t)) hits.push("Healthy Aging Support");
+  return [...new Set(hits)];
+}
+
+// Categorise a study by PMID against AKBM's Science Archive, falling back to keyword matching only
+// for a study the archive table hasn't been updated with yet.
+export function kategorier(pmid: string, tittel: string): string[] {
+  const archived = ARCHIVE_CATEGORIES[pmid];
+  if (archived?.length) return archived;
+  return fallbackCategories(tittel);
 }
 
 function curatedToStudie(c: CuratedStudy): Studie {
   return {
     pmid: c.pmid, tittel: c.title, tidsskrift: c.journal, dato: c.year, ar: c.year,
-    forfattere: c.authors, flereForfattere: false, kategori: kategori(c.title),
+    forfattere: c.authors, flereForfattere: false, kategori: kategorier(c.pmid, c.title),
     url: `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`,
     doiUrl: c.doi ? `https://doi.org/${c.doi}` : null,
     summary: c.summary, verified: true, quality: c.quality, akerNote: c.akerNote,
@@ -92,7 +170,7 @@ export async function hentStudier(): Promise<Studie[]> {
         ar: (x.pubdate ?? "").slice(0, 4),
         forfattere: (x.authors ?? []).slice(0, 3).map((a) => a.name).join(", "),
         flereForfattere: (x.authors ?? []).length > 3,
-        kategori: kategori(x.title),
+        kategori: kategorier(id, x.title),
         url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
         doiUrl: doi ? `https://doi.org/${doi}` : null,
         summary: kurert ? kurert.summary : ai ?? null,

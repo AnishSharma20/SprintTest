@@ -782,7 +782,7 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
     n = len(items)
     if not n:
         return
-    icons = _consistent_icons(items)              # all-or-nothing, one source, distinct (no AI-look ring)
+    icons = _consistent_icons(items)              # all-or-nothing, one source (repeats allowed)
     d = _ICON_DISC
     ban_h = 0.55
     ptop = (_BODY_TOP + d / 2) if icons else _BODY_TOP

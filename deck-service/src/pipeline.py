@@ -119,7 +119,12 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions)
             errs = validate.validate_plan(candidate)
-        hard = [e for e in errs if "shorten it by at least" not in e]
+        # Same soft-error tags as generate()'s split below — validate_plan() always appends
+        # VARIETY:/PHOTOS: coverage nudges now, and this second, separate hard/soft split had
+        # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
+        # fine deck would get discarded here for a coverage nudge it was never asked to address.
+        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:")
+        hard = [e for e in errs if not any(s in e for s in soft)]
         if hard:
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
                   + "\n- ".join(hard), file=sys.stderr)

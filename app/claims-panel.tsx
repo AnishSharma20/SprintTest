@@ -12,8 +12,14 @@ import type { Studie } from "./wiki";
 import type { Claim, ClaimStatus, Category } from "./lib/claims-types";
 import type { StudyMeta } from "./lib/claims-db";
 import { decodeEntities } from "./lib/text";
+import studyFiguresRaw from "./study-figures.json";
 
 type Filter = "pending_review" | "approved" | "rejected" | "all";
+
+// Charts/graphs/tables extracted from the study's own PDF (deck-service/scripts/extract_figures.py),
+// keyed by PMID. Only studies AKBM supplied as a PDF have any entries here.
+type StudyFigure = { file: string; page: number; width: number; height: number };
+const STUDY_FIGURES = studyFiguresRaw as Record<string, StudyFigure[]>;
 
 const STATUS_STYLE: Record<ClaimStatus, string> = {
   approved: "bg-[#DFF3E4] text-[#1B7A3D]",
@@ -157,6 +163,8 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
 
   return (
     <div>
+      <StudyFigures pmid={s.pmid} />
+
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
           {(["pending_review", "approved", "rejected", "all"] as Filter[]).map((f) => (
@@ -210,6 +218,90 @@ function ClaimsBody({ s, reviewer }: { s: Studie; reviewer: string }) {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+// ── Charts & tables from the study PDF (+ lightbox with a download link) ───────
+
+function StudyFigures({ pmid }: { pmid: string }) {
+  const [open, setOpen] = useState<StudyFigure | null>(null);
+  const figures = STUDY_FIGURES[pmid] ?? [];
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  if (figures.length === 0) return null;
+
+  return (
+    <div className="mb-4">
+      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+        Charts &amp; tables from this study
+      </div>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+        {figures.map((f) => (
+          <button
+            key={f.file}
+            onClick={() => setOpen(f)}
+            className="group overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white p-1 text-left transition-colors hover:border-[#3FD0C9]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/study-figures/${pmid}/${f.file}`}
+              alt={`Figure from page ${f.page}`}
+              className="aspect-square w-full rounded-[2px] object-contain"
+              loading="lazy"
+            />
+            <span className="mt-1 block text-[10px] text-zinc-400 group-hover:text-[#0A7A8A]">
+              Page {f.page}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-[#031B34]/80 p-4 backdrop-blur-sm"
+            onClick={() => setOpen(null)}
+          >
+            <div className="max-h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <span className="text-xs font-semibold text-white/80">Page {open.page}</span>
+                <div className="flex gap-2">
+                  <a
+                    href={`/study-figures/${pmid}/${open.file}`}
+                    download={`study-${pmid}-p${open.page}.${open.file.split(".").pop()}`}
+                    className="rounded-[4px] bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472]"
+                  >
+                    ⬇ Download {open.file.split(".").pop()?.toUpperCase()}
+                  </a>
+                  <button
+                    onClick={() => setOpen(null)}
+                    aria-label="Close"
+                    className="rounded-[4px] bg-white/10 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/20"
+                  >
+                    ✕ Close
+                  </button>
+                </div>
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/study-figures/${pmid}/${open.file}`}
+                alt={`Figure from page ${open.page}`}
+                className="max-h-[80vh] max-w-full rounded-[4px] bg-white object-contain"
+              />
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

@@ -36,6 +36,21 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   uses `template.pptx` until template2 is adopted (re-run `inspect_template` + `build_schema` on it).
 - **Tab 1 UX** — sort by scientific quality (+ hover definition), prominent "Read summary" button, and inline
   **edit & save** of a summary (localStorage — see weakness below); `app/wiki.tsx`, `app/summary-overrides.ts`.
+- **Charts & tables from the study PDF — NEW 2026-08-06.** The "Evidence from this study" modal
+  (`app/claims-panel.tsx`) now shows the real charts/graphs/tables from that study's own PDF, with a
+  lightbox + PNG/JPG download. `deck-service/scripts/extract_figures.py` pulls embedded raster images
+  out of AKBM's supplied PDFs (that's how figures/tables are placed on a typeset page), filtering out
+  logos/icons (min size), page-1 journal mastheads, full-page scans (image covers the whole page — no
+  text layer, so nothing to extract discretely), sliced-up chart fragments (extreme aspect ratio, e.g.
+  an axis label rasterised as its own object) and repeated running decorations (same image hash on
+  several pages). Output: `deck-service/assets/figures/<pmid>/*.{png,jpg}` (source of truth, mirrors
+  the `assets/fulltext` pattern) + mirrored into `public/study-figures/<pmid>/` (what Next actually
+  serves) with a manifest at `app/study-figures.json`. 30 of the 38 studies AKBM supplied a PDF for
+  have at least one figure (70 total); 8 have none (their data is typeset as native text, not raster).
+  Re-run when AKBM sends new PDFs: `python scripts/extract_figures.py <folder-of-pdfs> --write` from
+  `deck-service/`. 5 extra PDFs AKBM included (Bjorndal 2017, Ding 2024, Maki et al 2009, Nilsen 2022,
+  Yang 2022) aren't in `fulltext-studies.json` yet, so figures for them weren't extracted — they are
+  candidate NEW studies, not a bug; add them via `import_fulltext_pdfs.py` first if wanted.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

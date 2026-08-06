@@ -75,3 +75,15 @@ def resolve_asset(rel_path: str) -> Path:
 
 def selectable_photos() -> list[dict]:
     return [a for a in manifest()["assets"] if a.get("selectable") and a["kind"] == "photo"]
+
+
+@functools.lru_cache(maxsize=None)
+def figures_index() -> dict:
+    """pmid -> [{file, page, width, height, kind}], written by scripts/extract_figures.py. Empty dict
+    if it hasn't been generated yet (a fresh checkout, or before any PDFs were supplied)."""
+    p = ASSETS_DIR / "figures" / "index.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def figure_path(pmid: str, filename: str) -> Path:
+    return ASSETS_DIR / "figures" / pmid / filename

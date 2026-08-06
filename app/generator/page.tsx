@@ -393,8 +393,11 @@ export default function ContentGenerator() {
 
   // Build the source material shared by every asset: uploaded files +
   // the picked scientific studies synthesized into one text file + (optionally) the
-  // approved-claims block. Returns the claim ids fed in so each asset can record them.
-  function byggKilder(): { files: File[]; claimIds: string[] } {
+  // approved-claims block. Returns the claim ids fed in so each asset can record them, plus
+  // {pmid, cite} for each picked study — the deck generator uses this to append an appendix of
+  // those studies' real charts/tables (extract_figures.py), so the citation must match what's
+  // written into the source file above (same `cite` string, not re-derived on the Python side).
+  function byggKilder(): { files: File[]; claimIds: string[]; studyMeta: { pmid: string; cite: string }[] } {
     const kilder = [...filer];
     let claimIds: string[] = [];
     const claimsKilde = buildClaimsSourceFile(inkluderteClaims);
@@ -403,7 +406,12 @@ export default function ContentGenerator() {
       claimIds = claimsKilde.claimIds;
     }
     const valgte = studier.filter((s) => valgteStudier.has(s.pmid));
+    let studyMeta: { pmid: string; cite: string }[] = [];
     if (valgte.length) {
+      studyMeta = valgte.map((s) => ({
+        pmid: s.pmid,
+        cite: `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`,
+      }));
       const tekst = valgte
         .map((s) => {
           const sum = overrides[s.pmid]?.summary ?? s.summary;
@@ -422,13 +430,18 @@ export default function ContentGenerator() {
           "Selected-scientific-studies.txt", { type: "text/plain" })
       );
     }
-    return { files: kilder, claimIds };
+    return { files: kilder, claimIds, studyMeta };
   }
 
   // Run one content type end-to-end: start a job, poll it, then handle its
   // result (deck → download, blog → editable panel). Errors are recorded on
   // that asset's row so the other assets keep running.
-  async function kjorEn(type: ContentType, kilder: File[], claimIds: string[]) {
+  async function kjorEn(
+    type: ContentType,
+    kilder: File[],
+    claimIds: string[],
+    studyMeta: { pmid: string; cite: string }[]
+  ) {
     try {
       const form = new FormData();
       kilder.forEach((f) => form.append("filer", f));
@@ -437,6 +450,10 @@ export default function ContentGenerator() {
       form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
+      // The appendix of source charts/tables is a PPTX-only concept.
+      if (type === "deck" && studyMeta.length) {
+        form.append("study_meta", JSON.stringify(studyMeta));
+      }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
@@ -509,8 +526,8 @@ export default function ContentGenerator() {
     setKjoringer(typer.map((type) => ({ type, progress: 0, step: "Starting…", status: "running" })));
 
     // Each asset reads the same sources independently, so run them in parallel.
-    const { files, claimIds } = byggKilder();
-    await Promise.all(typer.map((type) => kjorEn(type, files, claimIds)));
+    const { files, claimIds, studyMeta } = byggKilder();
+    await Promise.all(typer.map((type) => kjorEn(type, files, claimIds, studyMeta)));
     setLaster(false);
   }
 

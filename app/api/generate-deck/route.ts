@@ -52,6 +52,7 @@ export async function POST(req: Request) {
       "innholdstype",
       "sprak",
       "sider",
+      "study_meta",
     ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);

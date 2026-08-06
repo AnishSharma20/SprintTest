@@ -94,7 +94,7 @@ def _wording(plan: dict) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
-def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions=""):
+def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
@@ -130,13 +130,14 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                   + "\n- ".join(hard), file=sys.stderr)
             break
         candidate = _strip_dashes_plan(candidate)
-        plan, pptx = candidate, renderer.render_deck(candidate)
+        plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta)
     return pptx, plan
 
 
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              length: str = "standard", tone: str = "balansert", quality: str = "fast",
-             instructions: str = "", on_progress=None) -> dict:
+             instructions: str = "", on_progress=None,
+             study_meta: list[dict] | None = None) -> dict:
     def _p(pct, step):
         if on_progress:
             try:
@@ -169,12 +170,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     _p(70, "Rendering slides on the Superba template")
     plan = _ensure_agenda(plan)      # guarantee a contents/agenda slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
-    pptx = renderer.render_deck(plan)
+    pptx = renderer.render_deck(plan, study_meta=study_meta)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
     if quality == "polished" or os.environ.get("DECK_QA_GATE"):
-        pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions)
+        pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
+                                  study_meta=study_meta)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

@@ -2176,7 +2176,46 @@ def _add_page_number(slide, n: int) -> None:
     r.font.color.rgb = color
 
 
-def render_deck(plan: dict) -> bytes:
+_APPENDIX_MAX_PER_STUDY = 4   # a rich paper can have a dozen+ figures/tables; cap so the appendix
+_APPENDIX_MAX_TOTAL = 20      # stays a reference section, not a second deck's worth of slides
+
+
+def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) -> None:
+    """Splice one slide per extracted chart/table from the studies actually cited in this deck -
+    the reviewer's own source evidence, spliced in verbatim (not planner-authored, so there is no
+    hallucination risk on a scientific figure). No-op if none of the cited studies have any
+    extracted figures/tables (assets/figures/, built by scripts/extract_figures.py)."""
+    if not study_meta:
+        return
+    index = config.figures_index()
+    if not index:
+        return
+    entries = []  # (pmid, cite, entry)
+    for m in study_meta:
+        pmid = str(m.get("pmid") or "").strip()
+        if not pmid:
+            continue
+        cite = (m.get("cite") or f"PMID {pmid}").strip()
+        for e in index.get(pmid, [])[:_APPENDIX_MAX_PER_STUDY]:
+            entries.append((pmid, cite, e))
+    entries = entries[:_APPENDIX_MAX_TOTAL]
+    if not entries:
+        return
+
+    _synth_slide(prs, master_index, title="Appendix",
+                 eyebrow="Source charts and tables from the cited studies")
+    for pmid, cite, e in entries:
+        path = config.figure_path(pmid, e["file"])
+        if not path.exists():
+            continue
+        kind_label = "Table" if e.get("kind") == "table" else "Figure"
+        slide = _synth_slide(prs, master_index, title="Appendix",
+                              eyebrow=_fit(f"{cite} — {kind_label}, page {e['page']}", 100))
+        box = (Inches(_MARGIN), Inches(_BODY_TOP), Inches(_CONTENT_W), Inches(_BODY_H))
+        _place_icon(slide, box, path)  # letterbox-fit — a chart must never be crop-to-filled
+
+
+def render_deck(plan: dict, study_meta: list[dict] | None = None) -> bytes:
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
     catalog = config.catalog()
@@ -2266,6 +2305,12 @@ def render_deck(plan: dict) -> bytes:
     benefits = ids[-1]
     sldIdLst.remove(benefits)
     sldIdLst.insert(max(1, len(sldIdLst) - 1), benefits)
+
+    # The reviewer's own source charts/tables, appended after everything else (added here, so it
+    # naturally lands after the just-reordered benefits slide, and picks up page numbers below like
+    # any other slide). Dark master, like every other synthetic content slide — the white margin
+    # baked into each extracted image already gives it a clean card-like frame against that background.
+    _add_appendix_slides(prs, dark, study_meta)
 
     # Page numbers in a fixed position on every slide (cover excluded), stamped in final order.
     for i, slide in enumerate(prs.slides):

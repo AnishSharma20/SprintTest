@@ -78,6 +78,22 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   2024** (krill oil skin-barrier study, Jpn Pharmacol Ther), has NO PMID at all — that journal isn't
   indexed in PubMed — so it doesn't fit the site's PMID-keyed model (claims, full text, figures, the
   PubMed link) and was left out pending a decision on how to represent a non-PubMed source.
+- **Deck appendix of source charts/tables — NEW 2026-08-06.** When a generated PPTX deck draws on
+  picked studies (Tab 2 study picker) that have extracted figures/tables (see above), the deck now
+  gets an **Appendix** section: a divider slide, then one slide per figure/table (their ORIGINAL
+  extracted image, letterboxed onto the dark master, citation + page/kind as the eyebrow), capped at
+  4 per study / 20 total so a well-cited deck doesn't grow a second deck's worth of slides. Fully
+  deterministic — the planner/LLM never sees or authors these slides, so there's no hallucination
+  risk on a scientific figure. Wiring: `app/generator/page.tsx` `byggKilder()` now also returns
+  `studyMeta` ({pmid, cite} per picked study, same `cite` string already written into the synthesized
+  source file) → sent as a `study_meta` JSON form field ONLY for `type === "deck"` → forwarded by
+  `app/api/generate-deck/route.ts` → `deck-service/main.py` `create_job()`/`_run_job()` (only attached
+  to the deck generated from the "Selected-scientific-studies.txt" file, never a raw uploaded doc) →
+  `pipeline.generate(..., study_meta=...)` → `renderer.render_deck(plan, study_meta=...)` →
+  `_add_appendix_slides()`, which reads `config.figures_index()` (`assets/figures/index.json`)
+  directly — no planner/schema involvement at all. Verified with a real generation run (rendered to
+  PNG via PowerPoint COM): divider + figure + table slides all correct, citation/page/kind eyebrow
+  text intact, image letterboxed and centred in the body zone.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

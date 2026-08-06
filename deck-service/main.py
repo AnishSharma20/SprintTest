@@ -405,13 +405,16 @@ def job_status(job_id: str):
 
 @app.get("/jobs/{job_id}/result")
 def job_result(job_id: str):
+    """Repeatable, not one-shot: the frontend keeps this URL around as a plain clickable link (so a
+    non-technical user can re-open their deck without hunting through a downloads folder), so it must
+    survive more than one GET. The bytes still go away eventually via _prune_jobs()'s JOB_TTL_SECONDS
+    (1h), same as any other job."""
     j = JOBS.get(job_id)
     if not j:
         return JSONResponse({"feil": "Unknown or expired job."}, status_code=404)
     if j.get("status") != "done":
         return JSONResponse({"feil": f"Job is {j.get('status')}, not ready."}, status_code=409)
     data, media, filename = j["result"], j["media_type"], j["filename"]
-    JOBS.pop(job_id, None)  # one-shot download frees the in-memory bytes
     return Response(content=data, media_type=media,
                     headers={"Content-Disposition": f'attachment; filename="{filename}"'})
 

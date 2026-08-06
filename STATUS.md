@@ -101,6 +101,16 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   directly — no planner/schema involvement at all. Verified with a real generation run (rendered to
   PNG via PowerPoint COM): divider + figure + table slides all correct, citation/page/kind eyebrow
   text intact, image letterboxed and centred in the body zone.
+- **Persistent "open your deck" link — NEW 2026-08-06.** Non-technical users were told to "check your
+  downloads folder" after generating a deck/blog/whitepaper, with nothing left on-screen if they lost
+  track of it. Two changes: (1) `deck-service/main.py` `job_result()` no longer pops the job on the
+  first GET (`JOBS.pop` removed) — it's a plain repeatable link now, expiring only via the existing
+  `_prune_jobs()` 1h TTL, not one-shot; (2) `app/generator/page.tsx` keeps the browser's automatic
+  download AND now also renders a real, persistent `<a href="/api/generate-deck?id=...&download=1" download>`
+  link in the per-asset status row ("📥 Open PowerPoint deck") that stays clickable in the page — so
+  the file can be re-opened without hunting through a downloads folder. Verified end-to-end with the
+  actual FastAPI service running locally: link renders with the right filename, and the same URL
+  fetches successfully twice in a row (byte-identical), confirming it survived past the first read.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

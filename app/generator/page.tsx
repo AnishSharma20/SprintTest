@@ -261,6 +261,10 @@ type Kjoring = {
   step: string;
   status: "running" | "done" | "error";
   error?: string;
+  // A stable link to the finished file, so it can be re-opened from the page itself rather than
+  // making the user hunt through their downloads folder (the browser also auto-saves a copy).
+  downloadUrl?: string;
+  downloadName?: string;
 };
 
 export default function ContentGenerator() {
@@ -481,16 +485,25 @@ export default function ContentGenerator() {
       if (TEXT_TYPES.has(type)) {
         const md = await dl.text();
         setUtkast((prev) => [...prev.filter((u) => u.type !== type), { type, markdown: md }]);
+        oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
       } else {
         const blob = await dl.blob();
+        const downloadName = nedlastingsnavn(dl, type, blob);
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = nedlastingsnavn(dl, type, blob);
+        a.download = downloadName;
         a.click();
         URL.revokeObjectURL(url);
+        // The job's result stays on the server for a while (deck-service/main.py, 1h TTL) - keep
+        // this URL around as a real clickable link too, not just the auto-download above, so
+        // someone who isn't sure where their downloads folder is has an obvious "open it" to click.
+        oppdaterKjoring(type, {
+          status: "done", progress: 100, step: "Done",
+          downloadUrl: `/api/generate-deck?id=${jobId}&download=1`,
+          downloadName,
+        });
       }
-      oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
 
       // Record which approved claims this asset drew on (retraction traceability). Only
       // deck/blog/whitepaper are ever generated, and only when claims were fed in.
@@ -1005,12 +1018,24 @@ export default function ContentGenerator() {
                       <p className="mt-2 text-xs text-zinc-500">{k.step || "Working…"}</p>
                     </>
                   )}
-                  {k.status === "done" && (
+                  {k.status === "done" && TEXT_TYPES.has(k.type) && (
                     <p className="mt-1 text-xs text-emerald-700">
-                      {TEXT_TYPES.has(k.type)
-                        ? "✅ Draft ready. Review & edit it below."
-                        : "✅ Downloaded. Check your downloads folder."}
+                      ✅ Draft ready. Review &amp; edit it below.
                     </p>
+                  )}
+                  {k.status === "done" && !TEXT_TYPES.has(k.type) && (
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                      <span className="text-emerald-700">✅ Ready — a copy also saved to your downloads.</span>
+                      {k.downloadUrl && (
+                        <a
+                          href={k.downloadUrl}
+                          download={k.downloadName}
+                          className="font-semibold text-[#0A7A8A] underline hover:text-[#086472]"
+                        >
+                          📥 Open {meta.label}
+                        </a>
+                      )}
+                    </div>
                   )}
                   {k.status === "error" && (
                     <p className="mt-1 text-xs text-red-600">{k.error}</p>

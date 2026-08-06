@@ -50,7 +50,7 @@
       "file": "02.png",
       "page": 5,
       "width": 469,
-      "height": 250,
+      "height": 196,
       "kind": "table"
     },
     {
@@ -73,14 +73,14 @@
       "file": "01.png",
       "page": 2,
       "width": 870,
-      "height": 435,
+      "height": 387,
       "kind": "table"
     },
     {
       "file": "02.png",
       "page": 3,
       "width": 870,
-      "height": 289,
+      "height": 241,
       "kind": "table"
     },
     {
@@ -136,7 +136,7 @@
       "file": "10.png",
       "page": 15,
       "width": 870,
-      "height": 290,
+      "height": 242,
       "kind": "table"
     },
     {
@@ -150,14 +150,14 @@
       "file": "12.png",
       "page": 16,
       "width": 870,
-      "height": 290,
+      "height": 242,
       "kind": "table"
     },
     {
       "file": "13.png",
       "page": 17,
       "width": 870,
-      "height": 435,
+      "height": 387,
       "kind": "table"
     },
     {
@@ -210,7 +210,7 @@
       "file": "01.png",
       "page": 2,
       "width": 910,
-      "height": 265,
+      "height": 199,
       "kind": "table"
     }
   ],
@@ -272,7 +272,7 @@
       "file": "02.png",
       "page": 3,
       "width": 1614,
-      "height": 714,
+      "height": 654,
       "kind": "table"
     },
     {
@@ -350,7 +350,7 @@
       "file": "03.png",
       "page": 6,
       "width": 1717,
-      "height": 568,
+      "height": 596,
       "kind": "table"
     },
     {
@@ -364,14 +364,14 @@
       "file": "05.png",
       "page": 7,
       "width": 1269,
-      "height": 711,
+      "height": 796,
       "kind": "table"
     },
     {
       "file": "06.png",
       "page": 8,
       "width": 1717,
-      "height": 683,
+      "height": 768,
       "kind": "table"
     }
   ],
@@ -417,42 +417,42 @@
       "file": "01.png",
       "page": 3,
       "width": 1263,
-      "height": 650,
+      "height": 684,
       "kind": "table"
     },
     {
       "file": "02.png",
       "page": 3,
       "width": 1263,
-      "height": 706,
+      "height": 760,
       "kind": "table"
     },
     {
       "file": "03.png",
       "page": 4,
       "width": 1263,
-      "height": 650,
+      "height": 706,
       "kind": "table"
     },
     {
       "file": "04.png",
       "page": 4,
       "width": 1263,
-      "height": 649,
+      "height": 702,
       "kind": "table"
     },
     {
       "file": "05.png",
       "page": 5,
       "width": 1262,
-      "height": 649,
+      "height": 689,
       "kind": "table"
     },
     {
       "file": "06.png",
       "page": 5,
       "width": 1262,
-      "height": 650,
+      "height": 602,
       "kind": "table"
     }
   ],
@@ -470,21 +470,21 @@
       "file": "01.png",
       "page": 6,
       "width": 1194,
-      "height": 1281,
+      "height": 1308,
       "kind": "table"
     },
     {
       "file": "02.png",
       "page": 7,
       "width": 753,
-      "height": 621,
+      "height": 623,
       "kind": "table"
     },
     {
       "file": "03.png",
       "page": 7,
       "width": 1193,
-      "height": 300,
+      "height": 241,
       "kind": "table"
     }
   ],
@@ -597,7 +597,7 @@
       "file": "01.png",
       "page": 4,
       "width": 1692,
-      "height": 255,
+      "height": 643,
       "kind": "table"
     },
     {
@@ -650,42 +650,42 @@
       "file": "02.png",
       "page": 6,
       "width": 1776,
-      "height": 931,
+      "height": 917,
       "kind": "table"
     },
     {
       "file": "03.png",
       "page": 7,
       "width": 1776,
-      "height": 2035,
+      "height": 2021,
       "kind": "table"
     },
     {
       "file": "04.png",
       "page": 8,
       "width": 1776,
-      "height": 1981,
+      "height": 1975,
       "kind": "table"
     },
     {
       "file": "05.png",
       "page": 9,
       "width": 1776,
-      "height": 1124,
+      "height": 1118,
       "kind": "table"
     },
     {
       "file": "06.png",
       "page": 9,
       "width": 1776,
-      "height": 1219,
+      "height": 1387,
       "kind": "table"
     },
     {
       "file": "07.png",
       "page": 11,
       "width": 1776,
-      "height": 1943,
+      "height": 1929,
       "kind": "table"
     }
   ],
@@ -694,14 +694,14 @@
       "file": "01.png",
       "page": 7,
       "width": 1333,
-      "height": 336,
+      "height": 475,
       "kind": "table"
     },
     {
       "file": "02.png",
       "page": 7,
       "width": 1084,
-      "height": 436,
+      "height": 411,
       "kind": "table"
     },
     {
@@ -715,14 +715,14 @@
       "file": "04.png",
       "page": 9,
       "width": 1333,
-      "height": 500,
+      "height": 772,
       "kind": "table"
     },
     {
       "file": "05.png",
       "page": 9,
       "width": 1333,
-      "height": 304,
+      "height": 279,
       "kind": "table"
     },
     {
@@ -736,7 +736,7 @@
       "file": "07.png",
       "page": 11,
       "width": 1333,
-      "height": 248,
+      "height": 200,
       "kind": "table"
     },
     {
@@ -750,7 +750,7 @@
       "file": "09.png",
       "page": 13,
       "width": 1333,
-      "height": 667,
+      "height": 746,
       "kind": "table"
     }
   ],
@@ -784,14 +784,14 @@
       "file": "01.png",
       "page": 3,
       "width": 885,
-      "height": 307,
+      "height": 326,
       "kind": "table"
     },
     {
       "file": "02.png",
       "page": 6,
       "width": 1158,
-      "height": 307,
+      "height": 442,
       "kind": "table"
     },
     {
@@ -805,7 +805,7 @@
       "file": "04.png",
       "page": 8,
       "width": 1669,
-      "height": 889,
+      "height": 841,
       "kind": "table"
     }
   ],
@@ -814,7 +814,7 @@
       "file": "01.png",
       "page": 3,
       "width": 1246,
-      "height": 631,
+      "height": 564,
       "kind": "table"
     }
   ],
@@ -830,7 +830,7 @@
       "file": "02.png",
       "page": 4,
       "width": 1639,
-      "height": 498,
+      "height": 618,
       "kind": "table"
     },
     {
@@ -904,7 +904,7 @@
       "file": "01.png",
       "page": 6,
       "width": 1115,
-      "height": 996,
+      "height": 948,
       "kind": "table"
     }
   ]

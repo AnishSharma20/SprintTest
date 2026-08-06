@@ -49,14 +49,21 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     several pages).
   - **Tables** are drawn as text + ruled lines, not an image, so PyMuPDF's `find_tables()` locates the
     grid and that region of the page is RENDERED (not extracted) to a PNG. `find_tables()`'s own bbox is
-    usually just the header row, so the crop grows dynamically: walk down the page's text blocks and
-    keep including each one UNLESS it has a "column sibling" (another block at the same height but a
-    disjoint x-range) — that's what a resumed two-column body looks like, whereas a short one-line
-    footnote has no such sibling even though it's narrower than the table. This replaced an earlier fixed
-    +220pt bottom pad, which either bled into the next paragraph (single-column pages) or cut a footnote
-    off mid-sentence (short footnotes, narrower than the table) — the width-alone heuristic couldn't
-    win both cases at once. Filters a separate `find_tables()` quirk where two stacked tables get unioned
-    into one bogus tall detection (row implausibly tall for its reported row count → dropped).
+    usually just the header ROW — missing the caption, any column-group header ("eWAT / Liver" above
+    "Chow / HFD / KrO"), and section labels above it, and the data rows/footnotes below — so the crop
+    grows dynamically on BOTH edges: walk outward through the page's text blocks and keep absorbing each
+    one UNLESS it has a "column sibling" (another block at the same height but a disjoint x-range wider
+    than ~120pt, so a narrow sidebar/pull-quote box next to the table doesn't falsely count) — that's
+    what a resumed two-column body looks like. Walking upward additionally stops at a real paragraph (by
+    height: a caption/header line is 1-3 lines, a preceding "We next examined..." intro is not), so the
+    table doesn't absorb unrelated narrative text just because the gap is small. A small pad (6pt) never
+    dips into a block that was explicitly rejected by these rules, so no sliver of rejected text bleeds
+    into the crop. Bug history: v1 used a flat +220pt bottom pad (bled into the next paragraph on
+    single-column pages, or cut a short footnote off mid-sentence); v2 fixed the bottom but still used a
+    flat +22pt top pad, which cut a table's own header row in half whenever the real caption/column-group
+    header was taller than that (found via a user-reported screenshot of a Gart 2021 table with the
+    header sliced mid-character). Filters a separate `find_tables()` quirk where two stacked tables get
+    unioned into one bogus tall detection (row implausibly tall for its reported row count → dropped).
   Output: `deck-service/assets/figures/<pmid>/*.{png,jpg}` (source of truth, mirrors the
   `assets/fulltext` pattern) + mirrored into `public/study-figures/<pmid>/` (what Next actually serves)
   with a manifest at `app/study-figures.json`. Re-run when AKBM sends new PDFs:

@@ -80,9 +80,8 @@ MAX_AVG_ROW_HEIGHT = 60  # points; find_tables() occasionally unions two stacked
 MAX_TABLES_PER_STUDY = 6
 MAX_TABLES_PER_PAGE = 2  # more than this on one page is usually one table mis-split into pieces
 TABLE_ZOOM = 3.0  # render resolution multiplier - tables are dense text, need to stay crisp
-TABLE_PAD_TOP, TABLE_PAD_SIDE = 22, 10  # points, for the caption above and a little breathing room on
-# the sides; the bottom instead grows dynamically to the last full-width (table/footnote) text block -
-# see extract_tables_for_pdf - so it stops right after the footnotes, not partway into the next paragraph
+TABLE_PAD_SIDE = 10  # points of side breathing room; top and bottom instead grow dynamically to the
+# nearest caption/footnote text block - see extract_tables_for_pdf
 
 MARGIN_PX = 48  # the reviewer downloads this file directly and uses it elsewhere (a slide, a doc) -
 # it needs to look like the on-screen preview (image floating in a white card), not a bare crop with
@@ -211,25 +210,35 @@ def extract_tables_for_pdf(path: Path) -> list[dict]:
                 deduped.append(b)
         deduped.sort(key=lambda r: r.y0)
 
-        # Other objects on the page (images, later tables) bound how far a table's render can bleed
-        # downward, so a table's footnotes don't drag the next chart/table into the same crop.
-        next_tops = sorted(
+        # Other objects on the page (images, other tables) bound how far a table's render can bleed
+        # up/down, so its caption/footnotes don't drag in unrelated neighbouring content.
+        other_tops = sorted(
             [r.y0 for r in deduped] +
             [rect.y0 for img in page.get_images(full=True) for rect in page.get_image_rects(img[0])]
         )
-        # find_tables()'s own bbox is often just the header row (the data rows + footnotes below are
-        # separate text blocks it doesn't attribute to the table). Walk down through the page's text
-        # blocks including each one in turn - UNLESS it has a "column sibling" (another block at the
-        # same height but a disjoint x-range), which is what a resumed two-column body looks like. A
-        # short one-line footnote has no such sibling even though it doesn't span the full width, so
-        # width alone isn't a reliable signal - two blocks side by side at the same height is.
+        other_bottoms = sorted(
+            [r.y1 for r in deduped] +
+            [rect.y1 for img in page.get_images(full=True) for rect in page.get_image_rects(img[0])]
+        )
+        # find_tables()'s own bbox is often just the header ROW, missing the caption/column-group
+        # header above it and the data rows/footnotes below - those are separate text blocks it
+        # doesn't attribute to the table. Walk outward (up AND down) through the page's text blocks,
+        # absorbing each one in turn, UNLESS:
+        #  - it has a "column sibling" (another block at the same height but a disjoint x-range) -
+        #    that's what the page's normal two-column body looks like, table captions/footnotes don't;
+        #  - (upward only) it's tall enough to be a real paragraph rather than a caption/header line -
+        #    a preceding "We next examined..." intro paragraph must NOT get pulled into the table crop
+        #    just because it's within the gap tolerance, the way a one-line caption legitimately is.
         blocks = sorted(page.get_text("blocks"), key=lambda bl: bl[1])
+        MAX_GAP, MAX_CAPTION_H = 40, 45
 
         def has_column_sibling(cand) -> bool:
             cx0, cy0, cx1, cy1 = cand
             for bx0, by0, bx1, by1, *_ in blocks:
                 if (bx0, by0, bx1, by1) == (cx0, cy0, cx1, cy1):
                     continue
+                if bx1 - bx0 < 120:
+                    continue  # a narrow sidebar/pull-quote box, not a resumed main-body column
                 y_overlap = min(cy1, by1) - max(cy0, by0)
                 if y_overlap < 0.4 * min(cy1 - cy0, by1 - by0):
                     continue
@@ -239,19 +248,33 @@ def extract_tables_for_pdf(path: Path) -> list[dict]:
             return False
 
         for b in deduped:
-            hard_limit = min([t for t in next_tops if t > b.y1 + 5] + [page.rect.height - 20])
-            bottom = b.y1
-            for bx0, by0, bx1, by1, *_ in blocks:
-                if by0 < bottom - 2 or by0 >= hard_limit:
+            hard_bottom = min([t for t in other_tops if t > b.y1 + 5] + [page.rect.height - 20])
+            bottom, bottom_floor = b.y1, hard_bottom  # bottom_floor tightens to a REJECTED block's
+            for bx0, by0, bx1, by1, *_ in blocks:      # own top if one is found, so the breathing-
+                if by0 < bottom - 2 or by0 >= hard_bottom:  # room pad below can't dip into it
                     continue  # above the table, or already past the next object's boundary
-                if by0 - bottom > 40:
+                if by0 - bottom > MAX_GAP:
                     break  # too big a gap to still be a caption/footnote for this table
                 if has_column_sibling((bx0, by0, bx1, by1)):
+                    bottom_floor = by0
                     break  # the page's normal two-column layout has resumed
-                bottom = min(by1, hard_limit)
+                bottom = min(by1, hard_bottom)
+
+            hard_top = max([t for t in other_bottoms if t < b.y0 - 5] + [10])
+            top, top_floor = b.y0, hard_top  # top_floor tightens likewise, for the top pad
+            for bx0, by0, bx1, by1, *_ in reversed(blocks):
+                if by1 > top + 2 or by1 <= hard_top:
+                    continue  # below the current top, or already past the previous object's boundary
+                if top - by1 > MAX_GAP:
+                    break
+                if (by1 - by0) > MAX_CAPTION_H or has_column_sibling((bx0, by0, bx1, by1)):
+                    top_floor = by1
+                    break  # a real paragraph above (not a caption/header line), or resumed columns
+                top = max(by0, hard_top)
+
             clip = fitz.Rect(
-                max(b.x0 - TABLE_PAD_SIDE, 0), max(b.y0 - TABLE_PAD_TOP, 0),
-                min(b.x1 + TABLE_PAD_SIDE, page.rect.width), min(bottom + 6, hard_limit),
+                max(b.x0 - TABLE_PAD_SIDE, 0), max(top - 6, top_floor, hard_top, 0),
+                min(b.x1 + TABLE_PAD_SIDE, page.rect.width), min(bottom + 6, bottom_floor, hard_bottom),
             )
             if clip.height < 15 or clip.width < 50:
                 continue

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Extract chart/graph/table figures from AKBM's supplied study PDFs, one per PMID.
+"""Extract chart/graph figures AND tables from AKBM's supplied study PDFs, one per PMID.
 
 The claims/findings review UI ("Evidence from this study") only ever showed the extracted TEXT
 (assets/fulltext/<pmid>.txt) - reviewers asked to also see the actual charts, graphs and tables from
-the paper, and download them as an image. This pulls the embedded raster images out of each PDF
-(that's how academic typesetting places figures/tables - as embedded PNG/JPEG on the page), filters
-out logos/icons/tiny inline glyphs by size, and drops images that repeat across many pages of the
-same paper (running headers, watermarks, journal crests).
+the paper, and download them as an image. Two different extraction paths, because the two are laid
+out completely differently in a typeset PDF:
+  - Figures/charts are embedded raster images placed on the page - extract_for_pdf() pulls them out
+    directly, filtering logos/icons/tiny glyphs by size and dropping images that repeat across many
+    pages (running headers, watermarks, journal crests).
+  - Tables are drawn as text + ruled lines, not an image - there is nothing to "extract". Instead
+    extract_tables_for_pdf() uses PyMuPDF's find_tables() to locate the grid, then RENDERS that
+    region of the page to a PNG (expanded past the raw bbox so the caption above and footnotes below
+    are included, capped by whatever comes next on the page so it doesn't bleed into unrelated content).
 
     python scripts/extract_figures.py <folder-of-pdfs> [--write] [--stats]
 
@@ -17,8 +22,8 @@ this script never guesses at a new PMID (unlike import_fulltext_pdfs.py, which r
 PubMed; figures are a lower-stakes visual, so a plain filename match is enough).
 
 Writes:
-    assets/figures/<pmid>/<NN>.<ext>      extracted images, one per figure/table
-    assets/figures/index.json             pmid -> [{file, page, width, height, bytes}]
+    assets/figures/<pmid>/<NN>.<ext>      extracted figures + rendered tables, page order
+    assets/figures/index.json             pmid -> [{file, page, width, height, kind}]
 And mirrors both into the frontend (same pattern as write_app_list in import_fulltext_pdfs.py):
     min-forste-app/public/study-figures/<pmid>/<NN>.<ext>
     min-forste-app/app/study-figures.json
@@ -60,6 +65,21 @@ MAX_PER_STUDY = 12  # sanity cap; extraction bugs (e.g. mosaic'd forest plots) c
 MAX_PER_PAGE = 3  # a real page rarely has more than 2-3 distinct figures/tables; more is a sliced-up
 # multi-panel chart (each strip/axis/legend embedded as its own image object) - keep only the largest
 FULL_PAGE_COVERAGE = 0.85  # an image placed across this much of the page is a scan, not a discrete figure
+
+# Tables aren't embedded raster images (they're drawn as text + ruled lines), so they need their own
+# path: PyMuPDF's find_tables() locates the grid, then we RENDER (not extract) that region of the page
+# to a raster. Its bbox only spans the "gridable" rows though (usually just the header) - the caption
+# above and the footnote lines below are separate text objects it doesn't know belong to the table -
+# so the render region is expanded past the raw bbox on all sides (see extract_tables_for_pdf).
+MIN_TABLE_ROWS, MIN_TABLE_COLS = 2, 2  # a 1xN/Nx1 "table" is almost always a false-positive text run
+MAX_AVG_ROW_HEIGHT = 60  # points; find_tables() occasionally unions two stacked tables (plus the gap
+# between them) into one bogus wide detection - a real row is ~15-30pt, so a much taller average row
+# means the "table" is actually spanning unrelated content, not a single grid
+MAX_TABLES_PER_STUDY = 6
+MAX_TABLES_PER_PAGE = 2  # more than this on one page is usually one table mis-split into pieces
+TABLE_ZOOM = 3.0  # render resolution multiplier - tables are dense text, need to stay crisp
+TABLE_PAD_TOP, TABLE_PAD_SIDE, TABLE_PAD_BOTTOM = 22, 10, 220  # points; bottom capped by the next
+# object on the page (see extract_tables_for_pdf) so it doesn't bleed into unrelated following content
 
 
 def stem_key(name: str) -> str:
@@ -132,7 +152,68 @@ def extract_for_pdf(path: Path) -> list[dict]:
             continue
         per_page[c["page"]] = n + 1
         capped.append(c)
+    for c in capped:
+        c["kind"] = "figure"
     return capped[:MAX_PER_STUDY]
+
+
+def extract_tables_for_pdf(path: Path) -> list[dict]:
+    """Return the kept tables for one PDF: [{bytes, ext, page, width, height, kind}]."""
+    doc = fitz.open(path)
+    candidates: list[dict] = []
+    for page_index in range(doc.page_count):
+        if page_index == 0:
+            continue
+        page = doc[page_index]
+        try:
+            tabs = page.find_tables()
+        except Exception:  # noqa: BLE001
+            continue
+        boxes = [
+            fitz.Rect(t.bbox) for t in tabs.tables
+            if t.row_count >= MIN_TABLE_ROWS and t.col_count >= MIN_TABLE_COLS
+            and (t.bbox[3] - t.bbox[1]) / t.row_count <= MAX_AVG_ROW_HEIGHT
+        ]
+        # find_tables() sometimes reports overlapping/duplicate boxes for the same visual table;
+        # keep the larger one when two overlap rather than rendering the same table twice.
+        boxes.sort(key=lambda r: -r.width * r.height)
+        deduped: list[fitz.Rect] = []
+        for b in boxes:
+            if not any((b & other).get_area() > 0.3 * b.get_area() for other in deduped):
+                deduped.append(b)
+        deduped.sort(key=lambda r: r.y0)
+
+        # Other objects on the page (images, later tables) bound how far a table's render can bleed
+        # downward, so a table's footnotes don't drag the next chart/table into the same crop.
+        next_tops = sorted(
+            [r.y0 for r in deduped] +
+            [rect.y0 for img in page.get_images(full=True) for rect in page.get_image_rects(img[0])]
+        )
+
+        for b in deduped:
+            bottom_limit = min([t for t in next_tops if t > b.y1 + 5] + [page.rect.height - 20])
+            clip = fitz.Rect(
+                max(b.x0 - TABLE_PAD_SIDE, 0), max(b.y0 - TABLE_PAD_TOP, 0),
+                min(b.x1 + TABLE_PAD_SIDE, page.rect.width), min(b.y1 + TABLE_PAD_BOTTOM, bottom_limit),
+            )
+            if clip.height < 15 or clip.width < 50:
+                continue
+            pix = page.get_pixmap(clip=clip, matrix=fitz.Matrix(TABLE_ZOOM, TABLE_ZOOM))
+            candidates.append({
+                "bytes": pix.tobytes("png"), "ext": "png", "page": page_index + 1,
+                "width": pix.width, "height": pix.height, "kind": "table",
+            })
+    doc.close()
+
+    per_page: dict[int, int] = {}
+    capped = []
+    for c in candidates:
+        n = per_page.get(c["page"], 0)
+        if n >= MAX_TABLES_PER_PAGE:
+            continue
+        per_page[c["page"]] = n + 1
+        capped.append(c)
+    return capped[:MAX_TABLES_PER_STUDY]
 
 
 def main() -> None:
@@ -163,23 +244,26 @@ def main() -> None:
             continue  # duplicate copy of a PDF we already processed (e.g. supplied twice)
         matched_pmids.add(pmid)
 
-        figs = extract_for_pdf(p)
-        print(f"  {pmid:<9} {p.name:<34} -> {len(figs)} figure(s)" + (
-            "  " + ", ".join(f"p{f['page']}:{f['width']}x{f['height']}" for f in figs) if stats else ""
+        figs = extract_for_pdf(p) + extract_tables_for_pdf(p)
+        figs.sort(key=lambda f: f["page"])
+        print(f"  {pmid:<9} {p.name:<34} -> {len(figs)} figure(s)/table(s)" + (
+            "  " + ", ".join(f"p{f['page']}:{f['kind']}:{f['width']}x{f['height']}" for f in figs) if stats else ""
         ))
         if not figs:
             continue
         entries = []
         for i, f in enumerate(figs, start=1):
             fname = f"{i:02d}.{f['ext']}"
-            entries.append({"file": fname, "page": f["page"], "width": f["width"], "height": f["height"]})
+            entries.append({
+                "file": fname, "page": f["page"], "width": f["width"], "height": f["height"], "kind": f["kind"],
+            })
             if write:
                 d = OUTDIR / pmid
                 d.mkdir(parents=True, exist_ok=True)
                 (d / fname).write_bytes(f["bytes"])
         index[pmid] = entries
 
-    print(f"\n  matched   : {len(matched_pmids)} studies, {sum(len(v) for v in index.values())} figures total")
+    print(f"\n  matched   : {len(matched_pmids)} studies, {sum(len(v) for v in index.values())} figures/tables total")
     print(f"  unmatched : {len(unmatched)} PDF(s) not in the study list, skipped: {unmatched}")
 
     if write:

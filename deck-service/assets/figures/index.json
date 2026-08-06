@@ -4,7 +4,8 @@
       "file": "01.png",
       "page": 5,
       "width": 1536,
-      "height": 1530
+      "height": 1530,
+      "kind": "figure"
     }
   ],
   "27817918": [
@@ -12,25 +13,29 @@
       "file": "01.jpeg",
       "page": 5,
       "width": 2067,
-      "height": 533
+      "height": 533,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 6,
       "width": 996,
-      "height": 462
+      "height": 462,
+      "kind": "figure"
     },
     {
       "file": "03.jpeg",
       "page": 6,
       "width": 996,
-      "height": 461
+      "height": 461,
+      "kind": "figure"
     },
     {
       "file": "04.jpeg",
       "page": 6,
       "width": 996,
-      "height": 381
+      "height": 381,
+      "kind": "figure"
     }
   ],
   "24098072": [
@@ -38,19 +43,29 @@
       "file": "01.png",
       "page": 4,
       "width": 410,
-      "height": 501
+      "height": 501,
+      "kind": "figure"
     },
     {
-      "file": "02.jpeg",
-      "page": 6,
-      "width": 1443,
-      "height": 1289
+      "file": "02.png",
+      "page": 5,
+      "width": 373,
+      "height": 753,
+      "kind": "table"
     },
     {
       "file": "03.jpeg",
+      "page": 6,
+      "width": 1443,
+      "height": 1289,
+      "kind": "figure"
+    },
+    {
+      "file": "04.jpeg",
       "page": 8,
       "width": 1345,
-      "height": 1208
+      "height": 1208,
+      "kind": "figure"
     }
   ],
   "25884846": [
@@ -58,13 +73,24 @@
       "file": "01.jpeg",
       "page": 6,
       "width": 1041,
-      "height": 633
+      "height": 633,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 7,
       "width": 1041,
-      "height": 627
+      "height": 627,
+      "kind": "figure"
+    }
+  ],
+  "42144109": [
+    {
+      "file": "01.png",
+      "page": 2,
+      "width": 814,
+      "height": 811,
+      "kind": "table"
     }
   ],
   "39974718": [
@@ -72,31 +98,36 @@
       "file": "01.jpeg",
       "page": 4,
       "width": 1535,
-      "height": 1736
+      "height": 1736,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 5,
       "width": 1654,
-      "height": 1915
+      "height": 1915,
+      "kind": "figure"
     },
     {
       "file": "03.jpeg",
       "page": 6,
       "width": 1654,
-      "height": 1888
+      "height": 1888,
+      "kind": "figure"
     },
     {
       "file": "04.jpeg",
       "page": 7,
       "width": 1772,
-      "height": 2072
+      "height": 2072,
+      "kind": "figure"
     },
     {
       "file": "05.jpeg",
       "page": 9,
       "width": 2126,
-      "height": 1683
+      "height": 1683,
+      "kind": "figure"
     }
   ],
   "21862301": [
@@ -104,7 +135,8 @@
       "file": "01.png",
       "page": 5,
       "width": 1356,
-      "height": 745
+      "height": 745,
+      "kind": "figure"
     }
   ],
   "29222893": [
@@ -112,25 +144,36 @@
       "file": "01.png",
       "page": 3,
       "width": 664,
-      "height": 584
+      "height": 584,
+      "kind": "figure"
     },
     {
       "file": "02.png",
-      "page": 5,
-      "width": 5266,
-      "height": 3978
+      "page": 3,
+      "width": 1518,
+      "height": 653,
+      "kind": "table"
     },
     {
       "file": "03.png",
-      "page": 6,
-      "width": 1264,
-      "height": 497
+      "page": 5,
+      "width": 5266,
+      "height": 3978,
+      "kind": "figure"
     },
     {
       "file": "04.png",
       "page": 6,
       "width": 1264,
-      "height": 496
+      "height": 497,
+      "kind": "figure"
+    },
+    {
+      "file": "05.png",
+      "page": 6,
+      "width": 1264,
+      "height": 496,
+      "kind": "figure"
     }
   ],
   "21042875": [
@@ -138,7 +181,8 @@
       "file": "01.jpeg",
       "page": 8,
       "width": 491,
-      "height": 527
+      "height": 527,
+      "kind": "figure"
     }
   ],
   "35504165": [
@@ -146,13 +190,15 @@
       "file": "01.jpeg",
       "page": 4,
       "width": 1536,
-      "height": 1365
+      "height": 1365,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 6,
       "width": 1654,
-      "height": 1213
+      "height": 1213,
+      "kind": "figure"
     }
   ],
   "35880828": [
@@ -160,7 +206,8 @@
       "file": "01.jpeg",
       "page": 9,
       "width": 870,
-      "height": 1501
+      "height": 1501,
+      "kind": "figure"
     }
   ],
   "41933837": [
@@ -168,19 +215,43 @@
       "file": "01.png",
       "page": 4,
       "width": 1541,
-      "height": 917
+      "height": 917,
+      "kind": "figure"
     },
     {
       "file": "02.png",
       "page": 6,
       "width": 1447,
-      "height": 839
+      "height": 839,
+      "kind": "figure"
     },
     {
       "file": "03.png",
+      "page": 6,
+      "width": 1621,
+      "height": 505,
+      "kind": "table"
+    },
+    {
+      "file": "04.png",
       "page": 7,
       "width": 1447,
-      "height": 627
+      "height": 627,
+      "kind": "figure"
+    },
+    {
+      "file": "05.png",
+      "page": 7,
+      "width": 1173,
+      "height": 812,
+      "kind": "table"
+    },
+    {
+      "file": "06.png",
+      "page": 8,
+      "width": 1621,
+      "height": 812,
+      "kind": "table"
     }
   ],
   "24461313": [
@@ -188,31 +259,80 @@
       "file": "01.jpeg",
       "page": 4,
       "width": 1482,
-      "height": 959
+      "height": 959,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 6,
       "width": 907,
-      "height": 614
+      "height": 614,
+      "kind": "figure"
     },
     {
       "file": "03.jpeg",
       "page": 6,
       "width": 902,
-      "height": 579
+      "height": 579,
+      "kind": "figure"
     },
     {
       "file": "04.jpeg",
       "page": 6,
       "width": 888,
-      "height": 587
+      "height": 587,
+      "kind": "figure"
     },
     {
       "file": "05.jpeg",
       "page": 7,
       "width": 981,
-      "height": 610
+      "height": 610,
+      "kind": "figure"
+    }
+  ],
+  "15656713": [
+    {
+      "file": "01.png",
+      "page": 3,
+      "width": 1167,
+      "height": 771,
+      "kind": "table"
+    },
+    {
+      "file": "02.png",
+      "page": 3,
+      "width": 1167,
+      "height": 1196,
+      "kind": "table"
+    },
+    {
+      "file": "03.png",
+      "page": 4,
+      "width": 1167,
+      "height": 783,
+      "kind": "table"
+    },
+    {
+      "file": "04.png",
+      "page": 4,
+      "width": 1167,
+      "height": 1195,
+      "kind": "table"
+    },
+    {
+      "file": "05.png",
+      "page": 5,
+      "width": 1166,
+      "height": 792,
+      "kind": "table"
+    },
+    {
+      "file": "06.png",
+      "page": 5,
+      "width": 1166,
+      "height": 1196,
+      "kind": "table"
     }
   ],
   "26504524": [
@@ -220,7 +340,31 @@
       "file": "01.jpeg",
       "page": 2,
       "width": 975,
-      "height": 1574
+      "height": 1574,
+      "kind": "figure"
+    }
+  ],
+  "34989797": [
+    {
+      "file": "01.png",
+      "page": 6,
+      "width": 1098,
+      "height": 866,
+      "kind": "table"
+    },
+    {
+      "file": "02.png",
+      "page": 7,
+      "width": 657,
+      "height": 640,
+      "kind": "table"
+    },
+    {
+      "file": "03.png",
+      "page": 7,
+      "width": 1097,
+      "height": 846,
+      "kind": "table"
     }
   ],
   "29372051": [
@@ -228,37 +372,43 @@
       "file": "01.png",
       "page": 5,
       "width": 1855,
-      "height": 948
+      "height": 948,
+      "kind": "figure"
     },
     {
       "file": "02.png",
       "page": 6,
       "width": 825,
-      "height": 558
+      "height": 558,
+      "kind": "figure"
     },
     {
       "file": "03.png",
       "page": 7,
       "width": 534,
-      "height": 362
+      "height": 362,
+      "kind": "figure"
     },
     {
       "file": "04.png",
       "page": 7,
       "width": 533,
-      "height": 360
+      "height": 360,
+      "kind": "figure"
     },
     {
       "file": "05.png",
       "page": 7,
       "width": 532,
-      "height": 360
+      "height": 360,
+      "kind": "figure"
     },
     {
       "file": "06.png",
       "page": 8,
       "width": 1208,
-      "height": 850
+      "height": 850,
+      "kind": "figure"
     }
   ],
   "28371906": [
@@ -266,25 +416,29 @@
       "file": "01.jpeg",
       "page": 4,
       "width": 817,
-      "height": 672
+      "height": 672,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 8,
       "width": 877,
-      "height": 1422
+      "height": 1422,
+      "kind": "figure"
     },
     {
       "file": "03.jpeg",
       "page": 9,
       "width": 875,
-      "height": 1465
+      "height": 1465,
+      "kind": "figure"
     },
     {
       "file": "04.jpeg",
       "page": 10,
       "width": 517,
-      "height": 1424
+      "height": 1424,
+      "kind": "figure"
     }
   ],
   "26407095": [
@@ -292,51 +446,66 @@
       "file": "01.png",
       "page": 7,
       "width": 1000,
-      "height": 721
+      "height": 721,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 8,
       "width": 1258,
-      "height": 706
+      "height": 706,
+      "kind": "figure"
     },
     {
       "file": "03.png",
       "page": 8,
       "width": 1434,
-      "height": 570
+      "height": 570,
+      "kind": "figure"
     },
     {
       "file": "04.png",
       "page": 9,
       "width": 1419,
-      "height": 571
+      "height": 571,
+      "kind": "figure"
     }
   ],
   "34959789": [
     {
       "file": "01.png",
-      "page": 7,
-      "width": 806,
-      "height": 647
+      "page": 4,
+      "width": 1596,
+      "height": 801,
+      "kind": "table"
     },
     {
       "file": "02.png",
-      "page": 8,
-      "width": 1147,
-      "height": 694
+      "page": 7,
+      "width": 806,
+      "height": 647,
+      "kind": "figure"
     },
     {
       "file": "03.png",
-      "page": 10,
-      "width": 1208,
-      "height": 667
+      "page": 8,
+      "width": 1147,
+      "height": 694,
+      "kind": "figure"
     },
     {
       "file": "04.png",
       "page": 10,
+      "width": 1208,
+      "height": 667,
+      "kind": "figure"
+    },
+    {
+      "file": "05.png",
+      "page": 10,
       "width": 1509,
-      "height": 443
+      "height": 443,
+      "kind": "figure"
     }
   ],
   "31937352": [
@@ -344,7 +513,8 @@
       "file": "01.jpeg",
       "page": 8,
       "width": 1420,
-      "height": 709
+      "height": 709,
+      "kind": "figure"
     }
   ],
   "27701428": [
@@ -352,27 +522,115 @@
       "file": "01.jpeg",
       "page": 5,
       "width": 2287,
-      "height": 3070
+      "height": 3070,
+      "kind": "figure"
+    },
+    {
+      "file": "02.png",
+      "page": 6,
+      "width": 1680,
+      "height": 860,
+      "kind": "table"
+    },
+    {
+      "file": "03.png",
+      "page": 7,
+      "width": 1680,
+      "height": 2118,
+      "kind": "table"
+    },
+    {
+      "file": "04.png",
+      "page": 8,
+      "width": 1680,
+      "height": 2109,
+      "kind": "table"
+    },
+    {
+      "file": "05.png",
+      "page": 9,
+      "width": 1680,
+      "height": 939,
+      "kind": "table"
+    },
+    {
+      "file": "06.png",
+      "page": 9,
+      "width": 1680,
+      "height": 1148,
+      "kind": "table"
+    },
+    {
+      "file": "07.png",
+      "page": 11,
+      "width": 1680,
+      "height": 2118,
+      "kind": "table"
     }
   ],
   "34444996": [
     {
-      "file": "01.jpeg",
-      "page": 8,
-      "width": 3916,
-      "height": 1940
+      "file": "01.png",
+      "page": 7,
+      "width": 1237,
+      "height": 240,
+      "kind": "table"
     },
     {
-      "file": "02.jpeg",
-      "page": 10,
-      "width": 2877,
-      "height": 2259
+      "file": "02.png",
+      "page": 7,
+      "width": 988,
+      "height": 340,
+      "kind": "table"
     },
     {
       "file": "03.jpeg",
+      "page": 8,
+      "width": 3916,
+      "height": 1940,
+      "kind": "figure"
+    },
+    {
+      "file": "04.png",
+      "page": 9,
+      "width": 1237,
+      "height": 404,
+      "kind": "table"
+    },
+    {
+      "file": "05.png",
+      "page": 9,
+      "width": 1237,
+      "height": 208,
+      "kind": "table"
+    },
+    {
+      "file": "06.jpeg",
+      "page": 10,
+      "width": 2877,
+      "height": 2259,
+      "kind": "figure"
+    },
+    {
+      "file": "07.png",
+      "page": 11,
+      "width": 1237,
+      "height": 794,
+      "kind": "table"
+    },
+    {
+      "file": "08.jpeg",
       "page": 13,
       "width": 3912,
-      "height": 1647
+      "height": 1647,
+      "kind": "figure"
+    },
+    {
+      "file": "09.png",
+      "page": 13,
+      "width": 1237,
+      "height": 571,
+      "kind": "table"
     }
   ],
   "31652561": [
@@ -380,13 +638,15 @@
       "file": "01.png",
       "page": 3,
       "width": 993,
-      "height": 565
+      "height": 565,
+      "kind": "figure"
     },
     {
       "file": "02.png",
       "page": 3,
       "width": 993,
-      "height": 565
+      "height": 565,
+      "kind": "figure"
     }
   ],
   "24304605": [
@@ -394,15 +654,47 @@
       "file": "01.png",
       "page": 8,
       "width": 1949,
-      "height": 514
+      "height": 514,
+      "kind": "figure"
     }
   ],
   "39169540": [
     {
-      "file": "01.jpeg",
+      "file": "01.png",
+      "page": 3,
+      "width": 789,
+      "height": 319,
+      "kind": "table"
+    },
+    {
+      "file": "02.png",
+      "page": 6,
+      "width": 1062,
+      "height": 853,
+      "kind": "table"
+    },
+    {
+      "file": "03.jpeg",
       "page": 8,
       "width": 2412,
-      "height": 881
+      "height": 881,
+      "kind": "figure"
+    },
+    {
+      "file": "04.png",
+      "page": 8,
+      "width": 1573,
+      "height": 1435,
+      "kind": "table"
+    }
+  ],
+  "29854443": [
+    {
+      "file": "01.png",
+      "page": 3,
+      "width": 1150,
+      "height": 1022,
+      "kind": "table"
     }
   ],
   "39555189": [
@@ -410,43 +702,57 @@
       "file": "01.jpeg",
       "page": 2,
       "width": 2189,
-      "height": 2907
+      "height": 2907,
+      "kind": "figure"
     },
     {
-      "file": "02.jpeg",
-      "page": 6,
-      "width": 5700,
-      "height": 3913
+      "file": "02.png",
+      "page": 4,
+      "width": 1543,
+      "height": 1009,
+      "kind": "table"
     },
     {
       "file": "03.jpeg",
-      "page": 7,
-      "width": 4485,
-      "height": 4539
+      "page": 6,
+      "width": 5700,
+      "height": 3913,
+      "kind": "figure"
     },
     {
       "file": "04.jpeg",
-      "page": 8,
-      "width": 3900,
-      "height": 4484
+      "page": 7,
+      "width": 4485,
+      "height": 4539,
+      "kind": "figure"
     },
     {
       "file": "05.jpeg",
-      "page": 10,
-      "width": 5976,
-      "height": 2518
+      "page": 8,
+      "width": 3900,
+      "height": 4484,
+      "kind": "figure"
     },
     {
       "file": "06.jpeg",
       "page": 10,
-      "width": 5777,
-      "height": 2241
+      "width": 5976,
+      "height": 2518,
+      "kind": "figure"
     },
     {
       "file": "07.jpeg",
+      "page": 10,
+      "width": 5777,
+      "height": 2241,
+      "kind": "figure"
+    },
+    {
+      "file": "08.jpeg",
       "page": 11,
       "width": 2083,
-      "height": 2171
+      "height": 2171,
+      "kind": "figure"
     }
   ],
   "33015116": [
@@ -454,19 +760,31 @@
       "file": "01.jpeg",
       "page": 4,
       "width": 1634,
-      "height": 2036
+      "height": 2036,
+      "kind": "figure"
     },
     {
       "file": "02.jpeg",
       "page": 5,
       "width": 1634,
-      "height": 2060
+      "height": 2060,
+      "kind": "figure"
     },
     {
       "file": "03.jpeg",
       "page": 5,
       "width": 1634,
-      "height": 2022
+      "height": 2022,
+      "kind": "figure"
+    }
+  ],
+  "12777162": [
+    {
+      "file": "01.png",
+      "page": 6,
+      "width": 1019,
+      "height": 1542,
+      "kind": "table"
     }
   ]
 }

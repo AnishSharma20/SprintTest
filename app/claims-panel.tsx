@@ -240,25 +240,27 @@ function StudyFigures({ pmid }: { pmid: string }) {
   if (figures.length === 0) return null;
 
   return (
-    <div className="mb-4">
-      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+    <div className="mb-6 rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-4">
+      <div className="mb-3 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
         Charts &amp; tables from this study
       </div>
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {figures.map((f) => (
           <button
             key={f.file}
             onClick={() => setOpen(f)}
-            className="group overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white p-1 text-left transition-colors hover:border-[#3FD0C9]"
+            className="group overflow-hidden rounded-[6px] border border-[#D6E6EE] bg-white p-3 text-left transition-colors hover:border-[#3FD0C9] hover:shadow-sm"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`/study-figures/${pmid}/${f.file}`}
-              alt={`Figure from page ${f.page}`}
-              className="aspect-square w-full rounded-[2px] object-contain"
-              loading="lazy"
-            />
-            <span className="mt-1 block text-[10px] text-zinc-400 group-hover:text-[#0A7A8A]">
+            <div className="flex h-32 items-center justify-center overflow-hidden rounded-[3px] bg-[#F4FBFC] sm:h-40">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/study-figures/${pmid}/${f.file}`}
+                alt={`Figure from page ${f.page}`}
+                className="max-h-full max-w-full object-contain"
+                loading="lazy"
+              />
+            </div>
+            <span className="mt-2 block text-[11px] text-zinc-400 group-hover:text-[#0A7A8A]">
               Page {f.page}
             </span>
           </button>
@@ -269,11 +271,11 @@ function StudyFigures({ pmid }: { pmid: string }) {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[70] flex items-center justify-center bg-[#031B34]/80 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-[#031B34]/80 p-8 backdrop-blur-sm"
             onClick={() => setOpen(null)}
           >
-            <div className="max-h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
-              <div className="mb-2 flex items-center justify-between gap-4">
+            <div className="max-h-[92vh] max-w-6xl" onClick={(e) => e.stopPropagation()}>
+              <div className="mb-3 flex items-center justify-between gap-4">
                 <span className="text-xs font-semibold text-white/80">Page {open.page}</span>
                 <div className="flex gap-2">
                   <a
@@ -292,12 +294,14 @@ function StudyFigures({ pmid }: { pmid: string }) {
                   </button>
                 </div>
               </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/study-figures/${pmid}/${open.file}`}
-                alt={`Figure from page ${open.page}`}
-                className="max-h-[80vh] max-w-full rounded-[4px] bg-white object-contain"
-              />
+              <div className="max-h-[80vh] overflow-auto rounded-[4px] bg-white p-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/study-figures/${pmid}/${open.file}`}
+                  alt={`Figure from page ${open.page}`}
+                  className="max-w-full object-contain"
+                />
+              </div>
             </div>
           </div>,
           document.body

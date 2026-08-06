@@ -37,20 +37,31 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 - **Tab 1 UX** — sort by scientific quality (+ hover definition), prominent "Read summary" button, and inline
   **edit & save** of a summary (localStorage — see weakness below); `app/wiki.tsx`, `app/summary-overrides.ts`.
 - **Charts & tables from the study PDF — NEW 2026-08-06.** The "Evidence from this study" modal
-  (`app/claims-panel.tsx`) now shows the real charts/graphs/tables from that study's own PDF, with a
-  lightbox + PNG/JPG download. `deck-service/scripts/extract_figures.py` pulls embedded raster images
-  out of AKBM's supplied PDFs (that's how figures/tables are placed on a typeset page), filtering out
-  logos/icons (min size), page-1 journal mastheads, full-page scans (image covers the whole page — no
-  text layer, so nothing to extract discretely), sliced-up chart fragments (extreme aspect ratio, e.g.
-  an axis label rasterised as its own object) and repeated running decorations (same image hash on
-  several pages). Output: `deck-service/assets/figures/<pmid>/*.{png,jpg}` (source of truth, mirrors
-  the `assets/fulltext` pattern) + mirrored into `public/study-figures/<pmid>/` (what Next actually
-  serves) with a manifest at `app/study-figures.json`. 30 of the 38 studies AKBM supplied a PDF for
-  have at least one figure (70 total); 8 have none (their data is typeset as native text, not raster).
-  Re-run when AKBM sends new PDFs: `python scripts/extract_figures.py <folder-of-pdfs> --write` from
-  `deck-service/`. 5 extra PDFs AKBM included (Bjorndal 2017, Ding 2024, Maki et al 2009, Nilsen 2022,
-  Yang 2022) aren't in `fulltext-studies.json` yet, so figures for them weren't extracted — they are
-  candidate NEW studies, not a bug; add them via `import_fulltext_pdfs.py` first if wanted.
+  (`app/claims-panel.tsx`) now shows the real charts/graphs/tables from that study's own PDF, in a
+  roomy 2/3/4-col thumbnail grid (own bordered card, generous gap/padding — tightened up after initial
+  feedback that it felt cramped), with a lightbox (full image, not cropped/squeezed) + PNG/JPG
+  download. `deck-service/scripts/extract_figures.py` has two extraction paths, because figures and
+  tables are laid out completely differently in a typeset PDF:
+  - **Figures/charts** are embedded raster images placed on the page - pulled out directly, filtering
+    logos/icons (min size), the page-1 journal masthead, full-page scans (image covers the whole page —
+    no text layer, nothing to extract discretely), sliced-up chart fragments (extreme aspect ratio, e.g.
+    an axis label rasterised as its own object) and repeated running decorations (same image hash on
+    several pages).
+  - **Tables** are drawn as text + ruled lines, not an image, so PyMuPDF's `find_tables()` locates the
+    grid and that region of the page is RENDERED (not extracted) to a PNG, expanded past the raw bbox to
+    include the caption above and footnotes below, capped by whatever comes next on the page (another
+    table/image) so it doesn't bleed into unrelated content. Filters a `find_tables()` quirk where two
+    stacked tables get unioned into one bogus tall detection (row implausibly tall for its reported row
+    count → dropped).
+  Output: `deck-service/assets/figures/<pmid>/*.{png,jpg}` (source of truth, mirrors the
+  `assets/fulltext` pattern) + mirrored into `public/study-figures/<pmid>/` (what Next actually serves)
+  with a manifest at `app/study-figures.json`. 32 of the 38 studies AKBM supplied a PDF for have at
+  least one figure/table (104 total, ~70 figures + ~34 tables); 6 have none (their data is plain text,
+  no gridable table or embeddable chart). Re-run when AKBM sends new PDFs:
+  `python scripts/extract_figures.py <folder-of-pdfs> --write` from `deck-service/`. 5 extra PDFs AKBM
+  included (Bjorndal 2017, Ding 2024, Maki et al 2009, Nilsen 2022, Yang 2022) aren't in
+  `fulltext-studies.json` yet, so figures for them weren't extracted — they are candidate NEW studies,
+  not a bug; add them via `import_fulltext_pdfs.py` first if wanted.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

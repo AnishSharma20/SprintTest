@@ -103,20 +103,23 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   text intact, image letterboxed and centred in the body zone.
 - **Content Generator V2 — NEW 2026-08-06, `/generator-v2`, a new nav tab alongside the original.**
   A redesign pitch ("Option B: Guided" from 3 mockups the client compared) rebuilt as a real, working
-  page — a step-by-step wizard (Create → Sources → Style → Review & Generate) instead of one long
-  scrolling form, same backend/`/api/generate-deck` contract and validation rules as V1. **Deliberately
-  a separate page, not a refactor of `/generator`**: the client explicitly asked to keep the old
-  version working while trying the new one, so `app/generator-v2/page.tsx` duplicates the constants
-  and generation logic (`byggKilder`, `kjorEn`, `produser`, the study picker, `LanguagePicker`) rather
-  than extracting a shared hook — `app/generator/page.tsx` is untouched (verified via `git diff`).
-  If V2 is later adopted as the replacement, that duplication should be collapsed then, not now.
-  `app/TopNav.tsx` gained a 4th tab; fixed a latent bug in the active-tab check while at it — a bare
-  `pathname.startsWith(t.href)` would have lit up "Content Generator" too while viewing
-  "Content Generator V2" (`/generator-v2` starts with `/generator`), now requires an exact match or a
-  `/`-bounded prefix. Verified end-to-end against a real deck-service run: all 4 steps navigate
-  correctly (including validation blocking Step 1→2 without a content type and Step 2→3 without a
-  source), the Review step's summary reflects actual picks, and a real generation reached the same
-  "📥 Open PowerPoint deck" link V1 produces. Confirmed V1 still renders unchanged at `/generator`.
+  page — a step-by-step wizard instead of one long scrolling form, same backend/`/api/generate-deck`
+  contract and validation rules as V1. **3 steps, not 4** (revised same day per feedback): Create →
+  Sources → Style, with the review summary + Generate button + results folded into the bottom of Step
+  3 rather than living on their own separate "Review" step — generation now happens right after Style,
+  no extra click. **Deliberately a separate page, not a refactor of `/generator`**: the client
+  explicitly asked to keep the old version working while trying the new one, so
+  `app/generator-v2/page.tsx` duplicates the constants and generation logic (`byggKilder`, `kjorEn`,
+  `produser`, the study picker, `LanguagePicker`) rather than extracting a shared hook —
+  `app/generator/page.tsx` is untouched (verified via `git diff`). If V2 is later adopted as the
+  replacement, that duplication should be collapsed then, not now. `app/TopNav.tsx` gained a 4th tab;
+  fixed a latent bug in the active-tab check while at it — a bare `pathname.startsWith(t.href)` would
+  have lit up "Content Generator" too while viewing "Content Generator V2" (`/generator-v2` starts
+  with `/generator`), now requires an exact match or a `/`-bounded prefix. Verified end-to-end against
+  a real deck-service run: all 3 steps navigate correctly (including validation blocking Step 1→2
+  without a content type and Step 2→3 without a source), the Step 3 summary reflects actual picks, and
+  a real generation reached the same "📥 Open PowerPoint deck" link V1 produces. Confirmed V1 still
+  renders unchanged at `/generator`.
 - **Persistent "open your deck" link — NEW 2026-08-06, revised same day.** Non-technical users were
   told to "check your downloads folder" after generating a deck/blog/whitepaper, with nothing left
   on-screen if they lost track of it. `deck-service/main.py` `job_result()` no longer pops the job on

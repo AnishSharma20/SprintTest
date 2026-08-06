@@ -65,10 +65,9 @@ function flaggFor(name: string): string {
 }
 
 const STEPS = [
-  { id: 1, eyebrow: "Step 1 of 4 · Create", title: "What are you creating?" },
-  { id: 2, eyebrow: "Step 2 of 4 · Sources", title: "What should it be based on?" },
-  { id: 3, eyebrow: "Step 3 of 4 · Style", title: "How should it sound?" },
-  { id: 4, eyebrow: "Step 4 of 4 · Review", title: "Ready to generate" },
+  { id: 1, eyebrow: "Step 1 of 3 · Create", title: "What are you creating?" },
+  { id: 2, eyebrow: "Step 2 of 3 · Sources", title: "What should it be based on?" },
+  { id: 3, eyebrow: "Step 3 of 3 · Style", title: "How should it sound?" },
 ] as const;
 
 function LanguagePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -436,7 +435,7 @@ export default function ContentGeneratorV2() {
       return;
     }
     setFeil(null);
-    setWizardStep((s) => Math.min(4, s + 1));
+    setWizardStep((s) => Math.min(3, s + 1));
   }
 
   function goBack() {
@@ -458,7 +457,7 @@ export default function ContentGeneratorV2() {
           <span className="rounded-full bg-[#EEFAF9] px-3 py-1 text-[11px] font-semibold text-[#0A7A8A]">Guided mode</span>
         </div>
 
-        <div className="mb-8 flex gap-1.5" role="progressbar" aria-valuenow={wizardStep} aria-valuemin={1} aria-valuemax={4}>
+        <div className="mb-8 flex gap-1.5" role="progressbar" aria-valuenow={wizardStep} aria-valuemin={1} aria-valuemax={3}>
           {STEPS.map((s) => (
             <button
               key={s.id}
@@ -713,14 +712,9 @@ export default function ContentGeneratorV2() {
                 className="w-full resize-y rounded-2xl border border-[#E4EDF0] bg-white p-3.5 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
               />
             </div>
-          </div>
-        )}
 
-        {/* ============================= STEP 4 ============================= */}
-        {wizardStep === 4 && (
-          <div className="space-y-6">
             <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
-              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Summary</div>
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Ready to generate</div>
               <dl className="space-y-2.5 text-sm">
                 <div className="flex justify-between gap-4"><dt className="text-zinc-500">Product</dt><dd className="font-semibold text-[#052A4E]">{PRODUCTS.find((p) => p.id === produkt)?.label}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-zinc-500">Creating</dt><dd className="text-right font-semibold text-[#052A4E]">{valgteTilgjengelige.map((t) => t.label).join(", ") || "Nothing picked"}</dd></div>
@@ -815,7 +809,7 @@ export default function ContentGeneratorV2() {
           ) : (
             <span />
           )}
-          {wizardStep < 4 && (
+          {wizardStep < 3 && (
             <button onClick={goNext} className="rounded-full bg-[#052A4E] px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-[#0a3a63]">
               Continue →
             </button>

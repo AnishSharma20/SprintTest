@@ -49,11 +49,11 @@ LAYOUT_USAGE = {
     "text":               "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points.",
     "text_with_picture":  "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`.",
     "picture_full":       "A full-bleed photo with a compact title — a strong visual break. `asset_id` required.",
-    "two_columns":        "TWO parallel points side by side; each column = `heading` + a substantive `body` of 2 to 3 sentences (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas.",
-    "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 2 to 3 full sentences that fill the panel, not a single line.",
-    "four_columns":       "FOUR parallel points; each column `body` should be 2 to 3 full sentences (roughly 120 to 200 characters) that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty.",
+    "two_columns":        "TWO parallel points side by side; each column = `heading` + a substantive `body` of 3 to 4 full sentences, written close to the [bracketed] body limit below (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas.",
+    "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that fill the panel, not a single line.",
+    "four_columns":       "FOUR parallel points; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty.",
     "ingredient":         "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck.",
-    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 2 to 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Keep each bullet to roughly 6 to 12 words, use parallel phrasing across the bullets, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
+    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
     "chart":              "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers.",
     "matrix":             "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`.",
     "exec_summary":       "An executive-summary opener: 2 to 4 key `points` (each `heading` + short `body`) beside an image. Give EVERY point an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword) so each point shows as an icon chip; all points must draw from ONE source and be distinct (or give none an icon). Emit `title`, `points`, and optionally an `asset_id` photo for the right side. Good as an early overview slide.",
@@ -132,6 +132,14 @@ def _asset_guide() -> str:
     return "\n".join(lines)
 
 
+def _max_tokens(target: int) -> int:
+    """Output budget scaled to the deck size. Bumped alongside the larger slide targets and the
+    fuller per-slide text density (TEXT DENSITY below) — the old 8000/12000/16000 ceilings were
+    sized for shorter decks with shorter copy, and would start truncating a 15 to 19 slide deck
+    that actually fills its boxes."""
+    return 20000 if target > 16 else (14000 if target > 10 else 10000)
+
+
 def build_system(length: str, tone: str, instructions: str = "") -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     # Same formulas as validate._coverage_warnings, so the initial prompt asks for exactly what
@@ -162,16 +170,35 @@ AGENDA (REQUIRED — every deck): the SECOND slide MUST be an `agenda` slide lis
 sections. Title is exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section
 label, well within 26 characters). They render as branded bullets on the standard Agenda layout.
 
+CONTEXT BEFORE EVIDENCE (match AKBM's own decks): do not leap from the agenda straight into the first
+specific data point. Spend the NEXT 1 to 2 slides setting the scene first — the underlying trend, need or
+problem this deck responds to (a market or consumer shift, a category challenge, why this matters now) —
+the way AKBM's own presentations open before turning to Superba specific proof. Good layouts for this beat:
+`serpentine`, `photo_stats`, `numbered_cards`, `stat`, `chart`, `implications`, `highlight`, or a `text`
+slide. Only after this scene setting should the deck turn to the first slide of product specific evidence.
+Keep full ACTION TITLE discipline even here — a real claim about the landscape (e.g. "Omega 3 deficiency
+now affects most of the adult population"), never a bare topic label ("Omega 3 status").
+
 ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
 claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
 Index"). Keep it to AT MOST 2 lines, roughly 90 characters — a reader who skims only the titles should get
 the whole argument. Mirror this discipline across the deck.
 
-BULLETS (discipline — a consulting deck is disciplined, not dense):
+TEXT DENSITY (write substantially, not sparsely): every body/detail field has a real character budget for
+its box — the [bracketed] limit printed next to each layout below is that budget, measured from the actual
+template geometry. Write to CLOSE TO that budget, not a small fraction of it: bring real supporting
+substance (a number, a mechanism, a comparison, a consequence), never a bare single clause when the box has
+room for three. AKBM's own decks read as dense and information rich; a slide whose text stops at a small
+fraction of its available room reads as thin next to them. This applies everywhere text has room to
+grow — column bodies, card bodies, item bodies — not only the `text` layout.
+
+BULLETS (discipline — a consulting deck is disciplined, not dense in COUNT, even though it is dense in
+TEXT per bullet — see TEXT DENSITY above):
 - At most 5 to 6 top-level bullets on a slide; if you have more, cap the CONTENT (split into two slides or
   cut) rather than cramming — never shrink to fit.
-- Each bullet is ONE idea, about 15 to 20 words, on a single thought (no run-on sentences stitched with
-  commas). At most 2 indent levels; prefer just one.
+- Each bullet is ONE idea, about 20 to 28 words, on a single thought (no run-on sentences stitched with
+  commas) — long enough to carry real substance, not a terse fragment. At most 2 indent levels; prefer just
+  one.
 - PARALLEL PHRASING inside a group: every bullet in a list starts the same grammatical way (all verbs, or
   all noun phrases) and has a similar length and shape, so the group reads as a set.
 - LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
@@ -306,7 +333,7 @@ def _call(client, system, user, model, max_tokens):
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
               tone: str = "balansert", instructions: str = "", model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
+    max_tokens = _max_tokens(target)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
     return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
@@ -316,15 +343,18 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
-    # Two different kinds of feedback need two different repair instructions. Schema errors name
+    max_tokens = _max_tokens(target)
+    # Three different kinds of feedback need three different repair instructions. Schema errors name
     # an exact field to shorten — a narrow, surgical fix. VARIETY:/PHOTOS: are deck-wide coverage
     # counts with no named field, and fixing them REQUIRES picking which slides to change layout
-    # on or add asset_id to — the opposite of "touch only what's named". Telling the model to do
-    # both under one "change ONLY the named fields, keep everything else byte-for-byte identical"
-    # rule would block the very freedom the coverage fix needs.
-    schema_errors = [e for e in errors if not (e.startswith("VARIETY:") or e.startswith("PHOTOS:"))]
-    coverage_errors = [e for e in errors if e.startswith("VARIETY:") or e.startswith("PHOTOS:")]
+    # on or add asset_id to — the opposite of "touch only what's named". TEXT: names fields that are
+    # too SHORT, the opposite direction from a schema error, and its fix (add substance) is the
+    # opposite of the coverage instruction's "keep content the same, just recast layout" — so it
+    # cannot share either bucket's wording without contradicting itself.
+    schema_errors = [e for e in errors
+                     if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:"))]
+    coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
+    text_errors = [e for e in errors if e.startswith("TEXT:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if schema_errors:
@@ -337,6 +367,13 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "`asset_id` to slides that don't have one, to satisfy the counts below. Keep the "
                       "underlying CONTENT and MESSAGE of each slide the same, just recast its layout or add "
                       "a photo — do not add new slides or remove existing ones:\n- " + "\n- ".join(coverage_errors))
+    if text_errors:
+        parts.append("TEXT DENSITY FEEDBACK — the fields named below are running short of the room their box "
+                      "actually has. EXPAND them (and any similarly thin field elsewhere) toward their "
+                      "bracketed limit with genuine supporting substance — a number, a mechanism, a "
+                      "comparison, a consequence — never by padding with filler or repeating the same point "
+                      "in other words. This changes the WORDING of those fields, not the deck's structure: "
+                      "keep every slide's layout, order and core claim the same:\n- " + "\n- ".join(text_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
@@ -348,7 +385,7 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
-    max_tokens = 16000 if target > 16 else (12000 if target > 10 else 8000)
+    max_tokens = _max_tokens(target)
     lines = []
     for f in findings:
         i = f.get("slide", 0)

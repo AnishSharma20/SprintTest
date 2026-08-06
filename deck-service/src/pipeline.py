@@ -120,10 +120,10 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             length=length, tone=tone, instructions=instructions)
             errs = validate.validate_plan(candidate)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
-        # VARIETY:/PHOTOS: coverage nudges now, and this second, separate hard/soft split had
+        # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
-        # fine deck would get discarded here for a coverage nudge it was never asked to address.
-        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:")
+        # fine deck would get discarded here for a nudge it was never asked to address.
+        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:")
         hard = [e for e in errs if not any(s in e for s in soft)]
         if hard:
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
@@ -160,7 +160,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             # auto-fit, so a few chars over is cosmetically absorbed at render, and a deck that
             # still under-uses layouts/photos after one revision is still a valid deck — don't
             # deny a non-technical user their deck over either.
-            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:")
+            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:")
             hard = [e for e in errors if not any(s in e for s in soft)]
             if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))

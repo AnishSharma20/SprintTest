@@ -62,6 +62,84 @@ def _coverage_warnings(plan: dict) -> list[str]:
     return warnings
 
 
+# Fields that intentionally stay short one-liners even when their maxLength happens to be
+# generous (a caption reading a chart, a banner summary, contact details) — never nudged toward
+# their limit; doing so would just pad a line that is supposed to stay a line.
+_SHORT_BY_DESIGN = {"title", "caption", "note", "tagline", "contact", "bottom_note", "banner"}
+
+
+def _long_text_paths(props: dict, prefix: tuple[str, ...] = (), min_len: int = 90) -> list[tuple]:
+    """Every STRING field long enough to be real prose (or an array-of-objects field's such
+    sub-fields), walked from one layout's schema conditional. A "*" in the returned path marks
+    where `_read_path` should iterate a list rather than index a key."""
+    out = []
+    for key, sub in props.items():
+        if key in _SHORT_BY_DESIGN:
+            continue
+        if sub.get("type") == "string" and sub.get("maxLength", 0) >= min_len:
+            out.append((prefix + (key,), sub["maxLength"]))
+        elif sub.get("type") == "array":
+            item = sub.get("items", {})
+            if item.get("type") == "object":
+                out.extend(_long_text_paths(item.get("properties", {}), prefix + (key, "*"), min_len))
+    return out
+
+
+def _read_path(slide: dict, path: tuple) -> list[tuple[str, str]]:
+    """Resolve a schema path (a "*" segment means iterate a list) against one slide instance.
+    Returns (concrete_path, text) pairs with REAL indices (e.g. "columns/1/body"), not the
+    wildcarded schema path, so a report can point the retry at the exact field."""
+    cur = [("", slide)]
+    for seg in path:
+        nxt = []
+        for cp, c in cur:
+            if seg == "*":
+                if isinstance(c, list):
+                    nxt.extend((f"{cp}/{j}" if cp else str(j), v) for j, v in enumerate(c))
+            elif isinstance(c, dict) and seg in c:
+                nxt.append((f"{cp}/{seg}" if cp else seg, c[seg]))
+        cur = nxt
+    return [(cp, v) for cp, v in cur if isinstance(v, str) and v.strip()]
+
+
+def _text_density_warnings(plan: dict) -> list[str]:
+    """Soft nudge (never blocks) toward AKBM's own house style of filling a box with real
+    supporting substance rather than a short fragment. Compares each long-form text field's
+    actual length to its schema maxLength — the true room its box has, already measured from the
+    real template geometry — and, if the deck is running noticeably short of that room on
+    average, names the worst offenders so the retry knows exactly what to expand. Never fires on
+    fewer than 4 qualifying fields (too little signal to judge a whole deck by)."""
+    slides = plan.get("slides", [])
+    if len(slides) < 3:
+        return []
+
+    long_paths_by_layout: dict[str, list[tuple]] = {}
+    for cond in config.schema()["properties"]["slides"]["items"].get("allOf", []):
+        sem = cond["if"]["properties"]["layout"]["const"]
+        long_paths_by_layout[sem] = _long_text_paths(cond["then"].get("properties", {}))
+
+    fields = []  # (path_str, actual_len, max_len)
+    for i, slide in enumerate(slides):
+        for path, max_len in long_paths_by_layout.get(slide.get("layout"), []):
+            for concrete_path, text in _read_path(slide, path):
+                fields.append((f"slides/{i}/{concrete_path}", len(text), max_len))
+
+    if len(fields) < 4:
+        return []
+    avg_fill = sum(a / m for _, a, m in fields) / len(fields)
+    if avg_fill >= 0.5:
+        return []
+
+    worst = sorted(fields, key=lambda f: f[1] / f[2])[:5]
+    examples = "; ".join(f"{p} ({a}/{m} chars, {round(100 * a / m)}%)" for p, a, m in worst)
+    return [f"TEXT: body and detail text is running short of the room available — averaging "
+            f"{round(100 * avg_fill)}% of each field's actual limit across {len(fields)} fields. "
+            f"AKBM's own decks fill these boxes with fuller sentences (a number, a mechanism, a "
+            f"comparison, a consequence), not a short fragment. Worst examples: {examples}. Expand "
+            f"these, and any similarly thin field elsewhere, toward their bracketed limit with real "
+            f"substance — never by padding with filler."]
+
+
 def validate_plan(plan: dict) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
@@ -95,5 +173,6 @@ def validate_plan(plan: dict) -> list[str]:
     # meant a plan with even one trivial residual overflow (which ships anyway) never got its
     # coverage checked at all, silently shipping under the photo/variety minimums.
     errors.extend(_coverage_warnings(plan))
+    errors.extend(_text_density_warnings(plan))
 
     return errors[:25]

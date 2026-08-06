@@ -827,9 +827,9 @@ export default function ContentGenerator() {
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          ["kort", "Short", "~6 slides"],
-                          ["standard", "Standard", "~9 slides"],
-                          ["detaljert", "Detailed", "~13 slides"],
+                          ["kort", "Short", "~9 slides"],
+                          ["standard", "Standard", "~15 slides"],
+                          ["detaljert", "Detailed", "~19 slides"],
                         ].map(([val, label, hint]) => (
                           <button
                             key={val}

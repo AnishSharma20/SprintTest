@@ -665,14 +665,15 @@ export default function ContentGeneratorV2() {
                   <div>
                     <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Length</div>
                     <div className="flex rounded-full border border-[#E4EDF0] p-1">
-                      {[["kort", "Short"], ["standard", "Standard"], ["detaljert", "Detailed"]].map(([val, label]) => (
+                      {[["kort", "Short", "~9 slides"], ["standard", "Standard", "~15 slides"], ["detaljert", "Detailed", "~19 slides"]].map(([val, label, hint]) => (
                         <button
                           key={val}
                           type="button"
                           onClick={() => setLengde(val)}
-                          className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${lengde === val ? "bg-[#052A4E] text-white" : "text-[#5C7A85]"}`}
+                          className={`flex-1 rounded-full px-3 py-2 text-center transition-colors ${lengde === val ? "bg-[#052A4E] text-white" : "text-[#5C7A85]"}`}
                         >
-                          {label}
+                          <div className="text-[13px] font-bold">{label}</div>
+                          <div className={`text-[11px] ${lengde === val ? "text-[#BFE3EF]" : "text-[#95AAB1]"}`}>{hint}</div>
                         </button>
                       ))}
                     </div>

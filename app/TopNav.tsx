@@ -8,6 +8,7 @@ const TABS = [
   { href: "/", label: "Scientific Studies" },
   { href: "/claims", label: "Findings Library" },
   { href: "/generator", label: "Content Generator" },
+  { href: "/generator-v2", label: "Content Generator V2" },
 ];
 
 export default function TopNav() {
@@ -30,8 +31,10 @@ export default function TopNav() {
         </Link>
         <div className="flex items-center gap-1">
           {TABS.map((t) => {
+            // Exact match or a path *segment* boundary ("/generator/" not "/generator-v2") -
+            // a bare startsWith would also light up "/generator" while viewing "/generator-v2".
             const aktiv =
-              t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
+              t.href === "/" ? pathname === "/" : pathname === t.href || pathname.startsWith(t.href + "/");
             return (
               <Link
                 key={t.href}

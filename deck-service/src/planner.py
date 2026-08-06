@@ -215,6 +215,11 @@ layout whenever the content has that shape:
 - numbers worth comparing -> `chart`;  one decisive figure -> `stat`;
 - a set of parallel points/benefits -> `key_points` (icon cards) or two/three/four_columns;
 - a sequence or process, or a dated sequence of up to 4 events -> `serpentine` (the wavy timeline);
+- EXACTLY TWO comparable groups, arms or conditions (e.g. a subgroup finding by sex, by genotype, a
+  before/after, an intervention vs control) -> `from_to`, `two_columns` or `comparison` — NEVER a
+  layout built for 3 or more parallel items (`serpentine` needs 3 to 4, `icon_grid` needs 3 to 6,
+  `numbered_cards`/`pillars`/`org_chart`/`decision_tree`/`cause_effect` need 2 minimum but read as
+  thin and mismatched at exactly 2; reach for one of those only once you truly have 3 or more).
 - TWO clear dimensions / a positioning trade-off -> `matrix` (e.g. absorption vs multinutrient value);
 - a factual side-by-side (values, yes/no, short text) -> `comparison` (table);
 - 3 or more OPTIONS rated on several qualitative criteria -> `harvey_ball` (0 to 4 balls);
@@ -351,16 +356,42 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     # too SHORT, the opposite direction from a schema error, and its fix (add substance) is the
     # opposite of the coverage instruction's "keep content the same, just recast layout" — so it
     # cannot share either bucket's wording without contradicting itself.
-    schema_errors = [e for e in errors
-                     if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:"))]
+    # A schema error's FIX depends on its DIRECTION. "shorten it by at least N" always means cut text.
+    # But "'items' is a required property" or an array "is too short" mean the opposite — a field is
+    # MISSING or UNDER-filled — and telling the model to "shorten the text, keep everything else
+    # identical" for those is not just unhelpful, it's the wrong direction entirely: nothing about
+    # that instruction says a field can be ADDED. That mismatch is exactly why a structural error
+    # like this survived the one retry and reached the user as a hard failure (seen in practice: a
+    # 2-arm subgroup finding forced into `serpentine`, which needs 3 to 4 items).
+    shorten_errors = [e for e in errors if "shorten it by at least" in e]
+    structural_errors = [e for e in errors
+                         if "is a required property" in e or "is too short" in e]
+    other_schema_errors = [e for e in errors
+                           if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:"))
+                           and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
-    if schema_errors:
-        parts.append("SCHEMA ERRORS — change ONLY the fields named below (shorten the text, or move detail "
-                      "into speaker_notes); keep every other field byte-for-byte identical; do not touch "
-                      "slides or fields that aren't listed:\n- " + "\n- ".join(schema_errors))
+    if shorten_errors:
+        parts.append("SCHEMA ERRORS (too long) — change ONLY the fields named below (shorten the text, or "
+                      "move detail into speaker_notes); keep every other field byte-for-byte identical; do "
+                      "not touch slides or fields that aren't listed:\n- " + "\n- ".join(shorten_errors))
+    if structural_errors:
+        parts.append("SCHEMA ERRORS (missing or too few) — the fields below are MISSING a required value, "
+                      "or an array has fewer items than that layout needs. For each: either ADD the missing "
+                      "field or the additional item(s) using REAL content from the source (never invent one "
+                      "to hit a count), OR, if the source genuinely does not have enough distinct parallel "
+                      "items for that layout's shape, change JUST that slide's `layout` to one that fits how "
+                      "many items you actually have (for example exactly two comparable groups/arms fits "
+                      "`from_to`, `two_columns` or `comparison`, not a 3-or-more layout like `serpentine`, "
+                      "`icon_grid` or `numbered_cards`). Do not touch slides or fields that aren't "
+                      "listed:\n- " + "\n- ".join(structural_errors))
+    if other_schema_errors:
+        parts.append("OTHER SCHEMA ERRORS — fix exactly the problem described for each field below (an "
+                      "invalid value, an unavailable background, etc.); keep every other field byte-for-byte "
+                      "identical; do not touch slides or fields that aren't listed:\n- "
+                      + "\n- ".join(other_schema_errors))
     if coverage_errors:
         parts.append("COVERAGE FEEDBACK — these are deck-wide, not a single field. You MAY change the "
                       "`layout` of some content slides to a better-fitting structural layout, and/or add "

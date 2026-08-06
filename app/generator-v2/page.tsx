@@ -714,24 +714,6 @@ export default function ContentGeneratorV2() {
               />
             </div>
 
-            <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
-              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Ready to generate</div>
-              <dl className="space-y-2.5 text-sm">
-                <div className="flex justify-between gap-4"><dt className="text-zinc-500">Product</dt><dd className="font-semibold text-[#052A4E]">{PRODUCTS.find((p) => p.id === produkt)?.label}</dd></div>
-                <div className="flex justify-between gap-4"><dt className="text-zinc-500">Creating</dt><dd className="text-right font-semibold text-[#052A4E]">{valgteTilgjengelige.map((t) => t.label).join(", ") || "Nothing picked"}</dd></div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-zinc-500">Sources</dt>
-                  <dd className="text-right font-semibold text-[#052A4E]">
-                    {[filer.length ? `${filer.length} file${filer.length === 1 ? "" : "s"}` : null, valgteStudier.size ? `${valgteStudier.size} stud${valgteStudier.size === 1 ? "y" : "ies"}` : null, inkluderteClaims.length ? `${inkluderteClaims.length} finding${inkluderteClaims.length === 1 ? "" : "s"}` : null].filter(Boolean).join(" · ") || "None yet"}
-                  </dd>
-                </div>
-                {visDeckOpsjoner && (
-                  <div className="flex justify-between gap-4"><dt className="text-zinc-500">Deck style</dt><dd className="font-semibold text-[#052A4E]">{lengde} · {tone}</dd></div>
-                )}
-                <div className="flex justify-between gap-4"><dt className="text-zinc-500">Language</dt><dd className="font-semibold text-[#052A4E]">{flaggFor(sprak)} {sprak}</dd></div>
-              </dl>
-            </div>
-
             <button
               onClick={produser}
               disabled={laster || !harValgt || !harKilder}

@@ -42,6 +42,8 @@ except Exception:  # noqa: BLE001
     pass
 
 import fitz  # PyMuPDF
+import io
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTDIR = ROOT / "assets" / "figures"
@@ -81,6 +83,31 @@ TABLE_ZOOM = 3.0  # render resolution multiplier - tables are dense text, need t
 TABLE_PAD_TOP, TABLE_PAD_SIDE = 22, 10  # points, for the caption above and a little breathing room on
 # the sides; the bottom instead grows dynamically to the last full-width (table/footnote) text block -
 # see extract_tables_for_pdf - so it stops right after the footnotes, not partway into the next paragraph
+
+MARGIN_PX = 48  # the reviewer downloads this file directly and uses it elsewhere (a slide, a doc) -
+# it needs to look like the on-screen preview (image floating in a white card), not a bare crop with
+# text touching the edge. Baked into the pixels here, not left to page-side CSS, so the download matches.
+
+
+def frame_with_margin(data: bytes, ext: str) -> tuple[bytes, str, int, int]:
+    """Pad an extracted figure/table with a white margin so downloads look like the in-app preview."""
+    im = Image.open(io.BytesIO(data))
+    if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+        im = im.convert("RGBA")
+        flat = Image.new("RGB", im.size, "white")
+        flat.paste(im, mask=im.split()[-1])
+        im = flat
+    else:
+        im = im.convert("RGB")
+    canvas = Image.new("RGB", (im.width + 2 * MARGIN_PX, im.height + 2 * MARGIN_PX), "white")
+    canvas.paste(im, (MARGIN_PX, MARGIN_PX))
+    buf = io.BytesIO()
+    if ext.lower() == "png":
+        canvas.save(buf, format="PNG")
+    else:
+        ext = "jpeg"
+        canvas.save(buf, format="JPEG", quality=92)
+    return buf.getvalue(), ext, canvas.width, canvas.height
 
 
 def stem_key(name: str) -> str:
@@ -276,6 +303,8 @@ def main() -> None:
 
         figs = extract_for_pdf(p) + extract_tables_for_pdf(p)
         figs.sort(key=lambda f: f["page"])
+        for f in figs:
+            f["bytes"], f["ext"], f["width"], f["height"] = frame_with_margin(f["bytes"], f["ext"])
         print(f"  {pmid:<9} {p.name:<34} -> {len(figs)} figure(s)/table(s)" + (
             "  " + ", ".join(f"p{f['page']}:{f['kind']}:{f['width']}x{f['height']}" for f in figs) if stats else ""
         ))

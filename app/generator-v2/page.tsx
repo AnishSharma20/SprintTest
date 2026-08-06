@@ -540,24 +540,6 @@ export default function ContentGeneratorV2() {
               You&apos;re creating <strong className="text-[#052A4E]">{valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ") || "…"}</strong>. Now pick the material it should draw on — upload files, choose from the study library, or both.
             </p>
 
-            <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#B9D8E0] bg-white p-7 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#EEFAF9]">
-              <input type="file" accept=".docx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />
-              <div className="text-3xl">📄</div>
-              <div className="mt-2 text-sm font-bold text-[#052A4E]">Click to add source files</div>
-              <div className="mt-1 text-xs text-zinc-500">.docx, .txt or .md · you can add several</div>
-            </label>
-
-            {filer.length > 0 && (
-              <ul className="space-y-2">
-                {filer.map((f, i) => (
-                  <li key={i} className="flex items-center justify-between rounded-xl border border-[#E4EDF0] bg-white px-4 py-2 text-sm">
-                    <span className="truncate text-[#052A4E]">📎 {f.name}</span>
-                    <button onClick={() => fjern(i)} className="ml-3 shrink-0 text-xs font-medium text-zinc-400 hover:text-red-500">Remove</button>
-                  </li>
-                ))}
-              </ul>
-            )}
-
             <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Or pick from Scientific Studies</div>
@@ -651,6 +633,24 @@ export default function ContentGeneratorV2() {
                 </div>
               )}
             </div>
+
+            <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#B9D8E0] bg-white p-7 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#EEFAF9]">
+              <input type="file" accept=".docx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />
+              <div className="text-3xl">📄</div>
+              <div className="mt-2 text-sm font-bold text-[#052A4E]">Click to add source files</div>
+              <div className="mt-1 text-xs text-zinc-500">.docx, .txt or .md · you can add several</div>
+            </label>
+
+            {filer.length > 0 && (
+              <ul className="space-y-2">
+                {filer.map((f, i) => (
+                  <li key={i} className="flex items-center justify-between rounded-xl border border-[#E4EDF0] bg-white px-4 py-2 text-sm">
+                    <span className="truncate text-[#052A4E]">📎 {f.name}</span>
+                    <button onClick={() => fjern(i)} className="ml-3 shrink-0 text-xs font-medium text-zinc-400 hover:text-red-500">Remove</button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 

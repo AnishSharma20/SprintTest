@@ -48,20 +48,36 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     an axis label rasterised as its own object) and repeated running decorations (same image hash on
     several pages).
   - **Tables** are drawn as text + ruled lines, not an image, so PyMuPDF's `find_tables()` locates the
-    grid and that region of the page is RENDERED (not extracted) to a PNG, expanded past the raw bbox to
-    include the caption above and footnotes below, capped by whatever comes next on the page (another
-    table/image) so it doesn't bleed into unrelated content. Filters a `find_tables()` quirk where two
-    stacked tables get unioned into one bogus tall detection (row implausibly tall for its reported row
-    count → dropped).
+    grid and that region of the page is RENDERED (not extracted) to a PNG. `find_tables()`'s own bbox is
+    usually just the header row, so the crop grows dynamically: walk down the page's text blocks and
+    keep including each one UNLESS it has a "column sibling" (another block at the same height but a
+    disjoint x-range) — that's what a resumed two-column body looks like, whereas a short one-line
+    footnote has no such sibling even though it's narrower than the table. This replaced an earlier fixed
+    +220pt bottom pad, which either bled into the next paragraph (single-column pages) or cut a footnote
+    off mid-sentence (short footnotes, narrower than the table) — the width-alone heuristic couldn't
+    win both cases at once. Filters a separate `find_tables()` quirk where two stacked tables get unioned
+    into one bogus tall detection (row implausibly tall for its reported row count → dropped).
   Output: `deck-service/assets/figures/<pmid>/*.{png,jpg}` (source of truth, mirrors the
   `assets/fulltext` pattern) + mirrored into `public/study-figures/<pmid>/` (what Next actually serves)
-  with a manifest at `app/study-figures.json`. 32 of the 38 studies AKBM supplied a PDF for have at
-  least one figure/table (104 total, ~70 figures + ~34 tables); 6 have none (their data is plain text,
-  no gridable table or embeddable chart). Re-run when AKBM sends new PDFs:
-  `python scripts/extract_figures.py <folder-of-pdfs> --write` from `deck-service/`. 5 extra PDFs AKBM
-  included (Bjorndal 2017, Ding 2024, Maki et al 2009, Nilsen 2022, Yang 2022) aren't in
-  `fulltext-studies.json` yet, so figures for them weren't extracted — they are candidate NEW studies,
-  not a bug; add them via `import_fulltext_pdfs.py` first if wanted.
+  with a manifest at `app/study-figures.json`. Re-run when AKBM sends new PDFs:
+  `python scripts/extract_figures.py <folder-of-pdfs> --write` from `deck-service/`, over a folder
+  containing ALL supplied PDFs (not just the new ones — it rebuilds the whole manifest from what it's
+  given, so a partial folder silently drops every other study's figures).
+- **4 new studies added 2026-08-06** (from a later AKBM PDF batch, after the archive was last reviewed):
+  Bjørndal 2018 (choline/homocysteine kinetics, PMID 30261756), Maki 2009 (EPA/DHA bioavailability,
+  PMID 19854375), Yang 2022/2023 (muscle injury recovery, PMID 36566465), SenGupta/Nilsen 2022
+  (dopaminergic neuron aging — **preclinical**, C. elegans + human cells, not a human trial like every
+  other entry, PMID 36367773). PMIDs resolved by hand (title/DOI lookup) since 3 of the 4 PDFs are
+  **scanned image-only** (no text layer — `import_fulltext_pdfs.py`'s automatic PubMed cross-check
+  needs extractable text and reported them UNRESOLVED/IMAGE-ONLY). Categorised in `ARCHIVE_CATEGORIES`
+  (`app/studies.ts`) by content judgment, flagged inline as NOT verified against AKBM's Science Archive
+  like the rest of that table. Consequence of being scans: no full text (AI summaries generated from the
+  PubMed abstract instead, same as any non-supplied study) and no chart/table extraction (a scan's whole
+  page is one embedded image, correctly excluded by the full-page-scan filter above) — SenGupta/Nilsen is
+  the exception, a normal born-digital PDF with real full text and 17 figures/tables. A 5th PDF, **Ding
+  2024** (krill oil skin-barrier study, Jpn Pharmacol Ther), has NO PMID at all — that journal isn't
+  indexed in PubMed — so it doesn't fit the site's PMID-keyed model (claims, full text, figures, the
+  PubMed link) and was left out pending a decision on how to represent a non-PubMed source.
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

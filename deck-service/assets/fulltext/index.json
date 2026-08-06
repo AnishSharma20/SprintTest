@@ -358,5 +358,15 @@
     "first_author": "Yurko-Mauro K",
     "year": "2015",
     "matched_by": "doi"
+  },
+  "36367773": {
+    "pdf": "Nilsen 2022.pdf",
+    "pages": 27,
+    "chars": 76499,
+    "doi": null,
+    "title": "Krill oil protects dopaminergic neurons from age-related degeneration through temporal transcriptome rewiring and suppression of several hallmarks of aging",
+    "first_author": "SenGupta T",
+    "year": "2022",
+    "matched_by": "manual"
   }
 }

@@ -94,6 +94,13 @@ const ARCHIVE_CATEGORIES: Record<string, string[]> = {
   "17353582": ["Wellness & Immune Support", "Joint Support"], // Deutsch 2007
   "38776073": ["Joint Support"], // KARAOKE 2024 results (Laslett); not in the archive
   "12777162": ["PMS Support"], // Sampalis 2003, the archive's only PMS study
+  // Added 2026-08-06 from a later AKBM PDF batch, after the archive was last reviewed - best-effort
+  // categorisation by content, NOT verified against AKBM's Science Archive like the rest of this table.
+  "30261756": ["Liver Support"], // Bjorndal 2018, choline/homocysteine kinetics (same topic as Modinger 2019)
+  "19854375": ["Wellness & Immune Support"], // Maki 2009, EPA/DHA bioavailability (Aker BioMarine co-authored)
+  "36566465": ["Sports Performance Support"], // Yang 2022/2023, muscle injury recovery after resistance exercise
+  "36367773": ["Healthy Aging Support", "Brain & Dry Eye Support"], // SenGupta/Nilsen 2022, C. elegans + human
+  // cells - dopaminergic neuron aging; PRECLINICAL (not a human trial), unlike every other study here
 };
 
 // Fallback for a study not yet added to ARCHIVE_CATEGORIES (e.g. a brand new PDF AKBM sends before

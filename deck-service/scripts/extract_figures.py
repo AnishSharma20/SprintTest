@@ -78,8 +78,9 @@ MAX_AVG_ROW_HEIGHT = 60  # points; find_tables() occasionally unions two stacked
 MAX_TABLES_PER_STUDY = 6
 MAX_TABLES_PER_PAGE = 2  # more than this on one page is usually one table mis-split into pieces
 TABLE_ZOOM = 3.0  # render resolution multiplier - tables are dense text, need to stay crisp
-TABLE_PAD_TOP, TABLE_PAD_SIDE, TABLE_PAD_BOTTOM = 22, 10, 220  # points; bottom capped by the next
-# object on the page (see extract_tables_for_pdf) so it doesn't bleed into unrelated following content
+TABLE_PAD_TOP, TABLE_PAD_SIDE = 22, 10  # points, for the caption above and a little breathing room on
+# the sides; the bottom instead grows dynamically to the last full-width (table/footnote) text block -
+# see extract_tables_for_pdf - so it stops right after the footnotes, not partway into the next paragraph
 
 
 def stem_key(name: str) -> str:
@@ -189,12 +190,41 @@ def extract_tables_for_pdf(path: Path) -> list[dict]:
             [r.y0 for r in deduped] +
             [rect.y0 for img in page.get_images(full=True) for rect in page.get_image_rects(img[0])]
         )
+        # find_tables()'s own bbox is often just the header row (the data rows + footnotes below are
+        # separate text blocks it doesn't attribute to the table). Walk down through the page's text
+        # blocks including each one in turn - UNLESS it has a "column sibling" (another block at the
+        # same height but a disjoint x-range), which is what a resumed two-column body looks like. A
+        # short one-line footnote has no such sibling even though it doesn't span the full width, so
+        # width alone isn't a reliable signal - two blocks side by side at the same height is.
+        blocks = sorted(page.get_text("blocks"), key=lambda bl: bl[1])
+
+        def has_column_sibling(cand) -> bool:
+            cx0, cy0, cx1, cy1 = cand
+            for bx0, by0, bx1, by1, *_ in blocks:
+                if (bx0, by0, bx1, by1) == (cx0, cy0, cx1, cy1):
+                    continue
+                y_overlap = min(cy1, by1) - max(cy0, by0)
+                if y_overlap < 0.4 * min(cy1 - cy0, by1 - by0):
+                    continue
+                x_overlap = min(cx1, bx1) - max(cx0, bx0)
+                if x_overlap <= 2:  # side by side, not stacked -> two columns resumed here
+                    return True
+            return False
 
         for b in deduped:
-            bottom_limit = min([t for t in next_tops if t > b.y1 + 5] + [page.rect.height - 20])
+            hard_limit = min([t for t in next_tops if t > b.y1 + 5] + [page.rect.height - 20])
+            bottom = b.y1
+            for bx0, by0, bx1, by1, *_ in blocks:
+                if by0 < bottom - 2 or by0 >= hard_limit:
+                    continue  # above the table, or already past the next object's boundary
+                if by0 - bottom > 40:
+                    break  # too big a gap to still be a caption/footnote for this table
+                if has_column_sibling((bx0, by0, bx1, by1)):
+                    break  # the page's normal two-column layout has resumed
+                bottom = min(by1, hard_limit)
             clip = fitz.Rect(
                 max(b.x0 - TABLE_PAD_SIDE, 0), max(b.y0 - TABLE_PAD_TOP, 0),
-                min(b.x1 + TABLE_PAD_SIDE, page.rect.width), min(b.y1 + TABLE_PAD_BOTTOM, bottom_limit),
+                min(b.x1 + TABLE_PAD_SIDE, page.rect.width), min(bottom + 6, hard_limit),
             )
             if clip.height < 15 or clip.width < 50:
                 continue

@@ -101,16 +101,25 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   directly — no planner/schema involvement at all. Verified with a real generation run (rendered to
   PNG via PowerPoint COM): divider + figure + table slides all correct, citation/page/kind eyebrow
   text intact, image letterboxed and centred in the body zone.
-- **Persistent "open your deck" link — NEW 2026-08-06.** Non-technical users were told to "check your
-  downloads folder" after generating a deck/blog/whitepaper, with nothing left on-screen if they lost
-  track of it. Two changes: (1) `deck-service/main.py` `job_result()` no longer pops the job on the
-  first GET (`JOBS.pop` removed) — it's a plain repeatable link now, expiring only via the existing
-  `_prune_jobs()` 1h TTL, not one-shot; (2) `app/generator/page.tsx` keeps the browser's automatic
-  download AND now also renders a real, persistent `<a href="/api/generate-deck?id=...&download=1" download>`
-  link in the per-asset status row ("📥 Open PowerPoint deck") that stays clickable in the page — so
-  the file can be re-opened without hunting through a downloads folder. Verified end-to-end with the
-  actual FastAPI service running locally: link renders with the right filename, and the same URL
-  fetches successfully twice in a row (byte-identical), confirming it survived past the first read.
+- **Persistent "open your deck" link — NEW 2026-08-06, revised same day.** Non-technical users were
+  told to "check your downloads folder" after generating a deck/blog/whitepaper, with nothing left
+  on-screen if they lost track of it. `deck-service/main.py` `job_result()` no longer pops the job on
+  the first GET (`JOBS.pop` removed) — it's a plain repeatable link, expiring only via the existing
+  `_prune_jobs()` 1h TTL, not one-shot. `app/generator/page.tsx` renders a real, persistent
+  `<a href="/api/generate-deck?id=...&download=1" target="_blank">📥 Open PowerPoint deck</a>` in the
+  per-asset status row, so the file can be re-opened without hunting through a downloads folder.
+  **Revised after first feedback round:** the first version ALSO kept the old silent
+  blob-fetch-and-synthetic-click auto-download running alongside the new link, so users still saw a
+  file silently land in Downloads and didn't notice the new link — the fix was to actually remove that
+  auto-download path (`kjorEn()` no longer fetches the blob at all for deck/whitepaper; it just stores
+  the URL), and drop the anchor's `download` attribute so a real click goes through the browser's own
+  native download handling (which surfaces an "Open" affordance directly, the closest a web page can
+  get to "just open it" — a page can never open a desktop app's file without the browser saving it
+  *somewhere* first). `nedlastingsnavn()`'s client-side filename/timestamp logic was deleted along with
+  it (dead code once nothing constructs a blob URL). Verified end-to-end against the actual FastAPI
+  service: generated a real deck through the browser, confirmed no `download=1` request fired until
+  the link was clicked, and that the click triggers the browser's download (net::ERR_ABORTED in
+  DevTools' network log is the browser handing the response to its download manager, not a failure).
 - **Generator study picker** — Tab 2 lists studies from the **`/api/studies`** route (`app/studies.ts`) with
   category filters + search; selected summaries feed the generator as a synthesized source file.
 - **Multi-asset generator + product selector** — Tab 2 content types are **multi-select** (tick deck, blog

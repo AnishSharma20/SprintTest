@@ -103,44 +103,6 @@ function flaggFor(name: string): string {
   return LANGUAGES.find((l) => l.name === name)?.flag ?? "🌐";
 }
 
-// Filename for a generated download. Prefer what the service sends in Content-Disposition (it is
-// derived from the generated title), and always append a timestamp: the old code hardcoded ONE name
-// per content type, so every run landed as "superba-whitepaper-indesign (1).zip", "(2)", "(3)"… and
-// looked like the same file coming back every time.
-//
-// KEEP THIS SHORT. Windows Explorer names the folder it extracts a zip into after the zip itself,
-// and it refuses to extract with "the target path is too long" well before the documented 260
-// character limit. A whitepaper zip that would not open had a 69 character folder name; the same
-// file extracted fine once shortened by hand.
-const STEM_MAX = 24;
-
-function nedlastingsnavn(res: Response, type: ContentType, blob: Blob): string {
-  const cd = res.headers.get("Content-Disposition") ?? "";
-  const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
-  let name = (m?.[1] ?? "").trim();
-  if (!name) {
-    name =
-      type === "whitepaper_mix"
-        ? "superba-whitepaper.zip"
-        : blob.type.includes("zip")
-          ? "content-decks.zip"
-          : "content-deck.pptx";
-  }
-  const dot = name.lastIndexOf(".");
-  let stem = dot > 0 ? name.slice(0, dot) : name;
-  const ext = dot > 0 ? name.slice(dot) : "";
-  if (stem.length > STEM_MAX) {
-    // Cut on a word boundary so it reads as a shortened title, not a truncated file.
-    const cut = stem.slice(0, STEM_MAX);
-    const dash = cut.lastIndexOf("-");
-    stem = (dash > STEM_MAX / 2 ? cut.slice(0, dash) : cut).replace(/-+$/, "");
-  }
-  const d = new Date();
-  const p = (n: number) => String(n).padStart(2, "0");
-  const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
-  return `${stem}-${stamp}${ext}`;
-}
-
 function LanguagePicker({
   value,
   onChange,
@@ -261,10 +223,9 @@ type Kjoring = {
   step: string;
   status: "running" | "done" | "error";
   error?: string;
-  // A stable link to the finished file, so it can be re-opened from the page itself rather than
-  // making the user hunt through their downloads folder (the browser also auto-saves a copy).
+  // A stable link to the finished file - the user clicks it themselves to open/save it (no
+  // auto-download on our side; see kjorEn), so nothing lands anywhere without them asking for it.
   downloadUrl?: string;
-  downloadName?: string;
 };
 
 export default function ContentGenerator() {
@@ -476,32 +437,24 @@ export default function ContentGenerator() {
         if (s.status === "error") throw new Error(s.error || "Generation failed");
       }
 
-      oppdaterKjoring(type, { step: TEXT_TYPES.has(type) ? "Writing the draft…" : "Downloading…" });
-      const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
-      if (!dl.ok) {
-        const d = await dl.json().catch(() => ({}));
-        throw new Error(d.feil || `Server responded ${dl.status}`);
-      }
       if (TEXT_TYPES.has(type)) {
+        oppdaterKjoring(type, { step: "Writing the draft…" });
+        const dl = await fetch(`/api/generate-deck?id=${jobId}&download=1`);
+        if (!dl.ok) {
+          const d = await dl.json().catch(() => ({}));
+          throw new Error(d.feil || `Server responded ${dl.status}`);
+        }
         const md = await dl.text();
         setUtkast((prev) => [...prev.filter((u) => u.type !== type), { type, markdown: md }]);
         oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
       } else {
-        const blob = await dl.blob();
-        const downloadName = nedlastingsnavn(dl, type, blob);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = downloadName;
-        a.click();
-        URL.revokeObjectURL(url);
-        // The job's result stays on the server for a while (deck-service/main.py, 1h TTL) - keep
-        // this URL around as a real clickable link too, not just the auto-download above, so
-        // someone who isn't sure where their downloads folder is has an obvious "open it" to click.
+        // No auto-download here on purpose - silently saving a file the user never clicked for is
+        // exactly the "now go hunt through your downloads folder" experience this replaced. The job's
+        // result stays on the server for a while (deck-service/main.py, 1h TTL), so this is a plain
+        // link the user opens themselves - the browser's own download/open handling takes it from there.
         oppdaterKjoring(type, {
           status: "done", progress: 100, step: "Done",
           downloadUrl: `/api/generate-deck?id=${jobId}&download=1`,
-          downloadName,
         });
       }
 
@@ -1025,11 +978,12 @@ export default function ContentGenerator() {
                   )}
                   {k.status === "done" && !TEXT_TYPES.has(k.type) && (
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                      <span className="text-emerald-700">✅ Ready — a copy also saved to your downloads.</span>
+                      <span className="text-emerald-700">✅ Ready.</span>
                       {k.downloadUrl && (
                         <a
                           href={k.downloadUrl}
-                          download={k.downloadName}
+                          target="_blank"
+                          rel="noopener"
                           className="font-semibold text-[#0A7A8A] underline hover:text-[#086472]"
                         >
                           📥 Open {meta.label}

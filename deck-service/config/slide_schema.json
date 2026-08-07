@@ -600,11 +600,11 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 61
+                  "maxLength": 24
                 },
                 "subtitle": {
                   "type": "string",
-                  "maxLength": 51
+                  "maxLength": 45
                 }
               }
             }
@@ -628,7 +628,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 74
+                  "maxLength": 99
                 }
               }
             }
@@ -653,7 +653,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 19
+                  "maxLength": 7
                 },
                 "items": {
                   "type": "array",
@@ -661,7 +661,7 @@
                   "maxItems": 7,
                   "items": {
                     "type": "string",
-                    "maxLength": 30
+                    "maxLength": 26
                   }
                 }
               }
@@ -686,7 +686,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 179
+                  "maxLength": 71
                 }
               }
             }
@@ -710,7 +710,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 125
+                  "maxLength": 167
                 }
               }
             }
@@ -735,7 +735,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 125
+                  "maxLength": 167
                 },
                 "body": {
                   "type": "string",
@@ -763,11 +763,11 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 63
+                  "maxLength": 84
                 },
                 "heading": {
                   "type": "string",
-                  "maxLength": 18
+                  "maxLength": 16
                 },
                 "body": {
                   "type": "string",
@@ -827,7 +827,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 60
+                  "maxLength": 81
                 },
                 "asset_id": {
                   "enum": [
@@ -883,7 +883,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 125
+                  "maxLength": 167
                 },
                 "columns": {
                   "type": "array",
@@ -899,7 +899,7 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 22
+                        "maxLength": 19
                       },
                       "body": {
                         "type": "string",
@@ -982,7 +982,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 125
+                  "maxLength": 167
                 },
                 "columns": {
                   "type": "array",
@@ -998,7 +998,7 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 22
+                        "maxLength": 19
                       },
                       "body": {
                         "type": "string",
@@ -1081,7 +1081,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 125
+                  "maxLength": 167
                 },
                 "columns": {
                   "type": "array",
@@ -1097,7 +1097,7 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 18
+                        "maxLength": 16
                       },
                       "body": {
                         "type": "string",

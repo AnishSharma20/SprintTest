@@ -11,8 +11,8 @@
       "subtitle": 1
     },
     "limits": {
-      "title": 61,
-      "subtitle": 51
+      "title": 24,
+      "subtitle": 45
     },
     "picture_slots": [],
     "removable_idx": [
@@ -31,7 +31,7 @@
       "title": 0
     },
     "limits": {
-      "title": 74
+      "title": 99
     },
     "picture_slots": [],
     "removable_idx": [
@@ -51,10 +51,10 @@
       "items": 13
     },
     "limits": {
-      "title": 19,
+      "title": 7,
       "items": {
         "maxItems": 7,
-        "item_max": 30
+        "item_max": 26
       }
     },
     "picture_slots": [],
@@ -74,7 +74,7 @@
       "title": 0
     },
     "limits": {
-      "title": 179
+      "title": 71
     },
     "picture_slots": [],
     "removable_idx": [
@@ -92,7 +92,7 @@
       "title": 0
     },
     "limits": {
-      "title": 125
+      "title": 167
     },
     "picture_slots": [],
     "removable_idx": [
@@ -111,7 +111,7 @@
       "body": 14
     },
     "limits": {
-      "title": 125,
+      "title": 167,
       "body": 560
     },
     "picture_slots": [],
@@ -134,8 +134,8 @@
       "picture": 17
     },
     "limits": {
-      "title": 63,
-      "heading": 18,
+      "title": 84,
+      "heading": 16,
       "body": 201
     },
     "picture_slots": [
@@ -160,7 +160,7 @@
       "picture": 17
     },
     "limits": {
-      "title": 60
+      "title": 81
     },
     "picture_slots": [
       17
@@ -193,10 +193,10 @@
       ]
     },
     "limits": {
-      "title": 125,
+      "title": 167,
       "columns": {
         "n": 2,
-        "heading_max": 22,
+        "heading_max": 19,
         "body_max": 254
       }
     },
@@ -242,10 +242,10 @@
       ]
     },
     "limits": {
-      "title": 125,
+      "title": 167,
       "columns": {
         "n": 3,
-        "heading_max": 22,
+        "heading_max": 19,
         "body_max": 254
       }
     },
@@ -300,10 +300,10 @@
       ]
     },
     "limits": {
-      "title": 125,
+      "title": 167,
       "columns": {
         "n": 4,
-        "heading_max": 18,
+        "heading_max": 16,
         "body_max": 201
       }
     },

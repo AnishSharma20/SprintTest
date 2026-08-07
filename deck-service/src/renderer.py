@@ -59,9 +59,14 @@ def _master_indices():
 # fold into this same scale, and native template placeholders are forced onto it too, not just
 # code-built layouts). Hierarchy is expressed through WEIGHT, COLOUR and CAPS, not extra sizes.
 # Defined early: default args below (_set_text/_set_lines) are evaluated at def-time.
-_SZ_TITLE = 24                         # slide headlines; also hero data figures (stat values)
-_SZ_BODY = 14                          # headings (bold), body, labels, table cells, bullets
-_SZ_SMALL = 11                         # eyebrows, captions, notes, footnotes, axis/step labels, footer chrome
+_SZ_HERO = 60                          # hero data figures (stat values); ALSO the "big statement"
+                                        # title layouts (cover, agenda, highlight) — matches what
+                                        # those specific layouts used natively before normalization
+_SZ_TITLE = 18                         # regular slide titles (every other layout, native or code-built)
+_SZ_SUBTITLE = 16                      # cover subtitle, column/text-picture headings
+_SZ_BODY = 14                          # body, bullets, table cells, items
+_SZ_SMALL = 12                         # eyebrows, captions, notes, footnotes, axis/step labels, footer
+                                        # chrome — the floor; nothing in the deck goes smaller
 
 
 def _find_layout(prs, name, master_index):
@@ -380,13 +385,16 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     title = spec.get("title")
     if cat["kind"] in ("title", "agenda"):     # narrow 1-line title box above a neighbour
         title = _fit(title, lim.get("title"))
+    # "Big statement" layouts (cover, agenda, highlight) get the hero size, matching what these
+    # specific layouts used natively; every other kind gets the regular title size.
+    title_size = _SZ_HERO if cat["kind"] in ("title", "agenda", "highlight") else _SZ_TITLE
     # Explicit, not inherited: two native "kind"s (highlight, text_picture) resolve their title
     # placeholder to "Exo 2 Light italic" instead of the template's dominant "Exo 2 italic" — an
     # inconsistency in the template itself. Force the SAME cut everywhere so every title, whatever
     # layout renders it, looks identical.
-    put(fields.get("title"), title, size=_SZ_TITLE, bold=False, italic=False, font=_HEAD_TITLE)
-    put(fields.get("subtitle"), spec.get("subtitle"))
-    put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
+    put(fields.get("title"), title, size=title_size, bold=False, italic=False, font=_HEAD_TITLE)
+    put(fields.get("subtitle"), spec.get("subtitle"), size=_SZ_SUBTITLE)
+    put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")), size=_SZ_SUBTITLE)
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
     if spec.get("items"):
         put(fields.get("items"), spec["items"], multiline=True, bullets=True)
@@ -407,7 +415,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
              or [None] * len(cols))
     heads = _distinct_col_headings([c.get("heading") for c in cols], col_head_max)
     for col_map, col, icon, head in zip(col_maps, cols, icons, heads):
-        put(col_map.get("heading"), head)
+        put(col_map.get("heading"), head, size=_SZ_SUBTITLE)
         # Content-driven: a column body written as several lines becomes bullets; a single
         # sentence stays prose. Same rule as the main body.
         put(col_map.get("body"), col.get("body"), multiline=True, bullets=True)
@@ -479,11 +487,11 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     if cat["kind"] == "text_picture":
         tbox = None
     if tbox and title:
-        # How tall will the title REALLY be? Titles now always render at _SZ_TITLE (forced
-        # explicitly in put(), not inherited from the layout), so use that directly with the
-        # wrapped line count for the box width.
-        lines = _est_lines(str(title), tbox[2] / 914400.0, _SZ_TITLE)
-        title_h = Inches(lines * _SZ_TITLE * 1.25 / 72.0)  # 1.25 ≈ single line spacing, rounded up
+        # How tall will the title REALLY be? Use title_size (the same per-kind value put() just
+        # rendered it at — 60 for the hero-tier kinds, 18 otherwise), not a single fixed constant,
+        # since the two now differ substantially and the gap math must match reality.
+        lines = _est_lines(str(title), tbox[2] / 914400.0, title_size)
+        title_h = Inches(lines * title_size * 1.25 / 72.0)  # 1.25 ≈ single line spacing, rounded up
         # Only boxes stacked BELOW the title qualify — never a side-by-side picture that legally
         # starts level with (or above) the title box.
         below = [(i, _layout_box(layout_name, master_index, i)) for i in filled
@@ -1085,7 +1093,7 @@ def _fill_stat(prs, spec: dict, dark_index: int) -> None:
     vy = _BODY_TOP + 0.8
     for i, st in enumerate(stats):
         x = _MARGIN + i * (cw + _GUTTER)
-        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_TITLE, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_HERO, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x, vy + 1.05, cw, 0.5, st.get("label", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         if st.get("note"):
             _place_text(slide, x + 0.2, vy + 1.6, cw - 0.4, 1.4, st["note"], _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
@@ -1236,7 +1244,7 @@ def _fill_kpi_dashboard(prs, spec: dict, dark_index: int) -> None:
         y = _BODY_TOP + rr * (th + _GUTTER)
         tile = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(tw), Inches(th))
         tile.fill.solid(); tile.fill.fore_color.rgb = _PANEL; tile.line.fill.background(); tile.shadow.inherit = False
-        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_TITLE, _RED,
+        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _RED,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
         _place_text(slide, x + _PAD, y + th * 0.52, tw - 2 * _PAD, 0.5, m.get("label", ""), _SZ_BODY, _INKC,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
@@ -1783,7 +1791,7 @@ def _fill_photo_stats(prs, spec: dict, dark_index: int) -> None:
         _place_text(slide, x + _PAD, py, cw - 2 * _PAD, 0.3, (it.get("label") or "").upper(),
                     _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x + _PAD, py + 0.3, cw - 2 * _PAD, 0.95, it.get("value", ""),
-                    _SZ_TITLE, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                    _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
                     anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
         if it.get("note"):
             _place_text(slide, x + _PAD, py + 1.27, cw - 2 * _PAD, note_h, it["note"],
@@ -1934,7 +1942,7 @@ def _fill_breakdown(prs, spec: dict, dark_index: int) -> None:
     hub.fill.solid(); hub.fill.fore_color.rgb = _TEAL
     hub.line.fill.background(); hub.shadow.inherit = False
     _place_text(slide, hub_cx - hub_d / 2, hub_cy - 0.5, hub_d, 1.0, spec.get("total", ""),
-                _SZ_TITLE, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
                 anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
     if spec.get("caption"):
         _place_text(slide, hub_cx - hub_d / 2, hub_cy + hub_d / 2 + 0.1, hub_d, 0.4,

@@ -36,6 +36,36 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   uses `template.pptx` until template2 is adopted (re-run `inspect_template` + `build_schema` on it).
 - **Tab 1 UX** — sort by scientific quality (+ hover definition), prominent "Read summary" button, and inline
   **edit & save** of a summary (localStorage — see weakness below); `app/wiki.tsx`, `app/summary-overrides.ts`.
+- **Editable categories + reviewer set quality — NEW 2026-08-07.** The 10 benefit categories were
+  hard coded in two places (the `categories` table for findings, `ARCHIVE_CATEGORIES` in
+  `app/studies.ts` for studies). The table is now the single source of truth for category NAMES,
+  and an override layer (**migration `0003_editable_categories_and_quality.sql`, must be run in the
+  Supabase SQL editor**) makes the rest editable from the UI:
+  - **Tab 1 filter chips** are ordered biggest category first down to the smallest, with **All
+    last**, and the biggest category is the **default view** (it keeps following the biggest one
+    until the user clicks a chip; a chip that disappears hands the selection back). The selection
+    is held as a category **id**, so a rename never loses it.
+  - **Manage categories** (same modal on Tab 1 and the Findings page, `app/category-manager.tsx`):
+    add, rename, delete. Renaming is id keyed, so one rename updates studies AND findings. Deleting
+    a category that still holds anything **requires a target to move into** (409 otherwise), and the
+    move goes study by study through `/api/study-categories` so each study's findings travel with it,
+    then `DELETE /api/categories/[id]?reassign_to=` sweeps up the rest (marketing findings, and
+    findings whose study is not in the list).
+  - **Moving one study** between categories (✎ Categories on a study card) re-files **that study's
+    findings** that sat in a category it just left, into the category it moved into, and writes a
+    `claim_events` row for each. Note the built in assignment lives in code, not the database, so the
+    client sends `previousCategoryIds` on the first edit of a study.
+  - **Scientific quality** can be added or changed per study (✎ Quality / ＋ Add quality): score
+    0 to 100 + High/Moderate/Low (auto suggested from the score, overridable) + optional note. The
+    **Reviewer name is required** and stored with the timestamp (`study_quality`), shown under the
+    badge as "Quality rated by X on YYYY MM DD"; every change is audited in `study_quality_events`.
+    A reviewer score overrides the curated one in `app/studies-data.ts`.
+  - Wiring: `app/study-meta.ts` loads the three GETs and lays the edits over the study list on the
+    CLIENT, so an edit shows immediately without touching the 24 h PubMed cache; both generator
+    pages apply the same overlay so the study picker shows the same category names. Everything
+    degrades to the built in values when Supabase is absent or 0003 has not been run (the edit
+    buttons simply do not appear; adding/renaming categories still works, since that table predates
+    0003).
 - **Charts & tables from the study PDF — NEW 2026-08-06.** The "Evidence from this study" modal
   (`app/claims-panel.tsx`) now shows the real charts/graphs/tables from that study's own PDF, in a
   roomy 2/3/4-col thumbnail grid (own bordered card, generous gap/padding — tightened up after initial
@@ -227,14 +257,32 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
 
 - **Consultancy design system (NEW 2026-07-10, shipped).** All synthetic layouts share ONE fixed
   skeleton (`renderer._synth_slide`): identical title/eyebrow/footer/page-number positions (title at the
-  template's 0.5in/0.746in), one gutter (`_GUTTER`), equal box heights, a strict **3-size type scale**
-  (title 24 / body 14 / small 11, plus one hero figure + footer), fixed line spacing, and content is
-  **capped, not shrunk**. Takeaway titles (≤2 lines, ~90 chars). Bullet discipline + column line-balance
+  template's 0.5in/0.746in), one gutter (`_GUTTER`), equal box heights, fixed line spacing, and content
+  is **capped, not shrunk**. Takeaway titles (≤2 lines, ~90 chars). Bullet discipline + column line-balance
   in the planner. **Anti-AI-look rules:** no decorative red bars (red is reserved for icons, data and the
   logo); icon "chips" (a brand icon in a light disc) instead of accent bars; icons are all-or-nothing from
   one source; body text uses the theme font ref (`+mn-lt`) so it renders the embedded regular Manrope, not
   a cursive fallback. Harvey balls are drawn shapes (equal size) and planner-gated to qualitative ratings.
   → detail in the `deck-service-architecture` memory (update hh).
+- **Exactly 3 font sizes, deck-wide, no exceptions (NEW 2026-08-07, shipped).** Every slide the tool
+  actually generates — code-built layouts AND the 11 native template layouts (cover, agenda, section
+  header, columns, etc.) — now renders text at exactly one of `_SZ_TITLE=24` / `_SZ_BODY=14` /
+  `_SZ_SMALL=11`, explicitly forced in `renderer.py` rather than inherited from the template's own
+  layout/master styles (which ranged 13 to 60pt). Hero stat figures and footer chrome (page number, AI
+  disclaimer) — previously documented exceptions — now fold into this same scale (weight/colour carry
+  the visual emphasis instead of a bigger size). `build_schema.py`'s `FONT_PT` was updated to match, so
+  the generated char limits stay safe (a smaller real font only ever means MORE room than the schema
+  assumes, never overflow). Shrinking native titles exposed a real bug: several "kind"s (`agenda`,
+  `columns`, ...) position their content a FIXED distance below the title box, sized for the template's
+  own much taller inherited title — at the smaller shared size this left a large dead gap. Fixed with a
+  bidirectional version of the existing title-overflow push-down logic in `_fill_slide` (a shared `shift`
+  applied to every "below" box, preserving their relative spacing) — verified visually via `scripts/qa.py`
+  PNG renders. **Known pre-existing quirk, unrelated to this change:** `columns`-kind layouts reserve
+  vertical space for an optional per-column icon/photo; when a real deck's columns have no icon, that
+  reserved band still shows as a gap above the column headings — same behaviour before and after this
+  fix, not something the font-size normalization introduced. **Left untouched, per explicit client
+  decision:** the two verbatim AKBM slides (`ingredient`, `benefits` overview) keep their own original
+  sizes (9/10.5/20/28/36/54/55pt) — they are byte-identical splices, not renderer output.
 
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.

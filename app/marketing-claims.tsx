@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Claim, Category, ClaimStatus } from "./lib/claims-types";
 import { decodeEntities } from "./lib/text";
+import CategoryManager from "./category-manager";
 
 type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
 type LibClaim = Claim & { studies?: { pmid: string | null; title: string } | null };
@@ -41,6 +42,7 @@ export default function MarketingClaims({
   onChanged: () => Promise<void>;
 }) {
   const [creating, setCreating] = useState(false);
+  const [administrerer, setAdministrerer] = useState(false);
   const [q, setQ] = useState("");
   const [valgtKategori, setValgtKategori] = useState<string | null>(null);
 
@@ -104,12 +106,20 @@ export default function MarketingClaims({
           What marketing can say about the product. Each finding is written in plain, benefit facing
           language and linked to the science that substantiates it, so it stays defensible.
         </p>
-        <button
-          onClick={() => setCreating(true)}
-          className="shrink-0 rounded-[4px] bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white hover:bg-[#086472]"
-        >
-          ＋ New finding
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            onClick={() => setAdministrerer(true)}
+            className="rounded-[4px] border border-[#B7D9DE] bg-white px-4 py-2 text-sm font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          >
+            ⚙ Manage categories
+          </button>
+          <button
+            onClick={() => setCreating(true)}
+            className="rounded-[4px] bg-[#0A7A8A] px-4 py-2 text-sm font-bold text-white hover:bg-[#086472]"
+          >
+            ＋ New finding
+          </button>
+        </div>
       </div>
 
       {marketing.length > 0 && (
@@ -166,6 +176,14 @@ export default function MarketingClaims({
             />
           ))}
         </ul>
+      )}
+
+      {administrerer && (
+        <CategoryManager
+          reviewer={reviewer}
+          onClose={() => setAdministrerer(false)}
+          onChanged={onChanged}
+        />
       )}
 
       {creating && (

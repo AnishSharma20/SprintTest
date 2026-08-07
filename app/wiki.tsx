@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Summary, Quality } from "./studies-data";
 import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
 import ClaimsModal from "./claims-panel";
+import CategoryManager from "./category-manager";
 import PageHero, { ReviewerField } from "./PageHero";
+import {
+  applyStudyMeta,
+  formatDate,
+  loadStudyMeta,
+  suggestLabel,
+  EMPTY_META,
+  type StudyMeta,
+} from "./study-meta";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -16,12 +25,19 @@ export type Studie = {
   ar: string;
   forfattere: string;
   flereForfattere: boolean;
-  kategori: string[]; // a study can belong to more than one of AKBM's 12 benefit categories
+  kategori: string[]; // a study can belong to more than one of AKBM's benefit categories
+  // The same categories as stable ids. Names can be renamed from the UI, so anything that has to
+  // survive a rename (filtering, moving a study, matching a study to its findings) uses these.
+  kategoriIds?: string[];
   url: string;
   doiUrl: string | null;
   summary?: Summary | null;
   verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
   quality?: Quality | null;
+  // Who set the quality score and when, for a score a reviewer entered (curated scores have none).
+  qualityReviewer?: string | null;
+  qualityReviewedAt?: string | null;
+  qualityNote?: string | null;
   akerNote?: string | null;
   // true = AKBM supplied the paper as a PDF, so summaries/findings come from the FULL TEXT.
   // false = we only have the PubMed abstract for it.
@@ -36,12 +52,24 @@ const QUALITY_DEF =
 
 type SortBy = "date" | "quality";
 
-export default function Wiki({ studier }: { studier: Studie[] }) {
+export default function Wiki({ studier: grunnStudier }: { studier: Studie[] }) {
   const [sok, setSok] = useState("");
+  // The selected category is held as an ID, so a rename never loses the selection.
   const [valgtKategori, setValgtKategori] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [reviewer, setReviewer] = useState("");
+  const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
+  const [administrerer, setAdministrerer] = useState(false);
+
+  const lastMeta = useCallback(async () => setMeta(await loadStudyMeta()), []);
+  useEffect(() => {
+    void lastMeta();
+  }, [lastMeta]);
+
+  // The study list as it stands after the reviewer edits (category names and membership,
+  // scientific quality) are laid over the built in data.
+  const studier = useMemo(() => applyStudyMeta(grunnStudier, meta), [grunnStudier, meta]);
 
   useEffect(() => {
     setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
@@ -65,11 +93,38 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
     };
   }, []);
 
+  // Categories with a study in them, biggest first — the order the filter chips are shown in.
   const kategorier = useMemo(() => {
-    const m = new Map<string, number>();
-    studier.forEach((s) => s.kategori.forEach((k) => m.set(k, (m.get(k) ?? 0) + 1)));
-    return [...m.entries()].sort((a, b) => b[1] - a[1]);
-  }, [studier]);
+    const navn = new Map(meta.categories.map((c) => [c.id, c.name]));
+    const m = new Map<string, { navn: string; antall: number }>();
+    studier.forEach((s) =>
+      (s.kategoriIds ?? []).forEach((id, i) => {
+        const e = m.get(id) ?? { navn: navn.get(id) ?? s.kategori[i] ?? id, antall: 0 };
+        e.antall += 1;
+        m.set(id, e);
+      })
+    );
+    return [...m.entries()]
+      .map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => b.antall - a.antall || a.navn.localeCompare(b.navn));
+  }, [studier, meta.categories]);
+
+  // The biggest category is the default view. It keeps following the biggest one until the user
+  // picks a chip themselves, and a category that disappears (deleted, or emptied by a move) hands
+  // the selection back to the biggest one rather than leaving an empty list on screen.
+  const brukerHarValgt = useRef(false);
+  useEffect(() => {
+    if (kategorier.length === 0) return;
+    const finnes = valgtKategori !== null && kategorier.some((k) => k.id === valgtKategori);
+    if (!brukerHarValgt.current || (valgtKategori !== null && !finnes)) {
+      setValgtKategori(kategorier[0].id);
+    }
+  }, [kategorier, valgtKategori]);
+
+  const velgKategori = (id: string | null) => {
+    brukerHarValgt.current = true;
+    setValgtKategori(id);
+  };
 
   const filtrert = useMemo(() => {
     const q = sok.toLowerCase().trim();
@@ -79,7 +134,7 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
         s.tittel.toLowerCase().includes(q) ||
         s.tidsskrift.toLowerCase().includes(q) ||
         s.forfattere.toLowerCase().includes(q);
-      const treffKat = !valgtKategori || s.kategori.includes(valgtKategori);
+      const treffKat = !valgtKategori || (s.kategoriIds ?? []).includes(valgtKategori);
       return treffSok && treffKat;
     });
     return list.sort((a, b) => {
@@ -135,15 +190,24 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
           />
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
-          <FilterKnapp aktiv={valgtKategori === null} onClick={() => setValgtKategori(null)}>
-            All ({studier.length})
-          </FilterKnapp>
-          {kategorier.map(([navn, antall]) => (
-            <FilterKnapp key={navn} aktiv={valgtKategori === navn} onClick={() => setValgtKategori(navn)}>
-              {navn} ({antall})
+        {/* Biggest category first, down to the smallest, with All last. */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {kategorier.map((k) => (
+            <FilterKnapp key={k.id} aktiv={valgtKategori === k.id} onClick={() => velgKategori(k.id)}>
+              {k.navn} ({k.antall})
             </FilterKnapp>
           ))}
+          <FilterKnapp aktiv={valgtKategori === null} onClick={() => velgKategori(null)}>
+            All ({studier.length})
+          </FilterKnapp>
+          {meta.configured && (
+            <button
+              onClick={() => setAdministrerer(true)}
+              className="ml-auto rounded-[4px] border border-[#B7D9DE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] transition-colors hover:bg-[#E1F4F3]"
+            >
+              ⚙ Manage categories
+            </button>
+          )}
         </div>
 
         {/* Sort control */}
@@ -185,6 +249,8 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
                 key={s.pmid}
                 s={s}
                 reviewer={reviewer}
+                meta={meta}
+                onMetaChanged={lastMeta}
                 override={overrides[s.pmid]}
                 onSave={(summary) => {
                   const o = saveOverride(s.pmid, summary);
@@ -193,6 +259,14 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
               />
             ))}
           </ul>
+        )}
+
+        {administrerer && (
+          <CategoryManager
+            reviewer={reviewer}
+            onClose={() => setAdministrerer(false)}
+            onChanged={lastMeta}
+          />
         )}
 
         <footer className="mt-12 border-t border-[#D6E6EE] pt-6 text-center text-xs text-zinc-400">
@@ -206,17 +280,24 @@ export default function Wiki({ studier }: { studier: Studie[] }) {
 function StudyCard({
   s,
   reviewer,
+  meta,
+  onMetaChanged,
   override,
   onSave,
 }: {
   s: Studie;
   reviewer: string;
+  meta: StudyMeta;
+  onMetaChanged: () => Promise<void>;
   override?: Override;
   onSave: (summary: Summary) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [claimsOpen, setClaimsOpen] = useState(false);
+  const [redigererKategorier, setRedigererKategorier] = useState(false);
+  const [redigererKvalitet, setRedigererKvalitet] = useState(false);
+  const [melding, setMelding] = useState<string | null>(null);
 
   const edited = !!override;
   const summary: Summary | null | undefined = override?.summary ?? s.summary;
@@ -229,6 +310,13 @@ function StudyCard({
     : q?.label === "Moderate" ? "bg-[#FBEED6] text-[#8A5A0B]"
     : "bg-[#F3E0E0] text-[#9A2A2A]";
 
+  async function etterEndring(tekst: string) {
+    setMelding(tekst);
+    setRedigererKategorier(false);
+    setRedigererKvalitet(false);
+    await onMetaChanged();
+  }
+
   return (
     <li className="group rounded-[4px] border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -237,13 +325,73 @@ function StudyCard({
             {k}
           </span>
         ))}
+        {meta.editable && (
+          <button
+            onClick={() => {
+              setRedigererKategorier((v) => !v);
+              setRedigererKvalitet(false);
+              setMelding(null);
+            }}
+            title="Move this study to other categories"
+            className="rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-0.5 text-[11px] font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          >
+            ✎ Categories
+          </button>
+        )}
         {q && (
-          <span className={`rounded-[4px] px-2.5 py-0.5 text-xs font-semibold ${qColor}`}>
+          <span
+            className={`rounded-[4px] px-2.5 py-0.5 text-xs font-semibold ${qColor}`}
+            title={s.qualityNote ?? undefined}
+          >
             Quality {q.score}% · {q.label}
           </span>
         )}
+        {meta.editable && (
+          <button
+            onClick={() => {
+              setRedigererKvalitet((v) => !v);
+              setRedigererKategorier(false);
+              setMelding(null);
+            }}
+            className="rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-0.5 text-[11px] font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          >
+            {q ? "✎ Quality" : "＋ Add quality"}
+          </button>
+        )}
         <span className="text-xs text-zinc-400">{s.dato}</span>
       </div>
+
+      {s.qualityReviewer && (
+        <p className="mb-2 text-[11px] text-zinc-400">
+          Quality rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}
+          {s.qualityNote ? ` · ${s.qualityNote}` : ""}
+        </p>
+      )}
+
+      {melding && (
+        <p className="mb-2 rounded-[4px] bg-[#DFF3E4] px-3 py-1.5 text-[11px] font-semibold text-[#1B7A3D]">
+          {melding}
+        </p>
+      )}
+
+      {redigererKategorier && (
+        <CategoryEditor
+          s={s}
+          meta={meta}
+          reviewer={reviewer}
+          onCancel={() => setRedigererKategorier(false)}
+          onSaved={etterEndring}
+        />
+      )}
+
+      {redigererKvalitet && (
+        <QualityEditor
+          s={s}
+          reviewer={reviewer}
+          onCancel={() => setRedigererKvalitet(false)}
+          onSaved={etterEndring}
+        />
+      )}
       <a
         href={s.url}
         target="_blank"
@@ -342,6 +490,271 @@ function StudyCard({
         <ClaimsModal s={s} reviewer={reviewer} onClose={() => setClaimsOpen(false)} />
       )}
     </li>
+  );
+}
+
+/**
+ * Move a study between categories. The findings that belong to this study follow it: the API
+ * re-files any finding sitting in a category the study just left (see /api/study-categories).
+ */
+function CategoryEditor({
+  s,
+  meta,
+  reviewer,
+  onCancel,
+  onSaved,
+}: {
+  s: Studie;
+  meta: StudyMeta;
+  reviewer: string;
+  onCancel: () => void;
+  onSaved: (melding: string) => Promise<void>;
+}) {
+  const [valgte, setValgte] = useState<Set<string>>(new Set(s.kategoriIds ?? []));
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+  const vitenskap = meta.categories.filter((c) => c.parent === "science");
+
+  function veksle(id: string) {
+    setValgte((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  }
+
+  async function lagre() {
+    if (valgte.size === 0) {
+      setFeil("A study needs at least one category.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch("/api/study-categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pmid: s.pmid,
+          categoryIds: [...valgte],
+          previousCategoryIds: s.kategoriIds ?? [],
+          actor: reviewer,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not save the categories.");
+        return;
+      }
+      await onSaved(
+        data.movedFindings
+          ? `Categories saved. ${data.movedFindings} findings moved to ${data.movedTo}.`
+          : "Categories saved."
+      );
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-[#F4FBFC] p-3">
+      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+        Categories for this study
+      </div>
+      <div className="mb-2 grid gap-1 sm:grid-cols-2">
+        {vitenskap.map((c) => (
+          <label key={c.id} className="flex cursor-pointer items-center gap-2 rounded-[4px] px-1 py-0.5 hover:bg-white">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-[#0A7A8A]"
+              checked={valgte.has(c.id)}
+              onChange={() => veksle(c.id)}
+            />
+            <span className="text-[12px] text-zinc-700">{c.name}</span>
+          </label>
+        ))}
+      </div>
+      <p className="mb-2 text-[11px] text-zinc-500">
+        Findings from this study move with it: anything filed under a category you remove is
+        re-filed under the category you add.
+      </p>
+      {feil && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{feil}</p>}
+      <div className="flex gap-2">
+        <button
+          onClick={() => void lagre()}
+          disabled={busy}
+          className="rounded-[4px] bg-[#1B7A3D] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+        >
+          {busy ? "Saving…" : "Save categories"}
+        </button>
+        <button
+          onClick={onCancel}
+          className="rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Add or change a study's scientific quality. The reviewer's name is required and stored with the
+ * date, so every score on the page is attributable to a person.
+ */
+function QualityEditor({
+  s,
+  reviewer,
+  onCancel,
+  onSaved,
+}: {
+  s: Studie;
+  reviewer: string;
+  onCancel: () => void;
+  onSaved: (melding: string) => Promise<void>;
+}) {
+  const [score, setScore] = useState<string>(String(s.quality?.score ?? 75));
+  const [label, setLabel] = useState<"High" | "Moderate" | "Low">(
+    s.quality?.label ?? suggestLabel(s.quality?.score ?? 75)
+  );
+  const [note, setNote] = useState(s.qualityNote ?? "");
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+  // The rating follows the score until the reviewer sets one themselves.
+  const egenVurdering = useRef(false);
+
+  function endreScore(v: string) {
+    setScore(v);
+    const n = Number(v);
+    if (!egenVurdering.current && Number.isFinite(n)) setLabel(suggestLabel(n));
+  }
+
+  async function lagre() {
+    if (!reviewer.trim()) {
+      setFeil("Add your name in the Reviewer field at the top of the page first.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch("/api/study-quality", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pmid: s.pmid, score: Number(score), label, note, reviewer }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not save the score.");
+        return;
+      }
+      await onSaved(`Quality saved as ${score}% ${label}.`);
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function fjern() {
+    if (!reviewer.trim()) {
+      setFeil("Add your name in the Reviewer field at the top of the page first.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch(
+        `/api/study-quality?pmid=${encodeURIComponent(s.pmid)}&reviewer=${encodeURIComponent(reviewer)}`,
+        { method: "DELETE" }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not clear the score.");
+        return;
+      }
+      await onSaved("Quality score cleared.");
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-[#F4FBFC] p-3">
+      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+        Scientific quality
+      </div>
+      <div className="mb-2 flex flex-wrap items-end gap-3">
+        <label className="text-[11px] font-semibold text-zinc-600">
+          Score (0 to 100)
+          <input
+            type="number"
+            min={0}
+            max={100}
+            value={score}
+            onChange={(e) => endreScore(e.target.value)}
+            className="mt-1 block w-24 rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+          />
+        </label>
+        <label className="text-[11px] font-semibold text-zinc-600">
+          Rating
+          <select
+            value={label}
+            onChange={(e) => {
+              egenVurdering.current = true;
+              setLabel(e.target.value as "High" | "Moderate" | "Low");
+            }}
+            className="mt-1 block rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+          >
+            <option value="High">High</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Low">Low</option>
+          </select>
+        </label>
+        <label className="min-w-[12rem] flex-1 text-[11px] font-semibold text-zinc-600">
+          Note (optional)
+          <input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="What the score is based on"
+            className="mt-1 block w-full rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+          />
+        </label>
+      </div>
+      <p className="mb-2 text-[11px] text-zinc-500">
+        Saved as {reviewer || "…"} on {formatDate(new Date().toISOString())}. The name and date are
+        stored with the score.
+      </p>
+      {feil && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{feil}</p>}
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => void lagre()}
+          disabled={busy}
+          className="rounded-[4px] bg-[#1B7A3D] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+        >
+          {busy ? "Saving…" : "Save quality"}
+        </button>
+        {s.qualityReviewer && (
+          <button
+            onClick={() => void fjern()}
+            disabled={busy}
+            className="rounded-[4px] border border-[#E6C9C9] bg-white px-3 py-1.5 text-xs font-semibold text-[#9A2A2A] hover:bg-[#F9EFEF] disabled:opacity-40"
+          >
+            Clear score
+          </button>
+        )}
+        <button
+          onClick={onCancel}
+          className="rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   );
 }
 

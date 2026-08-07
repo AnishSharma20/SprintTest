@@ -5,6 +5,7 @@
 
 import { type Studie } from "./wiki";
 import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Summary } from "./studies-data";
+import { canonicalIds } from "./lib/category-ids";
 import aiSummariesRaw from "./ai-summaries.json";
 import fulltextStudiesRaw from "./fulltext-studies.json";
 
@@ -132,9 +133,10 @@ export function kategorier(pmid: string, tittel: string): string[] {
 }
 
 function curatedToStudie(c: CuratedStudy): Studie {
+  const kat = kategorier(c.pmid, c.title);
   return {
     pmid: c.pmid, tittel: c.title, tidsskrift: c.journal, dato: c.year, ar: c.year,
-    forfattere: c.authors, flereForfattere: false, kategori: kategorier(c.pmid, c.title),
+    forfattere: c.authors, flereForfattere: false, kategori: kat, kategoriIds: canonicalIds(kat),
     url: `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`,
     doiUrl: c.doi ? `https://doi.org/${c.doi}` : null,
     summary: c.summary, verified: true, quality: c.quality, akerNote: c.akerNote,
@@ -170,6 +172,7 @@ export async function hentStudier(): Promise<Studie[]> {
       const doi = x.articleids?.find((i) => i.idtype === "doi")?.value;
       const kurert = curatedByPmid.get(id) ?? (doi ? curatedByDoi.get(doi.toLowerCase()) : undefined);
       const ai = AI_SUMMARIES[id];
+      const kat = kategorier(id, x.title);
       return {
         pmid: id,
         tittel: x.title.replace(/\.$/, ""),
@@ -178,7 +181,8 @@ export async function hentStudier(): Promise<Studie[]> {
         ar: (x.pubdate ?? "").slice(0, 4),
         forfattere: (x.authors ?? []).slice(0, 3).map((a) => a.name).join(", "),
         flereForfattere: (x.authors ?? []).length > 3,
-        kategori: kategorier(id, x.title),
+        kategori: kat,
+        kategoriIds: canonicalIds(kat),
         url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
         doiUrl: doi ? `https://doi.org/${doi}` : null,
         summary: kurert ? kurert.summary : ai ?? null,

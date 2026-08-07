@@ -12,6 +12,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
+import { applyStudyMeta, loadStudyMeta } from "../study-meta";
 import {
   loadApprovedClaims,
   buildClaimsSourceFile,
@@ -234,9 +235,14 @@ export default function ContentGeneratorV2() {
 
   useEffect(() => {
     void loadOverrides().then(setOverrides);
-    fetch("/api/studies")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((d) => setStudier(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : []))
+    // Same overlay as V1: the picker's categories follow the reviewer edits on the studies page.
+    void Promise.all([
+      fetch("/api/studies").then((r) => (r.ok ? r.json() : [])),
+      loadStudyMeta(),
+    ])
+      .then(([d, meta]) =>
+        setStudier(applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : [], meta))
+      )
       .catch(() => setStudier([]));
     void loadApprovedClaims().then((res) => {
       setClaimsConfigured(res.configured);

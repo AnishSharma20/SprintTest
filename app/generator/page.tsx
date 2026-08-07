@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
+import { applyStudyMeta, loadStudyMeta } from "../study-meta";
 import {
   loadApprovedClaims,
   buildClaimsSourceFile,
@@ -289,9 +290,15 @@ export default function ContentGenerator() {
 
   useEffect(() => {
     void loadOverrides().then(setOverrides);
-    fetch("/api/studies")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((d) => setStudier(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : []))
+    // The picker shows the categories as they stand after the reviewer edits on the studies page,
+    // so a renamed or re-filed category means the same thing in both places.
+    void Promise.all([
+      fetch("/api/studies").then((r) => (r.ok ? r.json() : [])),
+      loadStudyMeta(),
+    ])
+      .then(([d, meta]) =>
+        setStudier(applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : [], meta))
+      )
       .catch(() => setStudier([]));
     void loadApprovedClaims().then((res) => {
       setClaimsConfigured(res.configured);

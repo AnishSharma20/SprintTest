@@ -128,24 +128,33 @@ def _set_ph_box(ph, l, t, w, h) -> None:
     spPr.insert(0, xfrm)
 
 
-def _set_run_size(tf, size: float) -> None:
+def _set_run_size(tf, size: float, *, bold=None, italic=None, font=None) -> None:
     """Force every run in a text frame to one explicit size, overriding whatever the template's
     own layout/master style would otherwise inherit (54-60pt titles, 13-16pt bodies, etc.) — part
-    of keeping the deck to exactly 3 text sizes total, not just within the code-built layouts."""
+    of keeping the deck to exactly 3 text sizes total, not just within the code-built layouts.
+    bold/italic/font are left alone (None) unless explicitly given — used for the title role, whose
+    NATIVE placeholders otherwise inherit the theme's italic major font at a light weight, while
+    code-built layouts explicitly force bold, non-italic Exo 2. Same slide role, different look."""
     for p in tf.paragraphs:
         for r in p.runs:
             r.font.size = Pt(size)
+            if bold is not None:
+                r.font.bold = bold
+            if italic is not None:
+                r.font.italic = italic
+            if font is not None:
+                r.font.name = font
 
 
-def _set_text(ph, text: str, size: float = _SZ_BODY) -> None:
+def _set_text(ph, text: str, size: float = _SZ_BODY, **style) -> None:
     """Single logical value into a placeholder. Size is forced explicitly (not inherited from the
     layout) so native template placeholders stay on the same 3-size scale as code-built layouts."""
     ph.text_frame.text = text
     _autofit(ph.text_frame)
-    _set_run_size(ph.text_frame, size)
+    _set_run_size(ph.text_frame, size, **style)
 
 
-def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float = _SZ_BODY) -> None:
+def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float = _SZ_BODY, **style) -> None:
     """Multiple paragraphs (bullets / agenda items). If bullet_rid is given, each paragraph gets
     the brand's PICTURE bullet (the teal figure embedded in the template master) — this overrides
     the content placeholders' `buNone`. Otherwise each paragraph inherits the layout's list format.
@@ -159,7 +168,7 @@ def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float 
         for para in tf.paragraphs:
             _apply_picture_bullet(para._p, bullet_rid)
     _autofit(tf, shrink=False)   # bodies/lists: cap content, do not shrink
-    _set_run_size(tf, size)
+    _set_run_size(tf, size, **style)
 
 
 # The brand bullet is a small teal PNG embedded in the template master (as a picture bullet at
@@ -355,7 +364,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     benefit = spec.get("benefit")
     benefit = None if benefit in (None, "none") else benefit
 
-    def put(idx, value, multiline=False, bullets=False, size=_SZ_BODY):
+    def put(idx, value, multiline=False, bullets=False, size=_SZ_BODY, **style):
         if idx is None or idx not in phmap or value is None:
             return
         if multiline:
@@ -363,15 +372,18 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
             lines = [ln for ln in (str(x).strip() for x in raw) if ln]
             # A list of points (2+ lines) gets the brand picture bullet; a single line stays plain prose.
             rid = _bullet_rid(slide) if (bullets and len(lines) > 1) else None
-            _set_lines(phmap[idx], lines, bullet_rid=rid, size=size)
+            _set_lines(phmap[idx], lines, bullet_rid=rid, size=size, **style)
         else:
-            _set_text(phmap[idx], str(value), size=size)
+            _set_text(phmap[idx], str(value), size=size, **style)
         filled.add(idx)
 
     title = spec.get("title")
     if cat["kind"] in ("title", "agenda"):     # narrow 1-line title box above a neighbour
         title = _fit(title, lim.get("title"))
-    put(fields.get("title"), title, size=_SZ_TITLE)
+    # Match the code-built layouts' title treatment exactly (bold, non-italic Exo 2) — otherwise a
+    # native placeholder's title inherits the theme's light, italic major font while a code-built
+    # layout's title next to it in the same deck is bold and upright. Same role, same look.
+    put(fields.get("title"), title, size=_SZ_TITLE, bold=True, italic=False, font=_HEAD)
     put(fields.get("subtitle"), spec.get("subtitle"))
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)

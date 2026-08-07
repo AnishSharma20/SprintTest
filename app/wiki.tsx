@@ -295,9 +295,6 @@ function StudyCard({
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [claimsOpen, setClaimsOpen] = useState(false);
-  const [redigererKategorier, setRedigererKategorier] = useState(false);
-  const [redigererKvalitet, setRedigererKvalitet] = useState(false);
-  const [melding, setMelding] = useState<string | null>(null);
 
   const edited = !!override;
   const summary: Summary | null | undefined = override?.summary ?? s.summary;
@@ -309,89 +306,31 @@ function StudyCard({
     q?.label === "High" ? "bg-[#DFF3E4] text-[#1B7A3D]"
     : q?.label === "Moderate" ? "bg-[#FBEED6] text-[#8A5A0B]"
     : "bg-[#F3E0E0] text-[#9A2A2A]";
-
-  async function etterEndring(tekst: string) {
-    setMelding(tekst);
-    setRedigererKategorier(false);
-    setRedigererKvalitet(false);
-    await onMetaChanged();
-  }
+  // Who scored it and when, kept on the badge as a tooltip so the card face stays clean; the
+  // same line is spelled out inside the summary, next to the control that changes it.
+  const qTitle = s.qualityReviewer
+    ? `Rated by ${s.qualityReviewer} on ${formatDate(s.qualityReviewedAt)}${
+        s.qualityNote ? ` · ${s.qualityNote}` : ""
+      }`
+    : s.qualityNote ?? undefined;
 
   return (
     <li className="group rounded-[4px] border border-[#D6E6EE] bg-white p-5 shadow-sm transition-all hover:border-[#3FD0C9] hover:shadow-md">
+      {/* The card face is read only: categories, quality and date. Changing any of them lives
+          inside "Read summary", so the list stays scannable. */}
       <div className="mb-2 flex flex-wrap items-center gap-2">
         {s.kategori.map((k) => (
           <span key={k} className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
             {k}
           </span>
         ))}
-        {meta.editable && (
-          <button
-            onClick={() => {
-              setRedigererKategorier((v) => !v);
-              setRedigererKvalitet(false);
-              setMelding(null);
-            }}
-            title="Move this study to other categories"
-            className="rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-0.5 text-[11px] font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
-          >
-            ✎ Categories
-          </button>
-        )}
         {q && (
-          <span
-            className={`rounded-[4px] px-2.5 py-0.5 text-xs font-semibold ${qColor}`}
-            title={s.qualityNote ?? undefined}
-          >
+          <span className={`rounded-[4px] px-2.5 py-0.5 text-xs font-semibold ${qColor}`} title={qTitle}>
             Quality {q.score}% · {q.label}
           </span>
         )}
-        {meta.editable && (
-          <button
-            onClick={() => {
-              setRedigererKvalitet((v) => !v);
-              setRedigererKategorier(false);
-              setMelding(null);
-            }}
-            className="rounded-[4px] border border-[#B7D9DE] bg-white px-2 py-0.5 text-[11px] font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
-          >
-            {q ? "✎ Quality" : "＋ Add quality"}
-          </button>
-        )}
         <span className="text-xs text-zinc-400">{s.dato}</span>
       </div>
-
-      {s.qualityReviewer && (
-        <p className="mb-2 text-[11px] text-zinc-400">
-          Quality rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}
-          {s.qualityNote ? ` · ${s.qualityNote}` : ""}
-        </p>
-      )}
-
-      {melding && (
-        <p className="mb-2 rounded-[4px] bg-[#DFF3E4] px-3 py-1.5 text-[11px] font-semibold text-[#1B7A3D]">
-          {melding}
-        </p>
-      )}
-
-      {redigererKategorier && (
-        <CategoryEditor
-          s={s}
-          meta={meta}
-          reviewer={reviewer}
-          onCancel={() => setRedigererKategorier(false)}
-          onSaved={etterEndring}
-        />
-      )}
-
-      {redigererKvalitet && (
-        <QualityEditor
-          s={s}
-          reviewer={reviewer}
-          onCancel={() => setRedigererKvalitet(false)}
-          onSaved={etterEndring}
-        />
-      )}
       <a
         href={s.url}
         target="_blank"
@@ -462,10 +401,18 @@ function StudyCard({
                   <SummarySection label="Design & participants" text={summary.design} />
                   <SummarySection label="Key findings" text={summary.findings} />
                   <SummarySection label="Limitations & quality" text={summary.limitations} />
+                  <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
                 </>
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* A study with no summary at all has nothing to open, so it keeps its own strip. */}
+      {!summary && meta.editable && (
+        <div className="mt-3 rounded-[4px] border border-[#D6E6EE] bg-[#F4FBFC] p-4 text-sm">
+          <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
         </div>
       )}
 
@@ -490,6 +437,102 @@ function StudyCard({
         <ClaimsModal s={s} reviewer={reviewer} onClose={() => setClaimsOpen(false)} />
       )}
     </li>
+  );
+}
+
+/**
+ * The reviewer controls for one study: which categories it belongs to, and its scientific
+ * quality. They live INSIDE the opened summary rather than on the card face, so the list stays
+ * clean and only the person actually reading a study is offered the edits.
+ */
+function ReviewerTools({
+  s,
+  meta,
+  reviewer,
+  onMetaChanged,
+}: {
+  s: Studie;
+  meta: StudyMeta;
+  reviewer: string;
+  onMetaChanged: () => Promise<void>;
+}) {
+  const [redigererKategorier, setRedigererKategorier] = useState(false);
+  const [redigererKvalitet, setRedigererKvalitet] = useState(false);
+  const [melding, setMelding] = useState<string | null>(null);
+
+  if (!meta.editable) return null;
+
+  async function etterEndring(tekst: string) {
+    setMelding(tekst);
+    setRedigererKategorier(false);
+    setRedigererKvalitet(false);
+    await onMetaChanged();
+  }
+
+  return (
+    <div className="border-t border-[#C9E5E8] pt-3">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+          Categories & quality
+        </span>
+        <button
+          onClick={() => {
+            setRedigererKategorier((v) => !v);
+            setRedigererKvalitet(false);
+            setMelding(null);
+          }}
+          className="rounded-[4px] border border-[#B7D9DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+        >
+          ✎ Categories
+        </button>
+        <button
+          onClick={() => {
+            setRedigererKvalitet((v) => !v);
+            setRedigererKategorier(false);
+            setMelding(null);
+          }}
+          className="rounded-[4px] border border-[#B7D9DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+        >
+          {s.quality ? "✎ Quality" : "＋ Add quality"}
+        </button>
+        <span className="text-[11px] text-zinc-500">
+          {s.kategori.length ? s.kategori.join(", ") : "No category"}
+          {s.quality ? ` · Quality ${s.quality.score}% ${s.quality.label}` : " · No quality score"}
+        </span>
+      </div>
+
+      {s.qualityReviewer && (
+        <p className="mb-2 text-[11px] text-zinc-400">
+          Quality rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}
+          {s.qualityNote ? ` · ${s.qualityNote}` : ""}
+        </p>
+      )}
+
+      {melding && (
+        <p className="mb-2 rounded-[4px] bg-[#DFF3E4] px-3 py-1.5 text-[11px] font-semibold text-[#1B7A3D]">
+          {melding}
+        </p>
+      )}
+
+      {redigererKategorier && (
+        <CategoryEditor
+          s={s}
+          meta={meta}
+          reviewer={reviewer}
+          onCancel={() => setRedigererKategorier(false)}
+          onSaved={etterEndring}
+        />
+      )}
+
+      {redigererKvalitet && (
+        <QualityEditor
+          s={s}
+          reviewer={reviewer}
+          onCancel={() => setRedigererKvalitet(false)}
+          onSaved={etterEndring}
+        />
+      )}
+    </div>
   );
 }
 
@@ -560,7 +603,7 @@ function CategoryEditor({
   }
 
   return (
-    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-[#F4FBFC] p-3">
+    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-white p-3">
       <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
         Categories for this study
       </div>
@@ -684,7 +727,7 @@ function QualityEditor({
   }
 
   return (
-    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-[#F4FBFC] p-3">
+    <div className="mb-3 rounded-[4px] border border-[#B7D9DE] bg-white p-3">
       <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
         Scientific quality
       </div>

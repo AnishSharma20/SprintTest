@@ -51,7 +51,11 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     move goes study by study through `/api/study-categories` so each study's findings travel with it,
     then `DELETE /api/categories/[id]?reassign_to=` sweeps up the rest (marketing findings, and
     findings whose study is not in the list).
-  - **Moving one study** between categories (✎ Categories on a study card) re-files **that study's
+  - Both per study controls live **inside the opened "Read summary" panel** (a "Categories &
+    quality" strip), never on the card face, so the list stays scannable: the face shows the
+    category chips, the quality badge and the date, read only. Who rated a quality score and when
+    is spelled out next to the control and repeated as the badge's tooltip.
+  - **Moving one study** between categories (✎ Categories in that strip) re-files **that study's
     findings** that sat in a category it just left, into the category it moved into, and writes a
     `claim_events` row for each. Note the built in assignment lives in code, not the database, so the
     client sends `previousCategoryIds` on the first edit of a study.

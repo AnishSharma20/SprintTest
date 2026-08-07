@@ -56,10 +56,11 @@ LAYOUTS = {
     "four_columns":       {"tpl": "Four Columns",        "kind": "columns", "n": 4},
 }
 
-FONT_PT = {  # measured from the rendered template (used only to size char limits)
-    "cover_title": 54, "content_title": 32, "section_title": 36, "agenda_title": 60,
-    "highlight_title": 40, "subtitle": 16, "heading": 16, "body": 13, "object": 16,
-    "section_body": 16, "agenda_item": 16, "small_body": 14,
+FONT_PT = {  # forced explicitly by the renderer now (3-size deck-wide scale), not measured from
+             # the template's own inherited layout styles — used only to size char limits.
+    "cover_title": 24, "content_title": 24, "section_title": 24, "agenda_title": 24,
+    "highlight_title": 24, "subtitle": 14, "heading": 14, "body": 14, "object": 14,
+    "section_body": 14, "agenda_item": 14, "small_body": 14,
 }
 TITLE_FONT = {"title": "cover_title", "section": "section_title", "agenda": "agenda_title",
               "highlight": "highlight_title"}

@@ -600,11 +600,11 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 27
+                  "maxLength": 61
                 },
                 "subtitle": {
                   "type": "string",
-                  "maxLength": 45
+                  "maxLength": 51
                 }
               }
             }
@@ -628,7 +628,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 49
+                  "maxLength": 74
                 }
               }
             }
@@ -653,7 +653,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 7
+                  "maxLength": 19
                 },
                 "items": {
                   "type": "array",
@@ -661,7 +661,7 @@
                   "maxItems": 7,
                   "items": {
                     "type": "string",
-                    "maxLength": 26
+                    "maxLength": 30
                   }
                 }
               }
@@ -686,7 +686,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 107
+                  "maxLength": 179
                 }
               }
             }
@@ -710,7 +710,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 94
+                  "maxLength": 125
                 }
               }
             }
@@ -735,7 +735,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 94
+                  "maxLength": 125
                 },
                 "body": {
                   "type": "string",
@@ -763,15 +763,15 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 47
+                  "maxLength": 63
                 },
                 "heading": {
                   "type": "string",
-                  "maxLength": 16
+                  "maxLength": 18
                 },
                 "body": {
                   "type": "string",
-                  "maxLength": 244
+                  "maxLength": 201
                 },
                 "asset_id": {
                   "enum": [
@@ -827,7 +827,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 45
+                  "maxLength": 60
                 },
                 "asset_id": {
                   "enum": [
@@ -883,7 +883,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 94
+                  "maxLength": 125
                 },
                 "columns": {
                   "type": "array",
@@ -899,11 +899,11 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 19
+                        "maxLength": 22
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 274
+                        "maxLength": 254
                       },
                       "icon": {
                         "enum": [
@@ -982,7 +982,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 94
+                  "maxLength": 125
                 },
                 "columns": {
                   "type": "array",
@@ -998,11 +998,11 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 19
+                        "maxLength": 22
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 274
+                        "maxLength": 254
                       },
                       "icon": {
                         "enum": [
@@ -1081,7 +1081,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 94
+                  "maxLength": 125
                 },
                 "columns": {
                   "type": "array",
@@ -1097,11 +1097,11 @@
                     "properties": {
                       "heading": {
                         "type": "string",
-                        "maxLength": 16
+                        "maxLength": 18
                       },
                       "body": {
                         "type": "string",
-                        "maxLength": 217
+                        "maxLength": 201
                       },
                       "icon": {
                         "enum": [

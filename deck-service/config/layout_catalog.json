@@ -11,8 +11,8 @@
       "subtitle": 1
     },
     "limits": {
-      "title": 27,
-      "subtitle": 45
+      "title": 61,
+      "subtitle": 51
     },
     "picture_slots": [],
     "removable_idx": [
@@ -31,7 +31,7 @@
       "title": 0
     },
     "limits": {
-      "title": 49
+      "title": 74
     },
     "picture_slots": [],
     "removable_idx": [
@@ -51,10 +51,10 @@
       "items": 13
     },
     "limits": {
-      "title": 7,
+      "title": 19,
       "items": {
         "maxItems": 7,
-        "item_max": 26
+        "item_max": 30
       }
     },
     "picture_slots": [],
@@ -74,7 +74,7 @@
       "title": 0
     },
     "limits": {
-      "title": 107
+      "title": 179
     },
     "picture_slots": [],
     "removable_idx": [
@@ -92,7 +92,7 @@
       "title": 0
     },
     "limits": {
-      "title": 94
+      "title": 125
     },
     "picture_slots": [],
     "removable_idx": [
@@ -111,7 +111,7 @@
       "body": 14
     },
     "limits": {
-      "title": 94,
+      "title": 125,
       "body": 560
     },
     "picture_slots": [],
@@ -134,9 +134,9 @@
       "picture": 17
     },
     "limits": {
-      "title": 47,
-      "heading": 16,
-      "body": 244
+      "title": 63,
+      "heading": 18,
+      "body": 201
     },
     "picture_slots": [
       17
@@ -160,7 +160,7 @@
       "picture": 17
     },
     "limits": {
-      "title": 45
+      "title": 60
     },
     "picture_slots": [
       17
@@ -193,11 +193,11 @@
       ]
     },
     "limits": {
-      "title": 94,
+      "title": 125,
       "columns": {
         "n": 2,
-        "heading_max": 19,
-        "body_max": 274
+        "heading_max": 22,
+        "body_max": 254
       }
     },
     "picture_slots": [
@@ -242,11 +242,11 @@
       ]
     },
     "limits": {
-      "title": 94,
+      "title": 125,
       "columns": {
         "n": 3,
-        "heading_max": 19,
-        "body_max": 274
+        "heading_max": 22,
+        "body_max": 254
       }
     },
     "picture_slots": [
@@ -300,11 +300,11 @@
       ]
     },
     "limits": {
-      "title": 94,
+      "title": 125,
       "columns": {
         "n": 4,
-        "heading_max": 16,
-        "body_max": 217
+        "heading_max": 18,
+        "body_max": 201
       }
     },
     "picture_slots": [

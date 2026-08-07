@@ -55,6 +55,15 @@ def _master_indices():
     return dark, light
 
 
+# Type scale — exactly 3 text sizes, deck-wide, no exceptions (hero figures and footer chrome
+# fold into this same scale, and native template placeholders are forced onto it too, not just
+# code-built layouts). Hierarchy is expressed through WEIGHT, COLOUR and CAPS, not extra sizes.
+# Defined early: default args below (_set_text/_set_lines) are evaluated at def-time.
+_SZ_TITLE = 24                         # slide headlines; also hero data figures (stat values)
+_SZ_BODY = 14                          # headings (bold), body, labels, table cells, bullets
+_SZ_SMALL = 11                         # eyebrows, captions, notes, footnotes, axis/step labels, footer chrome
+
+
 def _find_layout(prs, name, master_index):
     master = prs.slide_masters[master_index]
     for lay in master.slide_layouts:
@@ -119,16 +128,28 @@ def _set_ph_box(ph, l, t, w, h) -> None:
     spPr.insert(0, xfrm)
 
 
-def _set_text(ph, text: str) -> None:
-    """Single logical value into a placeholder, inheriting all run formatting from the layout."""
+def _set_run_size(tf, size: float) -> None:
+    """Force every run in a text frame to one explicit size, overriding whatever the template's
+    own layout/master style would otherwise inherit (54-60pt titles, 13-16pt bodies, etc.) — part
+    of keeping the deck to exactly 3 text sizes total, not just within the code-built layouts."""
+    for p in tf.paragraphs:
+        for r in p.runs:
+            r.font.size = Pt(size)
+
+
+def _set_text(ph, text: str, size: float = _SZ_BODY) -> None:
+    """Single logical value into a placeholder. Size is forced explicitly (not inherited from the
+    layout) so native template placeholders stay on the same 3-size scale as code-built layouts."""
     ph.text_frame.text = text
     _autofit(ph.text_frame)
+    _set_run_size(ph.text_frame, size)
 
 
-def _set_lines(ph, lines: list[str], bullet_rid: str | None = None) -> None:
+def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float = _SZ_BODY) -> None:
     """Multiple paragraphs (bullets / agenda items). If bullet_rid is given, each paragraph gets
     the brand's PICTURE bullet (the teal figure embedded in the template master) — this overrides
-    the content placeholders' `buNone`. Otherwise each paragraph inherits the layout's list format."""
+    the content placeholders' `buNone`. Otherwise each paragraph inherits the layout's list format.
+    Size is forced explicitly, same reasoning as _set_text."""
     lines = [ln for ln in (l.strip() for l in lines) if ln]
     tf = ph.text_frame
     tf.text = lines[0] if lines else ""
@@ -138,6 +159,7 @@ def _set_lines(ph, lines: list[str], bullet_rid: str | None = None) -> None:
         for para in tf.paragraphs:
             _apply_picture_bullet(para._p, bullet_rid)
     _autofit(tf, shrink=False)   # bodies/lists: cap content, do not shrink
+    _set_run_size(tf, size)
 
 
 # The brand bullet is a small teal PNG embedded in the template master (as a picture bullet at
@@ -188,7 +210,7 @@ def _add_disclaimer(slide, dark: bool) -> None:
     tf.word_wrap = True
     tf.text = DISCLAIMER
     run = tf.paragraphs[0].runs[0]
-    run.font.size = Pt(9)
+    run.font.size = Pt(_SZ_SMALL)
     run.font.italic = True
     run.font.color.rgb = RGBColor(0xBF, 0xE3, 0xEF) if dark else RGBColor(0x6B, 0x8B, 0x95)
 
@@ -226,25 +248,6 @@ def _layout_box(layout_name: str, master_index: int, idx: int):
                 if p["idx"] == idx and p["width_emu"] and p["height_emu"]:
                     return p["left_emu"], p["top_emu"], p["width_emu"], p["height_emu"]
     return None
-
-
-def _layout_ph_font_pt(layout_name: str, master_index: int, idx: int, default: float = 32.0) -> float:
-    """The font size (pt) a placeholder's text will actually render at, read from the LAYOUT's own
-    list style. Needed because the template's title placeholders are 32pt, not the synthetic
-    _SZ_TITLE — so any 'how tall will this title be' maths must use the template's number."""
-    import re
-    from lxml import etree
-    try:
-        lay = _find_layout(_design_source(), layout_name, master_index)
-        for ph in lay.placeholders:
-            if ph.placeholder_format.idx != idx:
-                continue
-            sizes = re.findall(rb'sz="(\d+)"', etree.tostring(ph._element))
-            if sizes:
-                return int(sizes[0]) / 100.0
-    except Exception:  # noqa: BLE001
-        pass
-    return default
 
 
 def _place_icon(slide, box, icon_path) -> bool:
@@ -352,7 +355,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     benefit = spec.get("benefit")
     benefit = None if benefit in (None, "none") else benefit
 
-    def put(idx, value, multiline=False, bullets=False):
+    def put(idx, value, multiline=False, bullets=False, size=_SZ_BODY):
         if idx is None or idx not in phmap or value is None:
             return
         if multiline:
@@ -360,15 +363,15 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
             lines = [ln for ln in (str(x).strip() for x in raw) if ln]
             # A list of points (2+ lines) gets the brand picture bullet; a single line stays plain prose.
             rid = _bullet_rid(slide) if (bullets and len(lines) > 1) else None
-            _set_lines(phmap[idx], lines, bullet_rid=rid)
+            _set_lines(phmap[idx], lines, bullet_rid=rid, size=size)
         else:
-            _set_text(phmap[idx], str(value))
+            _set_text(phmap[idx], str(value), size=size)
         filled.add(idx)
 
     title = spec.get("title")
     if cat["kind"] in ("title", "agenda"):     # narrow 1-line title box above a neighbour
         title = _fit(title, lim.get("title"))
-    put(fields.get("title"), title)
+    put(fields.get("title"), title, size=_SZ_TITLE)
     put(fields.get("subtitle"), spec.get("subtitle"))
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
@@ -422,7 +425,8 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
         tph = phmap.get(fields.get("title"))
         if tph is not None:
             _set_ph_box(tph, Inches(_MARGIN), Inches(0.746), Inches(_CONTENT_W), Inches(1.0))
-            _shrink_to_fit(tph, str(title or ""), base_pt=32, min_pt=20)
+            # base==min: re-assert the fixed title size at the new box (no shrink below the scale).
+            _shrink_to_fit(tph, str(title or ""), base_pt=_SZ_TITLE, min_pt=_SZ_TITLE)
         hidx = fields.get("heading")
         if hidx in filled and hidx in phmap:
             phmap[hidx]._element.getparent().remove(phmap[hidx]._element)
@@ -439,51 +443,53 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
                 _set_ph_box(pph, Inches(5.0), Inches(body_top), Inches(7.83), Inches(_BODY_BOTTOM - body_top))
 
     # Section divider: a long section title overflows its short template box down into the footer.
-    # Give it a taller box (clear of the footer) and shrink the font deterministically to fit.
+    # Give it a taller box (clear of the footer); font stays fixed at the title size (no shrink
+    # below the deck-wide scale) — the taller box is what actually prevents overflow now.
     if cat["kind"] == "section":
         stph = phmap.get(fields.get("title"))
         if stph is not None and title and len(str(title)) > 40:
             _set_ph_box(stph, Inches(0.97), Inches(3.2), Inches(7.30), Inches(3.0))
-            _shrink_to_fit(stph, str(title), base_pt=40, min_pt=24)
+            _shrink_to_fit(stph, str(title), base_pt=_SZ_TITLE, min_pt=_SZ_TITLE)
 
     # A takeaway title can run to two lines, but some layouts (Text Slide, Title Only) have a
-    # ONE-line title box, so the second line collides with the content below. When such a
-    # layout gets a long title, push any filled content that sits too high down to clear a two-line
-    # title. Set the FULL box from the layout (left/width too) so we don't drop the inherited width.
+    # ONE-line title box, so the second line collides with the content below — and the opposite:
+    # every "below" box's position was authored assuming the layout's OWN much taller inherited
+    # title (up to 60pt), so at the deck-wide _SZ_TITLE a short title leaves a large dead gap above
+    # the content (seen concretely on Agenda and multi-column layouts). Both directions are the same
+    # fix: snap everything stacked below the title to sit a fixed, designer-preserved gap under the
+    # title's REAL rendered height, shifting every "below" box by the SAME delta so their spacing
+    # relative to each other (e.g. a column heading above its own body) is unchanged.
     title_idx = fields.get("title")
     tbox = _layout_box(layout_name, master_index, title_idx) if title_idx is not None else None
     # text_picture re-lays out its own title/body/picture above (with its own margin), so the generic
-    # push-down must not re-read the LAYOUT boxes and fight it.
+    # push/pull must not re-read the LAYOUT boxes and fight it.
     if cat["kind"] == "text_picture":
         tbox = None
     if tbox and title:
-        # How tall will the title REALLY be? Use the layout's own font size (32pt on this template,
-        # not _SZ_TITLE) and the wrapped line count for the box width. A fixed clearance can't work:
-        # at 32pt a 2-line title needs ~1.07in, so the old hardcoded 1.02in dropped the body ON TOP
-        # of the title's second line, leaving zero visible margin.
-        t_pt = _layout_ph_font_pt(layout_name, master_index, title_idx)
-        lines = _est_lines(str(title), tbox[2] / 914400.0, t_pt)
-        title_h = Inches(lines * t_pt * 1.25 / 72.0)      # 1.25 ≈ single line spacing, rounded up
-        # Preserve the gap the DESIGNER put between the title box and the first thing below it.
-        below = [_layout_box(layout_name, master_index, i) for i in filled
+        # How tall will the title REALLY be? Titles now always render at _SZ_TITLE (forced
+        # explicitly in put(), not inherited from the layout), so use that directly with the
+        # wrapped line count for the box width.
+        lines = _est_lines(str(title), tbox[2] / 914400.0, _SZ_TITLE)
+        title_h = Inches(lines * _SZ_TITLE * 1.25 / 72.0)  # 1.25 ≈ single line spacing, rounded up
+        # Only boxes stacked BELOW the title qualify — never a side-by-side picture that legally
+        # starts level with (or above) the title box.
+        below = [(i, _layout_box(layout_name, master_index, i)) for i in filled
                  if i != title_idx and i not in CHROME_IDX]
-        tops = [b[1] for b in below if b and b[1] >= tbox[1] + tbox[3] - Inches(0.05)]
-        gap = max(int(Inches(0.22)), (min(tops) - (tbox[1] + tbox[3])) if tops else 0)
-        safe_top = tbox[1] + int(title_h) + gap
-        for idx in filled:
-            if idx == title_idx or idx in CHROME_IDX:
-                continue
-            box = _layout_box(layout_name, master_index, idx)
-            ph = phmap.get(idx)
-            if ph is None or not box or box[1] >= safe_top:
-                continue
-            # Only push things stacked BELOW the title — never a side-by-side picture that legally
-            # starts level with (or above) the title box.
-            if box[1] < tbox[1] + tbox[3] - Inches(0.05):
-                continue
-            delta = safe_top - box[1]
-            ph.left, ph.width = Emu(box[0]), Emu(box[2])
-            ph.top, ph.height = Emu(safe_top), Emu(max(int(Inches(0.6)), box[3] - delta))
+        below = [(i, b) for i, b in below if b and b[1] >= tbox[1] + tbox[3] - Inches(0.05)]
+        if below:
+            # Preserve the gap the DESIGNER put between the title box and the nearest thing below it.
+            top_of_below = min(b[1] for _, b in below)
+            gap = max(int(Inches(0.22)), top_of_below - (tbox[1] + tbox[3]))
+            safe_top = tbox[1] + int(title_h) + gap
+            shift = safe_top - top_of_below     # positive = push down, negative = pull up
+            if shift != 0:
+                for idx, box in below:
+                    ph = phmap.get(idx)
+                    if ph is None:
+                        continue
+                    ph.left, ph.width = Emu(box[0]), Emu(box[2])
+                    ph.top = Emu(box[1] + shift)
+                    ph.height = Emu(max(int(Inches(0.6)), box[3] - shift))
 
     # AI-generated disclaimer along the bottom of the cover slide.
     if cat["kind"] == "title":
@@ -631,13 +637,6 @@ _BODY_H = _BODY_BOTTOM - _BODY_TOP     # 4.6 in
 _GUTTER = 0.3                          # the ONE gutter between all side-by-side boxes
 _PAD = 0.22                            # inner padding inside panels
 _LINE_SPACING = 1.06                   # fixed line spacing, applied everywhere
-
-# Type scale — exactly 3 text sizes (title / body / small) + one hero-figure size. Footer excluded.
-# Hierarchy is expressed through WEIGHT, COLOUR and CAPS, never through extra sizes.
-_SZ_TITLE = 24                         # slide headlines
-_SZ_BODY = 14                          # headings (bold), body, labels, table cells, bullets
-_SZ_SMALL = 11                         # eyebrows, captions, notes, footnotes, axis / step labels
-_SZ_HERO = 40                          # hero data figures ONLY (stat values)
 
 _STEP_BADGE = 0.5                      # numbered step / timeline node badge diameter
 _ICON_DISC = 0.9                       # icon-circle diameter
@@ -1068,7 +1067,7 @@ def _fill_stat(prs, spec: dict, dark_index: int) -> None:
     vy = _BODY_TOP + 0.8
     for i, st in enumerate(stats):
         x = _MARGIN + i * (cw + _GUTTER)
-        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_HERO, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_TITLE, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x, vy + 1.05, cw, 0.5, st.get("label", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         if st.get("note"):
             _place_text(slide, x + 0.2, vy + 1.6, cw - 0.4, 1.4, st["note"], _SZ_SMALL, _LTEAL, align=PP_ALIGN.CENTER)
@@ -1218,7 +1217,7 @@ def _fill_kpi_dashboard(prs, spec: dict, dark_index: int) -> None:
         y = _BODY_TOP + rr * (th + _GUTTER)
         tile = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(tw), Inches(th))
         tile.fill.solid(); tile.fill.fore_color.rgb = _PANEL; tile.line.fill.background(); tile.shadow.inherit = False
-        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _RED,
+        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_TITLE, _RED,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
         _place_text(slide, x + _PAD, y + th * 0.52, tw - 2 * _PAD, 0.5, m.get("label", ""), _SZ_BODY, _INKC,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
@@ -1765,7 +1764,7 @@ def _fill_photo_stats(prs, spec: dict, dark_index: int) -> None:
         _place_text(slide, x + _PAD, py, cw - 2 * _PAD, 0.3, (it.get("label") or "").upper(),
                     _SZ_SMALL, _LTEAL, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x + _PAD, py + 0.3, cw - 2 * _PAD, 0.95, it.get("value", ""),
-                    _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                    _SZ_TITLE, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
                     anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
         if it.get("note"):
             _place_text(slide, x + _PAD, py + 1.27, cw - 2 * _PAD, note_h, it["note"],
@@ -1916,7 +1915,7 @@ def _fill_breakdown(prs, spec: dict, dark_index: int) -> None:
     hub.fill.solid(); hub.fill.fore_color.rgb = _TEAL
     hub.line.fill.background(); hub.shadow.inherit = False
     _place_text(slide, hub_cx - hub_d / 2, hub_cy - 0.5, hub_d, 1.0, spec.get("total", ""),
-                _SZ_HERO, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
+                _SZ_TITLE, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
                 anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.0)
     if spec.get("caption"):
         _place_text(slide, hub_cx - hub_d / 2, hub_cy + hub_d / 2 + 0.1, hub_d, 0.4,
@@ -2161,7 +2160,7 @@ def _slide_has_white_bg(slide) -> bool:
 
 def _add_page_number(slide, n: int) -> None:
     """A page number in an identical bottom-centre position on every slide (the template carries none),
-    coloured for the slide's background. Footer element — excluded from the type-scale count."""
+    coloured for the slide's background. Uses the small tier — part of the 3-size scale, not an exception."""
     color = _TEAL if _slide_has_white_bg(slide) else _LTEAL
     tb = slide.shapes.add_textbox(Inches((13.333 - 1.0) / 2), Inches(7.06), Inches(1.0), Inches(0.3))
     tf = tb.text_frame
@@ -2171,7 +2170,7 @@ def _add_page_number(slide, n: int) -> None:
     p.alignment = PP_ALIGN.CENTER
     r = p.add_run()
     r.text = str(n)
-    r.font.size = Pt(10)
+    r.font.size = Pt(_SZ_SMALL)
     r.font.name = _BODY
     r.font.color.rgb = color
 

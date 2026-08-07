@@ -288,6 +288,36 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   decision:** the two verbatim AKBM slides (`ingredient`, `benefits` overview) keep their own original
   sizes (9/10.5/20/28/36/54/55pt) — they are byte-identical splices, not renderer output.
 
+- **About page: team rules + layout on/off switches — NEW 2026-08-07, `/about`, 5th nav tab.**
+  Two user-editable levers over PPTX generation, shared across users via Supabase (**migration
+  `0004_generation_rules_and_layouts.sql`, must be run in the Supabase SQL editor**; until then the
+  page renders read-only with a setup hint and generation is unchanged):
+  - **Generation rules** (`generation_rules` table; `/api/rules` + `/api/rules/[id]`): free-text
+    standing rules with per-rule on/off toggle, inline edit, delete; author + timestamp recorded
+    (same localStorage Reviewer name as the review pages). Enabled rules are fetched FRESH at
+    generation time (`app/generation-settings.ts`, shared by generator V1 AND V2), sent as a
+    `custom_rules` form field (numbered lines), forwarded by `/api/generate-deck` → deck-service
+    `/jobs` → `planner.build_system()`, which injects a "TEAM RULES" block — same priority ceiling
+    as per-run instructions (CLAIM FIDELITY + char limits always win). **Deck only** — blog and the
+    whitepapers have their own prompts and are untouched.
+  - **Layout catalog with previews** (`layout_settings` table; `/api/layout-settings`): the About
+    page shows a real PNG render of ALL 42 layouts + the verbatim benefits slide (example content,
+    filter chips All/Code built/Template/Turned off, expandable usage guidance) with an on/off
+    switch per layout. `title` + `agenda` are LOCKED on (cover required, `_ensure_agenda` safety
+    net), the verbatim benefits slide is shown but not switchable (it is spliced by the renderer,
+    not planner-picked). A disabled layout is sent as `disabled_layouts` (comma list) and enforced
+    TWICE in the planner: dropped from the prompt's layout guide (plus a DISABLED LAYOUTS note, and
+    the whole INGREDIENT paragraph disappears when `ingredient` is off) AND removed from the
+    `emit_plan` tool schema's layout enum, so the model *cannot* emit it (`planner.sanitize_disabled`
+    also strips unknown keys server-side). Threaded through revise_plan / revise_plan_visual /
+    the polished QA gate too.
+  - **Preview assets**: `scripts/export_layout_gallery.py` renders one sample slide per layout
+    (reusing `build_gallery.py`'s SYNTH/TMPL lists — that script now has a `main()` guard so it can
+    be imported) → `public/layout-gallery/<key>.png` + manifest `app/layout-gallery.json`. Re-run it
+    after adding/removing a layout or restyling the renderer (needs PowerPoint COM locally).
+  - Adding a genuinely NEW layout is still a code task (each layout is a `renderer._fill_*`
+    program) — the page says so; "adding" from the UI means re-enabling or writing rules.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

@@ -19,6 +19,7 @@ import {
   recordAssetClaims,
   type ApprovedClaim,
 } from "../claims-source";
+import { deckGenerationSettings } from "../generation-settings";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -345,6 +346,12 @@ export default function ContentGeneratorV2() {
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
       if (type === "deck" && studyMeta.length) form.append("study_meta", JSON.stringify(studyMeta));
+      // The About page's standing rules and layout switches govern deck planning only.
+      if (type === "deck") {
+        const innstillinger = await deckGenerationSettings();
+        if (innstillinger.customRules) form.append("custom_rules", innstillinger.customRules);
+        if (innstillinger.disabledLayouts) form.append("disabled_layouts", innstillinger.disabledLayouts);
+      }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));

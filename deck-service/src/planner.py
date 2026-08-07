@@ -116,10 +116,24 @@ def _limits_from_schema() -> dict[str, str]:
     return out
 
 
-def _layout_guide() -> str:
+# Layouts every deck depends on structurally: the cover, and the agenda slide the pipeline's
+# safety net inserts. They can never be turned off from the About page.
+_REQUIRED_LAYOUTS = {"title", "agenda"}
+
+
+def sanitize_disabled(disabled_layouts) -> set[str]:
+    """The user-managed off switch from the About page, made safe: only real layout keys,
+    never the structurally required ones."""
+    known = set(config.catalog())
+    return {d for d in (disabled_layouts or ()) if d in known} - _REQUIRED_LAYOUTS
+
+
+def _layout_guide(disabled: set[str]) -> str:
     limits = _limits_from_schema()
     lines = []
     for sem, usage in LAYOUT_USAGE.items():
+        if sem in disabled:
+            continue
         lim = limits.get(sem, "")
         lines.append(f"- {sem} — {usage}" + (f"  [{lim}]" if lim else ""))
     return "\n".join(lines)
@@ -140,8 +154,10 @@ def _max_tokens(target: int) -> int:
     return 20000 if target > 16 else (14000 if target > 10 else 10000)
 
 
-def build_system(length: str, tone: str, instructions: str = "") -> str:
+def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
+                 disabled_layouts=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
+    disabled = sanitize_disabled(disabled_layouts)
     # Same formulas as validate._coverage_warnings, so the initial prompt asks for exactly what
     # the post-hoc check enforces — the retry should rarely need to fire over these two.
     synth_min = max(3, target // 2)
@@ -155,11 +171,34 @@ def build_system(length: str, tone: str, instructions: str = "") -> str:
             "as high-priority guidance on audience, angle, emphasis, terminology and what to include or avoid. "
             "Follow it wherever possible; it may NOT override the CLAIM FIDELITY rules or the layout/character "
             "limits, which always win):\n\"\"\"\n" + instructions.strip() + "\n\"\"\"\n")
+    # Standing rules the team wrote on the tool's About page, applied to EVERY generation (unlike
+    # the per-run instructions above). Same priority ceiling: claim fidelity and limits still win.
+    rules_block = ""
+    if (custom_rules or "").strip():
+        rules_block = (
+            "\n\nTEAM RULES (standing rules Aker BioMarine's team configured in this tool — they apply to "
+            "every deck. Follow each one wherever the source material allows; they may NOT override the "
+            "CLAIM FIDELITY rules or the layout/character limits, which always win):\n\"\"\"\n"
+            + custom_rules.strip() + "\n\"\"\"\n")
+    # The About page can turn layouts off; a disabled layout is dropped from the guide AND from the
+    # emit_plan schema enum, so the model could not emit it even if it tried. The extra prompt line
+    # keeps the model from wasting a retry discovering that.
+    disabled_note = ""
+    if disabled:
+        disabled_note = ("\nDISABLED LAYOUTS: the team has turned OFF these layouts, so they are NOT "
+                         "available in this deck: " + ", ".join(sorted(disabled)) + ".")
+    ingredient_block = "" if "ingredient" in disabled else f"""
+INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
+nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,
+so just emit {{"layout":"ingredient"}} — do NOT write a title/eyebrow/callouts (anything you write is ignored).
+Default to including it whenever the deck is about the product; use it INSTEAD of a column layout for
+composition (never put benefit icons on nutrients). Omit only if the source is genuinely not about the product.
+"""
     return f"""You plan an on-brand PowerPoint deck for Aker BioMarine's Superba Krill from source material
 (a science summary or free text). You emit ONLY a structured plan via the `emit_plan` tool — you never
 write styling, colours, fonts, or positions. All design is inherited from the fixed Superba template;
 your job is the STORYLINE, the LAYOUT choice per slide, and the COPY.
-{instr_block}
+{instr_block}{rules_block}
 
 STORYLINE (pyramid principle): open with the conclusion, then support it. One message per slide — each
 slide makes a single clear point and earns its place (never repeat a point across slides). Aim for about
@@ -204,12 +243,7 @@ TEXT per bullet — see TEXT DENSITY above):
 - LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
   SIMILAR number of lines (and similar bullet counts) so the slide looks balanced, not lopsided.
 
-INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
-nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,
-so just emit {{"layout":"ingredient"}} — do NOT write a title/eyebrow/callouts (anything you write is ignored).
-Default to including it whenever the deck is about the product; use it INSTEAD of a column layout for
-composition (never put benefit icons on nutrients). Omit only if the source is genuinely not about the product.
-
+{ingredient_block}
 LAYOUTS — pick the layout whose SHAPE matches the point, not just text/columns. Reach for a structural
 layout whenever the content has that shape:
 - numbers worth comparing -> `chart`;  one decisive figure -> `stat`;
@@ -235,7 +269,7 @@ dividers, highlight beats and closing) — repeating the same 2 to 3 favourites 
 not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
 when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
 [bracketed] limits.
-{_layout_guide()}
+{_layout_guide(disabled)}{disabled_note}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
 its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
@@ -313,8 +347,16 @@ NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `
 Emit the plan now via emit_plan."""
 
 
-def _tool_schema() -> dict:
+def _tool_schema(disabled: set[str] | None = None) -> dict:
     s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
+    if disabled:
+        # Hard enforcement of the About page's off switches: a disabled layout is removed from the
+        # forced-tool enum, so the model cannot emit it at all (the prompt only explains why).
+        import copy
+        s = copy.deepcopy(s)
+        enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
+        s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = [
+            e for e in enum if e not in disabled]
     return s
 
 
@@ -325,27 +367,31 @@ def _extract_plan(msg) -> dict:
     raise ValueError("Planner returned no plan (no emit_plan tool call with slides).")
 
 
-def _call(client, system, user, model, max_tokens):
+def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None):
     return client.messages.create(
         model=model or config.MODEL, max_tokens=max_tokens, system=system,
         tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
-                "input_schema": _tool_schema()}],
+                "input_schema": _tool_schema(disabled)}],
         tool_choice={"type": "tool", "name": "emit_plan"},
         messages=user,
     )
 
 
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
-              tone: str = "balansert", instructions: str = "", model: str | None = None) -> dict:
+              tone: str = "balansert", instructions: str = "", custom_rules: str = "",
+              disabled_layouts=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
+    disabled = sanitize_disabled(disabled_layouts)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
-    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
+    return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
+                                                    disabled), user, model, max_tokens, disabled))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
+                custom_rules: str = "", disabled_layouts=None,
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
@@ -407,11 +453,14 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "keep every slide's layout, order and core claim the same:\n- " + "\n- ".join(text_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
+    disabled = sanitize_disabled(disabled_layouts)
+    return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
+                                                    disabled), user, model, max_tokens, disabled))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
                        length: str = "standard", tone: str = "balansert", instructions: str = "",
+                       custom_rules: str = "", disabled_layouts=None,
                        model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
@@ -438,4 +487,6 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            "plan via emit_plan.\n\nVISUAL QA FINDINGS:\n- " + "\n- ".join(lines)
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    return _extract_plan(_call(client, build_system(length, tone, instructions), user, model, max_tokens))
+    disabled = sanitize_disabled(disabled_layouts)
+    return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
+                                                    disabled), user, model, max_tokens, disabled))

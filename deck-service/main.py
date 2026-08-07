@@ -159,7 +159,8 @@ def _slug(text: str, limit: int = 60) -> str:
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
              kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
-             sprak: str = "English", sider: str = "", study_meta: str = "") -> None:
+             sprak: str = "English", sider: str = "", study_meta: str = "",
+             custom_rules: str = "", disabled_layouts: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -255,7 +256,9 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
             this_study_meta = parsed_study_meta if fname == "Selected-scientific-studies.txt" else None
             decks.append(src.generate(client, text, base, length=lengde, tone=tone,
                                        quality=kvalitet, instructions=instruksjoner, on_progress=on_prog,
-                                       study_meta=this_study_meta))
+                                       study_meta=this_study_meta, custom_rules=custom_rules,
+                                       disabled_layouts=[d.strip() for d in disabled_layouts.split(",")
+                                                         if d.strip()]))
 
         # Name each deck after its own generated deck_title (the topic), falling back to the source
         # file stem when the title yields no usable ASCII.
@@ -357,6 +360,8 @@ async def create_job(
     sprak: str = Form(default="English"),
     sider: str = Form(default=""),
     study_meta: str = Form(default=""),
+    custom_rules: str = Form(default=""),
+    disabled_layouts: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -366,7 +371,11 @@ async def create_job(
     sprak: output language for the generated text (any language; defaults to English).
     study_meta: JSON array of {pmid, cite} for the picked studies, so a deck can append an
     appendix of those studies' real charts/tables (see extract_figures.py); ignored for
-    non-deck content types."""
+    non-deck content types.
+    custom_rules: the team's standing generation rules from the tool's About page (newline
+    separated text), injected into the deck planner's prompt; deck only.
+    disabled_layouts: comma separated layout keys turned OFF on the About page — removed from
+    the planner's vocabulary and schema so the model cannot pick them; deck only."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -380,7 +389,7 @@ async def create_job(
     key = os.environ["ANTHROPIC_API_KEY"]
     threading.Thread(target=_run_job,
                      args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype,
-                           sprak, sider, study_meta),
+                           sprak, sider, study_meta, custom_rules, disabled_layouts),
                      daemon=True).start()
     return {"job_id": job_id}
 

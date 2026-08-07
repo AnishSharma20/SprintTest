@@ -94,7 +94,8 @@ def _wording(plan: dict) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
-def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None):
+def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
+                 custom_rules="", disabled_layouts=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
@@ -111,13 +112,17 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             break
         _p(90, f"Polishing {len(flags)} flagged slide(s)")
         candidate = planner.revise_plan_visual(client, summary_text, plan, flags,
-                                               length=length, tone=tone, instructions=instructions)
+                                               length=length, tone=tone, instructions=instructions,
+                                               custom_rules=custom_rules,
+                                               disabled_layouts=disabled_layouts)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
-                                            length=length, tone=tone, instructions=instructions)
+                                            length=length, tone=tone, instructions=instructions,
+                                            custom_rules=custom_rules,
+                                            disabled_layouts=disabled_layouts)
             errs = validate.validate_plan(candidate)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
@@ -137,7 +142,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              length: str = "standard", tone: str = "balansert", quality: str = "fast",
              instructions: str = "", on_progress=None,
-             study_meta: list[dict] | None = None) -> dict:
+             study_meta: list[dict] | None = None,
+             custom_rules: str = "", disabled_layouts: list[str] | None = None) -> dict:
     def _p(pct, step):
         if on_progress:
             try:
@@ -146,13 +152,15 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                 pass
 
     _p(5, "Planning the deck")
-    plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions)
+    plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
+                             custom_rules=custom_rules, disabled_layouts=disabled_layouts)
 
     errors = validate.validate_plan(plan)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
-                                   instructions=instructions)
+                                   instructions=instructions, custom_rules=custom_rules,
+                                   disabled_layouts=disabled_layouts)
         errors = validate.validate_plan(plan)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
@@ -176,7 +184,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
     if quality == "polished" or os.environ.get("DECK_QA_GATE"):
         pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
-                                  study_meta=study_meta)
+                                  study_meta=study_meta, custom_rules=custom_rules,
+                                  disabled_layouts=disabled_layouts)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

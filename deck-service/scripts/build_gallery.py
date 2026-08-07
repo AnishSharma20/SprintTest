@@ -254,19 +254,26 @@ def build(name: str, slides: list[dict], cover: dict) -> None:
     print(f"  WROTE {out.name}  ({len(full)} plan slides, {len({s['layout'] for s in full})} distinct layouts)")
 
 
-build("Superba_layouts_1_kodebygde",
-      SYNTH,
-      {"layout": "title", "title": "Superba layouts, part 1",
-       "subtitle": "All 32 code-built slide types"})
+def main() -> None:
+    build("Superba_layouts_1_kodebygde",
+          SYNTH,
+          {"layout": "title", "title": "Superba layouts, part 1",
+           "subtitle": "All 32 code-built slide types"})
 
-build("Superba_layouts_2_maloppsett",
-      TMPL,
-      {"layout": "title", "title": "Superba layouts, part 2",
-       "subtitle": "The template placeholder types"})
+    build("Superba_layouts_2_maloppsett",
+          TMPL,
+          {"layout": "title", "title": "Superba layouts, part 2",
+           "subtitle": "The template placeholder types"})
 
-print("\nlayout coverage check:")
-covered = {s["layout"] for s in SYNTH} | {s["layout"] for s in TMPL} | {"title"}
-allk = set(config.catalog())
-print("  covered:", len(covered), "of", len(allk))
-missing = sorted(allk - covered)
-print("  missing:", missing or "none")
+    print("\nlayout coverage check:")
+    covered = {s["layout"] for s in SYNTH} | {s["layout"] for s in TMPL} | {"title"}
+    allk = set(config.catalog())
+    print("  covered:", len(covered), "of", len(allk))
+    missing = sorted(allk - covered)
+    print("  missing:", missing or "none")
+
+
+# Guarded so export_layout_gallery.py can import SYNTH/TMPL (the per-layout sample slides)
+# without rebuilding the review decks as an import side effect.
+if __name__ == "__main__":
+    main()

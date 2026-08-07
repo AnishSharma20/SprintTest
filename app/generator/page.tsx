@@ -11,6 +11,7 @@ import {
   type ApprovedClaim,
 } from "../claims-source";
 import PageHero from "../PageHero";
+import { deckGenerationSettings } from "../generation-settings";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -425,6 +426,12 @@ export default function ContentGenerator() {
       // The appendix of source charts/tables is a PPTX-only concept.
       if (type === "deck" && studyMeta.length) {
         form.append("study_meta", JSON.stringify(studyMeta));
+      }
+      // The About page's standing rules and layout switches govern deck planning only.
+      if (type === "deck") {
+        const innstillinger = await deckGenerationSettings();
+        if (innstillinger.customRules) form.append("custom_rules", innstillinger.customRules);
+        if (innstillinger.disabledLayouts) form.append("disabled_layouts", innstillinger.disabledLayouts);
       }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });

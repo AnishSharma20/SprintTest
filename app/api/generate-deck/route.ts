@@ -53,6 +53,8 @@ export async function POST(req: Request) {
       "sprak",
       "sider",
       "study_meta",
+      "custom_rules",
+      "disabled_layouts",
     ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);

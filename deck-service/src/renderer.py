@@ -380,10 +380,11 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     title = spec.get("title")
     if cat["kind"] in ("title", "agenda"):     # narrow 1-line title box above a neighbour
         title = _fit(title, lim.get("title"))
-    # Match the code-built layouts' title treatment exactly (bold, non-italic Exo 2) — otherwise a
-    # native placeholder's title inherits the theme's light, italic major font while a code-built
-    # layout's title next to it in the same deck is bold and upright. Same role, same look.
-    put(fields.get("title"), title, size=_SZ_TITLE, bold=True, italic=False, font=_HEAD)
+    # Explicit, not inherited: two native "kind"s (highlight, text_picture) resolve their title
+    # placeholder to "Exo 2 Light italic" instead of the template's dominant "Exo 2 italic" — an
+    # inconsistency in the template itself. Force the SAME cut everywhere so every title, whatever
+    # layout renders it, looks identical.
+    put(fields.get("title"), title, size=_SZ_TITLE, bold=False, italic=False, font=_HEAD_TITLE)
     put(fields.get("subtitle"), spec.get("subtitle"))
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")))
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
@@ -633,6 +634,9 @@ _WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 _HEAD, _BODY = "Exo 2", "+mn-lt"   # body = the theme MINOR font (embedded Manrope), referenced the same
                                    # way the template placeholders do; a hard-coded "Manrope" can bind to a
                                    # wrong/cursive installed variant instead of the embedded regular one.
+_HEAD_TITLE = "Exo 2 italic"       # slide TITLES ONLY: the template's own theme major font and the
+                                   # brand guide's actual Exo 2 cut (guide lists only "Italic, Semibold
+                                   # Italic" — there is no non-italic Exo 2 in the brand). Non-bold.
 _CHART_COLORS = [_RED, _TEAL2, _LTEAL, RGBColor(0x60, 0xA0, 0x9B)]
 _TBL_LINE = "C9D9D9"                  # table row-line colour (hex, for XML)
 
@@ -714,8 +718,10 @@ def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
     if white:
         _set_white_bg(slide)
     if title is not None:
+        # Non-bold "Exo 2 italic" — matches the native template's own title placeholders exactly
+        # (its dominant cut; the brand guide lists no non-italic Exo 2 weight at all).
         _place_text(slide, _MARGIN, _TITLE_Y, _CONTENT_W, _TITLE_H, title, _SZ_TITLE,
-                    _INKC if white else _WHITE, bold=True, font=_HEAD)
+                    _INKC if white else _WHITE, bold=False, italic=False, font=_HEAD_TITLE)
     if eyebrow is not None:
         _place_text(slide, _MARGIN, _EYEBROW_Y, _CONTENT_W, 0.4, eyebrow, _SZ_SMALL,
                     _TEAL if white else _LTEAL, bold=True, font=_HEAD)
@@ -1200,7 +1206,8 @@ def _fill_closing(prs, spec: dict, dark_index: int) -> None:
     """Closing / contact: a closing statement, optional tagline, and contact details."""
     slide = _synth_slide(prs, dark_index)
     cy = 2.6
-    _place_text(slide, _MARGIN, cy, _CONTENT_W, 1.6, spec.get("title", ""), _SZ_TITLE, _WHITE, bold=True, font=_HEAD)
+    _place_text(slide, _MARGIN, cy, _CONTENT_W, 1.6, spec.get("title", ""), _SZ_TITLE, _WHITE,
+                bold=False, italic=False, font=_HEAD_TITLE)
     if spec.get("tagline"):
         _place_text(slide, _MARGIN, cy + 1.6, _CONTENT_W, 0.8, spec["tagline"], _SZ_BODY, _LTEAL)
     if spec.get("contact"):

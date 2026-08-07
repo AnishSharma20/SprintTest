@@ -62,25 +62,28 @@ export default function MarketingClaims({
     [claims]
   );
 
-  // Category filter chips, same pattern as the Research Wiki: named by count, most-used first.
+  // Category filter chips, same pattern as the Research Wiki: biggest category first, All last.
+  // Keyed by category ID, not name, so renaming a category never strands the selection.
   const kategorier = useMemo(() => {
-    const m = new Map<string, number>();
+    const m = new Map<string, { navn: string; antall: number }>();
     marketing.forEach((c) => {
-      const navn = catName[c.category_id] ?? c.category_id;
-      m.set(navn, (m.get(navn) ?? 0) + 1);
+      const e = m.get(c.category_id) ?? { navn: catName[c.category_id] ?? c.category_id, antall: 0 };
+      e.antall += 1;
+      m.set(c.category_id, e);
     });
-    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+    return [...m.entries()]
+      .map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => b.antall - a.antall || a.navn.localeCompare(b.navn));
   }, [marketing, catName]);
 
   const filteredMarketing = useMemo(() => {
     const needle = q.toLowerCase().trim();
     return marketing.filter((c) => {
-      const navn = catName[c.category_id] ?? c.category_id;
       const treffSok = !needle || c.text.toLowerCase().includes(needle);
-      const treffKat = !valgtKategori || navn === valgtKategori;
+      const treffKat = !valgtKategori || c.category_id === valgtKategori;
       return treffSok && treffKat;
     });
-  }, [marketing, catName, q, valgtKategori]);
+  }, [marketing, q, valgtKategori]);
   const scienceClaims = useMemo(
     () => claims.filter((c) => c.claim_type === "science" && c.status !== "superseded"),
     [claims]
@@ -135,15 +138,20 @@ export default function MarketingClaims({
             />
           </div>
 
+          {/* Biggest category first, down to the smallest, with All last. */}
           <div className="mb-4 flex flex-wrap gap-2">
+            {kategorier.map((k) => (
+              <FilterKnapp
+                key={k.id}
+                aktiv={valgtKategori === k.id}
+                onClick={() => setValgtKategori(k.id)}
+              >
+                {k.navn} ({k.antall})
+              </FilterKnapp>
+            ))}
             <FilterKnapp aktiv={valgtKategori === null} onClick={() => setValgtKategori(null)}>
               All ({marketing.length})
             </FilterKnapp>
-            {kategorier.map(([navn, antall]) => (
-              <FilterKnapp key={navn} aktiv={valgtKategori === navn} onClick={() => setValgtKategori(navn)}>
-                {navn} ({antall})
-              </FilterKnapp>
-            ))}
           </div>
 
           <p className="mb-3 text-sm text-zinc-500">

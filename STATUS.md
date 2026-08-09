@@ -354,6 +354,46 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     with on/off switches (no code-built vs template distinction in the UI; filters
     All / In use / Turned off / Your slides). Rules card re-titled "Writing rules & principles"
     and its copy now points typography asks at Design settings.
+- **About page v3: photo library, footer, density, favourites, live preview — NEW 2026-08-09**
+  (**migration `0006_custom_photos_and_preferred_layouts.sql`, must be run in the Supabase SQL
+  editor**; page degrades with hints until then):
+  - **Team photo library** (`custom_photos` table; `/api/custom-photos` + `[id]`): upload brand
+    photos (downscaled CLIENT-side via canvas to 1800px JPEG + 480px thumb — no service round
+    trip), name + REQUIRED description ("how the AI decides when to use it"), enabled toggle,
+    edit, delete. Enabled photos ride each deck job (`custom_photos_meta` + `custom_photo_files`,
+    keyed `team_photo_<id>`), join the planner's photo guide as "TEAM PHOTO: <description>" and
+    EVERY `asset_id` enum in the schema (5 spots — `planner.extend_asset_enums`, shared with
+    validate so they can't drift); the renderer stages bytes to temp files
+    (`register_custom_photos` + `_photo_path`, which replaced the 3 asset-resolution call
+    sites). Built-in library shown read-only below (26 thumbs via
+    `scripts/export_photo_library.py` → `public/photo-library/` + `app/photo-library.json`).
+  - **Footer controls** (design_settings keys, no new table): `page_numbers` on/off,
+    `footer_text` (e.g. "Confidential, for internal use"), `date_stamp` — drawn by the renamed
+    `renderer._stamp_footer` as ONE centred line ("Confidential · 09 Aug 2026 · 4"), verified in
+    a rendered PNG. The AI disclaimer is NOT controllable (house rule).
+  - **Photo/icon density** (design_settings `photo_level` less/default/more, `icon_level`
+    none/less/default): photo level swaps the PHOTOS prompt paragraph AND scales the enforced
+    minimum via ONE shared formula (`planner.photo_minimum`, used by the prompt and
+    `validate._coverage_warnings`); icon "none" is enforced deterministically (renderer refuses
+    to resolve any icon via `_ICONS_OFF` gate in `_icon_path`/`_generic_icon_path`) plus a
+    prompt block; "less" is prompt-level restraint.
+  - **House favourite stars** (`layout_settings.preferred` column): ★ on library cards (only on
+    enabled layouts; disabling clears the star) → `preferred_layouts` comma field → a "HOUSE
+    FAVOURITE LAYOUTS" prompt block (soft preference among equally fitting layouts; disabled and
+    unknown keys filtered).
+  - **Live design preview**: "Preview sample slides" button → `/api/design-settings/preview` →
+    deck-service `POST /design/preview` renders a fixed 2-slide sample plan (native text +
+    key_points) with the CURRENT (unsaved) settings and returns 2 JPEGs — deterministic, no LLM.
+    NOTE: render_deck splices benefits second-to-last, so the endpoint returns raster indices
+    0 and 2.
+  - **Planner robustness fix found while testing**: a plan truncated by max_tokens arrives as a
+    tool call WITHOUT `slides` and used to fail the deck ("Planner returned no plan");
+    `planner._call` now retries ONCE at 1.6× the length tier's budget when
+    `stop_reason == "max_tokens"`, and the error message includes stop_reason.
+  - Verified: full unit suite (prompt variants, enum extensions, validate gating, renderer
+    globals, photo registry), live `/design/preview` via TestClient, a REAL generation
+    (preferred layout used; photo-rich prompt; footer+date verified in rendered PNG; team photo
+    render path verified deterministically), `tsc` + `next build` clean.
 
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.

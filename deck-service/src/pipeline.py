@@ -95,11 +95,14 @@ def _wording(plan: dict) -> str:
 
 
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
-                 custom_rules="", disabled_layouts=None, design=None, custom_slides=None):
+                 custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
+                 custom_photos=None, preferred_layouts=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
+    photo_ids = planner.custom_photo_ids(custom_photos)
+    photo_level = (design or {}).get("photo_level", "default")
     rounds = max(1, int(os.environ.get("DECK_QA_ROUNDS", "1")))
     for _ in range(rounds):
         _p(80, "Reviewing the rendered slides")
@@ -116,17 +119,23 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                length=length, tone=tone, instructions=instructions,
                                                custom_rules=custom_rules,
                                                disabled_layouts=disabled_layouts,
-                                               custom_slides=custom_slides)
+                                               custom_slides=custom_slides,
+                                               custom_photos=custom_photos,
+                                               preferred_layouts=preferred_layouts, design=design)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
-        errs = validate.validate_plan(candidate, extra_layouts=extra)
+        errs = validate.validate_plan(candidate, extra_layouts=extra,
+                                      extra_photo_ids=photo_ids, photo_level=photo_level)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
                                             custom_rules=custom_rules,
                                             disabled_layouts=disabled_layouts,
-                                            custom_slides=custom_slides)
-            errs = validate.validate_plan(candidate, extra_layouts=extra)
+                                            custom_slides=custom_slides,
+                                            custom_photos=custom_photos,
+                                            preferred_layouts=preferred_layouts, design=design)
+            errs = validate.validate_plan(candidate, extra_layouts=extra,
+                                          extra_photo_ids=photo_ids, photo_level=photo_level)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -139,7 +148,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             break
         candidate = _strip_dashes_plan(candidate)
         plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta,
-                                                     design=design, custom_slides=custom_slides)
+                                                     design=design, custom_slides=custom_slides,
+                                                     custom_photos=custom_photos)
     return pptx, plan
 
 
@@ -149,9 +159,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              study_meta: list[dict] | None = None,
              custom_rules: str = "", disabled_layouts: list[str] | None = None,
              design: dict | None = None,
-             custom_slides: list[dict] | None = None) -> dict:
-    """design / custom_slides: the About page's deterministic design overrides and the team's
-    own verbatim slides ({key, name, description, mode, bytes, index, png} each) — see renderer."""
+             custom_slides: list[dict] | None = None,
+             custom_photos: list[dict] | None = None,
+             preferred_layouts: list[str] | None = None) -> dict:
+    """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
+    deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
+    bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
+    and the starred house-favourite layouts — see renderer/planner."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -160,19 +174,26 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                 pass
 
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
+    photo_ids = planner.custom_photo_ids(custom_photos)
+    photo_level = (design or {}).get("photo_level", "default")
 
     _p(5, "Planning the deck")
     plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
                              custom_rules=custom_rules, disabled_layouts=disabled_layouts,
-                             custom_slides=custom_slides)
+                             custom_slides=custom_slides, custom_photos=custom_photos,
+                             preferred_layouts=preferred_layouts, design=design)
 
-    errors = validate.validate_plan(plan, extra_layouts=extra)
+    errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
+                                    photo_level=photo_level)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
                                    instructions=instructions, custom_rules=custom_rules,
-                                   disabled_layouts=disabled_layouts, custom_slides=custom_slides)
-        errors = validate.validate_plan(plan, extra_layouts=extra)
+                                   disabled_layouts=disabled_layouts, custom_slides=custom_slides,
+                                   custom_photos=custom_photos,
+                                   preferred_layouts=preferred_layouts, design=design)
+        errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
+                                        photo_level=photo_level)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -190,7 +211,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _ensure_agenda(plan)      # guarantee a contents/agenda slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,
-                                custom_slides=custom_slides)
+                                custom_slides=custom_slides, custom_photos=custom_photos)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
@@ -198,7 +219,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
         pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
                                   study_meta=study_meta, custom_rules=custom_rules,
                                   disabled_layouts=disabled_layouts, design=design,
-                                  custom_slides=custom_slides)
+                                  custom_slides=custom_slides, custom_photos=custom_photos,
+                                  preferred_layouts=preferred_layouts)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

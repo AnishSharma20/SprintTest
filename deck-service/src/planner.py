@@ -163,11 +163,19 @@ def _custom_slide_guide(custom_slides) -> str:
         "never force one in.\n" + "\n".join(lines))
 
 
-def _asset_guide() -> str:
+def _asset_guide(custom_photos=None) -> str:
     lines = []
     for a in config.selectable_photos():
         lines.append(f"- {a['id']} ({a.get('bg_fit','')}) — {a['description']}")
+    for p in custom_photos or []:
+        desc = (p.get("description") or "").strip() or p.get("name") or "a team photo"
+        lines.append(f"- {p['key']} (any) — TEAM PHOTO: {desc}")
     return "\n".join(lines)
+
+
+def custom_photo_ids(custom_photos) -> list[str]:
+    """The asset ids of the team's uploaded photos, for extending the schema's asset_id enums."""
+    return [p["key"] for p in (custom_photos or []) if p.get("key")]
 
 
 def _max_tokens(target: int) -> int:
@@ -178,14 +186,29 @@ def _max_tokens(target: int) -> int:
     return 20000 if target > 16 else (14000 if target > 10 else 10000)
 
 
+def photo_minimum(total: int, photo_level: str) -> int:
+    """The deck-wide photo floor, scaled by the About page's 'Photos' density level. ONE formula
+    shared by the prompt and validate._coverage_warnings, so the initial prompt asks for exactly
+    what the post-hoc check enforces."""
+    if photo_level == "less":
+        return max(1, total // 8)
+    if photo_level == "more":
+        return max(3, total // 3)
+    return max(2, total // 4)
+
+
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
-                 disabled_layouts=None, custom_slides=None) -> str:
+                 disabled_layouts=None, custom_slides=None, custom_photos=None,
+                 preferred_layouts=None, design=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     disabled = sanitize_disabled(disabled_layouts)
+    design = design or {}
+    photo_level = design.get("photo_level", "default")
+    icon_level = design.get("icon_level", "default")
     # Same formulas as validate._coverage_warnings, so the initial prompt asks for exactly what
     # the post-hoc check enforces — the retry should rarely need to fire over these two.
     synth_min = max(3, target // 2)
-    photo_min = max(2, target // 4)
+    photo_min = photo_minimum(target, photo_level)
     benefits = ", ".join(config.manifest()["benefits"])
     generic = ", ".join(config.manifest().get("generic_icons", []))
     instr_block = ""
@@ -218,6 +241,86 @@ so just emit {{"layout":"ingredient"}} — do NOT write a title/eyebrow/callouts
 Default to including it whenever the deck is about the product; use it INSTEAD of a column layout for
 composition (never put benefit icons on nutrients). Omit only if the source is genuinely not about the product.
 """
+    # "House favourite" stars from the About page: a soft preference among equally fitting
+    # layouts — never a licence to force a shape onto content that doesn't have it.
+    preferred = [p for p in (preferred_layouts or []) if p in LAYOUT_USAGE and p not in disabled]
+    preferred_block = ""
+    if preferred:
+        preferred_block = (
+            "\nHOUSE FAVOURITE LAYOUTS: the team starred these as the house style — when several layouts "
+            "fit a point EQUALLY well, pick a starred one first: " + ", ".join(preferred) + ". The shape "
+            "of the content still wins: never force a favourite onto a point whose shape doesn't match.")
+    # Photo density level from the About page. The paragraph wording and the enforced minimum
+    # move together; validate._coverage_warnings uses the same photo_minimum() formula.
+    if photo_level == "less":
+        photos_block = f"""PHOTOS (use sparingly — the team turned photo density DOWN): the photo library below is available,
+but this deck should stay text and data led. Set `asset_id` only where an image genuinely strengthens the
+point (at least {photo_min} slide{'s' if photo_min != 1 else ''} across the deck, e.g. the cover or one breather beat); otherwise leave
+photos off. `text_with_picture` and `picture_full` require an asset_id by schema, so reach for those
+layouts only when you actually want their photo.
+{_asset_guide(custom_photos)}"""
+    else:
+        more_line = ("\nThe team asked for a PHOTO RICH deck: place photos generously, on every slide where "
+                     "one fits." if photo_level == "more" else "")
+        photos_block = f"""PHOTOS (REQUIRED, not aspirational): we have a real, high-quality photo library (krill in the wild, Antarctic
+ocean/ice, product close-ups, lab and sourcing shots, the team) — USE IT. This {target}-slide deck MUST set
+`asset_id` on AT LEAST {photo_min} slides total, not just the odd one: `text_with_picture` and `picture_full`
+(asset_id required by their schema) are built for it, and `exec_summary` / `photo_stats` also take an optional
+`asset_id` — set one there rather than leaving it off by default. A deck with zero or one photo is under-using
+the library; a cover, a mid-deck breather, and a closing beat are all good spots to place one. Choose an
+`asset_id` whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits
+a light slide). Only skip a photo on a given slide when truly nothing in the library fits that specific
+point — the {photo_min}-slide minimum still applies across the rest of the deck.{more_line}
+{_asset_guide(custom_photos)}"""
+    if custom_photos:
+        photos_block += ("\nTEAM PHOTOS: entries marked TEAM PHOTO above were uploaded by the team with that "
+                         "description as your guidance — prefer one whenever its description matches the "
+                         "slide's point better than a library photo.")
+    # Icon density level. "none" is ALSO enforced deterministically (the renderer refuses to
+    # resolve any icon), so the prompt line just saves the model wasted effort.
+    if icon_level == "none":
+        icons_block = """ICONS: the team turned brand icons OFF for generated decks. NEVER set a column `icon`, an
+`icon_generic`, or a slide-level `benefit` icon field — any you set are dropped by the renderer. Express
+hierarchy through headings and text alone."""
+    elif icon_level == "less":
+        icons_block = f"""ICONS (use sparingly — the team turned icon density DOWN): brand icons exist in two sources, branded
+benefit icons ({benefits}) via a column's `icon` or a slide's `benefit`, and generic keywords ({generic})
+via `icon_generic`. Add icons ONLY when a slide clearly benefits (e.g. a benefits overview where each
+item IS a distinct health benefit) — never by default. The renderer's rules still apply: one source per
+slide, all columns or none, exact topic match (no heart icon on a liver point). When in doubt, leave
+icons off; a clean text slide is the preferred look here."""
+    else:
+        icons_block = f"""ICONS — clean brand-red line-art from TWO sources; a slide uses ONLY ONE source. Every rule below is ENFORCED
+by the renderer, so follow them exactly or the icons are silently dropped.
+(A) BRANDED BENEFIT ICONS — one per HEALTH BENEFIT ({benefits}). Set a column's `icon`, or a slide's top-level
+    `benefit`, to the benefit it depicts. MATCH THE TOPIC EXACTLY: heart→heart, liver→liver,
+    brain/memory/focus/mood→cognitive, joints→joint, muscle/strength/recovery→muscle, skin→skin,
+    eyes/vision→eye, women's-health/menstrual/cycle→pms, exercise/sport/performance→sports, overall
+    wellbeing→whole_body, uptake/bioavailability→absorption. Never attach an icon whose meaning differs from
+    the words (no heart icon on a liver point).
+(B) GENERIC FALLBACK ICONS — a neutral line-art set for topics with NO branded benefit icon. Set a column's
+    `icon_generic` to the closest keyword from: {generic}. Use for science / composition / sourcing / quality
+    slides (e.g. science, research, molecule, omega3, sustainability, ocean, sourcing, purity, quality, safety,
+    growth, proven, process).
+RULES (column layouts):
+- ADD ICONS BY DEFAULT to two/three/four_columns, key_points and exec_summary: these layouts look empty and
+  unbalanced without an icon per item, so give EVERY item one unless truly nothing fits. When the items are
+  not health benefits (e.g. two forms of omega 3, a process, a quality point) use `icon_generic` keywords such
+  as molecule, omega3, cell, research, science, sourcing, purity, sustainability, proven.
+- ALL-OR-NOTHING + ONE SOURCE. Either give EVERY column a branded `icon`, OR give EVERY column an
+  `icon_generic`, OR give no column any icon. NEVER mix the two fields on one slide and NEVER fill only some
+  columns — a partial or mixed set is dropped entirely, so it's wasted effort.
+- PREFER branded benefit icons when every column is a distinct health benefit. If even one column is not a
+  benefit but the set still deserves icons, use `icon_generic` on ALL columns instead (there are generic
+  heart / brain / joint / muscle / eye keywords to cover any benefit columns in that same generic set).
+- PREFER a DIFFERENT icon per item when the items are genuinely different topics — but when every item is a
+  sub-facet of ONE single benefit or theme (e.g. three cognitive test types from one study, all "cognitive"),
+  REPEAT that one icon across every item rather than leaving icons off the slide. A repeated icon still
+  passes the all-or-nothing/one-source rule; a slide with no icon at all is the worse outcome here.
+- Set slide-level `benefit` on a highlight / section / text_with_picture slide about ONE benefit (e.g. a skin
+  statement → benefit:"skin"); the icon is placed automatically.
+- Nutrients / ingredients / composition → use the `ingredient` layout, never icons. If in doubt, leave off."""
+
     return f"""You plan an on-brand PowerPoint deck for Aker BioMarine's Superba Krill from source material
 (a science summary or free text). You emit ONLY a structured plan via the `emit_plan` tool — you never
 write styling, colours, fonts, or positions. All design is inherited from the fixed Superba template;
@@ -293,7 +396,7 @@ dividers, highlight beats and closing) — repeating the same 2 to 3 favourites 
 not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
 when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
 [bracketed] limits.
-{_layout_guide(disabled)}{disabled_note}{_custom_slide_guide(custom_slides)}
+{_layout_guide(disabled)}{disabled_note}{preferred_block}{_custom_slide_guide(custom_slides)}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
 its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
@@ -305,51 +408,13 @@ columns' headings clearly DISTINCT. Never give two columns headings that share t
 the barrier does" + "What the barrier needs" — they collapse to the same label; use "Structure" + "Upkeep").
 Put the explanation in the column body, not the heading.
 
-PHOTOS (REQUIRED, not aspirational): we have a real, high-quality photo library (krill in the wild, Antarctic
-ocean/ice, product close-ups, lab and sourcing shots, the team) — USE IT. This {target}-slide deck MUST set
-`asset_id` on AT LEAST {photo_min} slides total, not just the odd one: `text_with_picture` and `picture_full`
-(asset_id required by their schema) are built for it, and `exec_summary` / `photo_stats` also take an optional
-`asset_id` — set one there rather than leaving it off by default. A deck with zero or one photo is under-using
-the library; a cover, a mid-deck breather, and a closing beat are all good spots to place one. Choose an
-`asset_id` whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits
-a light slide). Only skip a photo on a given slide when truly nothing in the library fits that specific
-point — the {photo_min}-slide minimum still applies across the rest of the deck.
-{_asset_guide()}
+{photos_block}
 
 BACKGROUND & RHYTHM: most slides default to the dark deep-sea master; set `background`:"light" on some
 slides for rhythm (light works well for airy statement/picture slides). Alternate — never many identical
 slides in a row.
 
-ICONS — clean brand-red line-art from TWO sources; a slide uses ONLY ONE source. Every rule below is ENFORCED
-by the renderer, so follow them exactly or the icons are silently dropped.
-(A) BRANDED BENEFIT ICONS — one per HEALTH BENEFIT ({benefits}). Set a column's `icon`, or a slide's top-level
-    `benefit`, to the benefit it depicts. MATCH THE TOPIC EXACTLY: heart→heart, liver→liver,
-    brain/memory/focus/mood→cognitive, joints→joint, muscle/strength/recovery→muscle, skin→skin,
-    eyes/vision→eye, women's-health/menstrual/cycle→pms, exercise/sport/performance→sports, overall
-    wellbeing→whole_body, uptake/bioavailability→absorption. Never attach an icon whose meaning differs from
-    the words (no heart icon on a liver point).
-(B) GENERIC FALLBACK ICONS — a neutral line-art set for topics with NO branded benefit icon. Set a column's
-    `icon_generic` to the closest keyword from: {generic}. Use for science / composition / sourcing / quality
-    slides (e.g. science, research, molecule, omega3, sustainability, ocean, sourcing, purity, quality, safety,
-    growth, proven, process).
-RULES (column layouts):
-- ADD ICONS BY DEFAULT to two/three/four_columns, key_points and exec_summary: these layouts look empty and
-  unbalanced without an icon per item, so give EVERY item one unless truly nothing fits. When the items are
-  not health benefits (e.g. two forms of omega 3, a process, a quality point) use `icon_generic` keywords such
-  as molecule, omega3, cell, research, science, sourcing, purity, sustainability, proven.
-- ALL-OR-NOTHING + ONE SOURCE. Either give EVERY column a branded `icon`, OR give EVERY column an
-  `icon_generic`, OR give no column any icon. NEVER mix the two fields on one slide and NEVER fill only some
-  columns — a partial or mixed set is dropped entirely, so it's wasted effort.
-- PREFER branded benefit icons when every column is a distinct health benefit. If even one column is not a
-  benefit but the set still deserves icons, use `icon_generic` on ALL columns instead (there are generic
-  heart / brain / joint / muscle / eye keywords to cover any benefit columns in that same generic set).
-- PREFER a DIFFERENT icon per item when the items are genuinely different topics — but when every item is a
-  sub-facet of ONE single benefit or theme (e.g. three cognitive test types from one study, all "cognitive"),
-  REPEAT that one icon across every item rather than leaving icons off the slide. A repeated icon still
-  passes the all-or-nothing/one-source rule; a slide with no icon at all is the worse outcome here.
-- Set slide-level `benefit` on a highlight / section / text_with_picture slide about ONE benefit (e.g. a skin
-  statement → benefit:"skin"); the icon is placed automatically.
-- Nutrients / ingredients / composition → use the `ingredient` layout, never icons. If in doubt, leave off.
+{icons_block}
 
 TONE: {TONE_GUIDANCE.get(tone, TONE_GUIDANCE['balansert'])}
 
@@ -371,56 +436,88 @@ NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `
 Emit the plan now via emit_plan."""
 
 
-def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None) -> dict:
+def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None,
+                 extra_photo_ids: list[str] | None = None) -> dict:
     s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
-    if disabled or extra_layouts:
+    if disabled or extra_layouts or extra_photo_ids:
         # Hard enforcement of the About page's switches: a disabled layout is removed from the
-        # forced-tool enum, so the model cannot emit it at all (the prompt only explains why),
-        # and the team's own 'auto' slides are added as pickable verbatim layout keys.
+        # forced-tool enum, so the model cannot emit it at all (the prompt only explains why);
+        # the team's own 'auto' slides are added as pickable verbatim layout keys; and the
+        # team's photos join every asset_id enum. Deep copy first — config.schema() is cached.
         import copy
         s = copy.deepcopy(s)
         enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
         enum = [e for e in enum if e not in (disabled or ())]
         enum += [k for k in (extra_layouts or []) if k not in enum]
         s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum
+        if extra_photo_ids:
+            extend_asset_enums(s, extra_photo_ids)
     return s
+
+
+def extend_asset_enums(node, extra_ids: list[str]) -> None:
+    """Walk a (sub)schema and append the team's photo ids to EVERY `asset_id` enum — the schema
+    enum-constrains asset_id in several per-layout conditionals (top level, photo_stats items,
+    exec_summary...), and validate.py reuses this so the two can never drift. Mutates in place."""
+    if isinstance(node, dict):
+        aid = node.get("asset_id")
+        if isinstance(aid, dict) and isinstance(aid.get("enum"), list):
+            aid["enum"] = aid["enum"] + [i for i in extra_ids if i not in aid["enum"]]
+        for v in node.values():
+            extend_asset_enums(v, extra_ids)
+    elif isinstance(node, list):
+        for v in node:
+            extend_asset_enums(v, extra_ids)
 
 
 def _extract_plan(msg) -> dict:
     for block in msg.content:
         if block.type == "tool_use" and isinstance(block.input, dict) and block.input.get("slides"):
             return block.input
-    raise ValueError("Planner returned no plan (no emit_plan tool call with slides).")
+    raise ValueError(f"Planner returned no plan (no emit_plan tool call with slides; "
+                     f"stop_reason={getattr(msg, 'stop_reason', '?')}).")
 
 
 def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None,
-          extra_layouts: list[str] | None = None):
-    return client.messages.create(
-        model=model or config.MODEL, max_tokens=max_tokens, system=system,
-        tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
-                "input_schema": _tool_schema(disabled, extra_layouts)}],
-        tool_choice={"type": "tool", "name": "emit_plan"},
-        messages=user,
-    )
+          extra_layouts: list[str] | None = None, extra_photo_ids: list[str] | None = None):
+    def once(budget):
+        return client.messages.create(
+            model=model or config.MODEL, max_tokens=budget, system=system,
+            tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
+                    "input_schema": _tool_schema(disabled, extra_layouts, extra_photo_ids)}],
+            tool_choice={"type": "tool", "name": "emit_plan"},
+            messages=user,
+        )
+    msg = once(max_tokens)
+    # A plan cut off mid-tool-call arrives without usable input (no slides) — seen in practice
+    # when a photo-rich or team-slide-rich prompt makes the plan run longer than the length
+    # tier's budget. One retry with real headroom beats failing the user's whole deck.
+    if msg.stop_reason == "max_tokens":
+        msg = once(int(max_tokens * 1.6))
+    return msg
 
 
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
               tone: str = "balansert", instructions: str = "", custom_rules: str = "",
-              disabled_layouts=None, custom_slides=None, model: str | None = None) -> dict:
+              disabled_layouts=None, custom_slides=None, custom_photos=None,
+              preferred_layouts=None, design=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     disabled = sanitize_disabled(disabled_layouts)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
+    photo_ids = custom_photo_ids(custom_photos)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled, custom_slides), user, model,
-                               max_tokens, disabled, extra))
+                                                    disabled, custom_slides, custom_photos,
+                                                    preferred_layouts, design), user, model,
+                               max_tokens, disabled, extra, photo_ids))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
+                custom_photos=None, preferred_layouts=None, design=None,
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
@@ -485,13 +582,15 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     disabled = sanitize_disabled(disabled_layouts)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled, custom_slides), user, model,
-                               max_tokens, disabled, extra))
+                                                    disabled, custom_slides, custom_photos,
+                                                    preferred_layouts, design), user, model,
+                               max_tokens, disabled, extra, custom_photo_ids(custom_photos)))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
                        length: str = "standard", tone: str = "balansert", instructions: str = "",
                        custom_rules: str = "", disabled_layouts=None, custom_slides=None,
+                       custom_photos=None, preferred_layouts=None, design=None,
                        model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
@@ -521,5 +620,6 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
     disabled = sanitize_disabled(disabled_layouts)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled, custom_slides), user, model,
-                               max_tokens, disabled, extra))
+                                                    disabled, custom_slides, custom_photos,
+                                                    preferred_layouts, design), user, model,
+                               max_tokens, disabled, extra, custom_photo_ids(custom_photos)))

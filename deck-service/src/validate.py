@@ -20,7 +20,7 @@ from . import config
 _STRUCTURAL_LAYOUTS = {"title", "agenda", "section", "highlight", "title_only", "closing", "ingredient"}
 
 
-def _coverage_warnings(plan: dict) -> list[str]:
+def _coverage_warnings(plan: dict, photo_level: str = "default") -> list[str]:
     """Soft nudges (never block generation) for two house-style preferences that are easy
     for the model to under-deliver on despite prompt guidance: reaching for the 31-layout
     synthetic catalog instead of repeating text/two_columns/key_points, and actually using
@@ -50,7 +50,9 @@ def _coverage_warnings(plan: dict) -> list[str]:
             f"layouts are used.")
 
     photo_slides = sum(1 for s in slides if s.get("asset_id"))
-    min_photos = max(2, total // 4)
+    # Scaled by the About page's photo density level — same formula the planner prompt uses.
+    from .planner import photo_minimum
+    min_photos = photo_minimum(total, photo_level)
     if photo_slides < min_photos:
         warnings.append(
             f"PHOTOS: only {photo_slides} slide(s) use a photo (asset_id) out of {total} — the photo "
@@ -140,24 +142,32 @@ def _text_density_warnings(plan: dict) -> list[str]:
             f"substance — never by padding with filler."]
 
 
-def _schema_with_extras(extra_layouts: list[str] | None) -> dict:
-    """The slide schema, with the team's own verbatim slide keys (custom_<id>, from the About
-    page) added to the layout enum so a plan that places one still validates. They need no
-    if/then conditional — a verbatim slide carries no other fields."""
-    if not extra_layouts:
+def _schema_with_extras(extra_layouts: list[str] | None,
+                        extra_photo_ids: list[str] | None = None) -> dict:
+    """The slide schema, with the team's own verbatim slide keys (custom_<id>) added to the
+    layout enum and the team's photo ids (team_photo_<id>) added to every asset_id enum, so a
+    plan that uses either still validates. Verbatim slides need no if/then conditional — they
+    carry no other fields."""
+    if not extra_layouts and not extra_photo_ids:
         return config.schema()
     import copy
     s = copy.deepcopy(config.schema())
-    enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
-    s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum + [
-        k for k in extra_layouts if k not in enum]
+    if extra_layouts:
+        enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
+        s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum + [
+            k for k in extra_layouts if k not in enum]
+    if extra_photo_ids:
+        from .planner import extend_asset_enums
+        extend_asset_enums(s, extra_photo_ids)
     return s
 
 
-def validate_plan(plan: dict, extra_layouts: list[str] | None = None) -> list[str]:
+def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
+                  extra_photo_ids: list[str] | None = None,
+                  photo_level: str = "default") -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
-    validator = jsonschema.Draft202012Validator(_schema_with_extras(extra_layouts))
+    validator = jsonschema.Draft202012Validator(_schema_with_extras(extra_layouts, extra_photo_ids))
     for e in sorted(validator.iter_errors(plan), key=lambda e: list(e.absolute_path)):
         where = "/".join(str(p) for p in e.absolute_path) or "(root)"
         # Precise, actionable message for the planner's retry: exact length, limit, and how
@@ -170,7 +180,7 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None) -> list[st
 
     # Semantic checks beyond the JSON Schema (asset_id must be a real, selectable photo;
     # the enum already covers this, but a clear message helps the retry).
-    ids = {a["id"] for a in config.selectable_photos()}
+    ids = {a["id"] for a in config.selectable_photos()} | set(extra_photo_ids or ())
     catalog = config.catalog()
     for i, slide in enumerate(plan.get("slides", []), 1):
         aid = slide.get("asset_id")
@@ -186,7 +196,7 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None) -> list[st
     # retry a plan gets can act on both at once. Gating this behind "only when otherwise clean"
     # meant a plan with even one trivial residual overflow (which ships anyway) never got its
     # coverage checked at all, silently shipping under the photo/variety minimums.
-    errors.extend(_coverage_warnings(plan))
+    errors.extend(_coverage_warnings(plan, photo_level))
     errors.extend(_text_density_warnings(plan))
 
     return errors[:25]

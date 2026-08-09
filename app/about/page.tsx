@@ -20,6 +20,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import PageHero, { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
+import photoLibrary from "../photo-library.json";
 
 const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
@@ -65,7 +66,23 @@ type DesignSettings = {
   line_spacing?: number | string;
   margin_in?: number | string;
   gutter_in?: number | string;
+  footer_text?: string;
+  page_numbers?: boolean;
+  date_stamp?: boolean;
+  photo_level?: string;
+  icon_level?: string;
 };
+
+type CustomPhoto = {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  thumb_b64: string | null;
+  created_by?: string | null;
+};
+
+type BuiltinPhoto = { id: string; description: string; bg_fit: string };
 
 const LOCKED = new Set(["title", "agenda"]);
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
@@ -117,10 +134,29 @@ export default function AboutPage() {
 
   // ----- layouts -----
   const [layoutsMigrated, setLayoutsMigrated] = useState(true);
+  const [starsMigrated, setStarsMigrated] = useState(true);
   const [disabled, setDisabled] = useState<Set<string>>(new Set());
+  const [preferred, setPreferred] = useState<Set<string>>(new Set());
   const [layoutError, setLayoutError] = useState("");
   const [filter, setFilter] = useState<"all" | "on" | "off" | "mine">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  // ----- design preview -----
+  const [previewBusy, setPreviewBusy] = useState(false);
+  const [previewError, setPreviewError] = useState("");
+  const [previewImgs, setPreviewImgs] = useState<string[] | null>(null);
+
+  // ----- photo library -----
+  const [photosMigrated, setPhotosMigrated] = useState(true);
+  const [customPhotos, setCustomPhotos] = useState<CustomPhoto[]>([]);
+  const [photoError, setPhotoError] = useState("");
+  const photoInput = useRef<HTMLInputElement>(null);
+  const [photoDraft, setPhotoDraft] = useState<{ image_b64: string; thumb_b64: string; name: string; description: string } | null>(null);
+  const [photoSaving, setPhotoSaving] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<string | null>(null);
+  const [photoName, setPhotoName] = useState("");
+  const [photoDesc, setPhotoDesc] = useState("");
+  const [showBuiltins, setShowBuiltins] = useState(false);
 
   // ----- custom slides -----
   const [slidesMigrated, setSlidesMigrated] = useState(true);
@@ -150,9 +186,18 @@ export default function AboutPage() {
     try {
       const l = await (await fetch("/api/layout-settings")).json();
       setLayoutsMigrated(l.configured !== false && l.migrated !== false);
+      setStarsMigrated(l.starsMigrated !== false);
       setDisabled(new Set<string>(l.disabled ?? []));
+      setPreferred(new Set<string>(l.preferred ?? []));
     } catch {
       setLayoutsMigrated(false);
+    }
+    try {
+      const p = await (await fetch("/api/custom-photos")).json();
+      setPhotosMigrated(p.configured !== false && p.migrated !== false);
+      setCustomPhotos(p.photos ?? []);
+    } catch {
+      setPhotosMigrated(false);
     }
     try {
       const d = await (await fetch("/api/design-settings")).json();
@@ -297,6 +342,153 @@ export default function AboutPage() {
     } catch (e) {
       setDisabled(before);
       setLayoutError((e as Error).message);
+    }
+  }
+
+  async function toggleStar(key: string, star: boolean) {
+    setLayoutError("");
+    const before = new Set(preferred);
+    const next = new Set(preferred);
+    if (star) next.add(key);
+    else next.delete(key);
+    setPreferred(next); // optimistic
+    try {
+      const res = await fetch("/api/layout-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layout: key, preferred: star, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not save the favourite.");
+      }
+    } catch (e) {
+      setPreferred(before);
+      setLayoutError((e as Error).message);
+    }
+  }
+
+  // ---------- design preview ----------
+  async function previewDesign() {
+    setPreviewBusy(true);
+    setPreviewError("");
+    try {
+      const settings: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(design)) {
+        if (v === undefined || v === null || String(v).trim() === "") continue;
+        settings[k] =
+          k === "title_font" || k === "body_font" || k === "footer_text" || k === "photo_level" || k === "icon_level"
+            ? String(v).trim()
+            : k === "page_numbers" || k === "date_stamp"
+              ? v
+              : Number(v);
+      }
+      const res = await fetch("/api/design-settings/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settings }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Preview failed.");
+      setPreviewImgs(d.slides ?? []);
+    } catch (e) {
+      setPreviewError((e as Error).message);
+    } finally {
+      setPreviewBusy(false);
+    }
+  }
+
+  // ---------- photo library ----------
+  async function readAndDownscale(file: File): Promise<{ image_b64: string; thumb_b64: string }> {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = () => reject(new Error("Could not read the image file."));
+        i.src = url;
+      });
+      const scale = (max: number, quality: number) => {
+        const s = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * s);
+        c.height = Math.round(img.height * s);
+        c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+        return c.toDataURL("image/jpeg", quality).split(",")[1];
+      };
+      return { image_b64: scale(1800, 0.85), thumb_b64: scale(480, 0.8) };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function pickPhoto(file: File) {
+    setPhotoError("");
+    try {
+      if (!file.type.startsWith("image/")) throw new Error("Upload an image file (JPG or PNG).");
+      const scaled = await readAndDownscale(file);
+      setPhotoDraft({ ...scaled, name: file.name.replace(/\.[^.]+$/, "").slice(0, 60), description: "" });
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function savePhoto() {
+    if (!photoDraft || photoSaving) return;
+    setPhotoSaving(true);
+    setPhotoError("");
+    try {
+      const res = await fetch("/api/custom-photos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: photoDraft.name,
+          description: photoDraft.description,
+          image_b64: photoDraft.image_b64,
+          thumb_b64: photoDraft.thumb_b64,
+          author: reviewer,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not save the photo.");
+      setCustomPhotos((p) => [...p, d.photo]);
+      setPhotoDraft(null);
+      if (photoInput.current) photoInput.current.value = "";
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    } finally {
+      setPhotoSaving(false);
+    }
+  }
+
+  async function patchPhoto(id: string, patch: { name?: string; description?: string; enabled?: boolean }) {
+    setPhotoError("");
+    try {
+      const res = await fetch(`/api/custom-photos/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...patch, author: reviewer }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not update the photo.");
+      setCustomPhotos((p) => p.map((x) => (x.id === id ? { ...x, ...d.photo } : x)));
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function deletePhoto(id: string) {
+    if (!window.confirm("Remove this photo from the tool? Decks already generated keep it.")) return;
+    setPhotoError("");
+    try {
+      const res = await fetch(`/api/custom-photos/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not remove the photo.");
+      }
+      setCustomPhotos((p) => p.filter((x) => x.id !== id));
+    } catch (e) {
+      setPhotoError((e as Error).message);
     }
   }
 
@@ -447,7 +639,7 @@ export default function AboutPage() {
           min={min}
           max={max}
           step={step}
-          value={design[key] ?? ""}
+          value={(design[key] as number | string | undefined) ?? ""}
           placeholder={placeholder}
           onChange={(e) => setDesignField(key, e.target.value)}
           disabled={!designMigrated}
@@ -692,6 +884,70 @@ export default function AboutPage() {
                 {numField("Page margin", "margin_in", "0.5", 0.2, 1.5, 0.05, "in")}
                 {numField("Box gutter", "gutter_in", "0.3", 0.1, 1, 0.05, "in")}
               </div>
+
+              <div className="mt-4 grid gap-4 border-t border-[#E3EDF2] pt-4 sm:grid-cols-2 lg:grid-cols-4">
+                <label className="block text-xs font-semibold text-[#06456B]">
+                  Footer text (every slide)
+                  <input
+                    value={design.footer_text ?? ""}
+                    placeholder='e.g. "Confidential, for internal use"'
+                    onChange={(e) => setDesignField("footer_text", e.target.value)}
+                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
+                  />
+                </label>
+                <div className="text-xs font-semibold text-[#06456B]">
+                  Footer extras
+                  <label className="mt-2 flex items-center gap-2 font-normal text-zinc-600">
+                    <input
+                      type="checkbox"
+                      checked={design.page_numbers !== false}
+                      onChange={(e) => {
+                        setDesign((d) => ({ ...d, page_numbers: e.target.checked ? undefined : false }));
+                        setDesignDirty(true);
+                        setDesignSavedTick(false);
+                      }}
+                    />
+                    Page numbers
+                  </label>
+                  <label className="mt-1 flex items-center gap-2 font-normal text-zinc-600">
+                    <input
+                      type="checkbox"
+                      checked={design.date_stamp === true}
+                      onChange={(e) => {
+                        setDesign((d) => ({ ...d, date_stamp: e.target.checked ? true : undefined }));
+                        setDesignDirty(true);
+                        setDesignSavedTick(false);
+                      }}
+                    />
+                    Date of generation
+                  </label>
+                </div>
+                <label className="block text-xs font-semibold text-[#06456B]">
+                  Photos in decks
+                  <select
+                    value={design.photo_level || "default"}
+                    onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
+                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                  >
+                    <option value="less">Fewer photos</option>
+                    <option value="default">Standard</option>
+                    <option value="more">More photos</option>
+                  </select>
+                </label>
+                <label className="block text-xs font-semibold text-[#06456B]">
+                  Icons in decks
+                  <select
+                    value={design.icon_level || "default"}
+                    onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
+                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                  >
+                    <option value="none">No icons</option>
+                    <option value="less">Fewer icons</option>
+                    <option value="default">Standard</option>
+                  </select>
+                </label>
+              </div>
+
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <button
                   type="button"
@@ -700,6 +956,14 @@ export default function AboutPage() {
                   className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                 >
                   {designSaving ? "Saving…" : "Save design settings"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void previewDesign()}
+                  disabled={previewBusy}
+                  className="rounded-[4px] border border-[#031B34] px-4 py-2 text-sm font-semibold text-[#031B34] disabled:opacity-40"
+                >
+                  {previewBusy ? "Rendering preview…" : "Preview sample slides"}
                 </button>
                 <button
                   type="button"
@@ -725,6 +989,26 @@ export default function AboutPage() {
             </>
           )}
           {designError && <p className="mt-2 text-sm text-red-700">{designError}</p>}
+          {previewError && <p className="mt-2 text-sm text-red-700">{previewError}</p>}
+          {previewImgs && (
+            <div className="mt-4">
+              <p className="text-xs text-zinc-500">
+                Sample slides rendered with the settings above (fixed example content — your decks
+                keep their own content):
+              </p>
+              <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                {previewImgs.map((b64, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={i}
+                    src={`data:image/jpeg;base64,${b64}`}
+                    alt={`Design preview slide ${i + 1}`}
+                    className="w-full rounded-[4px] border border-[#C2D9E3]"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* ----- slide library ----- */}
@@ -1040,17 +1324,35 @@ export default function AboutPage() {
                         </div>
                       </div>
                       {!locked && (
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={!off}
-                          disabled={!layoutsMigrated}
-                          title={off ? "Off: the AI cannot pick this slide type" : "On: available to the AI"}
-                          onClick={() => void toggleLayout(g.key, off)}
-                          className={switchCls(!off)}
-                        >
-                          <span className={knobCls(!off)} />
-                        </button>
+                        <div className="flex shrink-0 items-center gap-1.5">
+                          {!off && starsMigrated && (
+                            <button
+                              type="button"
+                              onClick={() => void toggleStar(g.key, !preferred.has(g.key))}
+                              title={
+                                preferred.has(g.key)
+                                  ? "House favourite: the AI prefers this when several layouts fit"
+                                  : "Star as a house favourite"
+                              }
+                              className={`text-lg leading-none ${
+                                preferred.has(g.key) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                              }`}
+                            >
+                              {preferred.has(g.key) ? "★" : "☆"}
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={!off}
+                            disabled={!layoutsMigrated}
+                            title={off ? "Off: the AI cannot pick this slide type" : "On: available to the AI"}
+                            onClick={() => void toggleLayout(g.key, off)}
+                            className={switchCls(!off)}
+                          >
+                            <span className={knobCls(!off)} />
+                          </button>
+                        </div>
                       )}
                     </div>
                     <p
@@ -1065,6 +1367,229 @@ export default function AboutPage() {
               );
             })}
           </div>
+        </section>
+
+        {/* ----- photo library ----- */}
+        <section className="mt-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
+            <span className="text-xs text-zinc-500">
+              {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team
+            </span>
+          </div>
+          <p className="mt-2 max-w-3xl text-sm text-zinc-600">
+            The photos the AI can place on slides. Add your own brand photos with a short
+            description — the description is how the AI decides when to use a photo, so write it
+            like a caption (&quot;Athlete stretching outdoors, for sports performance slides&quot;).
+            Images are downscaled automatically before saving.
+          </p>
+          {photoError && <p className="mt-2 text-sm text-red-700">{photoError}</p>}
+
+          <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="text-sm font-bold text-[#031B34]">Add a photo</div>
+                <p className="text-xs text-zinc-500">JPG or PNG; name + description required.</p>
+              </div>
+              <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
+                ＋ Upload photo
+                <input
+                  ref={photoInput}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={!photosMigrated}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void pickPhoto(f);
+                  }}
+                />
+              </label>
+            </div>
+            {!photosMigrated && (
+              <p className="mt-3 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-3 text-xs text-zinc-500">
+                Team photos live in the shared database and it is not ready yet: run migration
+                0006_custom_photos_and_preferred_layouts.sql in the Supabase SQL editor.
+              </p>
+            )}
+            {photoDraft && (
+              <div className="mt-4 flex flex-wrap items-start gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`data:image/jpeg;base64,${photoDraft.thumb_b64}`}
+                  alt="New photo"
+                  className="w-56 rounded-[4px] border border-[#C2D9E3]"
+                />
+                <div className="min-w-64 flex-1 space-y-2">
+                  <input
+                    value={photoDraft.name}
+                    placeholder="Short name (required)"
+                    onChange={(e) => setPhotoDraft((d) => d && { ...d, name: e.target.value })}
+                    className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                  />
+                  <textarea
+                    value={photoDraft.description}
+                    rows={2}
+                    placeholder='When should the AI use it? e.g. "Runner at sunrise, for sports performance and recovery slides" (required)'
+                    onChange={(e) => setPhotoDraft((d) => d && { ...d, description: e.target.value })}
+                    className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void savePhoto()}
+                      disabled={photoSaving || !photoDraft.name.trim() || !photoDraft.description.trim()}
+                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                    >
+                      {photoSaving ? "Saving…" : "Add photo"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPhotoDraft(null);
+                        if (photoInput.current) photoInput.current.value = "";
+                      }}
+                      className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zinc-500 hover:bg-zinc-100"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* team photos */}
+          {customPhotos.length > 0 && (
+            <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {customPhotos.map((p) => (
+                <div
+                  key={p.id}
+                  className={`overflow-hidden rounded-[4px] border bg-white ${
+                    p.enabled ? "border-[#3FD0C9]" : "border-[#E3EDF2] opacity-60"
+                  }`}
+                >
+                  {p.thumb_b64 ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`data:image/jpeg;base64,${p.thumb_b64}`}
+                      alt={p.name}
+                      className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex aspect-video items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
+                      No preview
+                    </div>
+                  )}
+                  <div className="p-3">
+                    {editingPhoto === p.id ? (
+                      <div className="space-y-2">
+                        <input
+                          value={photoName}
+                          onChange={(e) => setPhotoName(e.target.value)}
+                          className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                        />
+                        <textarea
+                          value={photoDesc}
+                          rows={2}
+                          onChange={(e) => setPhotoDesc(e.target.value)}
+                          className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              void patchPhoto(p.id, { name: photoName, description: photoDesc });
+                              setEditingPhoto(null);
+                            }}
+                            className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingPhoto(null)}
+                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your photo</div>
+                          </div>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={p.enabled}
+                            title={p.enabled ? "On: the AI can use this photo" : "Off: kept but not offered"}
+                            onClick={() => void patchPhoto(p.id, { enabled: !p.enabled })}
+                            className={switchCls(p.enabled)}
+                          >
+                            <span className={knobCls(p.enabled)} />
+                          </button>
+                        </div>
+                        <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                        <div className="mt-2 flex gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingPhoto(p.id);
+                              setPhotoName(p.name);
+                              setPhotoDesc(p.description);
+                            }}
+                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                          >
+                            ✎ Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void deletePhoto(p.id)}
+                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* built-in brand photos, collapsed by default */}
+          <button
+            type="button"
+            onClick={() => setShowBuiltins((v) => !v)}
+            className="mt-4 rounded-[4px] px-3 py-1.5 text-sm font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+          >
+            {showBuiltins ? "▾ Hide" : "▸ Show"} the {(photoLibrary as BuiltinPhoto[]).length} built-in brand photos
+          </button>
+          {showBuiltins && (
+            <div className="mt-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {(photoLibrary as BuiltinPhoto[]).map((p) => (
+                <div key={p.id} className="overflow-hidden rounded-[4px] border border-[#C2D9E3] bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/photo-library/${p.id}.jpg`}
+                    alt={p.description}
+                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                    loading="lazy"
+                  />
+                  <div className="p-3">
+                    <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
+                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

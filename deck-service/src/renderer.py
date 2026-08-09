@@ -15,10 +15,13 @@ Key disciplines that make template-fill clean (the earlier attempt failed on the
 from __future__ import annotations
 
 import copy
+import datetime
 import io
 import math
 import re
 import sys
+import tempfile
+from pathlib import Path
 
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
@@ -76,6 +79,20 @@ _FORCE_BODY_FONT: str | None = None
 # Same idea for line spacing: code-built text always draws at _LINE_SPACING, but native
 # placeholders inherit the template's own spacing UNLESS the user overrode it on the About page.
 _FORCE_LINE_SPACING: bool = False
+# Footer controls (About page design settings): page numbers on/off, an optional standing
+# footer line (e.g. "Confidential, for internal use") and an optional render-date stamp —
+# all drawn by _stamp_footer in one centred line. The AI disclaimer is NOT controlled here
+# (house rule: every generated deck carries it).
+_PAGE_NUMBERS: bool = True
+_FOOTER_TEXT: str = ""
+_DATE_STAMP: bool = False
+# icon_level "none": the team turned brand icons off entirely. Gated where icon paths are
+# resolved (_icon_path/_generic_icon_path), so every icon call site inherits the switch.
+_ICONS_OFF: bool = False
+# The team's own uploaded photos, registered per render: asset key -> temp file path. Kept
+# alongside a TemporaryDirectory handle so the files outlive the render that uses them.
+_CUSTOM_PHOTO_PATHS: dict[str, "Path"] = {}
+_CUSTOM_PHOTO_DIR = None
 
 
 def _find_layout(prs, name, master_index):
@@ -256,8 +273,10 @@ def _add_disclaimer(slide, dark: bool) -> None:
 
 def _icon_path(benefit: str):
     """Resolve a health-benefit tag to its staged branded icon (one brand-red line-art colourway
-    that reads on both masters). Returns None if there is no icon for that benefit."""
-    if not benefit or benefit == "none":
+    that reads on both masters). Returns None if there is no icon for that benefit — or if the
+    team turned icons off entirely (icon_level "none"): every icon call site resolves through
+    here or _generic_icon_path, so gating the two covers the whole deck deterministically."""
+    if _ICONS_OFF or not benefit or benefit == "none":
         return None
     entry = config.asset_index().get(f"icon_{benefit}")
     if not entry or not entry.get("path"):
@@ -268,10 +287,43 @@ def _icon_path(benefit: str):
 
 def _generic_icon_path(keyword: str):
     """Resolve a generic-library keyword to its staged fallback icon (same brand-red line-art).
-    Used only when a slide can't be fully covered by the branded benefit icons."""
-    if not keyword or keyword == "none":
+    Used only when a slide can't be fully covered by the branded benefit icons. Same
+    icons-off gate as _icon_path."""
+    if _ICONS_OFF or not keyword or keyword == "none":
         return None
     entry = config.asset_index().get(f"generic_{keyword}")
+    if not entry or not entry.get("path"):
+        return None
+    p = config.resolve_asset(entry["path"])
+    return p if p.exists() else None
+
+
+def register_custom_photos(photos) -> None:
+    """Stage the team's uploaded photos (About page photo library) for this render: each
+    {key, bytes} is written to a temp file and resolvable through _photo_path just like a
+    built-in library photo. Called by render_deck; an empty/None list clears the registry."""
+    global _CUSTOM_PHOTO_PATHS, _CUSTOM_PHOTO_DIR
+    _CUSTOM_PHOTO_PATHS = {}
+    _CUSTOM_PHOTO_DIR = None
+    if not photos:
+        return
+    _CUSTOM_PHOTO_DIR = tempfile.TemporaryDirectory(prefix="team_photos_")
+    for p in photos:
+        key, data = p.get("key"), p.get("bytes")
+        if not key or not data:
+            continue
+        path = Path(_CUSTOM_PHOTO_DIR.name) / f"{key}.jpg"
+        path.write_bytes(data)
+        _CUSTOM_PHOTO_PATHS[key] = path
+
+
+def _photo_path(aid: str):
+    """Resolve a photo asset id to a file: the team's uploaded photos first (team_photo_*),
+    then the built-in manifest. None when unknown or missing on disk."""
+    p = _CUSTOM_PHOTO_PATHS.get(aid)
+    if p is not None:
+        return p if p.exists() else None
+    entry = config.asset_index().get(aid)
     if not entry or not entry.get("path"):
         return None
     p = config.resolve_asset(entry["path"])
@@ -452,8 +504,8 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     pic_idx = fields.get("picture")
     if aid:
         if pic_idx is not None and pic_idx in phmap:
-            path = config.resolve_asset(config.asset_index()[aid]["path"])
-            if path.exists():
+            path = _photo_path(aid)
+            if path is not None:
                 phmap[pic_idx].insert_picture(str(path))
                 filled.add(pic_idx)
     elif benefit and pic_idx is not None and pic_idx in phmap:
@@ -790,6 +842,7 @@ _DESIGN_DEFAULTS = {
     "_LINE_SPACING": _LINE_SPACING, "_MARGIN": _MARGIN, "_GUTTER": _GUTTER,
     "_HEAD": _HEAD, "_BODY": _BODY, "_HEAD_TITLE": _HEAD_TITLE,
     "_FORCE_BODY_FONT": None, "_FORCE_LINE_SPACING": False,
+    "_PAGE_NUMBERS": True, "_FOOTER_TEXT": "", "_DATE_STAMP": False, "_ICONS_OFF": False,
 }
 
 
@@ -836,6 +889,16 @@ def apply_design(design: dict | None) -> None:
     if bf:
         g["_BODY"] = bf                 # code-built text boxes read _BODY at call time
         g["_FORCE_BODY_FONT"] = bf      # native placeholders get forced in _set_text/_set_lines
+    # Footer controls + icon switch (booleans/levels validated by the API; belt here again).
+    if d.get("page_numbers") is False:
+        g["_PAGE_NUMBERS"] = False
+    ft = str(d.get("footer_text") or "").strip()
+    if ft:
+        g["_FOOTER_TEXT"] = ft[:80]
+    if d.get("date_stamp") is True:
+        g["_DATE_STAMP"] = True
+    if d.get("icon_level") == "none":
+        g["_ICONS_OFF"] = True
 
 
 def _is_num(s: str) -> bool:
@@ -1222,8 +1285,8 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
     placed = False
     if aid:
         try:
-            path = config.resolve_asset(config.asset_index()[aid]["path"])
-            if path.exists():
+            path = _photo_path(aid)
+            if path is not None:
                 slide.shapes.add_picture(str(path), Inches(ix), Inches(iy), Inches(iw), Inches(ih)); placed = True
         except Exception:  # noqa: BLE001
             placed = False
@@ -1952,8 +2015,8 @@ def _fill_photo_stats(prs, spec: dict, dark_index: int) -> None:
         aid = it.get("asset_id")
         if aid:
             try:
-                path = config.resolve_asset(config.asset_index()[aid]["path"])
-                if path.exists():
+                path = _photo_path(aid)
+                if path is not None:
                     _place_cropped(slide, path, x, top, cw, photo_h); placed = True
             except Exception:  # noqa: BLE001
                 placed = False
@@ -2365,18 +2428,31 @@ def _slide_has_white_bg(slide) -> bool:
     return bg is not None and "FFFFFF" in (bg.xml or "")
 
 
-def _add_page_number(slide, n: int) -> None:
-    """A page number in an identical bottom-centre position on every slide (the template carries none),
-    coloured for the slide's background. Uses the small tier — part of the 3-size scale, not an exception."""
+def _stamp_footer(slide, n: int) -> None:
+    """The one centred footer line on every slide (the template carries none): page number by
+    default, plus the About page's optional standing footer text and/or render-date stamp,
+    joined with middle dots. Coloured for the slide's background; small tier — part of the
+    3-size scale, not an exception. Draws nothing when the team turned everything off."""
+    parts = []
+    if _FOOTER_TEXT:
+        parts.append(_FOOTER_TEXT)
+    if _DATE_STAMP:
+        parts.append(datetime.date.today().strftime("%d %b %Y"))
+    if _PAGE_NUMBERS:
+        parts.append(str(n))
+    if not parts:
+        return
+    text = "  ·  ".join(parts)
     color = _TEAL if _slide_has_white_bg(slide) else _LTEAL
-    tb = slide.shapes.add_textbox(Inches((13.333 - 1.0) / 2), Inches(7.06), Inches(1.0), Inches(0.3))
+    w = 9.0 if len(parts) > 1 else 1.0   # a lone number keeps its original narrow box
+    tb = slide.shapes.add_textbox(Inches((13.333 - w) / 2), Inches(7.06), Inches(w), Inches(0.3))
     tf = tb.text_frame
     tf.word_wrap = False
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
     p = tf.paragraphs[0]
     p.alignment = PP_ALIGN.CENTER
     r = p.add_run()
-    r.text = str(n)
+    r.text = text
     r.font.size = Pt(_SZ_SMALL)
     r.font.name = _BODY
     r.font.color.rgb = color
@@ -2423,13 +2499,17 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
 
 def render_deck(plan: dict, study_meta: list[dict] | None = None,
                 design: dict | None = None,
-                custom_slides: list[dict] | None = None) -> bytes:
-    """design: the About page's deterministic overrides (fonts/sizes/spacing/margins) — applied
-    (or reset to brand defaults when empty) before anything is drawn.
+                custom_slides: list[dict] | None = None,
+                custom_photos: list[dict] | None = None) -> bytes:
+    """design: the About page's deterministic overrides (fonts/sizes/spacing/margins/footer) —
+    applied (or reset to brand defaults when empty) before anything is drawn.
     custom_slides: the team's own verbatim slides, each {key, name, mode, bytes, index, png}.
     mode 'auto' slides appear where the PLAN placed them (layout == their key); mode 'always'
-    slides are appended after the content (before the benefits overview) on every deck."""
+    slides are appended after the content (before the benefits overview) on every deck.
+    custom_photos: the team's uploaded photo library, each {key, bytes} — resolvable wherever
+    the plan sets an asset_id, exactly like a built-in library photo."""
     apply_design(design)
+    register_custom_photos(custom_photos)
     custom_by_key = {c["key"]: c for c in (custom_slides or [])}
     placed_custom: set[str] = set()
     unnumbered: set[int] = set()   # slide ids that carry their own baked page number
@@ -2544,12 +2624,12 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     # baked into each extracted image already gives it a clean card-like frame against that background.
     _add_appendix_slides(prs, dark, study_meta)
 
-    # Page numbers in a fixed position on every slide (cover excluded; team slides carry their
-    # own baked chrome and would double-print), stamped in final order.
+    # Footer line (page number / footer text / date) in a fixed position on every slide (cover
+    # excluded; team slides carry their own baked chrome and would double-print), in final order.
     for i, slide in enumerate(prs.slides):
         if i == 0 or slide.slide_id in unnumbered:
             continue
-        _add_page_number(slide, i + 1)
+        _stamp_footer(slide, i + 1)
 
     buf = io.BytesIO()
     prs.save(buf)

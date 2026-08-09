@@ -186,12 +186,35 @@ def _parse_custom_slides(custom_slides_meta: str,
     return out
 
 
+def _parse_custom_photos(custom_photos_meta: str,
+                         photo_blobs: dict[str, bytes]) -> list[dict]:
+    """The About page's team photo library, matched to the uploaded image blobs. Same
+    never-fail contract as _parse_custom_slides."""
+    try:
+        meta = json.loads(custom_photos_meta) if custom_photos_meta else []
+    except Exception:  # noqa: BLE001
+        return []
+    out = []
+    for m in meta if isinstance(meta, list) else []:
+        if not isinstance(m, dict) or not m.get("id"):
+            continue
+        blob = photo_blobs.get(str(m["id"]))
+        if not blob:
+            continue
+        out.append({"key": f"team_photo_{m['id']}", "name": str(m.get("name") or "Team photo"),
+                    "description": str(m.get("description") or ""), "bytes": blob})
+    return out
+
+
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
              kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
              sprak: str = "English", sider: str = "", study_meta: str = "",
              custom_rules: str = "", disabled_layouts: str = "", design_settings: str = "",
              custom_slides_meta: str = "",
-             custom_file_blobs: dict[str, bytes] | None = None) -> None:
+             custom_file_blobs: dict[str, bytes] | None = None,
+             custom_photos_meta: str = "",
+             custom_photo_blobs: dict[str, bytes] | None = None,
+             preferred_layouts: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -279,6 +302,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         except Exception:  # noqa: BLE001
             parsed_design = None
         parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
+        parsed_photos = _parse_custom_photos(custom_photos_meta, custom_photo_blobs or {})
+        parsed_preferred = [p.strip() for p in (preferred_layouts or "").split(",") if p.strip()]
 
         decks: list[dict] = []
         total = len(files)
@@ -299,7 +324,9 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                        study_meta=this_study_meta, custom_rules=custom_rules,
                                        disabled_layouts=[d.strip() for d in disabled_layouts.split(",")
                                                          if d.strip()],
-                                       design=parsed_design, custom_slides=parsed_custom))
+                                       design=parsed_design, custom_slides=parsed_custom,
+                                       custom_photos=parsed_photos,
+                                       preferred_layouts=parsed_preferred))
 
         # Name each deck after its own generated deck_title (the topic), falling back to the source
         # file stem when the title yields no usable ASCII.
@@ -406,6 +433,9 @@ async def create_job(
     design_settings: str = Form(default=""),
     custom_slides_meta: str = Form(default=""),
     custom_files: list[UploadFile] | None = File(default=None),
+    custom_photos_meta: str = Form(default=""),
+    custom_photo_files: list[UploadFile] | None = File(default=None),
+    preferred_layouts: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -424,7 +454,11 @@ async def create_job(
     margins) the renderer enforces; deck only.
     custom_slides_meta + custom_files: the team's own verbatim slides — meta is a JSON array of
     {id, file_id, slide_index, name, description, mode, preview_b64?}; each custom_files upload
-    is named <file_id>.pptx; deck only."""
+    is named <file_id>.pptx; deck only.
+    custom_photos_meta + custom_photo_files: the team's photo library — meta is a JSON array of
+    {id, name, description}; each custom_photo_files upload is named <id>.jpg; deck only.
+    preferred_layouts: comma separated layout keys the team starred as house favourites —
+    a soft planner preference among equally fitting layouts; deck only."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -439,15 +473,75 @@ async def create_job(
         fid = (uf.filename or "").rsplit(".", 1)[0]
         if fid:
             custom_blobs[fid] = await uf.read()
+    photo_blobs: dict[str, bytes] = {}
+    for uf in custom_photo_files or []:
+        pid = (uf.filename or "").rsplit(".", 1)[0]
+        if pid:
+            photo_blobs[pid] = await uf.read()
     job_id = uuid.uuid4().hex
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
     threading.Thread(target=_run_job,
                      args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype,
                            sprak, sider, study_meta, custom_rules, disabled_layouts,
-                           design_settings, custom_slides_meta, custom_blobs),
+                           design_settings, custom_slides_meta, custom_blobs,
+                           custom_photos_meta, photo_blobs, preferred_layouts),
                      daemon=True).start()
     return {"job_id": job_id}
+
+
+# Fixed sample content for the design preview: one NATIVE text slide (title font/size, body
+# font, bullets, line spacing) and one CODE-BUILT card slide (headings, gutter, icon chips) —
+# together they show every design setting. Content is fixed; no LLM is involved.
+_PREVIEW_PLAN = {
+    "deck_title": "Design preview", "language": "en", "slides": [
+        {"layout": "text", "title": "This is how your slide titles will look",
+         "body": ("Body text renders in your chosen body font and size.\n"
+                  "Line spacing and bullets follow your design settings.\n"
+                  "The footer below shows page number, footer text and date.")},
+        {"layout": "key_points", "title": "Code built slides follow the same settings",
+         "banner": "Headings, boxes and gutters restyle too",
+         "items": [
+             {"heading": "Fonts", "body": "Titles and body\nin your fonts", "icon_generic": "science"},
+             {"heading": "Sizes", "body": "Three text sizes\nset by you", "icon_generic": "quality"},
+             {"heading": "Spacing", "body": "Line spacing\nand gutters", "icon_generic": "proven"}]},
+    ],
+}
+
+
+@app.post("/design/preview")
+async def design_preview(payload: dict, x_deck_token: str | None = Header(default=None)):
+    """Render the two fixed sample slides with the GIVEN design settings and return them as
+    JPEGs, so the About page can show the effect before saving. Deterministic, no LLM."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    try:
+        from PIL import Image
+
+        from src import qa_gate, renderer
+        design = payload.get("settings") if isinstance(payload, dict) else None
+        if not isinstance(design, dict):
+            design = None
+        pptx = renderer.render_deck(_PREVIEW_PLAN, design=design)
+        images = qa_gate.rasterize(pptx)
+        if not images:
+            return JSONResponse({"feil": "No slide renderer is available on the server."},
+                                status_code=503)
+        # render_deck splices the verbatim benefits slide in SECOND-TO-LAST, so a 2-slide plan
+        # renders as [text, benefits, key_points] — return indices 0 and 2.
+        picks = [images[0], images[2]] if len(images) >= 3 else images[:1]
+        out = []
+        for png in picks:
+            im = Image.open(io.BytesIO(png)).convert("RGB")
+            if im.width > 1100:
+                im = im.resize((1100, round(im.height * 1100 / im.width)))
+            buf = io.BytesIO()
+            im.save(buf, "JPEG", quality=82)
+            out.append(base64.b64encode(buf.getvalue()).decode("ascii"))
+        return {"slides": out}
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Preview failed: {e}"}, status_code=500)
 
 
 @app.post("/slides/inspect")

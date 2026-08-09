@@ -1,0 +1,132 @@
+[
+  {
+    "id": "photo_capsule_single",
+    "description": "one red krill-oil softgel on white — minimal, clean product hero",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_capsules_white",
+    "description": "red softgels scattered on white marble — clean product hero",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_capsules_glass",
+    "description": "softgels in a glass bowl on marble — premium product close-up",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_capsules_daily",
+    "description": "two softgels on a wood block, soft background — the daily dose",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_capsules_wood",
+    "description": "red softgels on warm wood — natural, everyday product",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_capsules_heart",
+    "description": "softgels arranged as a heart on marble — heart-health hero",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_breakfast",
+    "description": "breakfast bowl with berries + a daily capsule on a dark table — everyday wellness",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_ingredients",
+    "description": "capsules with avocado, blueberries and walnuts on wood — clean-label omega-3 foods",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_jar_antarctic",
+    "description": "a jar of softgels on a snowy Antarctic rock — product meets pristine origin",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_capsules_pattern",
+    "description": "many softgels in a neat ring on white — product pattern",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_oil_in_water",
+    "description": "red krill oil dispersing in water on white — bioavailability / absorption",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_oil_texture",
+    "description": "abstract red krill-oil texture — bold science/product backdrop",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_oil_lab",
+    "description": "red oil poured into lab glassware — extraction, purity, science",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_krill_closeup",
+    "description": "a translucent Antarctic krill in close-up on blue — the raw ingredient",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_krill_blue_water",
+    "description": "a single krill in deep blue water with light rays — deep-sea origin",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_krill_swarm",
+    "description": "a dense red krill swarm (macro) — biomass, abundance, sustainable sourcing",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_krill_single",
+    "description": "one translucent krill with bubbles on a clean ground — the species",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_krill_ice",
+    "description": "krill embedded in blue Antarctic ice — cold, pristine origin",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_iceberg",
+    "description": "a moody grey iceberg on the horizon — pristine origin, sustainability",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_antarctic_ocean",
+    "description": "blue Antarctic ocean with a distant coast — pristine sourcing",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_antarctic_land",
+    "description": "a wide, calm icy Antarctic horizon — pristine, understated",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_antarctic_bright",
+    "description": "bright icebergs, blue ocean and snow peaks — pristine and optimistic",
+    "bg_fit": "light"
+  },
+  {
+    "id": "photo_antarctic_sunset",
+    "description": "orange sunset on an Antarctic peak — dramatic, aspirational",
+    "bg_fit": "dark"
+  },
+  {
+    "id": "photo_lab",
+    "description": "gloved hands testing oil in the Houston lab — research and quality control",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_team",
+    "description": "two experts in hard hats at the krill-oil plant — credibility and expertise",
+    "bg_fit": "neutral"
+  },
+  {
+    "id": "photo_warehouse",
+    "description": "a long warehouse aisle — scale, logistics, supply",
+    "bg_fit": "dark"
+  }
+]

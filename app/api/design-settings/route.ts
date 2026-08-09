@@ -9,7 +9,7 @@
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 
-type Settings = Record<string, string | number>;
+type Settings = Record<string, string | number | boolean>;
 
 // Known keys with validation. Ranges are deliberately tight — this is a brand tool, not a
 // free-for-all: sizes stay readable, spacing stays sane, and anything outside is rejected
@@ -22,17 +22,24 @@ const NUMERIC: Record<string, [number, number]> = {
   margin_in: [0.2, 1.5],
   gutter_in: [0.1, 1.0],
 };
-const TEXTUAL = new Set(["title_font", "body_font"]);
+const TEXTUAL: Record<string, number> = { title_font: 60, body_font: 60, footer_text: 80 };
+const BOOLEAN = new Set(["page_numbers", "date_stamp"]);
+// Content-density levels: how eagerly the AI reaches for photos / icons. Enforced in the
+// planner prompt + coverage checks (photos) and deterministically in the renderer (icons off).
+const LEVELS: Record<string, string[]> = {
+  photo_level: ["less", "default", "more"],
+  icon_level: ["none", "less", "default"],
+};
 
 function clean(input: unknown): { settings?: Settings; error?: string } {
   if (typeof input !== "object" || input === null || Array.isArray(input))
     return { error: "settings must be an object." };
   const out: Settings = {};
   for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
-    if (TEXTUAL.has(k)) {
+    if (k in TEXTUAL) {
       if (typeof v !== "string") return { error: `${k} must be text.` };
       const t = v.trim();
-      if (t.length > 60) return { error: `${k}: keep the font name under 60 characters.` };
+      if (t.length > TEXTUAL[k]) return { error: `${k}: keep it under ${TEXTUAL[k]} characters.` };
       if (t) out[k] = t;
     } else if (k in NUMERIC) {
       const n = Number(v);
@@ -40,6 +47,13 @@ function clean(input: unknown): { settings?: Settings; error?: string } {
       if (!Number.isFinite(n)) return { error: `${k} must be a number.` };
       if (n < lo || n > hi) return { error: `${k} must be between ${lo} and ${hi}.` };
       out[k] = n;
+    } else if (BOOLEAN.has(k)) {
+      if (typeof v !== "boolean") return { error: `${k} must be true or false.` };
+      out[k] = v;
+    } else if (k in LEVELS) {
+      if (typeof v !== "string" || !LEVELS[k].includes(v))
+        return { error: `${k} must be one of ${LEVELS[k].join(", ")}.` };
+      if (v !== "default") out[k] = v;
     } else {
       return { error: `Unknown setting "${k}".` };
     }

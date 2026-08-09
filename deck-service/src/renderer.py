@@ -18,6 +18,7 @@ import copy
 import io
 import math
 import re
+import sys
 
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
@@ -67,6 +68,14 @@ _SZ_SUBTITLE = 16                      # cover subtitle, column/text-picture hea
 _SZ_BODY = 14                          # body, bullets, table cells, items
 _SZ_SMALL = 12                         # eyebrows, captions, notes, footnotes, axis/step labels, footer
                                         # chrome — the floor; nothing in the deck goes smaller
+
+# When the About page's design settings override the body font, native template placeholders must
+# be forced onto it too (they otherwise inherit the template theme's font and the deck would mix
+# two body typefaces). None = no override, inherit as designed. Set by apply_design().
+_FORCE_BODY_FONT: str | None = None
+# Same idea for line spacing: code-built text always draws at _LINE_SPACING, but native
+# placeholders inherit the template's own spacing UNLESS the user overrode it on the About page.
+_FORCE_LINE_SPACING: bool = False
 
 
 def _find_layout(prs, name, master_index):
@@ -151,19 +160,32 @@ def _set_run_size(tf, size: float, *, bold=None, italic=None, font=None) -> None
                 r.font.name = font
 
 
-def _set_text(ph, text: str, size: float = _SZ_BODY, **style) -> None:
+def _set_text(ph, text: str, size: float | None = None, **style) -> None:
     """Single logical value into a placeholder. Size is forced explicitly (not inherited from the
-    layout) so native template placeholders stay on the same 3-size scale as code-built layouts."""
+    layout) so native template placeholders stay on the same 3-size scale as code-built layouts.
+    size=None means "the current body size" — resolved at CALL time, not def time, so the About
+    page's design overrides (apply_design) actually reach these defaults."""
+    if size is None:
+        size = _SZ_BODY
+    if _FORCE_BODY_FONT and "font" not in style:
+        style["font"] = _FORCE_BODY_FONT
     ph.text_frame.text = text
     _autofit(ph.text_frame)
+    if _FORCE_LINE_SPACING:
+        for p in ph.text_frame.paragraphs:
+            p.line_spacing = _LINE_SPACING
     _set_run_size(ph.text_frame, size, **style)
 
 
-def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float = _SZ_BODY, **style) -> None:
+def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float | None = None, **style) -> None:
     """Multiple paragraphs (bullets / agenda items). If bullet_rid is given, each paragraph gets
     the brand's PICTURE bullet (the teal figure embedded in the template master) — this overrides
     the content placeholders' `buNone`. Otherwise each paragraph inherits the layout's list format.
-    Size is forced explicitly, same reasoning as _set_text."""
+    Size is forced explicitly, same reasoning (and same call-time default) as _set_text."""
+    if size is None:
+        size = _SZ_BODY
+    if _FORCE_BODY_FONT and "font" not in style:
+        style["font"] = _FORCE_BODY_FONT
     lines = [ln for ln in (l.strip() for l in lines) if ln]
     tf = ph.text_frame
     tf.text = lines[0] if lines else ""
@@ -172,6 +194,9 @@ def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float 
     if bullet_rid:
         for para in tf.paragraphs:
             _apply_picture_bullet(para._p, bullet_rid)
+    if _FORCE_LINE_SPACING:
+        for para in tf.paragraphs:
+            para.line_spacing = _LINE_SPACING
     _autofit(tf, shrink=False)   # bodies/lists: cap content, do not shrink
     _set_run_size(tf, size, **style)
 
@@ -553,19 +578,38 @@ def _find_design_slide(marker: str):
     raise ValueError(f"Design source slide not found in template.pptx (marker {marker!r}).")
 
 
-def _add_ingredient_slide(prs, master_index: int) -> None:
-    """Insert AKBM's standard ingredient slide VERBATIM — the exact slide they always use — by
-    splicing its self-contained shape tree into the deck and re-embedding its images / re-linking
-    its external hyperlinks. Fidelity is perfect: the slide carries its own full-bleed background,
-    so the host layout (a Blank one) is completely hidden behind it. Content is FIXED (the product
-    composition never changes), so nothing here is generated."""
-    src_slide = _find_design_slide("Cellular Nutrient")
-    slide = prs.slides.add_slide(_find_layout(prs, "Blank", master_index))
-    for ph in list(slide.shapes):                 # drop the Blank layout's own placeholders
-        ph._element.getparent().remove(ph._element)
-    spTree = slide.shapes._spTree
+def _splice_shapes(dst_slide, src_slide, *, strict: bool = False) -> bool:
+    """Deep-copy every shape of src_slide onto dst_slide, re-embedding images and re-linking
+    external hyperlinks — the one verbatim-splice mechanism (ingredient, benefits, and the
+    About page's team-uploaded slides all ride on it). Internal references that are NOT images
+    (an embedded chart, video, OLE object) cannot be carried over: with strict=True the whole
+    splice is refused (returns False, dst untouched) so the caller can fall back to a rendered
+    PNG; with strict=False just those shapes are skipped. PLACEHOLDER shapes are also unsafe in
+    strict mode: their geometry AND text formatting inherit from the source deck's layout, which
+    does not travel with them, so a copied placeholder lands at a default position with default
+    styling (verified: a spliced two-column slide collapsed to centre-stacked unstyled text)."""
     rmap = dict(src_slide.part.rels.items())
+
+    def unsafe(element) -> bool:
+        if strict and element.find(qn("p:nvSpPr")) is not None:
+            nvPr = element.find(qn("p:nvSpPr")).find(qn("p:nvPr"))
+            if nvPr is not None and nvPr.find(qn("p:ph")) is not None:
+                return True
+        for node in element.iter():
+            for a in _R_ATTRS:
+                rid = node.get(a)
+                if rid and rid in rmap:
+                    rel = rmap[rid]
+                    if not rel.is_external and "image" not in rel.reltype:
+                        return True
+        return False
+
+    if strict and any(unsafe(shp._element) for shp in src_slide.shapes):
+        return False
+    spTree = dst_slide.shapes._spTree
     for shp in src_slide.shapes:
+        if unsafe(shp._element):
+            continue
         el = copy.deepcopy(shp._element)
         for node in el.iter():                    # remap every relationship reference in the copy
             for a in _R_ATTRS:
@@ -574,11 +618,24 @@ def _add_ingredient_slide(prs, master_index: int) -> None:
                     if rel is None:
                         continue
                     if rel.is_external:
-                        new = slide.part.rels.get_or_add_ext_rel(rel.reltype, rel.target_ref)
+                        new = dst_slide.part.rels.get_or_add_ext_rel(rel.reltype, rel.target_ref)
                     else:
-                        _, new = slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
+                        _, new = dst_slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
                     node.set(a, new)
         spTree.append(el)
+    return True
+
+
+def _add_ingredient_slide(prs, master_index: int) -> None:
+    """Insert AKBM's standard ingredient slide VERBATIM — the exact slide they always use — by
+    splicing its self-contained shape tree into the deck. Fidelity is perfect: the slide carries
+    its own full-bleed background, so the host layout (a Blank one) is completely hidden behind
+    it. Content is FIXED (the product composition never changes), so nothing here is generated."""
+    src_slide = _find_design_slide("Cellular Nutrient")
+    slide = prs.slides.add_slide(_find_layout(prs, "Blank", master_index))
+    for ph in list(slide.shapes):                 # drop the Blank layout's own placeholders
+        ph._element.getparent().remove(ph._element)
+    _splice_shapes(slide, src_slide)
 
 
 def _blank_layout(prs, master_index: int):
@@ -608,22 +665,76 @@ def _add_benefits_slide(prs, master_index: int) -> None:
     for ph in list(slide.shapes):
         ph._element.getparent().remove(ph._element)
     _set_white_bg(slide)
-    spTree = slide.shapes._spTree
-    rmap = dict(src_slide.part.rels.items())
-    for shp in src_slide.shapes:
-        el = copy.deepcopy(shp._element)
+    _splice_shapes(slide, src_slide)
+
+
+def _copy_slide_bg(dst_slide, src_slide) -> None:
+    """Carry a foreign slide's EFFECTIVE background over: its own p:bg if it has one, else its
+    layout's, else its master's — re-embedding a picture fill from whichever part owned it. A team
+    slide spliced without this would sit on OUR deep-sea master and look nothing like its preview.
+    No background found anywhere → dst keeps the host master's (rare; every deck has SOME bg)."""
+    for holder in (src_slide, src_slide.slide_layout, src_slide.slide_layout.slide_master):
+        cSld = holder._element.find(qn("p:cSld"))
+        bg = cSld.find(qn("p:bg")) if cSld is not None else None
+        if bg is None:
+            continue
+        el = copy.deepcopy(bg)
+        rmap = dict(holder.part.rels.items())
         for node in el.iter():
             for a in _R_ATTRS:
                 if a in node.attrib:
                     rel = rmap.get(node.get(a))
-                    if rel is None:
+                    if rel is None or rel.is_external or "image" not in rel.reltype:
                         continue
-                    if rel.is_external:
-                        new = slide.part.rels.get_or_add_ext_rel(rel.reltype, rel.target_ref)
-                    else:
-                        _, new = slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
+                    _, new = dst_slide.part.get_or_add_image_part(io.BytesIO(rel._target.blob))
                     node.set(a, new)
-        spTree.append(el)
+        dcSld = dst_slide._element.find(qn("p:cSld"))
+        for old in dcSld.findall(qn("p:bg")):
+            dcSld.remove(old)
+        dcSld.insert(0, el)
+        return
+
+
+def _add_custom_slide(prs, master_index: int, pptx_bytes: bytes, slide_index: int,
+                      png_bytes: bytes | None = None, skip_number: set | None = None) -> None:
+    """Splice one slide of a TEAM-UPLOADED deck in verbatim (the About page's "your slides").
+    Shapes are copied with images re-embedded and the source's own background carried over, so
+    the slide stays EDITABLE in the generated deck. Slides using features the splice cannot
+    carry (embedded charts / media / OLE) fall back to their stored full-slide PNG — pixel
+    perfect, just not editable. Never raises: a team slide must not fail the whole deck."""
+    try:
+        src = Presentation(io.BytesIO(pptx_bytes))
+        slides = list(src.slides)
+        if not 0 <= slide_index < len(slides):
+            print(f"[custom-slide] slide index {slide_index} out of range ({len(slides)} slides); skipped",
+                  file=sys.stderr)
+            return
+        src_slide = slides[slide_index]
+        slide = prs.slides.add_slide(_blank_layout(prs, master_index))
+        # The source slide carries its OWN chrome (page number, logos) — verbatim means verbatim,
+        # so our own page-number pass must skip this slide or the two numbers overprint.
+        if skip_number is not None:
+            skip_number.add(slide.slide_id)
+        for ph in list(slide.shapes):
+            ph._element.getparent().remove(ph._element)
+        _copy_slide_bg(slide, src_slide)
+        if _splice_shapes(slide, src_slide, strict=True):
+            return
+        if png_bytes:
+            # Letterbox the rendered PNG (source decks can be 4:3) on a white background.
+            from PIL import Image
+            with Image.open(io.BytesIO(png_bytes)) as im:
+                iw, ih = im.size
+            _set_white_bg(slide)
+            sw, sh = prs.slide_width, prs.slide_height
+            scale = min(sw / iw, sh / ih)
+            w, h = int(iw * scale), int(ih * scale)
+            slide.shapes.add_picture(io.BytesIO(png_bytes), (sw - w) // 2, (sh - h) // 2, w, h)
+            return
+        # No stored preview to fall back on: splice what CAN be carried rather than nothing.
+        _splice_shapes(slide, src_slide, strict=False)
+    except Exception as e:  # noqa: BLE001
+        print(f"[custom-slide] splice failed ({e}); slide skipped", file=sys.stderr)
 
 
 # ---------------------------------------------------------------------------
@@ -666,6 +777,66 @@ _STEP_BADGE = 0.5                      # numbered step / timeline node badge dia
 _ICON_DISC = 0.9                       # icon-circle diameter
 _BOX = MSO_SHAPE.RECTANGLE            # one shape style for content boxes (square, consulting look)
 
+# ── User design overrides (the About page's "Design settings") ────────────────────────────
+# The brand defaults above stay the single source of truth; this layer lets the TEAM (never the
+# LLM) deterministically restyle the drawn output: fonts, the three text sizes, line spacing,
+# page margin and box gutter. apply_design() is called once at the top of render_deck() — it
+# first RESETS everything to the recorded defaults (so one job's overrides can never leak into
+# the next) and then applies the given overrides. Subtitle and hero sizes scale with the title
+# size so the type hierarchy keeps its designed proportions.
+_DESIGN_DEFAULTS = {
+    "_SZ_HERO": _SZ_HERO, "_SZ_TITLE": _SZ_TITLE, "_SZ_SUBTITLE": _SZ_SUBTITLE,
+    "_SZ_BODY": _SZ_BODY, "_SZ_SMALL": _SZ_SMALL,
+    "_LINE_SPACING": _LINE_SPACING, "_MARGIN": _MARGIN, "_GUTTER": _GUTTER,
+    "_HEAD": _HEAD, "_BODY": _BODY, "_HEAD_TITLE": _HEAD_TITLE,
+    "_FORCE_BODY_FONT": None, "_FORCE_LINE_SPACING": False,
+}
+
+
+def apply_design(design: dict | None) -> None:
+    """Reset the design globals to brand defaults, then lay the given overrides on top.
+    Unknown keys and out-of-range values are ignored (the API validates ranges; this is the
+    server-side belt to that suspender). Safe to call with None/{} — that IS the reset."""
+    g = globals()
+    g.update(_DESIGN_DEFAULTS)
+    g["_CONTENT_W"] = 13.333 - 2 * g["_MARGIN"]
+    if not design:
+        return
+    d = {k: v for k, v in design.items() if v not in (None, "")}
+
+    def num(key, lo, hi):
+        try:
+            v = float(d[key])
+        except (KeyError, TypeError, ValueError):
+            return None
+        return v if lo <= v <= hi else None
+
+    if (v := num("size_title", 14, 40)) is not None:
+        ratio = v / _DESIGN_DEFAULTS["_SZ_TITLE"]
+        g["_SZ_TITLE"] = v
+        g["_SZ_SUBTITLE"] = round(_DESIGN_DEFAULTS["_SZ_SUBTITLE"] * ratio)
+        g["_SZ_HERO"] = round(_DESIGN_DEFAULTS["_SZ_HERO"] * ratio)
+    if (v := num("size_body", 9, 24)) is not None:
+        g["_SZ_BODY"] = v
+    if (v := num("size_small", 8, 18)) is not None:
+        g["_SZ_SMALL"] = v
+    if (v := num("line_spacing", 0.8, 2.0)) is not None:
+        g["_LINE_SPACING"] = v
+        g["_FORCE_LINE_SPACING"] = True   # reach native placeholders too, not just code-built text
+    if (v := num("margin_in", 0.2, 1.5)) is not None:
+        g["_MARGIN"] = v
+        g["_CONTENT_W"] = 13.333 - 2 * v
+    if (v := num("gutter_in", 0.1, 1.0)) is not None:
+        g["_GUTTER"] = v
+    tf = str(d.get("title_font") or "").strip()
+    if tf:
+        g["_HEAD_TITLE"] = tf     # slide titles (native and code-built)
+        g["_HEAD"] = tf           # bold headings / eyebrows — the same "display" role
+    bf = str(d.get("body_font") or "").strip()
+    if bf:
+        g["_BODY"] = bf                 # code-built text boxes read _BODY at call time
+        g["_FORCE_BODY_FONT"] = bf      # native placeholders get forced in _set_text/_set_lines
+
 
 def _is_num(s: str) -> bool:
     s = (s or "").strip()
@@ -688,9 +859,15 @@ def _hbar_table(tbl) -> None:
                 tcPr.insert(0, _ln(tag, tag == "lnB"))
 
 
-def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=_BODY,
+def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=None,
                 align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, italic=False,
-                line_spacing=_LINE_SPACING):
+                line_spacing=None):
+    # None defaults resolve at CALL time so apply_design()'s overrides reach them (a def-time
+    # default would freeze the brand values at import).
+    if font is None:
+        font = _BODY
+    if line_spacing is None:
+        line_spacing = _LINE_SPACING
     tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
     tf = tb.text_frame
     tf.word_wrap = True
@@ -766,10 +943,13 @@ def _icon_disc(slide, cx, cy, d, icon_path=None, number=None):
     return disc
 
 
-def _place_bullets(slide, l, t, w, h, lines, size, color, *, font=_BODY,
+def _place_bullets(slide, l, t, w, h, lines, size, color, *, font=None,
                    anchor=MSO_ANCHOR.TOP, rid=None):
     """Render lines as a Superba teal picture-bullet list in a synthetic textbox (the standard brand
-    bullet). A single line still gets a bullet, so lists read consistently across the deck."""
+    bullet). A single line still gets a bullet, so lists read consistently across the deck.
+    font=None resolves to the current body font at call time (see apply_design)."""
+    if font is None:
+        font = _BODY
     lines = [ln.strip() for ln in lines if ln and ln.strip()]
     tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
     tf = tb.text_frame
@@ -2241,7 +2421,19 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
         _place_icon(slide, box, path)  # letterbox-fit — a chart must never be crop-to-filled
 
 
-def render_deck(plan: dict, study_meta: list[dict] | None = None) -> bytes:
+def render_deck(plan: dict, study_meta: list[dict] | None = None,
+                design: dict | None = None,
+                custom_slides: list[dict] | None = None) -> bytes:
+    """design: the About page's deterministic overrides (fonts/sizes/spacing/margins) — applied
+    (or reset to brand defaults when empty) before anything is drawn.
+    custom_slides: the team's own verbatim slides, each {key, name, mode, bytes, index, png}.
+    mode 'auto' slides appear where the PLAN placed them (layout == their key); mode 'always'
+    slides are appended after the content (before the benefits overview) on every deck."""
+    apply_design(design)
+    custom_by_key = {c["key"]: c for c in (custom_slides or [])}
+    placed_custom: set[str] = set()
+    unnumbered: set[int] = set()   # slide ids that carry their own baked page number
+
     prs = Presentation(str(config.template_path()))
     _delete_example_slides(prs)
     catalog = config.catalog()
@@ -2249,6 +2441,14 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None) -> bytes:
 
     for spec in plan["slides"]:
         layout_name = spec["layout"]
+        if layout_name.startswith("custom_"):   # a team slide the planner placed in the storyline
+            c = custom_by_key.get(layout_name)
+            if c:
+                _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+                placed_custom.add(layout_name)
+            else:
+                print(f"[custom-slide] plan references unknown {layout_name}; skipped", file=sys.stderr)
+            continue
         if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
             _add_ingredient_slide(prs, dark)
             continue
@@ -2323,6 +2523,12 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None) -> bytes:
         slide = prs.slides.add_slide(layout)
         _fill_slide(slide, spec, cat, master_index, dark=not want_light)
 
+    # Team slides marked "in every deck" that the plan didn't already place — appended after the
+    # content, before the benefits overview below, so they read as part of the deck's fixed tail.
+    for c in (custom_slides or []):
+        if c.get("mode") == "always" and c["key"] not in placed_custom:
+            _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+
     # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last
     # slide of every deck (appended, then moved into place).
     _add_benefits_slide(prs, light)
@@ -2338,9 +2544,10 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None) -> bytes:
     # baked into each extracted image already gives it a clean card-like frame against that background.
     _add_appendix_slides(prs, dark, study_meta)
 
-    # Page numbers in a fixed position on every slide (cover excluded), stamped in final order.
+    # Page numbers in a fixed position on every slide (cover excluded; team slides carry their
+    # own baked chrome and would double-print), stamped in final order.
     for i, slide in enumerate(prs.slides):
-        if i == 0:
+        if i == 0 or slide.slide_id in unnumbered:
             continue
         _add_page_number(slide, i + 1)
 

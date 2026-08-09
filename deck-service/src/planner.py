@@ -139,6 +139,30 @@ def _layout_guide(disabled: set[str]) -> str:
     return "\n".join(lines)
 
 
+def auto_custom_slides(custom_slides) -> list[dict]:
+    """The team-uploaded verbatim slides the PLANNER may place ({mode:'auto'} only — 'always'
+    slides are appended deterministically by the renderer and never offered to the model)."""
+    return [c for c in (custom_slides or []) if c.get("mode") == "auto" and c.get("key")]
+
+
+def _custom_slide_guide(custom_slides) -> str:
+    """Prompt block offering the team's own slides as verbatim layouts. Each is a FIXED, finished
+    slide (spliced in unchanged), so the model only decides WHERE it belongs — it writes nothing."""
+    autos = auto_custom_slides(custom_slides)
+    if not autos:
+        return ""
+    lines = []
+    for c in autos:
+        desc = (c.get("description") or "").strip() or "a finished team slide"
+        lines.append(f'- {c["key"]} — "{c.get("name", "Team slide")}": {desc}')
+    return (
+        "\n\nTEAM SLIDES (finished, pre-approved slides the team added to this tool — inserted "
+        "VERBATIM): when one of these genuinely fits the storyline, include it by emitting ONLY "
+        f'{{"layout":"<its key>"}} at that point — never write a title/body for it (anything you '
+        "write is ignored), and use each AT MOST once. Include one only where its content belongs; "
+        "never force one in.\n" + "\n".join(lines))
+
+
 def _asset_guide() -> str:
     lines = []
     for a in config.selectable_photos():
@@ -155,7 +179,7 @@ def _max_tokens(target: int) -> int:
 
 
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
-                 disabled_layouts=None) -> str:
+                 disabled_layouts=None, custom_slides=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     disabled = sanitize_disabled(disabled_layouts)
     # Same formulas as validate._coverage_warnings, so the initial prompt asks for exactly what
@@ -269,7 +293,7 @@ dividers, highlight beats and closing) — repeating the same 2 to 3 favourites 
 not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
 when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
 [bracketed] limits.
-{_layout_guide(disabled)}{disabled_note}
+{_layout_guide(disabled)}{disabled_note}{_custom_slide_guide(custom_slides)}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
 its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
@@ -347,16 +371,18 @@ NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `
 Emit the plan now via emit_plan."""
 
 
-def _tool_schema(disabled: set[str] | None = None) -> dict:
+def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None) -> dict:
     s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
-    if disabled:
-        # Hard enforcement of the About page's off switches: a disabled layout is removed from the
-        # forced-tool enum, so the model cannot emit it at all (the prompt only explains why).
+    if disabled or extra_layouts:
+        # Hard enforcement of the About page's switches: a disabled layout is removed from the
+        # forced-tool enum, so the model cannot emit it at all (the prompt only explains why),
+        # and the team's own 'auto' slides are added as pickable verbatim layout keys.
         import copy
         s = copy.deepcopy(s)
         enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
-        s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = [
-            e for e in enum if e not in disabled]
+        enum = [e for e in enum if e not in (disabled or ())]
+        enum += [k for k in (extra_layouts or []) if k not in enum]
+        s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum
     return s
 
 
@@ -367,11 +393,12 @@ def _extract_plan(msg) -> dict:
     raise ValueError("Planner returned no plan (no emit_plan tool call with slides).")
 
 
-def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None):
+def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None,
+          extra_layouts: list[str] | None = None):
     return client.messages.create(
         model=model or config.MODEL, max_tokens=max_tokens, system=system,
         tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
-                "input_schema": _tool_schema(disabled)}],
+                "input_schema": _tool_schema(disabled, extra_layouts)}],
         tool_choice={"type": "tool", "name": "emit_plan"},
         messages=user,
     )
@@ -379,19 +406,21 @@ def _call(client, system, user, model, max_tokens, disabled: set[str] | None = N
 
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
               tone: str = "balansert", instructions: str = "", custom_rules: str = "",
-              disabled_layouts=None, model: str | None = None) -> dict:
+              disabled_layouts=None, custom_slides=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     disabled = sanitize_disabled(disabled_layouts)
+    extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled), user, model, max_tokens, disabled))
+                                                    disabled, custom_slides), user, model,
+                               max_tokens, disabled, extra))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
-                custom_rules: str = "", disabled_layouts=None,
+                custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
@@ -454,13 +483,15 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)
+    extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled), user, model, max_tokens, disabled))
+                                                    disabled, custom_slides), user, model,
+                               max_tokens, disabled, extra))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
                        length: str = "standard", tone: str = "balansert", instructions: str = "",
-                       custom_rules: str = "", disabled_layouts=None,
+                       custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                        model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
@@ -488,5 +519,7 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)
+    extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
-                                                    disabled), user, model, max_tokens, disabled))
+                                                    disabled, custom_slides), user, model,
+                               max_tokens, disabled, extra))

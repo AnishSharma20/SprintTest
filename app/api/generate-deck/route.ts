@@ -55,9 +55,15 @@ export async function POST(req: Request) {
       "study_meta",
       "custom_rules",
       "disabled_layouts",
+      "design_settings",
+      "custom_slides_meta",
     ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);
+    }
+    // The team's own verbatim slides (About page), one .pptx per uploaded source file.
+    for (const f of incoming.getAll("custom_files")) {
+      if (f instanceof File) forward.append("custom_files", f, f.name);
     }
 
     const res = await fetch(`${base}/jobs`, {

@@ -95,10 +95,11 @@ def _wording(plan: dict) -> str:
 
 
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
-                 custom_rules="", disabled_layouts=None):
+                 custom_rules="", disabled_layouts=None, design=None, custom_slides=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
+    extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
     rounds = max(1, int(os.environ.get("DECK_QA_ROUNDS", "1")))
     for _ in range(rounds):
         _p(80, "Reviewing the rendered slides")
@@ -114,16 +115,18 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         candidate = planner.revise_plan_visual(client, summary_text, plan, flags,
                                                length=length, tone=tone, instructions=instructions,
                                                custom_rules=custom_rules,
-                                               disabled_layouts=disabled_layouts)
+                                               disabled_layouts=disabled_layouts,
+                                               custom_slides=custom_slides)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
-        errs = validate.validate_plan(candidate)
+        errs = validate.validate_plan(candidate, extra_layouts=extra)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
                                             custom_rules=custom_rules,
-                                            disabled_layouts=disabled_layouts)
-            errs = validate.validate_plan(candidate)
+                                            disabled_layouts=disabled_layouts,
+                                            custom_slides=custom_slides)
+            errs = validate.validate_plan(candidate, extra_layouts=extra)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -135,7 +138,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                   + "\n- ".join(hard), file=sys.stderr)
             break
         candidate = _strip_dashes_plan(candidate)
-        plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta)
+        plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta,
+                                                     design=design, custom_slides=custom_slides)
     return pptx, plan
 
 
@@ -143,7 +147,11 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              length: str = "standard", tone: str = "balansert", quality: str = "fast",
              instructions: str = "", on_progress=None,
              study_meta: list[dict] | None = None,
-             custom_rules: str = "", disabled_layouts: list[str] | None = None) -> dict:
+             custom_rules: str = "", disabled_layouts: list[str] | None = None,
+             design: dict | None = None,
+             custom_slides: list[dict] | None = None) -> dict:
+    """design / custom_slides: the About page's deterministic design overrides and the team's
+    own verbatim slides ({key, name, description, mode, bytes, index, png} each) — see renderer."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -151,17 +159,20 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             except Exception:  # noqa: BLE001 — progress must never break generation
                 pass
 
+    extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
+
     _p(5, "Planning the deck")
     plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
-                             custom_rules=custom_rules, disabled_layouts=disabled_layouts)
+                             custom_rules=custom_rules, disabled_layouts=disabled_layouts,
+                             custom_slides=custom_slides)
 
-    errors = validate.validate_plan(plan)
+    errors = validate.validate_plan(plan, extra_layouts=extra)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
                                    instructions=instructions, custom_rules=custom_rules,
-                                   disabled_layouts=disabled_layouts)
-        errors = validate.validate_plan(plan)
+                                   disabled_layouts=disabled_layouts, custom_slides=custom_slides)
+        errors = validate.validate_plan(plan, extra_layouts=extra)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -178,14 +189,16 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     _p(70, "Rendering slides on the Superba template")
     plan = _ensure_agenda(plan)      # guarantee a contents/agenda slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
-    pptx = renderer.render_deck(plan, study_meta=study_meta)
+    pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,
+                                custom_slides=custom_slides)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
     if quality == "polished" or os.environ.get("DECK_QA_GATE"):
         pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
                                   study_meta=study_meta, custom_rules=custom_rules,
-                                  disabled_layouts=disabled_layouts)
+                                  disabled_layouts=disabled_layouts, design=design,
+                                  custom_slides=custom_slides)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

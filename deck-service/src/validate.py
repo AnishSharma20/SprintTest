@@ -140,10 +140,24 @@ def _text_density_warnings(plan: dict) -> list[str]:
             f"substance — never by padding with filler."]
 
 
-def validate_plan(plan: dict) -> list[str]:
+def _schema_with_extras(extra_layouts: list[str] | None) -> dict:
+    """The slide schema, with the team's own verbatim slide keys (custom_<id>, from the About
+    page) added to the layout enum so a plan that places one still validates. They need no
+    if/then conditional — a verbatim slide carries no other fields."""
+    if not extra_layouts:
+        return config.schema()
+    import copy
+    s = copy.deepcopy(config.schema())
+    enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
+    s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum + [
+        k for k in extra_layouts if k not in enum]
+    return s
+
+
+def validate_plan(plan: dict, extra_layouts: list[str] | None = None) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
-    validator = jsonschema.Draft202012Validator(config.schema())
+    validator = jsonschema.Draft202012Validator(_schema_with_extras(extra_layouts))
     for e in sorted(validator.iter_errors(plan), key=lambda e: list(e.absolute_path)):
         where = "/".join(str(p) for p in e.absolute_path) or "(root)"
         # Precise, actionable message for the planner's retry: exact length, limit, and how

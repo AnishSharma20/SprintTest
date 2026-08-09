@@ -14,6 +14,7 @@ ANTHROPIC_API_KEY is read from the environment, server-side only.
 """
 from __future__ import annotations
 
+import base64
 import io
 import json
 import os
@@ -25,7 +26,7 @@ import uuid
 import zipfile
 
 import anthropic
-from fastapi import FastAPI, Form, Header, UploadFile
+from fastapi import FastAPI, File, Form, Header, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 import src
@@ -157,10 +158,40 @@ def _slug(text: str, limit: int = 60) -> str:
     return (cut[:boundary] if boundary > limit // 2 else cut).rstrip("-")
 
 
+def _parse_custom_slides(custom_slides_meta: str,
+                         custom_file_blobs: dict[str, bytes]) -> list[dict]:
+    """The About page's team slides, matched to their uploaded .pptx blobs. Malformed or
+    incomplete entries are dropped silently — a team slide must never fail a whole job."""
+    try:
+        meta = json.loads(custom_slides_meta) if custom_slides_meta else []
+    except Exception:  # noqa: BLE001
+        return []
+    out = []
+    for m in meta if isinstance(meta, list) else []:
+        if not isinstance(m, dict):
+            continue
+        blob = custom_file_blobs.get(str(m.get("file_id") or ""))
+        if not blob or not m.get("id"):
+            continue
+        png = None
+        if m.get("preview_b64"):
+            try:
+                png = base64.b64decode(m["preview_b64"])
+            except Exception:  # noqa: BLE001
+                png = None
+        out.append({"key": f"custom_{m['id']}", "name": str(m.get("name") or "Team slide"),
+                    "description": str(m.get("description") or ""),
+                    "mode": m.get("mode") if m.get("mode") in ("auto", "always") else "auto",
+                    "bytes": blob, "index": int(m.get("slide_index") or 0), "png": png})
+    return out
+
+
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
              kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
              sprak: str = "English", sider: str = "", study_meta: str = "",
-             custom_rules: str = "", disabled_layouts: str = "") -> None:
+             custom_rules: str = "", disabled_layouts: str = "", design_settings: str = "",
+             custom_slides_meta: str = "",
+             custom_file_blobs: dict[str, bytes] | None = None) -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -240,6 +271,15 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         except Exception:  # noqa: BLE001 — malformed input is never worth failing the whole job over
             parsed_study_meta = []
 
+        # The About page's deterministic design overrides + the team's own verbatim slides.
+        try:
+            parsed_design = json.loads(design_settings) if design_settings else None
+            if not isinstance(parsed_design, dict):
+                parsed_design = None
+        except Exception:  # noqa: BLE001
+            parsed_design = None
+        parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
+
         decks: list[dict] = []
         total = len(files)
         for k, (fname, data) in enumerate(files):
@@ -258,7 +298,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                        quality=kvalitet, instructions=instruksjoner, on_progress=on_prog,
                                        study_meta=this_study_meta, custom_rules=custom_rules,
                                        disabled_layouts=[d.strip() for d in disabled_layouts.split(",")
-                                                         if d.strip()]))
+                                                         if d.strip()],
+                                       design=parsed_design, custom_slides=parsed_custom))
 
         # Name each deck after its own generated deck_title (the topic), falling back to the source
         # file stem when the title yields no usable ASCII.
@@ -362,6 +403,9 @@ async def create_job(
     study_meta: str = Form(default=""),
     custom_rules: str = Form(default=""),
     disabled_layouts: str = Form(default=""),
+    design_settings: str = Form(default=""),
+    custom_slides_meta: str = Form(default=""),
+    custom_files: list[UploadFile] | None = File(default=None),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -375,7 +419,12 @@ async def create_job(
     custom_rules: the team's standing generation rules from the tool's About page (newline
     separated text), injected into the deck planner's prompt; deck only.
     disabled_layouts: comma separated layout keys turned OFF on the About page — removed from
-    the planner's vocabulary and schema so the model cannot pick them; deck only."""
+    the planner's vocabulary and schema so the model cannot pick them; deck only.
+    design_settings: JSON object of deterministic design overrides (fonts, sizes, spacing,
+    margins) the renderer enforces; deck only.
+    custom_slides_meta + custom_files: the team's own verbatim slides — meta is a JSON array of
+    {id, file_id, slide_index, name, description, mode, preview_b64?}; each custom_files upload
+    is named <file_id>.pptx; deck only."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -384,14 +433,58 @@ async def create_job(
 
     _prune_jobs()
     files = [((uf.filename or f"summary-{i}"), await uf.read()) for i, uf in enumerate(filer)]
+    # Each team-slide upload is named <file_id>.pptx by the frontend; index the blobs by that id.
+    custom_blobs: dict[str, bytes] = {}
+    for uf in custom_files or []:
+        fid = (uf.filename or "").rsplit(".", 1)[0]
+        if fid:
+            custom_blobs[fid] = await uf.read()
     job_id = uuid.uuid4().hex
     JOBS[job_id] = {"status": "running", "progress": 0, "step": "Starting", "created": time.time()}
     key = os.environ["ANTHROPIC_API_KEY"]
     threading.Thread(target=_run_job,
                      args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype,
-                           sprak, sider, study_meta, custom_rules, disabled_layouts),
+                           sprak, sider, study_meta, custom_rules, disabled_layouts,
+                           design_settings, custom_slides_meta, custom_blobs),
                      daemon=True).start()
     return {"job_id": job_id}
+
+
+@app.post("/slides/inspect")
+async def slides_inspect(
+    file: UploadFile,
+    x_deck_token: str | None = Header(default=None),
+):
+    """Render every slide of an uploaded .pptx to a preview image, so the About page can let the
+    user pick which slides to add as team slides. Pure rasterisation, no LLM — LibreOffice on the
+    deployed service, PowerPoint COM in local dev. Returns {slides: [{index, preview_b64}]}
+    (JPEG, ≤1280px wide) — the same previews are stored and reused as gallery thumbnails and as
+    the pixel-perfect fallback when a slide can't be shape-spliced."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    data = await file.read()
+    if not data:
+        return JSONResponse({"feil": "Empty file."}, status_code=400)
+    try:
+        from PIL import Image
+
+        from src import qa_gate
+        images = qa_gate.rasterize(data)
+        if not images:
+            return JSONResponse({"feil": "No slide renderer is available on the server."},
+                                status_code=503)
+        out = []
+        for i, png in enumerate(images):
+            im = Image.open(io.BytesIO(png)).convert("RGB")
+            if im.width > 1280:
+                im = im.resize((1280, round(im.height * 1280 / im.width)))
+            buf = io.BytesIO()
+            im.save(buf, "JPEG", quality=82)
+            out.append({"index": i, "preview_b64": base64.b64encode(buf.getvalue()).decode("ascii")})
+        return {"slides": out}
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
 
 
 @app.get("/idml/pages")

@@ -315,8 +315,45 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     (reusing `build_gallery.py`'s SYNTH/TMPL lists — that script now has a `main()` guard so it can
     be imported) → `public/layout-gallery/<key>.png` + manifest `app/layout-gallery.json`. Re-run it
     after adding/removing a layout or restyling the renderer (needs PowerPoint COM locally).
-  - Adding a genuinely NEW layout is still a code task (each layout is a `renderer._fill_*`
-    program) — the page says so; "adding" from the UI means re-enabling or writing rules.
+  - Adding a genuinely NEW code-built layout is still a code task (each layout is a
+    `renderer._fill_*` program) — but see the 2026-08-09 update below: the team can now ADD
+    their own finished slides from a .pptx upload.
+- **About page v2: design settings + own slides — NEW 2026-08-09** (**migration
+  `0005_design_settings_and_custom_slides.sql`, must be run in the Supabase SQL editor**; the
+  page degrades read-only with a setup hint until then):
+  - **Design settings** (`design_settings` single-row table; `/api/design-settings`): controls
+    the RENDERER enforces deterministically (never prompt-based) — title/body font (datalist of
+    common fonts, free text allowed), the 3 text sizes, line spacing, page margin, box gutter.
+    `renderer.apply_design()` resets to brand defaults then lays overrides on top at the start
+    of every `render_deck` (def-time defaults in `_set_text`/`_set_lines`/`_place_text`/
+    `_place_bullets` were converted to call-time None-defaults so overrides actually reach
+    them); hero/subtitle sizes scale with the title ratio; a body-font override is FORCED onto
+    native template placeholders too (`_FORCE_BODY_FONT`), and a line-spacing override reaches
+    native bodies via `_FORCE_LINE_SPACING` (without an override, native slides keep template
+    spacing exactly as before). API + renderer both validate ranges. Verified via COM-rendered
+    PNGs (Georgia/Arial/24pt/1.5 spacing all took effect, XML runs checked).
+  - **Team slides** (`custom_slide_files` + `custom_slides` tables; `/api/custom-slides` +
+    `[id]` + `/inspect`): "Add your own slides" on the About page — upload a .pptx (≤4 MB,
+    Vercel body ceiling), deck-service `POST /slides/inspect` rasterises every slide to JPEG
+    previews (LibreOffice on Render / PowerPoint COM locally), user ticks slides and gives each
+    a name + "when should the AI use it" + mode: **AI decides** (offered to the planner as a
+    verbatim layout `custom_<id>` — prompt block "TEAM SLIDES", schema enum + validate extended
+    at call time) or **in every deck** (appended deterministically before the benefits slide,
+    never shown to the model). Renderer `_add_custom_slide()`: shape-splice with images
+    re-embedded AND the source slide's effective background copied (slide→layout→master) keeps
+    the slide editable; slides using PLACEHOLDERS (most real slides — their geometry/formatting
+    lives in the source deck's layout and does not travel) or embedded charts/media fall back
+    to the stored full-slide preview image, letterboxed — pixel-perfect, not editable. Custom
+    slides skip our page-number pass (they carry their own baked chrome; verified no
+    double-print). Job payload: `custom_slides_meta` JSON + `custom_files` uploads (one per
+    unique source file, named `<file_id>.pptx`), fetched fresh at generation time with a
+    ~3.5 MB budget (`app/generation-settings.ts` `appendDeckSettings`), forwarded by
+    `/api/generate-deck`. A failing team slide can never fail a deck (never-raise splice).
+  - **Slide library unified**: one grid — team slides first (mode dropdown, edit, delete;
+    deleting the last slide of an upload garbage-collects the stored .pptx), then all built-ins
+    with on/off switches (no code-built vs template distinction in the UI; filters
+    All / In use / Turned off / Your slides). Rules card re-titled "Writing rules & principles"
+    and its copy now points typography asks at Design settings.
 
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.

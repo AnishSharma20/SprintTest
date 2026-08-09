@@ -1,5 +1,10 @@
 "use client";
 
+// Content Generator — the guided, step-by-step flow ("Option B: Guided" from the redesign pitch).
+// Started life as a separate /generator-v2 page beside the original long-form page; the team
+// adopted it on 2026-08-09, so it replaced the original at /generator (the old page is deleted,
+// /generator-v2 redirects here — see next.config.ts).
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import { loadOverrides, type Override } from "../summary-overrides";
@@ -10,7 +15,6 @@ import {
   recordAssetClaims,
   type ApprovedClaim,
 } from "../claims-source";
-import PageHero from "../PageHero";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
@@ -23,20 +27,9 @@ const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean
   { id: "revervia", label: "Revervia", hint: "", available: false },
 ];
 
-type ContentType =
-  | "deck"
-  | "blog"
-  | "video"
-  | "podcast"
-  | "whitepaper_mix";
+type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 
-const CONTENT_TYPES: {
-  id: ContentType;
-  label: string;
-  icon: string;
-  hint: string;
-  available: boolean;
-}[] = [
+const CONTENT_TYPES: { id: ContentType; label: string; icon: string; hint: string; available: boolean }[] = [
   { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "Branded slides", available: true },
   { id: "whitepaper_mix", label: "Whitepaper", icon: "📄", hint: "Designed, on brand", available: true },
   { id: "blog", label: "Blog post", icon: "✍️", hint: "Grounded in science", available: true },
@@ -44,74 +37,38 @@ const CONTENT_TYPES: {
   { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
 ];
 
-// Content types whose result is a Markdown draft (shown in an editable panel + Word download),
-// as opposed to a binary file (a deck or a designed whitepaper) that downloads directly.
 const TEXT_TYPES = new Set<ContentType>(["blog"]);
 
-
-// Languages with the flag of the main country that speaks them. Not exhaustive — the picker
-// also lets you type any language in the world (a custom entry appears when nothing matches).
 const LANGUAGES: { name: string; flag: string }[] = [
-  { name: "English", flag: "🇬🇧" },
-  { name: "Norwegian", flag: "🇳🇴" },
-  { name: "Swedish", flag: "🇸🇪" },
-  { name: "Danish", flag: "🇩🇰" },
-  { name: "Finnish", flag: "🇫🇮" },
-  { name: "Icelandic", flag: "🇮🇸" },
-  { name: "German", flag: "🇩🇪" },
-  { name: "French", flag: "🇫🇷" },
-  { name: "Spanish", flag: "🇪🇸" },
-  { name: "Portuguese", flag: "🇵🇹" },
-  { name: "Portuguese (Brazil)", flag: "🇧🇷" },
-  { name: "Italian", flag: "🇮🇹" },
-  { name: "Dutch", flag: "🇳🇱" },
-  { name: "Polish", flag: "🇵🇱" },
-  { name: "Czech", flag: "🇨🇿" },
-  { name: "Slovak", flag: "🇸🇰" },
-  { name: "Hungarian", flag: "🇭🇺" },
-  { name: "Romanian", flag: "🇷🇴" },
-  { name: "Bulgarian", flag: "🇧🇬" },
-  { name: "Greek", flag: "🇬🇷" },
-  { name: "Croatian", flag: "🇭🇷" },
-  { name: "Serbian", flag: "🇷🇸" },
-  { name: "Slovenian", flag: "🇸🇮" },
-  { name: "Lithuanian", flag: "🇱🇹" },
-  { name: "Latvian", flag: "🇱🇻" },
-  { name: "Estonian", flag: "🇪🇪" },
-  { name: "Russian", flag: "🇷🇺" },
-  { name: "Ukrainian", flag: "🇺🇦" },
-  { name: "Turkish", flag: "🇹🇷" },
-  { name: "Arabic", flag: "🇸🇦" },
-  { name: "Hebrew", flag: "🇮🇱" },
-  { name: "Persian", flag: "🇮🇷" },
-  { name: "Hindi", flag: "🇮🇳" },
-  { name: "Bengali", flag: "🇧🇩" },
-  { name: "Urdu", flag: "🇵🇰" },
-  { name: "Chinese (Simplified)", flag: "🇨🇳" },
-  { name: "Chinese (Traditional)", flag: "🇹🇼" },
-  { name: "Japanese", flag: "🇯🇵" },
-  { name: "Korean", flag: "🇰🇷" },
-  { name: "Vietnamese", flag: "🇻🇳" },
-  { name: "Thai", flag: "🇹🇭" },
-  { name: "Indonesian", flag: "🇮🇩" },
-  { name: "Malay", flag: "🇲🇾" },
-  { name: "Filipino", flag: "🇵🇭" },
-  { name: "Swahili", flag: "🇰🇪" },
-  { name: "Afrikaans", flag: "🇿🇦" },
-  { name: "Irish", flag: "🇮🇪" },
+  { name: "English", flag: "🇬🇧" }, { name: "Norwegian", flag: "🇳🇴" }, { name: "Swedish", flag: "🇸🇪" },
+  { name: "Danish", flag: "🇩🇰" }, { name: "Finnish", flag: "🇫🇮" }, { name: "Icelandic", flag: "🇮🇸" },
+  { name: "German", flag: "🇩🇪" }, { name: "French", flag: "🇫🇷" }, { name: "Spanish", flag: "🇪🇸" },
+  { name: "Portuguese", flag: "🇵🇹" }, { name: "Portuguese (Brazil)", flag: "🇧🇷" }, { name: "Italian", flag: "🇮🇹" },
+  { name: "Dutch", flag: "🇳🇱" }, { name: "Polish", flag: "🇵🇱" }, { name: "Czech", flag: "🇨🇿" },
+  { name: "Slovak", flag: "🇸🇰" }, { name: "Hungarian", flag: "🇭🇺" }, { name: "Romanian", flag: "🇷🇴" },
+  { name: "Bulgarian", flag: "🇧🇬" }, { name: "Greek", flag: "🇬🇷" }, { name: "Croatian", flag: "🇭🇷" },
+  { name: "Serbian", flag: "🇷🇸" }, { name: "Slovenian", flag: "🇸🇮" }, { name: "Lithuanian", flag: "🇱🇹" },
+  { name: "Latvian", flag: "🇱🇻" }, { name: "Estonian", flag: "🇪🇪" }, { name: "Russian", flag: "🇷🇺" },
+  { name: "Ukrainian", flag: "🇺🇦" }, { name: "Turkish", flag: "🇹🇷" }, { name: "Arabic", flag: "🇸🇦" },
+  { name: "Hebrew", flag: "🇮🇱" }, { name: "Persian", flag: "🇮🇷" }, { name: "Hindi", flag: "🇮🇳" },
+  { name: "Bengali", flag: "🇧🇩" }, { name: "Urdu", flag: "🇵🇰" }, { name: "Chinese (Simplified)", flag: "🇨🇳" },
+  { name: "Chinese (Traditional)", flag: "🇹🇼" }, { name: "Japanese", flag: "🇯🇵" }, { name: "Korean", flag: "🇰🇷" },
+  { name: "Vietnamese", flag: "🇻🇳" }, { name: "Thai", flag: "🇹🇭" }, { name: "Indonesian", flag: "🇮🇩" },
+  { name: "Malay", flag: "🇲🇾" }, { name: "Filipino", flag: "🇵🇭" }, { name: "Swahili", flag: "🇰🇪" },
+  { name: "Afrikaans", flag: "🇿🇦" }, { name: "Irish", flag: "🇮🇪" },
 ];
 
 function flaggFor(name: string): string {
   return LANGUAGES.find((l) => l.name === name)?.flag ?? "🌐";
 }
 
-function LanguagePicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
+const STEPS = [
+  { id: 1, eyebrow: "Step 1 of 3 · Create", title: "What are you creating?" },
+  { id: 2, eyebrow: "Step 2 of 3 · Sources", title: "What should it be based on?" },
+  { id: 3, eyebrow: "Step 3 of 3 · Style", title: "How should it sound?" },
+] as const;
+
+function LanguagePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
@@ -140,7 +97,7 @@ function LanguagePicker({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-2 text-sm text-[#052A4E] shadow-sm outline-none hover:border-[#9FC9D9] focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+        className="flex w-full items-center justify-between rounded-2xl border border-[#E4EDF0] bg-white px-4 py-3 text-sm text-[#052A4E] shadow-sm outline-none hover:border-[#9FC9D9] focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
       >
         <span className="flex items-center gap-2">
           <span className="text-base leading-none">{flaggFor(value)}</span>
@@ -149,14 +106,14 @@ function LanguagePicker({
         <span className="text-zinc-400">▾</span>
       </button>
       {open && (
-        <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-[4px] border border-[#D6E6EE] bg-white shadow-md">
+        <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-2xl border border-[#E4EDF0] bg-white shadow-lg">
           <input
             autoFocus
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search language…"
-            className="w-full border-b border-[#EEF4F7] px-3 py-2 text-sm outline-none placeholder:text-zinc-400"
+            className="w-full border-b border-[#EEF4F7] px-4 py-2.5 text-sm outline-none placeholder:text-zinc-400"
           />
           <ul className="max-h-60 overflow-y-auto py-1">
             {q && !exact && (
@@ -164,12 +121,10 @@ function LanguagePicker({
                 <button
                   type="button"
                   onClick={() => pick(query.trim())}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-[#E1F4F3]"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-[#EEFAF9]"
                 >
                   <span className="text-base leading-none">🌐</span>
-                  <span>
-                    Use “{query.trim()}”
-                  </span>
+                  <span>Use “{query.trim()}”</span>
                 </button>
               </li>
             )}
@@ -178,7 +133,7 @@ function LanguagePicker({
                 <button
                   type="button"
                   onClick={() => pick(l.name)}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-[#E1F4F3] ${
+                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-[#EEFAF9] ${
                     l.name === value ? "bg-[#F4FBFC] font-semibold text-[#0A7A8A]" : "text-[#052A4E]"
                   }`}
                 >
@@ -187,9 +142,7 @@ function LanguagePicker({
                 </button>
               </li>
             ))}
-            {treff.length === 0 && !q && (
-              <li className="px-3 py-2 text-sm text-zinc-400">No languages</li>
-            )}
+            {treff.length === 0 && !q && <li className="px-4 py-2 text-sm text-zinc-400">No languages</li>}
           </ul>
         </div>
       )}
@@ -197,21 +150,13 @@ function LanguagePicker({
   );
 }
 
-function PickChip({
-  aktiv,
-  onClick,
-  children,
-}: {
-  aktiv: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function PickChip({ aktiv, onClick, children }: { aktiv: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-[4px] px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-        aktiv ? "bg-[#0A7A8A] text-white" : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
+      className={`rounded-full px-3 py-1 text-[11px] font-semibold transition-colors ${
+        aktiv ? "bg-[#0A7A8A] text-white" : "bg-white text-zinc-600 ring-1 ring-[#E4EDF0] hover:bg-[#EEFAF9]"
       }`}
     >
       {children}
@@ -225,12 +170,12 @@ type Kjoring = {
   step: string;
   status: "running" | "done" | "error";
   error?: string;
-  // A stable link to the finished file - the user clicks it themselves to open/save it (no
-  // auto-download on our side; see kjorEn), so nothing lands anywhere without them asking for it.
   downloadUrl?: string;
 };
 
 export default function ContentGenerator() {
+  const [wizardStep, setWizardStep] = useState(1);
+
   const [produkt, setProdukt] = useState<ProductId>("superba");
   const [valgteTyper, setValgteTyper] = useState<Set<ContentType>>(new Set<ContentType>(["deck"]));
   const [filer, setFiler] = useState<File[]>([]);
@@ -244,12 +189,16 @@ export default function ContentGenerator() {
   const [studieSok, setStudieSok] = useState("");
   const [studieKat, setStudieKat] = useState<string | null>(null);
 
-  // Phase 2 — approved-claims source. `inkluderClaims` toggles the block on; an empty
-  // `claimKatFilter` means "all approved claims", otherwise it narrows to the ticked categories.
   const [approvedClaims, setApprovedClaims] = useState<ApprovedClaim[]>([]);
   const [claimsConfigured, setClaimsConfigured] = useState(true);
   const [inkluderClaims, setInkluderClaims] = useState(false);
   const [claimKatFilter, setClaimKatFilter] = useState<Set<string>>(new Set());
+
+  const [laster, setLaster] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+  const [kjoringer, setKjoringer] = useState<Kjoring[]>([]);
+  const [utkast, setUtkast] = useState<{ type: ContentType; markdown: string }[]>([]);
+  const [lagerWord, setLagerWord] = useState(false);
 
   const claimKategorier = useMemo(() => {
     const m = new Map<string, { name: string; count: number }>();
@@ -262,12 +211,7 @@ export default function ContentGenerator() {
   }, [approvedClaims]);
 
   const inkluderteClaims = useMemo(
-    () =>
-      !inkluderClaims
-        ? []
-        : approvedClaims.filter(
-            (c) => claimKatFilter.size === 0 || claimKatFilter.has(c.category_id)
-          ),
+    () => (!inkluderClaims ? [] : approvedClaims.filter((c) => claimKatFilter.size === 0 || claimKatFilter.has(c.category_id))),
     [inkluderClaims, approvedClaims, claimKatFilter]
   );
 
@@ -282,17 +226,13 @@ export default function ContentGenerator() {
     return studier.filter(
       (s) =>
         (!studieKat || s.kategori.includes(studieKat)) &&
-        (!q ||
-          s.tittel.toLowerCase().includes(q) ||
-          s.forfattere.toLowerCase().includes(q) ||
-          s.tidsskrift.toLowerCase().includes(q))
+        (!q || s.tittel.toLowerCase().includes(q) || s.forfattere.toLowerCase().includes(q) || s.tidsskrift.toLowerCase().includes(q))
     );
   }, [studier, studieSok, studieKat]);
 
   useEffect(() => {
     void loadOverrides().then(setOverrides);
-    // The picker shows the categories as they stand after the reviewer edits on the studies page,
-    // so a renamed or re-filed category means the same thing in both places.
+    // Same overlay as V1: the picker's categories follow the reviewer edits on the studies page.
     void Promise.all([
       fetch("/api/studies").then((r) => (r.ok ? r.json() : [])),
       loadStudyMeta(),
@@ -307,13 +247,20 @@ export default function ContentGenerator() {
     });
   }, []);
 
+  const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
+  const harValgt = valgteTilgjengelige.length > 0;
+  const visDeckOpsjoner = valgteTyper.has("deck");
+  const harKilder = filer.length > 0 || valgteStudier.size > 0 || inkluderteClaims.length > 0;
 
-  function toggleClaimKat(id: string) {
-    setClaimKatFilter((prev) => {
+  function toggleType(t: ContentType) {
+    const meta = CONTENT_TYPES.find((x) => x.id === t)!;
+    if (!meta.available) return;
+    setValgteTyper((prev) => {
       const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
+      n.has(t) ? n.delete(t) : n.add(t);
       return n;
     });
+    setFeil(null);
     setKjoringer([]);
   }
 
@@ -325,25 +272,13 @@ export default function ContentGenerator() {
     });
     setKjoringer([]);
   }
-  const [laster, setLaster] = useState(false);
-  const [feil, setFeil] = useState<string | null>(null);
-  const [kjoringer, setKjoringer] = useState<Kjoring[]>([]);
-  const [utkast, setUtkast] = useState<{ type: ContentType; markdown: string }[]>([]);
-  const [lagerWord, setLagerWord] = useState(false);
 
-  const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
-  const harValgt = valgteTilgjengelige.length > 0;
-  const visDeckOpsjoner = valgteTyper.has("deck");
-
-  function toggleType(t: ContentType) {
-    const meta = CONTENT_TYPES.find((x) => x.id === t)!;
-    if (!meta.available) return; // "Soon" types can't be selected yet
-    setValgteTyper((prev) => {
+  function toggleClaimKat(id: string) {
+    setClaimKatFilter((prev) => {
       const n = new Set(prev);
-      n.has(t) ? n.delete(t) : n.add(t);
+      n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
-    setFeil(null);
     setKjoringer([]);
   }
 
@@ -364,12 +299,6 @@ export default function ContentGenerator() {
     setKjoringer((prev) => prev.map((k) => (k.type === type ? { ...k, ...patch } : k)));
   }
 
-  // Build the source material shared by every asset: uploaded files +
-  // the picked scientific studies synthesized into one text file + (optionally) the
-  // approved-claims block. Returns the claim ids fed in so each asset can record them, plus
-  // {pmid, cite} for each picked study — the deck generator uses this to append an appendix of
-  // those studies' real charts/tables (extract_figures.py), so the citation must match what's
-  // written into the source file above (same `cite` string, not re-derived on the Python side).
   function byggKilder(): { files: File[]; claimIds: string[]; studyMeta: { pmid: string; cite: string }[] } {
     const kilder = [...filer];
     let claimIds: string[] = [];
@@ -398,23 +327,12 @@ export default function ContentGenerator() {
           );
         })
         .join("\n\n---\n\n");
-      kilder.push(
-        new File([`Selected Aker BioMarine scientific studies\n\n${tekst}`],
-          "Selected-scientific-studies.txt", { type: "text/plain" })
-      );
+      kilder.push(new File([`Selected Aker BioMarine scientific studies\n\n${tekst}`], "Selected-scientific-studies.txt", { type: "text/plain" }));
     }
     return { files: kilder, claimIds, studyMeta };
   }
 
-  // Run one content type end-to-end: start a job, poll it, then handle its
-  // result (deck → download, blog → editable panel). Errors are recorded on
-  // that asset's row so the other assets keep running.
-  async function kjorEn(
-    type: ContentType,
-    kilder: File[],
-    claimIds: string[],
-    studyMeta: { pmid: string; cite: string }[]
-  ) {
+  async function kjorEn(type: ContentType, kilder: File[], claimIds: string[], studyMeta: { pmid: string; cite: string }[]) {
     try {
       const form = new FormData();
       kilder.forEach((f) => form.append("filer", f));
@@ -423,10 +341,7 @@ export default function ContentGenerator() {
       form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
-      // The appendix of source charts/tables is a PPTX-only concept.
-      if (type === "deck" && studyMeta.length) {
-        form.append("study_meta", JSON.stringify(studyMeta));
-      }
+      if (type === "deck" && studyMeta.length) form.append("study_meta", JSON.stringify(studyMeta));
       // The About page's rules, design settings, layout switches and team slides govern deck
       // planning/rendering only.
       if (type === "deck") {
@@ -435,9 +350,7 @@ export default function ContentGenerator() {
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });
       const startData = await start.json().catch(() => ({}));
-      if (!start.ok || !startData.job_id) {
-        throw new Error(startData.feil || `Server responded ${start.status}`);
-      }
+      if (!start.ok || !startData.job_id) throw new Error(startData.feil || `Server responded ${start.status}`);
       const jobId = startData.job_id as string;
 
       for (;;) {
@@ -461,28 +374,12 @@ export default function ContentGenerator() {
         setUtkast((prev) => [...prev.filter((u) => u.type !== type), { type, markdown: md }]);
         oppdaterKjoring(type, { status: "done", progress: 100, step: "Done" });
       } else {
-        // No auto-download here on purpose - silently saving a file the user never clicked for is
-        // exactly the "now go hunt through your downloads folder" experience this replaced. The job's
-        // result stays on the server for a while (deck-service/main.py, 1h TTL), so this is a plain
-        // link the user opens themselves - the browser's own download/open handling takes it from there.
-        oppdaterKjoring(type, {
-          status: "done", progress: 100, step: "Done",
-          downloadUrl: `/api/generate-deck?id=${jobId}&download=1`,
-        });
+        oppdaterKjoring(type, { status: "done", progress: 100, step: "Done", downloadUrl: `/api/generate-deck?id=${jobId}&download=1` });
       }
 
-      // Record which approved claims this asset drew on (retraction traceability). Only
-      // deck/blog/whitepaper are ever generated, and only when claims were fed in.
-      if (
-        claimIds.length &&
-        (type === "deck" || type === "blog" || type === "whitepaper_mix")
-      ) {
-        const reviewer =
-          typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
-        void recordAssetClaims(type, claimIds, {
-          title: `${type} · ${new Date().toISOString().slice(0, 10)}`,
-          createdBy: reviewer,
-        });
+      if (claimIds.length && (type === "deck" || type === "blog" || type === "whitepaper_mix")) {
+        const reviewer = typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
+        void recordAssetClaims(type, claimIds, { title: `${type} · ${new Date().toISOString().slice(0, 10)}`, createdBy: reviewer });
       }
     } catch (e) {
       oppdaterKjoring(type, { status: "error", step: "Failed", error: (e as Error).message });
@@ -495,7 +392,7 @@ export default function ContentGenerator() {
       setFeil("Pick at least one thing to create.");
       return;
     }
-    if (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0) {
+    if (!harKilder) {
       setFeil("Add at least one source file, pick a study, or include approved findings to base the content on.");
       return;
     }
@@ -503,14 +400,11 @@ export default function ContentGenerator() {
     setFeil(null);
     setUtkast([]);
     setKjoringer(typer.map((type) => ({ type, progress: 0, step: "Starting…", status: "running" })));
-
-    // Each asset reads the same sources independently, so run them in parallel.
     const { files, claimIds, studyMeta } = byggKilder();
     await Promise.all(typer.map((type) => kjorEn(type, files, claimIds, studyMeta)));
     setLaster(false);
   }
 
-  // Convert the current (edited) draft to a Word .docx on the backend and download it.
   async function lastNedWord(markdown: string, base: string) {
     if (!markdown) return;
     setLagerWord(true);
@@ -539,145 +433,128 @@ export default function ContentGenerator() {
     }
   }
 
+  function goNext() {
+    if (wizardStep === 1 && !harValgt) {
+      setFeil("Pick at least one thing to create.");
+      return;
+    }
+    if (wizardStep === 2 && !harKilder) {
+      setFeil("Add at least one source file, pick a study, or include approved findings.");
+      return;
+    }
+    setFeil(null);
+    setWizardStep((s) => Math.min(3, s + 1));
+  }
+
+  function goBack() {
+    setFeil(null);
+    setWizardStep((s) => Math.max(1, s - 1));
+  }
+
+  const current = STEPS[wizardStep - 1];
+
   return (
-    <div className="min-h-screen bg-[#F2F7F9]">
-      <PageHero eyebrow="Content Generation Tool" title="Create content from your material">
-        Upload your source files and choose what to produce. Pick one or several at once, and our AI
-        turns them into ready to use, on brand content: polished PowerPoint decks, designed
-        whitepapers and science backed blog drafts.
-      </PageHero>
-
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        {/* Product selector — which brand the content is for (single choice) */}
-        <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-          Which product is this for?
-        </div>
-        <div className="mb-6 grid grid-cols-3 gap-2">
-          {PRODUCTS.map((p) => {
-            const valgt = produkt === p.id && p.available;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => p.available && setProdukt(p.id)}
-                disabled={!p.available}
-                aria-pressed={valgt}
-                className={`relative rounded-[4px] border px-3 py-3 text-left transition-colors ${
-                  valgt
-                    ? "border-[#E30917] bg-[#FDECEC]"
-                    : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                } ${!p.available ? "cursor-not-allowed opacity-60" : ""}`}
-              >
-                {!p.available && (
-                  <span className="absolute right-2 top-2 rounded-[4px] bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
-                    Soon
-                  </span>
-                )}
-                <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
-                {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
-              </button>
-            );
-          })}
+    <div className="min-h-screen bg-[#FAFCFD]">
+      <div className="mx-auto max-w-2xl px-5 py-10">
+        {/* Compact wizard header — deliberately NOT the full PageHero banner every other page
+            uses: the point of this layout is fewer things competing for attention per screen. */}
+        <div className="mb-7 flex items-center justify-between">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#6D8894]">
+            Content Generator
+          </span>
+          <span className="rounded-full bg-[#EEFAF9] px-3 py-1 text-[11px] font-semibold text-[#0A7A8A]">Guided mode</span>
         </div>
 
-        {/* Content type selector — multi-select: pick one or several */}
-        <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-          What do you want to create? <span className="text-zinc-400 normal-case tracking-normal">(pick one or several)</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-          {CONTENT_TYPES.map((t) => {
-            const valgt = valgteTyper.has(t.id) && t.available;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => toggleType(t.id)}
-                disabled={!t.available}
-                aria-pressed={valgt}
-                className={`relative rounded-[4px] border px-3 py-4 text-left transition-colors ${
-                  valgt
-                    ? "border-[#E30917] bg-[#FDECEC]"
-                    : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                } ${!t.available ? "cursor-not-allowed opacity-60" : ""}`}
-              >
-                {!t.available ? (
-                  <span className="absolute right-2 top-2 rounded-[4px] bg-[#E1EEF3] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6B8B95]">
-                    Soon
-                  </span>
-                ) : (
-                  valgt && (
-                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-[4px] bg-[#E30917] text-[11px] font-bold text-white">
-                      ✓
-                    </span>
-                  )
-                )}
-                <div className="text-2xl">{t.icon}</div>
-                <div className="mt-2 text-sm font-semibold text-[#052A4E]">{t.label}</div>
-                <div className="text-xs text-zinc-500">{t.hint}</div>
-              </button>
-            );
-          })}
+        <div className="mb-8 flex gap-1.5" role="progressbar" aria-valuenow={wizardStep} aria-valuemin={1} aria-valuemax={3}>
+          {STEPS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              disabled={s.id > wizardStep}
+              onClick={() => s.id <= wizardStep && setWizardStep(s.id)}
+              aria-label={`${s.title}${s.id === wizardStep ? " (current step)" : ""}`}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                s.id < wizardStep ? "bg-[#1B7A3D]" : s.id === wizardStep ? "bg-[#0A7A8A]" : "bg-[#E4EDF0]"
+              } ${s.id <= wizardStep ? "cursor-pointer" : "cursor-default"}`}
+            />
+          ))}
         </div>
 
-        {harValgt ? (
-          <>
-            {/* Upload */}
-            <label className="mt-6 block cursor-pointer rounded-[4px] border-2 border-dashed border-[#9FC9D9] bg-white p-8 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#E1F4F3]">
-              <input
-                type="file"
-                accept=".docx,.txt,.md"
-                multiple
-                className="hidden"
-                onChange={(e) => leggTilFiler(e.target.files)}
-              />
-              <div className="text-4xl">📄</div>
-              <div className="mt-2 font-semibold text-[#052A4E]">
-                Click to add source files
-              </div>
-              <div className="mt-1 text-xs text-zinc-500">
-                .docx, .txt or .md · you can add several
-              </div>
-            </label>
+        <div className="mb-1 text-[12.5px] font-bold uppercase tracking-[0.06em] text-[#0A7A8A]">{current.eyebrow}</div>
+        <h1 className="mb-8 text-[26px] font-extrabold leading-tight tracking-tight text-[#052A4E]">{current.title}</h1>
 
-            {/* File list */}
-            {filer.length > 0 && (
-              <ul className="mt-4 space-y-2">
-                {filer.map((f, i) => (
-                  <li
-                    key={i}
-                    className="flex items-center justify-between rounded-[4px] border border-[#D6E6EE] bg-white px-4 py-2 text-sm"
-                  >
-                    <span className="truncate text-[#052A4E]">📎 {f.name}</span>
+        {/* ============================= STEP 1 ============================= */}
+        {wizardStep === 1 && (
+          <div className="space-y-8">
+            <div>
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Which product is this for?</div>
+              <div className="grid grid-cols-3 gap-2">
+                {PRODUCTS.map((p) => {
+                  const valgt = produkt === p.id && p.available;
+                  return (
                     <button
-                      onClick={() => fjern(i)}
-                      className="ml-3 shrink-0 text-xs font-medium text-zinc-400 hover:text-red-500"
+                      key={p.id}
+                      type="button"
+                      onClick={() => p.available && setProdukt(p.id)}
+                      disabled={!p.available}
+                      className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                        valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
+                      } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                     >
-                      Remove
+                      {!p.available && <span className="absolute right-2 top-2 rounded-md bg-[#F1F5F7] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#8FA5AE]">Soon</span>}
+                      <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
+                      {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
                     </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+                  );
+                })}
+              </div>
+            </div>
 
-            <p className="mt-3 text-xs text-zinc-500">
-              Every selected asset is built from the same sources. For a deck, one deck is generated
-              per file (multiple files download as a zip).
+            <div>
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">
+                What do you want to create? <span className="normal-case tracking-normal text-zinc-400">(pick one or several)</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {CONTENT_TYPES.map((t) => {
+                  const valgt = valgteTyper.has(t.id) && t.available;
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => toggleType(t.id)}
+                      disabled={!t.available}
+                      className={`relative flex items-center gap-3 rounded-2xl border p-4 text-left transition-colors ${
+                        valgt ? "border-[#3FD0C9] bg-[#EEFAF9] shadow-[0_0_0_3px_rgba(63,208,201,0.14)]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
+                      } ${!t.available ? "cursor-not-allowed opacity-50" : ""}`}
+                    >
+                      <span className="text-2xl">{t.icon}</span>
+                      <span>
+                        <span className="block text-sm font-bold text-[#052A4E]">{t.label}</span>
+                        <span className="block text-[11px] text-zinc-500">{t.available ? t.hint : "Soon"}</span>
+                      </span>
+                      {valgt && <span className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A7A8A] text-[11px] font-bold text-white">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================= STEP 2 ============================= */}
+        {wizardStep === 2 && (
+          <div className="space-y-6">
+            <p className="text-[14px] leading-relaxed text-[#5C7A85]">
+              You&apos;re creating <strong className="text-[#052A4E]">{valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ") || "…"}</strong>. Now pick the material it should draw on — upload files, choose from the study library, or both.
             </p>
 
-            {/* Pick from Scientific Studies */}
-            <div className="mt-4 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Or pick from Scientific Studies
-                </div>
-                {valgteStudier.size > 0 && (
-                  <span className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-xs font-semibold text-[#0A7A8A]">
-                    {valgteStudier.size} selected
-                  </span>
-                )}
+            <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Or pick from Scientific Studies</div>
+                {valgteStudier.size > 0 && <span className="rounded-full bg-[#EEFAF9] px-2.5 py-0.5 text-xs font-bold text-[#0A7A8A]">{valgteStudier.size} selected</span>}
               </div>
               {studier.length === 0 ? (
-                <p className="mt-2 text-xs text-zinc-400">Loading studies…</p>
+                <p className="text-xs text-zinc-400">Loading studies…</p>
               ) : (
                 <>
                   <input
@@ -685,19 +562,15 @@ export default function ContentGenerator() {
                     value={studieSok}
                     onChange={(e) => setStudieSok(e.target.value)}
                     placeholder="Search studies…"
-                    className="mt-3 w-full rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-2 text-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                    className="mb-2 w-full rounded-xl border border-[#E4EDF0] bg-white px-3 py-2 text-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
                   />
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    <PickChip aktiv={studieKat === null} onClick={() => setStudieKat(null)}>
-                      All ({studier.length})
-                    </PickChip>
+                  <div className="mb-3 flex flex-wrap gap-1.5">
+                    <PickChip aktiv={studieKat === null} onClick={() => setStudieKat(null)}>All ({studier.length})</PickChip>
                     {studieKategorier.map(([navn, antall]) => (
-                      <PickChip key={navn} aktiv={studieKat === navn} onClick={() => setStudieKat(navn)}>
-                        {navn} ({antall})
-                      </PickChip>
+                      <PickChip key={navn} aktiv={studieKat === navn} onClick={() => setStudieKat(navn)}>{navn} ({antall})</PickChip>
                     ))}
                   </div>
-                  <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
+                  <div className="max-h-64 space-y-1.5 overflow-y-auto pr-1">
                     {filtrerteStudier.length === 0 ? (
                       <p className="py-4 text-center text-xs text-zinc-400">No studies match.</p>
                     ) : (
@@ -707,27 +580,18 @@ export default function ContentGenerator() {
                         return (
                           <label
                             key={s.pmid}
-                            className={`flex cursor-pointer items-start gap-2 rounded-[4px] border p-2 text-sm transition-colors ${
-                              valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E3EEF2] hover:bg-[#F7FBFC]"
+                            className={`flex cursor-pointer items-start gap-2 rounded-xl border p-2.5 text-sm transition-colors ${
+                              valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E9F1F4] hover:bg-[#F7FBFC]"
                             }`}
                           >
-                            <input
-                              type="checkbox"
-                              checked={valgt}
-                              onChange={() => toggleStudie(s.pmid)}
-                              className="mt-1 accent-[#0A7A8A]"
-                            />
+                            <input type="checkbox" checked={valgt} onChange={() => toggleStudie(s.pmid)} className="mt-1 h-4 w-4 accent-[#0A7A8A]" />
                             <span className="min-w-0 flex-1">
                               <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
                               <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
                                 {verified ? (
-                                  <span className="rounded-[4px] bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">
-                                    Verified
-                                  </span>
+                                  <span className="rounded-md bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">Verified</span>
                                 ) : (
-                                  <span className="rounded-[4px] bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">
-                                    AI
-                                  </span>
+                                  <span className="rounded-md bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">AI</span>
                                 )}
                                 {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
                                 <span className="text-zinc-400">{s.ar}</span>
@@ -740,23 +604,14 @@ export default function ContentGenerator() {
                   </div>
                 </>
               )}
-              <p className="mt-2 text-xs text-zinc-500">
-                Selected summaries are sent to the AI as source material, alongside any files.
-              </p>
             </div>
 
-            {/* Approved science claims (Phase 2) — authoritative, science-reviewed facts the
-                generators compose from and cite. Recorded per asset for retraction traceability. */}
-            <div className="mt-6 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
+            <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
-                    ✓ Approved findings
-                  </div>
-                  <p className="mt-1 max-w-lg text-xs text-zinc-500">
-                    {claimsConfigured
-                      ? "Facts reviewed and approved by the science team. Included as an authoritative source the AI prefers and cites."
-                      : "The findings library is not set up yet, so there are no approved findings to include."}
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A7A8A]">✓ Approved findings</div>
+                  <p className="mt-1 max-w-sm text-xs text-zinc-500">
+                    {claimsConfigured ? "Facts reviewed and approved by the science team." : "The findings library is not set up yet."}
                   </p>
                 </div>
                 {claimsConfigured && approvedClaims.length > 0 && (
@@ -774,298 +629,184 @@ export default function ContentGenerator() {
                   </label>
                 )}
               </div>
-
-              {claimsConfigured && approvedClaims.length === 0 && (
-                <p className="mt-2 text-xs text-zinc-400">
-                  No approved findings yet. Approve some in the Research tab, then they show up here.
-                </p>
-              )}
-
               {inkluderClaims && approvedClaims.length > 0 && (
                 <div className="mt-3">
                   <div className="mb-2 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => {
-                        setClaimKatFilter(new Set());
-                        setKjoringer([]);
-                      }}
-                      className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-colors ${
-                        claimKatFilter.size === 0
-                          ? "bg-[#0A7A8A] text-white"
-                          : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
-                      }`}
-                    >
-                      All ({approvedClaims.length})
-                    </button>
+                    <PickChip aktiv={claimKatFilter.size === 0} onClick={() => { setClaimKatFilter(new Set()); setKjoringer([]); }}>All ({approvedClaims.length})</PickChip>
                     {claimKategorier.map(([id, { name, count }]) => (
-                      <button
-                        key={id}
-                        onClick={() => toggleClaimKat(id)}
-                        className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-colors ${
-                          claimKatFilter.has(id)
-                            ? "bg-[#0A7A8A] text-white"
-                            : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE] hover:bg-[#E1F4F3]"
-                        }`}
-                      >
-                        {name} ({count})
-                      </button>
+                      <PickChip key={id} aktiv={claimKatFilter.has(id)} onClick={() => toggleClaimKat(id)}>{name} ({count})</PickChip>
                     ))}
                   </div>
-                  <p className="text-xs font-semibold text-[#0A7A8A]">
-                    {inkluderteClaims.length} finding{inkluderteClaims.length === 1 ? "" : "s"} will be fed to
-                    the AI as authoritative source and cited in the output.
-                  </p>
+                  <p className="text-xs font-semibold text-[#0A7A8A]">{inkluderteClaims.length} finding{inkluderteClaims.length === 1 ? "" : "s"} will be cited in the output.</p>
                 </div>
               )}
             </div>
 
-            {/* Options */}
-            <div className="mt-6 space-y-4">
-              {/* Deck-specific settings live in their own labelled card, so when a
-                  deck AND a blog are selected it's obvious these apply to the deck
-                  only — not to the blog. */}
-              {visDeckOpsjoner && (
-                <div className="rounded-[4px] border border-[#D6E6EE] bg-[#F7FBFC] p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0A7A8A]">
-                    📊 PowerPoint deck settings
-                  </div>
-                  <p className="mt-0.5 text-xs text-zinc-500">
-                    These apply to the deck only.
-                  </p>
+            <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#B9D8E0] bg-white p-7 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#EEFAF9]">
+              <input type="file" accept=".docx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />
+              <div className="text-3xl">📄</div>
+              <div className="mt-2 text-sm font-bold text-[#052A4E]">Click to add source files</div>
+              <div className="mt-1 text-xs text-zinc-500">.docx, .txt or .md · you can add several</div>
+            </label>
 
-                  <div className="mt-3 space-y-4">
-                    <div>
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B8B95]">
-                        Length
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          ["kort", "Short", "~9 slides"],
-                          ["standard", "Standard", "~15 slides"],
-                          ["detaljert", "Detailed", "~19 slides"],
-                        ].map(([val, label, hint]) => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setLengde(val)}
-                            className={`rounded-[4px] border px-3 py-2 text-left transition-colors ${
-                              lengde === val
-                                ? "border-[#E30917] bg-[#FDECEC]"
-                                : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                            }`}
-                          >
-                            <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                            <div className="text-xs text-zinc-500">{hint}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B8B95]">
-                        Tone
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          ["salg", "Sales", "Benefit first"],
-                          ["balansert", "Balanced", "Benefit + proof"],
-                          ["vitenskap", "Scientific", "More evidence"],
-                        ].map(([val, label, hint]) => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setTone(val)}
-                            className={`rounded-[4px] border px-3 py-2 text-left transition-colors ${
-                              tone === val
-                                ? "border-[#E30917] bg-[#FDECEC]"
-                                : "border-[#D6E6EE] bg-white hover:border-[#9FC9D9]"
-                            }`}
-                          >
-                            <div className="text-sm font-semibold text-[#052A4E]">{label}</div>
-                            <div className="text-xs text-zinc-500">{hint}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Output language — applies to every selected asset. Free text, so any language works. */}
-              <div>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Output language{" "}
-                  <span className="normal-case tracking-normal text-zinc-400">
-                    (any language, applies to everything you create)
-                  </span>
-                </div>
-                <LanguagePicker value={sprak} onChange={setSprak} />
-                <p className="mt-1 text-xs text-zinc-500">
-                  Search and pick a language, or type your own. Any language in the world works. The AI
-                  writes all output text in it, whatever the source language.
-                </p>
-              </div>
-
-              <div>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  Context & instructions{" "}
-                  <span className="normal-case tracking-normal text-zinc-400">
-                    (optional, applies to everything you create)
-                  </span>
-                </div>
-                <textarea
-                  value={kontekst}
-                  onChange={(e) => setKontekst(e.target.value)}
-                  rows={4}
-                  placeholder="Tell the AI anything specific: audience, angle, points to include, claims to avoid, terminology, structure. E.g. 'Audience is pharmacy buyers in Germany; lead with the Omega 3 Index data; don't mention competitors; keep it to the joint health story.'"
-                  className="w-full resize-y rounded-[4px] border border-[#D6E6EE] bg-white p-3 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
-                />
-                <p className="mt-1 text-xs text-zinc-500">
-                  Free text. Every selected asset follows this on top of the source files (it never
-                  overrides brand styling or the accuracy rules for findings).
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          /* Nothing selectable is chosen yet */
-          <div className="mt-6 rounded-[4px] border border-dashed border-[#D6E6EE] bg-white p-8 text-center">
-            <div className="text-4xl">👆</div>
-            <div className="mt-3 text-lg font-semibold text-[#052A4E]">
-              Pick what you want to create
-            </div>
-            <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
-              Choose <strong>PowerPoint deck</strong>, <strong>Blog post</strong> or{" "}
-              <strong>Whitepaper</strong> above (pick one or several). Video and podcast are on the way.
-            </p>
+            {filer.length > 0 && (
+              <ul className="space-y-2">
+                {filer.map((f, i) => (
+                  <li key={i} className="flex items-center justify-between rounded-xl border border-[#E4EDF0] bg-white px-4 py-2 text-sm">
+                    <span className="truncate text-[#052A4E]">📎 {f.name}</span>
+                    <button onClick={() => fjern(i)} className="ml-3 shrink-0 text-xs font-medium text-zinc-400 hover:text-red-500">Remove</button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
-        {/* Produce */}
-        <button
-          onClick={produser}
-          disabled={
-            laster ||
-            !harValgt ||
-            (filer.length === 0 && valgteStudier.size === 0 && inkluderteClaims.length === 0)
-          }
-          className="mt-6 w-full rounded-[4px] bg-[#E30917] py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-[#c40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
-        >
-          {laster
-            ? "AI is working…"
-            : harValgt
-              ? `Generate ${valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ")}`
-              : "Generate"}
-        </button>
-
-        {/* Per-asset progress & result status */}
-        {kjoringer.length > 0 && (
-          <div className="mt-4 space-y-3">
-            {kjoringer.map((k) => {
-              const meta = CONTENT_TYPES.find((t) => t.id === k.type)!;
-              return (
-                <div key={k.type} className="rounded-[4px] border border-[#D6E6EE] bg-white p-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-[#052A4E]">
-                      {meta.icon} {meta.label}
-                    </span>
-                    <span className="tabular-nums text-[#6B8B95]">
-                      {k.status === "running" ? `${k.progress}%` : k.status === "done" ? "✅" : "⚠️"}
-                    </span>
-                  </div>
-                  {k.status === "running" && (
-                    <>
-                      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-[4px] bg-[#E1EEF3]">
-                        <div
-                          className="h-full rounded-[4px] bg-[#E30917] transition-all duration-700 ease-out"
-                          style={{ width: `${Math.max(3, k.progress)}%` }}
-                        />
-                      </div>
-                      <p className="mt-2 text-xs text-zinc-500">{k.step || "Working…"}</p>
-                    </>
-                  )}
-                  {k.status === "done" && TEXT_TYPES.has(k.type) && (
-                    <p className="mt-1 text-xs text-emerald-700">
-                      ✅ Draft ready. Review &amp; edit it below.
-                    </p>
-                  )}
-                  {k.status === "done" && !TEXT_TYPES.has(k.type) && (
-                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                      <span className="text-emerald-700">✅ Ready.</span>
-                      {k.downloadUrl && (
-                        <a
-                          href={k.downloadUrl}
-                          target="_blank"
-                          rel="noopener"
-                          className="font-semibold text-[#0A7A8A] underline hover:text-[#086472]"
+        {/* ============================= STEP 3 ============================= */}
+        {wizardStep === 3 && (
+          <div className="space-y-6">
+            {visDeckOpsjoner && (
+              <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A7A8A]">📊 PowerPoint deck settings</div>
+                <p className="mt-0.5 text-xs text-zinc-500">These apply to the deck only.</p>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Length</div>
+                    <div className="flex rounded-full border border-[#E4EDF0] p-1">
+                      {[["kort", "Short", "~9 slides"], ["standard", "Standard", "~15 slides"], ["detaljert", "Detailed", "~19 slides"]].map(([val, label, hint]) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setLengde(val)}
+                          className={`flex-1 rounded-full px-3 py-2 text-center transition-colors ${lengde === val ? "bg-[#052A4E] text-white" : "text-[#5C7A85]"}`}
                         >
-                          📥 Open {meta.label}
-                        </a>
-                      )}
+                          <div className="text-[13px] font-bold">{label}</div>
+                          <div className={`text-[11px] ${lengde === val ? "text-[#BFE3EF]" : "text-[#95AAB1]"}`}>{hint}</div>
+                        </button>
+                      ))}
                     </div>
-                  )}
-                  {k.status === "error" && (
-                    <p className="mt-1 text-xs text-red-600">{k.error}</p>
-                  )}
+                  </div>
+                  <div>
+                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Tone</div>
+                    <div className="flex rounded-full border border-[#E4EDF0] p-1">
+                      {[["salg", "Sales"], ["balansert", "Balanced"], ["vitenskap", "Scientific"]].map(([val, label]) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setTone(val)}
+                          className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${tone === val ? "bg-[#052A4E] text-white" : "text-[#5C7A85]"}`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Output language</div>
+              <LanguagePicker value={sprak} onChange={setSprak} />
+              <p className="mt-1.5 text-xs text-zinc-500">Search and pick a language, or type your own — applies to everything you create.</p>
+            </div>
+
+            <div>
+              <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Context &amp; instructions <span className="normal-case tracking-normal text-zinc-400">(optional)</span></div>
+              <textarea
+                value={kontekst}
+                onChange={(e) => setKontekst(e.target.value)}
+                rows={4}
+                placeholder="e.g. Audience is pharmacy buyers in Germany; lead with the Omega 3 Index data; keep it to the joint health story."
+                className="w-full resize-y rounded-2xl border border-[#E4EDF0] bg-white p-3.5 text-sm text-[#052A4E] shadow-sm outline-none placeholder:text-zinc-400 focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+              />
+            </div>
+
+            <button
+              onClick={produser}
+              disabled={laster || !harValgt || !harKilder}
+              className="w-full rounded-full bg-[#E30917] py-4 text-base font-bold text-white shadow-sm transition-colors hover:bg-[#C40813] disabled:cursor-not-allowed disabled:bg-zinc-300"
+            >
+              {laster ? "AI is working…" : `Generate ${valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ") || ""}`}
+            </button>
+
+            {kjoringer.length > 0 && (
+              <div className="space-y-3">
+                {kjoringer.map((k) => {
+                  const meta = CONTENT_TYPES.find((t) => t.id === k.type)!;
+                  return (
+                    <div key={k.type} className="rounded-2xl border border-[#E4EDF0] bg-white p-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium text-[#052A4E]">{meta.icon} {meta.label}</span>
+                        <span className="tabular-nums text-[#6D8894]">{k.status === "running" ? `${k.progress}%` : k.status === "done" ? "✅" : "⚠️"}</span>
+                      </div>
+                      {k.status === "running" && (
+                        <>
+                          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#EEF3F5]">
+                            <div className="h-full rounded-full bg-[#E30917] transition-all duration-700 ease-out" style={{ width: `${Math.max(3, k.progress)}%` }} />
+                          </div>
+                          <p className="mt-2 text-xs text-zinc-500">{k.step || "Working…"}</p>
+                        </>
+                      )}
+                      {k.status === "done" && TEXT_TYPES.has(k.type) && <p className="mt-1 text-xs text-emerald-700">✅ Draft ready. Review &amp; edit below.</p>}
+                      {k.status === "done" && !TEXT_TYPES.has(k.type) && (
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                          <span className="text-emerald-700">✅ Ready.</span>
+                          {k.downloadUrl && (
+                            <a href={k.downloadUrl} target="_blank" rel="noopener" className="font-semibold text-[#0A7A8A] underline hover:text-[#086472]">📥 Open {meta.label}</a>
+                          )}
+                        </div>
+                      )}
+                      {k.status === "error" && <p className="mt-1 text-xs text-red-600">{k.error}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {utkast.map((u) => {
+              const label = CONTENT_TYPES.find((t) => t.id === u.type)?.label ?? "Draft";
+              const base = "superba-blog-draft";
+              return (
+                <div key={u.type} className="rounded-2xl border border-[#E4EDF0] bg-white p-4">
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">{label} draft · review &amp; edit</div>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => navigator.clipboard?.writeText(u.markdown)} className="rounded-xl border border-[#E4EDF0] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#EEFAF9]">Copy</button>
+                      <button type="button" onClick={() => lastNedWord(u.markdown, base)} disabled={lagerWord} className="rounded-xl bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300">
+                        {lagerWord ? "Creating…" : "Download Word (.docx)"}
+                      </button>
+                    </div>
+                  </div>
+                  <textarea
+                    value={u.markdown}
+                    onChange={(e) => setUtkast((prev) => prev.map((x) => (x.type === u.type ? { ...x, markdown: e.target.value } : x)))}
+                    className="h-[24rem] w-full resize-y rounded-xl border border-[#E4EDF0] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+                  />
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* Top-level validation error (e.g. nothing picked) */}
         {feil && (
-          <div className="mt-4 rounded-[4px] border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {feil}
-          </div>
+          <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{feil}</div>
         )}
 
-        {utkast.map((u) => {
-          const label = CONTENT_TYPES.find((t) => t.id === u.type)?.label ?? "Draft";
-          const base = "superba-blog-draft";   // the blog is the only editable draft left
-          return (
-            <div key={u.type} className="mt-4 rounded-[4px] border border-[#D6E6EE] bg-white p-4">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6B8B95]">
-                  {label} draft · review & edit
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => navigator.clipboard?.writeText(u.markdown)}
-                    className="rounded-[4px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
-                  >
-                    Copy
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => lastNedWord(u.markdown, base)}
-                    disabled={lagerWord}
-                    className="rounded-[4px] bg-[#0A7A8A] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#086472] disabled:cursor-not-allowed disabled:bg-zinc-300"
-                  >
-                    {lagerWord ? "Creating…" : "Download Word (.docx)"}
-                  </button>
-                </div>
-              </div>
-              <textarea
-                value={u.markdown}
-                onChange={(e) =>
-                  setUtkast((prev) => prev.map((x) => (x.type === u.type ? { ...x, markdown: e.target.value } : x)))
-                }
-                className="h-[28rem] w-full resize-y rounded-[4px] border border-[#D6E6EE] bg-[#FAFDFE] p-3 font-mono text-xs leading-relaxed text-[#052A4E] outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
-              />
-              <p className="mt-1 text-xs text-zinc-500">
-                AI generated draft based on your sources. Edit it here, then download as Word. Review the
-                science and findings before publishing.
-              </p>
-            </div>
-          );
-        })}
-
-        <p className="mt-8 text-center text-xs text-zinc-400">
-          Powered by AI · rendered on the Superba brand template
-        </p>
-      </main>
+        {/* Nav footer */}
+        <div className="mt-9 flex items-center justify-between border-t border-[#E4EDF0] pt-6">
+          {wizardStep > 1 ? (
+            <button onClick={goBack} className="text-sm font-semibold text-[#6D8894] hover:text-[#052A4E]">← Back</button>
+          ) : (
+            <span />
+          )}
+          {wizardStep < 3 && (
+            <button onClick={goNext} className="rounded-full bg-[#052A4E] px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-[#0a3a63]">
+              Continue →
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

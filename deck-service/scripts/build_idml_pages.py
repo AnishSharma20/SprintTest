@@ -1,7 +1,6 @@
 """Build config/idml_pages.json — the PAGE LIBRARY for cross-template whitepapers.
 
-Where build_idml_manifest.py maps ONE template (Healthy Aging) end to end, this maps a library of
-individually designed PAGES drawn from the three standard A4 Superba brochures (Sport Performance,
+Maps a library of individually designed PAGES drawn from the three standard A4 Superba brochures (Sport Performance,
 Sustainability, Superba Brochure) so `idml_compose.py` can assemble a document out of them and the
 existing fill engine can pour text into the chosen pages.
 
@@ -47,8 +46,8 @@ from src.idml_compose import Source, spread_images  # noqa: E402
 OUT = ROOT / "config" / "idml_pages.json"
 
 # The three standard A4 brochures. Fish Oil is excluded (different brand, different type system) and
-# Healthy Aging is excluded here (US Letter and far longer than AKBM's standard brochure) — it keeps
-# its own dedicated manifest in config/idml_manifest.json.
+# Healthy Aging is excluded (US Letter and far longer than AKBM's standard brochure; its dedicated
+# single template pipeline was removed when mixed pages replaced it).
 TEMPLATES = {
     "sport": "assets/whitepaper_sport.idml",
     "sustainability": "assets/whitepaper_sustainability.idml",

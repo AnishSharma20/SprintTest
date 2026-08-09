@@ -581,15 +581,6 @@ async def slides_inspect(
         return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
 
 
-@app.get("/idml/pages")
-def idml_pages():
-    """The composable page library, so the UI can offer a manual page override."""
-    try:
-        return {"pages": src.idml_page_library()}
-    except Exception as e:  # noqa: BLE001
-        return JSONResponse({"feil": f"Page library unavailable: {e}"}, status_code=500)
-
-
 @app.get("/jobs/{job_id}")
 def job_status(job_id: str):
     j = JOBS.get(job_id)

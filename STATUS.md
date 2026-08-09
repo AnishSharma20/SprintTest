@@ -135,7 +135,15 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   directly — no planner/schema involvement at all. Verified with a real generation run (rendered to
   PNG via PowerPoint COM): divider + figure + table slides all correct, citation/page/kind eyebrow
   text intact, image letterboxed and centred in the body zone.
-- **Content Generator V2 — NEW 2026-08-06, `/generator-v2`, a new nav tab alongside the original.**
+- **Content Generator V2 — NEW 2026-08-06; ADOPTED AS *THE* GENERATOR 2026-08-09.** The client picked
+  the guided flow, so it now lives at **`/generator`** under the plain "Content Generator" name: the
+  old long-form page is DELETED, `/generator-v2` 308-redirects to `/generator` (next.config.ts), and
+  the nav has one generator tab again. The dead single-template whitepaper leftovers went in the same
+  sweep (deck-service: `/idml/pages` endpoint + `library_summary` [the manual page picker's backend,
+  whose UI was long gone], idml.py's `fill_idml`/`build_idml_schema`/manifest loaders, and
+  `config/idml_manifest.json` + `assets/whitepaper_template.idml` + `scripts/build_idml_manifest.py` —
+  idml.py keeps only the line-mapping primitives the mixed-pages path and scripts actually use).
+  History of the V2 rollout below.
   A redesign pitch ("Option B: Guided" from 3 mockups the client compared) rebuilt as a real, working
   page — a step-by-step wizard instead of one long scrolling form, same backend/`/api/generate-deck`
   contract and validation rules as V1. **3 steps, not 4** (revised same day per feedback): Create →

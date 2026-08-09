@@ -7,9 +7,9 @@ Two stages, mirroring the deck pipeline (plan -> validate -> render):
              produce a malformed document (exactly one cover first, a closing last, no duplicates,
              no data-bound page unless the source really carries that data).
   2. FILL    A forced-tool schema is generated from just the chosen pages' slot maps, Claude writes
-             the text, and `idml.fill_idml`-style line mapping pours it into the composed package.
+             the text, and idml.py's line mapping pours it into the composed package.
 
-The user may override stage 1 entirely by passing explicit page ids.
+The caller may override stage 1 entirely by passing explicit page ids.
 """
 from __future__ import annotations
 
@@ -37,16 +37,6 @@ def pages_by_id() -> dict[str, dict]:
 
 def templates() -> dict[str, Path]:
     return {k: (config.ROOT / v) for k, v in load_library()["templates"].items()}
-
-
-def library_summary() -> list[dict]:
-    """What the UI needs to offer a manual override."""
-    out = []
-    for p in load_library()["pages"]:
-        out.append({"id": p["id"], "role": p["role"], "theme": p["theme"],
-                    "fill": bool(p.get("fill")), "hint": p.get("hint", ""),
-                    "requires_matching_data": bool(p.get("requires_matching_data"))})
-    return out
 
 
 # ---------------------------------------------------------------------------

@@ -10,7 +10,6 @@ const TABS = [
   { href: "/claims", label: "Findings Library" },
   { href: "/findings-v2", label: "Findings Library V2" },
   { href: "/generator", label: "Content Generator" },
-  { href: "/generator-v2", label: "Content Generator V2" },
   { href: "/about", label: "About" },
 ];
 
@@ -28,7 +27,7 @@ export default function TopNav() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#031B34]">
-      {/* max-w-7xl (not 5xl) and a scrollable, non wrapping tab row: seven tabs since the V2
+      {/* max-w-7xl (not 5xl) and a scrollable, non wrapping tab row: six tabs since the V2
           pages arrived. Wrapping instead would make the nav two rows tall, and the V2 pages'
           sticky sidebar/panel offsets assume the nav keeps its one row height. */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
@@ -37,8 +36,9 @@ export default function TopNav() {
         </Link>
         <div className="flex flex-nowrap items-center gap-1 overflow-x-auto">
           {TABS.map((t) => {
-            // Exact match or a path *segment* boundary ("/generator/" not "/generator-v2") -
-            // a bare startsWith would also light up "/generator" while viewing "/generator-v2".
+            // Exact match or a path *segment* boundary ("/studies-v2/" not "/studies-v2x") -
+            // a bare startsWith on "/claims" would also light up while viewing a sibling route
+            // that merely shares the prefix.
             const aktiv =
               t.href === "/" ? pathname === "/" : pathname === t.href || pathname.startsWith(t.href + "/");
             return (

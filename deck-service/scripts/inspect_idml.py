@@ -3,10 +3,10 @@
 The IDML analog of inspect_template.py. An .idml is a zip of XML; text lives in
 Stories/Story_*.xml as <Content> runs, layout in Spreads/Spread_*.xml. This prints every
 text frame in reading order (page, then y, then x) with its story id, character count,
-paragraph styles and a text preview, so a human can curate the semantic story map that
-scripts/build_idml_manifest.py turns into config/idml_manifest.json.
+paragraph styles and a text preview, so a human can curate the semantic slot maps that
+scripts/build_idml_pages.py turns into config/idml_pages.json.
 
-Usage: python scripts/inspect_idml.py assets/whitepaper_template.idml
+Usage: python scripts/inspect_idml.py assets/whitepaper_sport.idml
 """
 from __future__ import annotations
 
@@ -74,4 +74,4 @@ def main(path: str) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "assets/whitepaper_template.idml")
+    main(sys.argv[1] if len(sys.argv) > 1 else "assets/whitepaper_sport.idml")

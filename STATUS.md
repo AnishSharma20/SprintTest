@@ -417,16 +417,8 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     slide's own text (title, content in reading order, citations, ≤1400 chars) for any slide the
     retry still missed. Verbatim slides (`ingredient`, `custom_*`) are exempt by contract (they are
     emitted as bare `{"layout": key}`); the spliced benefits slide likewise carries none.
-  - **Executive summary in every deck.** An EXECUTIVE SUMMARY (REQUIRED) prompt block: the third
-    slide, right after the agenda, must be an `exec_summary` distilling the whole argument into
-    2 to 4 points (title = the deck's core claim). Soft `SUMMARY:` nudge (`validate._summary_warning`)
-    + repair bucket, and a deterministic net `pipeline._ensure_exec_summary` that builds a
-    takeaways-style "Executive summary" slide from the deck's own action titles (headings ≤90 fit;
-    exec_summary point headings ≤42 don't) and inserts it after the agenda. The requirement travels
-    with the layout: disabling `exec_summary` on the About page disables prompt block, nudge and
-    net (the net also stands down if `takeaways` is disabled). `validate_plan` gained a
-    `disabled_layouts` param, threaded from `pipeline.generate` + `_visual_gate`; `NOTES:`/`SUMMARY:`
-    joined the soft-error tuples so neither can ever fail a deck.
+  - **Executive summary in every deck** (redesigned same day to a client-supplied spec — see
+    below; the first cut was icon-card points after the agenda, now superseded).
   - **PPTX as input.** `main._read_summary` now handles `.pptx`/`.potx` via `main._pptx_text`
     (python-pptx): all reader-facing text slide by slide — text frames, grouped shapes recursively,
     table rows, chart data best-effort (categories + series values), and the old deck's own speaker
@@ -435,10 +427,56 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     `app/generator/page.tsx`); the API route needed no change (it forwards files as-is; the
     existing ~4.5 MB Vercel body ceiling applies to big decks).
   - Verified: component tests (extraction on a real AKBM deck, validators, nets, a rendered deck
-    read back with notes on all 9 slides incl. chart/key_points/exec_summary) + a REAL end-to-end
-    generation with a .pptx as the only source (13-slide plan, exec_summary at position 3, 12/13
-    slides with planner-written notes, only the two verbatim splices without) + `tsc` clean + the
-    upload UI verified live in the browser.
+    read back with notes on every slide incl. chart/key_points) + a REAL end-to-end generation with
+    a .pptx as the only source + `tsc` clean + the upload UI verified live in the browser.
+- **Executive summary REDESIGNED to a fixed business-memo spec — same day, 2026-08-10.** The
+  client gave an exact spec after seeing the first icon-card version: **slide 2**, immediately
+  after the cover (not after the agenda — the agenda now comes third), fixed static title
+  "Executive summary", and exactly 5 labelled rows — `source` (study/studies: author, year,
+  journal, study type), `key_finding` (the single most important result with its real endpoint +
+  number), `supporting_findings` (one sentence on the secondary results), `relevance` (the
+  commercial so-what for Superba sales/marketing), `contents` (one line on what the deck covers) —
+  each a bold lead-in label + 1 to 2 full sentences, no orphan bullets, numbers over adjectives,
+  every claim traceable to the source (nothing new invented at the summary level), ~80 words total
+  across all 5 rows.
+  - **Schema** (`scripts/build_schema.py`, regenerated `config/slide_schema.json`): `exec_summary`'s
+    conditional dropped `title`/`asset_id`/`points` for 5 required string fields with maxLengths
+    (110/140/140/110/90 chars) sized as a safety ceiling above the ~80-word prompt target, not the
+    target itself. Title is FIXED like `ingredient`'s — the model writes none.
+  - **Renderer** (`renderer._fill_exec_summary`, `_place_labeled_row`): complete rewrite from
+    icon-chip rows + photo to 5 stacked text rows with a thin divider between, each one wrapped
+    paragraph with a bold "Label: " run followed by a normal-weight sentence run — no icons, no
+    photo (per spec). Title is stamped "Executive summary" regardless of the plan.
+  - **Prompt** (`planner.py`): STORYLINE reordered to cover → exec summary → agenda → sections;
+    AGENDA's position phrased relative to the exec summary (so it's still correct when the layout
+    is disabled) rather than a hardcoded slide number; a full EXECUTIVE SUMMARY block spells out
+    all 5 fields, the word budget and the no-invention rule.
+  - **Validation**: `_summary_warning` reworded for the new position/fields; new
+    `_exec_summary_length_warning` (`EXEC_LENGTH:` tag, soft) fires if the 5 rows exceed ~110
+    words, with its own `revise_plan` repair bucket instructing the model to tighten, not restructure.
+    `exec_summary` added to `_STRUCTURAL_LAYOUTS` (it's a mandatory fixed-role slide now, not a
+    content choice, so it no longer counts toward the layout-variety nudge); dropped from the
+    PHOTOS nudge's suggested targets (it no longer takes a photo).
+  - **Deterministic fallback** (`pipeline._ensure_exec_summary`): rewritten to build the actual
+    `exec_summary` shape (not a `takeaways` stand-in) from the deck's OWN already-generated content
+    only — `source` from `study_meta` citations (threaded in from `pipeline.generate`) or the deck's
+    own `source_citations`, `key_finding`/`supporting_findings` from its own action titles,
+    `relevance` a fixed generic line, `contents` from its own section titles — each capped to its
+    schema maxLength so a last-resort fallback can never overflow its box.
+    `pipeline._ensure_agenda`'s insertion point now steps past a leading exec_summary so the order
+    (cover, summary, agenda) holds regardless of which safety net fires first; `generate()` calls
+    the summary net before the agenda net for the same reason. `_NOTE_FIELDS` gained the 5 new
+    field names so the generic notes-fallback can still compose a note if a model-written
+    exec_summary slide is missing just its `speaker_notes`.
+  - Gallery sample content (`scripts/build_gallery.py`) updated to the new fields; the About page's
+    stored preview PNG regenerated (`python scripts/export_layout_gallery.py`, needs PowerPoint COM
+    locally) — only `exec_summary.png` + its manifest line changed, verified via `git status`.
+  - Verified: direct renderer/validate/pipeline unit checks (correct row text, `SUMMARY:` fires
+    when missing, `EXEC_LENGTH:` fires on a deliberately long slide, the deterministic fallback
+    composes real capped content and lands at position 2, the agenda net correctly lands at
+    position 3 after it) + a REAL end-to-end generation from a written trial summary: exec_summary
+    landed at slide 2 with real numbers ("14% more than placebo, p=0.03") in every field, 69 words
+    total, agenda at slide 3, notes present — `tsc` clean.
 
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.

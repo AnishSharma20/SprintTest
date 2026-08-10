@@ -321,14 +321,19 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 30},
                            "body": {"type": "string", "maxLength": 120}}}}}, "2x2 matrix")
 
-    _synth("exec_summary", "exec_summary", "dark", ["layout", "title", "points"], {
-        "title": {"type": "string", "maxLength": 90},
-        "asset_id": {"enum": asset_ids + [None]},
-        "points": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
-            "type": "object", "additionalProperties": False, "required": ["heading", "body"],
-            "properties": {"heading": {"type": "string", "maxLength": 42},
-                           "body": {"type": "string", "maxLength": 160},
-                           "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "text points + image")
+    # The deck's REQUIRED executive summary (slide 2, right after the cover). Title is FIXED
+    # ("Executive summary", stamped by the renderer) so it is deliberately absent here — like
+    # `ingredient`, the model writes no title for it. Five fixed labelled rows, each a lead-in
+    # label + 1-2 sentences; maxLengths sized so the 5 together cap just over the ~80-word target
+    # (a safety ceiling against overflow, not the target itself — the prompt drives the real budget).
+    _synth("exec_summary", "exec_summary", "dark",
+          ["layout", "source", "key_finding", "supporting_findings", "relevance", "contents"], {
+        "source": {"type": "string", "maxLength": 110},
+        "key_finding": {"type": "string", "maxLength": 140},
+        "supporting_findings": {"type": "string", "maxLength": 140},
+        "relevance": {"type": "string", "maxLength": 110},
+        "contents": {"type": "string", "maxLength": 90},
+    }, "executive summary: source/key_finding/supporting_findings/relevance/contents")
 
     _synth("comparison", "comparison", "light", ["layout", "title", "headers", "rows"], {
         "title": {"type": "string", "maxLength": 90},
@@ -679,6 +684,9 @@ def main():
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"}}}},
                         "asset_id": {"enum": asset_ids + [None]},
                         "benefit": {"enum": benefits},
+                        "source": {"type": "string"}, "key_finding": {"type": "string"},
+                        "supporting_findings": {"type": "string"}, "relevance": {"type": "string"},
+                        "contents": {"type": "string"},
                         "speaker_notes": {"type": "string", "maxLength": 1400},
                         "source_citations": {"type": "array", "maxItems": 6,
                                              "items": {"type": "string", "maxLength": 160}},

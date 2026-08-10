@@ -7,7 +7,7 @@
   {
     "key": "exec_summary",
     "kind": "synthetic",
-    "usage": "An executive-summary opener: 2 to 4 key `points` (each `heading` + short `body`) beside an image. Give EVERY point an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword) so each point shows as an icon chip; all points must draw from ONE source and be distinct (or give none an icon). Emit `title`, `points`, and optionally an `asset_id` photo for the right side. Good as an early overview slide."
+    "usage": "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget."
   },
   {
     "key": "numbered_cards",

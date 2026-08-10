@@ -56,7 +56,7 @@ LAYOUT_USAGE = {
     "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
     "chart":              "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers.",
     "matrix":             "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`.",
-    "exec_summary":       "The executive summary — REQUIRED in every deck, as the slide right after the agenda: 2 to 4 key `points` (each `heading` + short `body`) beside an image, together distilling the deck's WHOLE argument (a skim of this one slide should give the full story). Give EVERY point an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword) so each point shows as an icon chip; all points must draw from ONE source and be distinct (or give none an icon). Emit `title`, `points`, and optionally an `asset_id` photo for the right side.",
+    "exec_summary":       "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget.",
     "comparison":         "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings.",
     "stat":               "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point.",
     "harvey_ball":        "A Harvey-ball rating grid for comparing 3 or more OPTIONS across several GENUINELY QUALITATIVE criteria by relative strength. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty, 4 = full). USE ONLY when EVERY criterion is a subjective/relative rating (e.g. evidence strength, risk of bias, breadth, sustainability). Do NOT use it for exact numbers (sample size, dose, duration, price) — those belong in a `comparison` table with the real values, since balls hide the actual figure. NEVER use a ball for a yes/no outcome (a partial fill misreads a binary). If any row is a hard number or a yes/no, choose `comparison` instead.",
@@ -244,11 +244,25 @@ composition (never put benefit icons on nutrients). Omit only if the source is g
     # The executive-summary requirement travels with the layout: when the About page turns
     # exec_summary off, the deck simply doesn't get one (and validate skips its nudge too).
     exec_block = "" if "exec_summary" in disabled else """
-EXECUTIVE SUMMARY (REQUIRED — every deck): the THIRD slide, right after the agenda, MUST be an
-`exec_summary` slide that distills the deck's WHOLE argument into 2 to 4 points — the conclusion, the
-strongest evidence behind it, and what it means for the reader. Write it so a reader who sees ONLY this
-slide still gets the full story; the rest of the deck is the proof. Title it with the deck's core claim
-(an action title), not the words "Executive summary" alone.
+EXECUTIVE SUMMARY (REQUIRED — every deck): the SECOND slide, immediately after the cover (before
+the agenda), MUST be an `exec_summary` slide. Its title is FIXED to "Executive summary" — do NOT
+emit a `title` for it (anything you write there is ignored). Emit exactly these 5 fields, each ONE
+row: a bolded lead-in label (drawn automatically from the field name) followed by 1 to 2 full
+sentences:
+- `source`: which study or studies the deck is generated from — author(s), year, journal, study
+  type (e.g. "Randomized controlled trial, n=105, published in Frontiers in Nutrition 2025").
+- `key_finding`: the single most important result, with the actual endpoint and number (e.g.
+  "WOMAC pain score fell 14% more than placebo at 6 months").
+- `supporting_findings`: one sentence covering the secondary results the deck also presents.
+- `relevance`: why this matters commercially for Superba Krill — the so what for sales/marketing.
+- `contents`: what the deck covers, one line (e.g. "12 slides: study design, primary and
+  secondary endpoints, mechanism, positioning").
+RULES: full sentences, no orphan bullet fragments. Every claim here must already appear in the
+source material or the deck's own slides — invent NOTHING new at the summary level. Prefer a real
+number over an adjective ("14% reduction", never "a significant improvement"). Keep the five
+fields TOGETHER under about 80 words total — if the true content does not fit that tightly, it is
+not a summary: cut to the essential number and sentence per row; the full detail still lives on
+the deck's own slides and in their speaker_notes.
 """
     # "House favourite" stars from the About page: a soft preference among equally fitting
     # layouts — never a licence to force a shape onto content that doesn't have it.
@@ -338,22 +352,23 @@ your job is the STORYLINE, the LAYOUT choice per slide, and the COPY.
 
 STORYLINE (pyramid principle): open with the conclusion, then support it. One message per slide — each
 slide makes a single clear point and earns its place (never repeat a point across slides). Aim for about
-{target} slides. Open with a `title` cover, then an `agenda` slide, and use `section` dividers to chunk
-the narrative.
-
-AGENDA (REQUIRED — every deck): the SECOND slide MUST be an `agenda` slide listing the deck's main
-sections. Title is exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section
-label, well within 26 characters). They render as branded bullets on the standard Agenda layout.
+{target} slides. Open with a `title` cover, then the executive summary, then an `agenda` slide, and use
+`section` dividers to chunk the narrative.
 {exec_block}
+AGENDA (REQUIRED — every deck): the slide right after the executive summary (or right after the cover, if
+the executive summary is turned off) MUST be an `agenda` slide listing the deck's main sections. Title is
+exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section label, well within 26
+characters). They render as branded bullets on the standard Agenda layout.
+
 SPEAKER NOTES (REQUIRED — every slide): give EVERY slide a `speaker_notes` field with a presenter-ready
 script of 3 to 6 spoken sentences: an opening line that states the slide's takeaway, a walk through the
 slide's content in the order a presenter would point at it, the heavy detail that backs it up (effect
 sizes, CI, p values, dose, study design, full citations — this is where that detail lives, never on the
 slide), and a one-line bridge into the next slide. Write them in the SAME language as the slide text, as
 speech a presenter can read aloud (no headings, no markup). Structural beats need notes too: on the cover
-a welcome plus the deck's core message, on the agenda how the presentation will run, on a section divider
-what the coming section will show. The ONLY exceptions are verbatim slides (`ingredient` and team slides),
-which stay exactly {{"layout":"<key>"}}.
+a welcome plus the deck's core message, on the executive summary a spoken version of its 5 rows, on the
+agenda how the presentation will run, on a section divider what the coming section will show. The ONLY
+exceptions are verbatim slides (`ingredient` and team slides), which stay exactly {{"layout":"<key>"}}.
 
 CONTEXT BEFORE EVIDENCE (match AKBM's own decks): do not leap from the agenda straight into the first
 specific data point. Spend the NEXT 1 to 2 slides setting the scene first — the underlying trend, need or
@@ -558,12 +573,14 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     structural_errors = [e for e in errors
                          if "is a required property" in e or "is too short" in e]
     other_schema_errors = [e for e in errors
-                           if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:"))
+                           if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
+                                                "EXEC_LENGTH:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
     notes_errors = [e for e in errors if e.startswith("NOTES:")]
     summary_errors = [e for e in errors if e.startswith("SUMMARY:")]
+    exec_length_errors = [e for e in errors if e.startswith("EXEC_LENGTH:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -607,9 +624,17 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "identical:\n- " + "\n- ".join(notes_errors))
     if summary_errors:
         parts.append("EXECUTIVE SUMMARY FEEDBACK — the deck is missing its executive summary. INSERT one "
-                      "`exec_summary` slide directly AFTER the agenda slide, distilling the deck's whole "
-                      "argument into 2 to 4 points as the EXECUTIVE SUMMARY rule describes. Keep every "
-                      "existing slide unchanged and in order:\n- " + "\n- ".join(summary_errors))
+                      "`exec_summary` slide as the SECOND slide, immediately after the cover (before the "
+                      "agenda), with its 5 required fields (source, key_finding, supporting_findings, "
+                      "relevance, contents) as the EXECUTIVE SUMMARY rule describes. Keep every existing "
+                      "slide unchanged and in order:\n- " + "\n- ".join(summary_errors))
+    if exec_length_errors:
+        parts.append("EXECUTIVE SUMMARY LENGTH FEEDBACK — the executive summary is running long. TIGHTEN "
+                      "its 5 fields (source, key_finding, supporting_findings, relevance, contents) toward "
+                      "the roughly 80-word total target: keep the one essential number and sentence per "
+                      "row, cut everything else (the full detail already lives on the deck's own slides "
+                      "and in speaker_notes). Keep every other slide byte-for-byte "
+                      "identical:\n- " + "\n- ".join(exec_length_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)

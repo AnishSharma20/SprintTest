@@ -1254,40 +1254,47 @@ def _fill_matrix(prs, spec: dict, dark_index: int) -> None:
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
 
 
+_EXEC_SUMMARY_ROWS = (("source", "Source"), ("key_finding", "Key finding"),
+                     ("supporting_findings", "Supporting findings"), ("relevance", "Relevance"),
+                     ("contents", "Contents"))
+
+
+def _place_labeled_row(slide, l, t, w, h, label: str, text: str) -> None:
+    """One executive-summary row: a bold lead-in label followed inline by its sentence(s), in a
+    single wrapped paragraph — the business-memo style the slide's spec calls for, not a
+    heading-then-body stack."""
+    tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    try:
+        tf.auto_size = MSO_AUTO_SIZE.NONE
+    except Exception:  # noqa: BLE001
+        pass
+    tf.margin_left = tf.margin_right = Emu(0)
+    p = tf.paragraphs[0]
+    p.line_spacing = _LINE_SPACING
+    r1 = p.add_run(); r1.text = f"{label}: "
+    r1.font.size = Pt(_SZ_BODY); r1.font.bold = True; r1.font.name = _HEAD; r1.font.color.rgb = _WHITE
+    r2 = p.add_run(); r2.text = text or ""
+    r2.font.size = Pt(_SZ_BODY); r2.font.bold = False; r2.font.name = _BODY; r2.font.color.rgb = _LTEAL
+
+
 def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
-    """Executive summary: key points as icon-chip rows on the left, a picture (or teal panel) on the right.
-    Each point gets its own icon disc (a brand icon, or a numbered chip) — the consulting look, no accent bars."""
-    slide = _synth_slide(prs, dark_index, title=spec.get("title", ""))
-    pts = (spec.get("points") or [])[:4]
-    n = max(1, len(pts))
-    icons = _consistent_icons(pts)
-    left_w = 7.0
-    disc = 0.72
-    text_x = _MARGIN + disc + 0.3
-    tw = left_w - (disc + 0.3)
-    step = _BODY_H / n                     # equal vertical slot per point
-    for i, pt in enumerate(pts):
-        y = _BODY_TOP + i * step
-        _icon_disc(slide, _MARGIN + disc / 2, y + 0.42, disc,
-                   icon_path=(icons[i] if icons else None), number=(None if icons else i + 1))
-        _place_text(slide, text_x, y + 0.12, tw, 0.5, pt.get("heading", ""), _SZ_BODY, _WHITE, bold=True, font=_HEAD)
-        _place_text(slide, text_x, y + 0.6, tw, step - 0.68, pt.get("body", ""), _SZ_BODY, _LTEAL)
-    # right: photo if picked, else a teal panel — spans the full body zone
-    ix = _MARGIN + left_w + 0.6
-    iw = 13.333 - _MARGIN - ix
-    iy, ih = _BODY_TOP, _BODY_H
-    aid = spec.get("asset_id")
-    placed = False
-    if aid:
-        try:
-            path = _photo_path(aid)
-            if path is not None:
-                slide.shapes.add_picture(str(path), Inches(ix), Inches(iy), Inches(iw), Inches(ih)); placed = True
-        except Exception:  # noqa: BLE001
-            placed = False
-    if not placed:
-        pan = slide.shapes.add_shape(_BOX, Inches(ix), Inches(iy), Inches(iw), Inches(ih))
-        pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL2; pan.line.fill.background(); pan.shadow.inherit = False
+    """The deck's REQUIRED executive summary (slide 2, right after the cover): a FIXED static
+    title (never the model's — matches ingredient/agenda's forced-text pattern) and exactly 5
+    labelled rows (Source / Key finding / Supporting findings / Relevance / Contents), each a
+    bold lead-in label plus 1-2 sentences. A business-memo layout, not icon cards, so the whole
+    deck's argument reads in one glance — no photo, no icons, per the spec."""
+    slide = _synth_slide(prs, dark_index, title="Executive summary")
+    rows = [(label, spec.get(key, "")) for key, label in _EXEC_SUMMARY_ROWS if spec.get(key)]
+    n = max(1, len(rows))
+    rh = _BODY_H / n
+    for i, (label, text) in enumerate(rows):
+        y = _BODY_TOP + i * rh
+        _place_labeled_row(slide, _MARGIN, y + 0.1, _CONTENT_W, rh - 0.22, label, text)
+        if i < n - 1:
+            ln = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y + rh - 0.02), Inches(_CONTENT_W), Inches(0.012))
+            ln.fill.solid(); ln.fill.fore_color.rgb = _TEAL2; ln.line.fill.background(); ln.shadow.inherit = False
 
 
 def _fill_comparison(prs, spec: dict, light_index: int) -> None:

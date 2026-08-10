@@ -54,43 +54,73 @@ def _ensure_agenda(plan: dict) -> dict:
         return plan  # nothing sensible to list — leave the deck as-is
     agenda = {"layout": "agenda", "title": "Agenda", "items": items}
     at = 1 if slides and slides[0].get("layout") == "title" else 0
+    if len(slides) > at and slides[at].get("layout") == "exec_summary":
+        at += 1   # the executive summary sits between the cover and the agenda
     return {**plan, "slides": slides[:at] + [agenda] + slides[at:]}
 
 
-def _ensure_exec_summary(plan: dict, disabled_layouts=None) -> dict:
-    """Every deck opens with an executive summary right after the agenda. The planner is
-    instructed to write a proper `exec_summary` slide (and the SUMMARY: nudge drives the retry);
-    this is the deterministic net for when it still doesn't — built as a takeaways-style slide
-    from the deck's own ACTION TITLES, which already state each slide's takeaway as a full
-    sentence, so the derived summary is real content, not boilerplate. Skipped when the About
-    page turned exec_summary off (the requirement travels with the layout)."""
-    disabled = set(disabled_layouts or ())
-    slides = plan.get("slides", [])
-    if ("exec_summary" in disabled or "takeaways" in disabled or len(slides) < 4
-            or any(s.get("layout") == "exec_summary" for s in slides)):
+_EXEC_SUMMARY_CAPS = {"source": 110, "key_finding": 140, "supporting_findings": 140,
+                      "relevance": 110, "contents": 90}
+_EXEC_SUMMARY_SKIP = {"title", "agenda", "section", "highlight", "title_only", "closing",
+                      "ingredient", "exec_summary"}
+
+
+def _cap(text: str, n: int) -> str:
+    text = (text or "").strip()
+    return text if len(text) <= n else text[:n].rstrip()
+
+
+def _ensure_exec_summary(plan: dict, disabled_layouts=None, study_meta=None) -> dict:
+    """Every deck opens with an executive summary as slide 2, right after the cover and before
+    the agenda. The planner is instructed to write one (the SUMMARY:/EXEC_LENGTH: nudges drive
+    the retry); this is the deterministic net for when it still doesn't — composed ONLY from the
+    deck's OWN already generated content (its citations, action titles, and the picked studies'
+    metadata), never a new claim, so a fallback summary stays as honest as a model-written one.
+    Skipped when the About page turned exec_summary off (the requirement travels with the layout)."""
+    if "exec_summary" in (disabled_layouts or ()):
         return plan
-    skip = {"title", "agenda", "section", "highlight", "title_only", "closing", "ingredient"}
-    items, seen = [], set()
+    slides = plan.get("slides", [])
+    if len(slides) < 3 or any(s.get("layout") == "exec_summary" for s in slides):
+        return plan
+
+    content_titles, citations = [], []
     for s in slides:
         layout = s.get("layout") or ""
+        if layout in _EXEC_SUMMARY_SKIP or layout.startswith("custom_"):
+            continue
         t = (s.get("title") or "").strip()
-        if layout in skip or layout.startswith("custom_") or not t:
-            continue
-        if t.lower() in seen:
-            continue
-        seen.add(t.lower())
-        items.append({"heading": t[:90].rstrip()})
-        if len(items) >= 5:
-            break
-    if len(items) < 2:
-        return plan
-    summary = {"layout": "takeaways", "title": "Executive summary", "items": items,
-               "speaker_notes": " ".join(i["heading"] for i in items)}
-    # Directly after the agenda (or the cover, or at the very front — whichever exists).
-    at = 0
-    for i, s in enumerate(slides[:3]):
-        if s.get("layout") in ("title", "agenda"):
-            at = i + 1
+        if t:
+            content_titles.append(t)
+        citations.extend(s.get("source_citations") or [])
+    seen, uniq_cites = set(), []
+    for c in citations:
+        if c and c.lower() not in seen:
+            seen.add(c.lower())
+            uniq_cites.append(c)
+
+    if study_meta:
+        source = "; ".join(m.get("cite", "") for m in study_meta[:2] if m.get("cite"))
+    elif uniq_cites:
+        source = "; ".join(uniq_cites[:2])
+    else:
+        source = "See the cited sources in the deck's own slides and speaker notes."
+
+    key_finding = content_titles[0] if content_titles else \
+        "See the deck's evidence slides for the primary result."
+    supporting_findings = ". ".join(content_titles[1:3]) if len(content_titles) > 1 else \
+        "See the deck for its full body of supporting evidence."
+    relevance = "This strengthens Superba Krill's evidence based positioning in this area."
+    contents = f"{len(slides)} slides: " + ", ".join(
+        content_titles[:3] or ["study evidence", "mechanism", "positioning"])
+
+    summary = {"layout": "exec_summary",
+              "source": _cap(source, _EXEC_SUMMARY_CAPS["source"]),
+              "key_finding": _cap(key_finding, _EXEC_SUMMARY_CAPS["key_finding"]),
+              "supporting_findings": _cap(supporting_findings, _EXEC_SUMMARY_CAPS["supporting_findings"]),
+              "relevance": _cap(relevance, _EXEC_SUMMARY_CAPS["relevance"]),
+              "contents": _cap(contents, _EXEC_SUMMARY_CAPS["contents"]),
+              "speaker_notes": _cap(f"{key_finding} {supporting_findings}", 1400)}
+    at = 1 if slides and slides[0].get("layout") == "title" else 0
     return {**plan, "slides": slides[:at] + [summary] + slides[at:]}
 
 
@@ -98,7 +128,8 @@ def _ensure_exec_summary(plan: dict, disabled_layouts=None) -> dict:
 # speaker note, in the order a presenter would read the slide.
 _NOTE_FIELDS = ("subtitle", "banner", "body", "caption", "items", "columns", "points", "stats",
                 "metrics", "quadrants", "stages", "phases", "criteria", "bubbles", "before",
-                "after", "center", "total", "tagline", "contact")
+                "after", "center", "total", "tagline", "contact",
+                "source", "key_finding", "supporting_findings", "relevance", "contents")
 
 
 def _note_lines(value) -> list[str]:
@@ -219,7 +250,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
         # fine deck would get discarded here for a nudge it was never asked to address.
-        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:")
+        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:", "EXEC_LENGTH:")
         hard = [e for e in errs if not any(s in e for s in soft)]
         if hard:
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
@@ -280,7 +311,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             # auto-fit, so a few chars over is cosmetically absorbed at render, and a deck that
             # still under-uses layouts/photos after one revision is still a valid deck — don't
             # deny a non-technical user their deck over either.
-            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:")
+            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:", "EXEC_LENGTH:")
             hard = [e for e in errors if not any(s in e for s in soft)]
             if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))
@@ -288,8 +319,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                   + "\n- ".join(errors), file=sys.stderr)
 
     _p(70, "Rendering slides on the Superba template")
+    plan = _ensure_exec_summary(plan, disabled_layouts, study_meta)  # slide 2, before the agenda
     plan = _ensure_agenda(plan)                             # guarantee a contents/agenda slide
-    plan = _ensure_exec_summary(plan, disabled_layouts)     # guarantee an executive summary
     plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,

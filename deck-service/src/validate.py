@@ -17,7 +17,8 @@ from . import config
 # closing beat), not chosen for the shape of a point, so they don't count toward "use the
 # fuller synthetic catalog" variety — including them would let a deck satisfy the minimum
 # on structural slides alone while the actual content stayed on text/two_columns throughout.
-_STRUCTURAL_LAYOUTS = {"title", "agenda", "section", "highlight", "title_only", "closing", "ingredient"}
+_STRUCTURAL_LAYOUTS = {"title", "agenda", "section", "highlight", "title_only", "closing", "ingredient",
+                       "exec_summary"}
 
 
 def _coverage_warnings(plan: dict, photo_level: str = "default") -> list[str]:
@@ -58,8 +59,8 @@ def _coverage_warnings(plan: dict, photo_level: str = "default") -> list[str]:
             f"PHOTOS: only {photo_slides} slide(s) use a photo (asset_id) out of {total} — the photo "
             f"library (krill in the wild, Antarctic ocean/ice, product close-ups, lab and sourcing shots, "
             f"the team) is under-used. Add asset_id to at least {min_photos} slides total: use "
-            f"text_with_picture or picture_full for a couple of breather beats, and set asset_id on an "
-            f"exec_summary or photo_stats slide rather than leaving it off.")
+            f"text_with_picture or picture_full for a couple of breather beats, and set asset_id on a "
+            f"photo_stats slide rather than leaving it off.")
 
     return warnings
 
@@ -87,16 +88,39 @@ def _notes_warnings(plan: dict) -> list[str]:
 
 
 def _summary_warning(plan: dict, disabled_layouts=None) -> list[str]:
-    """Soft nudge: every deck opens with an executive summary right after the agenda (skipped
-    when the About page turned the exec_summary layout off). pipeline._ensure_exec_summary
-    backstops a deck that still lacks one after the retry."""
+    """Soft nudge: every deck opens with an executive summary as slide 2, right after the cover
+    and before the agenda (skipped when the About page turned the exec_summary layout off).
+    pipeline._ensure_exec_summary backstops a deck that still lacks one after the retry."""
     if "exec_summary" in (disabled_layouts or ()):
         return []
     slides = plan.get("slides", [])
-    if len(slides) < 4 or any(s.get("layout") == "exec_summary" for s in slides):
+    if len(slides) < 3 or any(s.get("layout") == "exec_summary" for s in slides):
         return []
-    return ["SUMMARY: the deck has no `exec_summary` slide — every deck needs one directly after "
-            "the agenda, distilling the whole argument into 2 to 4 points."]
+    return ["SUMMARY: the deck has no `exec_summary` slide — every deck needs one as slide 2, "
+            "right after the cover, with its 5 fields (source, key_finding, supporting_findings, "
+            "relevance, contents)."]
+
+
+_EXEC_SUMMARY_FIELDS = ("source", "key_finding", "supporting_findings", "relevance", "contents")
+_EXEC_SUMMARY_WORD_TARGET = 110  # ceiling with headroom over the ~80-word prompt target
+
+
+def _exec_summary_length_warning(plan: dict) -> list[str]:
+    """Soft nudge: the executive summary's 5 rows together should read as ~80 words, a tight
+    business-memo summary, not fill every field's generous schema maxLength ceiling. Tagged
+    EXEC_LENGTH: so it never blocks generation."""
+    for s in plan.get("slides", []):
+        if s.get("layout") != "exec_summary":
+            continue
+        text = " ".join(str(s.get(f) or "") for f in _EXEC_SUMMARY_FIELDS)
+        words = len(text.split())
+        if words > _EXEC_SUMMARY_WORD_TARGET:
+            return [f"EXEC_LENGTH: the executive summary is {words} words across its 5 rows — the "
+                    f"target is about 80 words total. Tighten each row to the essential number and "
+                    f"sentence; the full detail already lives on the deck's own slides and in "
+                    f"speaker_notes."]
+        return []
+    return []
 
 
 # Fields that intentionally stay short one-liners even when their maxLength happens to be
@@ -236,5 +260,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_text_density_warnings(plan))
     errors.extend(_notes_warnings(plan))
     errors.extend(_summary_warning(plan, disabled_layouts))
+    errors.extend(_exec_summary_length_warning(plan))
 
     return errors[:25]

@@ -43,10 +43,12 @@ STUDIES = [
 
 # ── Part 1: synthetic (code-built) layouts ───────────────────────────────────────
 SYNTH = [
-    {"layout": "exec_summary", "title": "Why phospholipid krill oil wins", "points": [
-        {"heading": "Better uptake", "body": "Phospholipid omega-3 absorbs more readily.", "icon_generic": "research"},
-        {"heading": "Cleaner oil", "body": "Cold processing keeps oxidation low.", "icon_generic": "quality"},
-        {"heading": "Proven", "body": "Backed by 50+ human clinical trials.", "icon_generic": "proven"}]},
+    {"layout": "exec_summary",
+     "source": "Randomized controlled trial, n=105, published in Frontiers in Nutrition 2025.",
+     "key_finding": "WOMAC knee pain score fell 14% more than placebo at 6 months.",
+     "supporting_findings": "Stiffness and physical function scores also improved versus placebo.",
+     "relevance": "Strengthens Superba Krill's evidence based positioning in joint health.",
+     "contents": "9 slides: study design, primary and secondary endpoints, mechanism, positioning."},
     {"layout": "numbered_cards", "title": "Three reasons Superba is positioned to win", "items": [
         {"heading": "The evidence is deep and human", "body": "More than 50 published human trials span heart, brain, joints and immunity.", "icon_generic": "proven"},
         {"heading": "The delivery form is the difference", "body": "Phospholipid EPA and DHA reach cell membranes more readily.", "icon_generic": "molecule"},

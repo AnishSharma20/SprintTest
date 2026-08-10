@@ -13,6 +13,7 @@ import {
   authorYearPrefix,
   composeFindingText,
   evidenceBasisLine,
+  guessAuthorSurname,
   splitDesignSuffix,
   stripCitationPrefix,
   REGULATORY_DISCLAIMER,
@@ -233,7 +234,7 @@ export default function FindingsV2({
           <div className="flex w-full flex-col gap-3 sm:w-[300px]">
             <button
               onClick={() => setCreating(true)}
-              className="rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C] sm:self-end"
+              className="self-end rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
             >
               + New finding
             </button>
@@ -307,17 +308,18 @@ export default function FindingsV2({
                   <p className="text-[16px] font-semibold leading-[1.5] tracking-[-0.01em] text-[#1D1D1F]">
                     {splitDesignSuffix(stripCitationPrefix(decodeEntities(c.text))).body}
                   </p>
-                  {c.studies?.pmid && (
-                    <div className="mt-2 text-right">
-                      <a
-                        href={`/studies-v2?pmid=${c.studies.pmid}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-block text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
-                      >
-                        Trace source →
-                      </a>
-                    </div>
-                  )}
+                  <div className="mt-2 text-right">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setValgtId(c.id);
+                      }}
+                      className="inline-block text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+                    >
+                      Trace source →
+                    </button>
+                  </div>
                 </li>
               );
             })}
@@ -395,11 +397,37 @@ function EvidencePanel({
   const studies = new Set(backing.map((b) => b.study_id ?? b.id)).size;
   // The trailing "(design)" parenthetical is design detail, not part of the headline sentence —
   // shown as its own bullet list next to the source below instead (2026-08-10 feedback).
-  const { body: titleBody, design: claimDesign } = splitDesignSuffix(decodeEntities(claim.text));
+  // The "Author Year:" citation prefix comes off too (2026-08-10 feedback: "not any name and
+  // year") — the study byline is now its own "Study N: Author, Title" list below instead.
+  const { body: designStripped, design: claimDesign } = splitDesignSuffix(decodeEntities(claim.text));
+  const titleBody = stripCitationPrefix(designStripped);
+  const seenStudyIds = new Set<string>();
+  const distinctStudies = backing
+    .filter((b) => {
+      const key = b.study_id ?? b.id;
+      if (!b.studies || seenStudyIds.has(key)) return false;
+      seenStudyIds.add(key);
+      return true;
+    })
+    .map((b) => b.studies!);
 
   return (
     <div>
-      <PanelHeader eyebrow="Evidence chain" onClose={onClose} title={titleBody}>
+      <PanelHeader
+        eyebrow="Evidence chain"
+        onClose={onClose}
+        title={<span className="text-[14.5px] font-semibold leading-snug">{titleBody}</span>}
+      >
+        {distinctStudies.length > 0 && (
+          <ul className="mt-2.5 space-y-0.5">
+            {distinctStudies.map((s, i) => (
+              <li key={s.pmid ?? i} className="text-[12.5px] leading-snug text-[#6E6E73]">
+                <span className="font-semibold text-[#1D1D1F]">Study {i + 1}:</span>{" "}
+                {guessAuthorSurname(s.authors) || "Unknown author"}, {s.title}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
           {statusPill(claim.status)}
           <span className="text-[12.5px] text-[#AEAEB2]">{categoryName}</span>

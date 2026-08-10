@@ -11,6 +11,7 @@ const TABS = [
   { href: "/findings-v2", label: "Findings Library V2" },
   { href: "/generator", label: "Content Generator" },
   { href: "/about", label: "About" },
+  { href: "/about-v2", label: "About V2" },
 ];
 
 export default function TopNav() {

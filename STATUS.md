@@ -187,7 +187,17 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   and/or whitepaper; each runs as its own parallel `/jobs` job with a per-asset progress row). Deck-only
   Length/Tone sit in a labelled "deck settings" card; **Output language** (searchable dropdown of ~45 languages
   with country-flag emojis, or type any language; threaded as `sprak`) + Context apply to all. A **product
-  selector** (Superba live; Lysoveta + Revervia greyed "Soon") is **UI-only** — not sent to the backend yet.
+  selector** (Superba live; Lysoveta, Revervia + **PL+** [added 2026-08-10] greyed "Soon") is **UI-only** —
+  not sent to the backend yet. The list now lives in **`app/products.ts`**, shared with the About page's
+  own brand picker (added same day, same file) so the two can't drift.
+- **About page brand picker — NEW 2026-08-10, frontend only.** The same product tiles as the generator,
+  above the existing settings sections: Superba selectable (all its rules/design/slides/photos unchanged
+  below), Lysoveta/Revervia/PL+ shown as real "Soon" tiles, disabled, with a note that they get their OWN
+  settings once onboarded rather than inheriting Superba's. No backend change — `generation_rules`/
+  `design_settings`/etc. are still single global rows; picking a brand other than Superba isn't possible
+  yet. Came out of a 3-option proposal (Tidy Up / Brand Switcher / Layout Studio) for combining the About
+  page cleanup with real multi-brand support — this is a first, safe slice of the "Brand Switcher" tier,
+  not the tier itself (no Supabase migration, no per-brand template).
 - **Blog generation** — `src/blog.py`: a science-based **blog draft** in the superbakrill.com/blog style
   (problem-hook → mechanism → clinical evidence → whitepaper CTA; cites the source studies). Shows editable in
   Tab 2; **Download Word (.docx)** via `/blog/docx` + `/api/blog-docx` (converts the *edited* draft).

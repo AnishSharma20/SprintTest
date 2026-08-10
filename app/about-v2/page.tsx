@@ -174,6 +174,7 @@ export default function AboutV2Page() {
   const [preferred, setPreferred] = useState<Set<string>>(new Set());
   const [layoutError, setLayoutError] = useState("");
   const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
+  const [galleryTheme, setGalleryTheme] = useState<"dark" | "light">("dark");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   // ----- design preview -----
@@ -1341,27 +1342,49 @@ export default function AboutV2Page() {
               </div>
 
               {/* filters */}
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {(
-                  [
-                    ["all", "All"],
-                    ["on", "In use"],
-                    ["off", `Turned off (${offCount})`],
-                    ["favourites", `Favourites (${preferred.size})`],
-                    ["mine", `Your slides (${customSlides.length})`],
-                  ] as const
-                ).map(([k, label]) => (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => setFilter(k)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                      filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {(
+                    [
+                      ["all", "All"],
+                      ["on", "In use"],
+                      ["off", `Turned off (${offCount})`],
+                      ["favourites", `Favourites (${preferred.size})`],
+                      ["mine", `Your slides (${customSlides.length})`],
+                    ] as const
+                  ).map(([k, label]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setFilter(k)}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
+                  {(
+                    [
+                      ["dark", "Blue Ocean"],
+                      ["light", "Pastel Blue"],
+                    ] as const
+                  ).map(([k, label]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setGalleryTheme(k)}
+                      title={`Preview slides in the ${label} color theme`}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        galleryTheme === k ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* the grid: custom slides first, then built-ins */}
@@ -1479,8 +1502,8 @@ export default function AboutV2Page() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/layout-gallery/${g.key}.png`}
-                        alt={`Example of the ${pretty(g.key)} slide`}
+                        src={`/layout-gallery${galleryTheme === "light" ? "-light" : ""}/${g.key}.png`}
+                        alt={`Example of the ${pretty(g.key)} slide in ${galleryTheme === "light" ? "Pastel Blue" : "Blue Ocean"}`}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"
                       />

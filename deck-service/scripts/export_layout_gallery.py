@@ -2,10 +2,16 @@
 """Export a PNG preview of every slide layout for the About page's layout gallery.
 
 Renders ONE deck holding one sample slide per layout (the same samples build_gallery.py
-uses for the design-review decks), rasterises it, and names each PNG after its layout key:
+uses for the design-review decks), rasterises it TWICE — once as-is (Blue Ocean, the dark
+default) and once with every slide's `background` forced to "light" (Pastel Blue, mirroring
+pipeline._apply_color_theme) — and names each PNG after its layout key:
 
-    public/layout-gallery/<layout>.png     what the Next app serves
-    app/layout-gallery.json                ordered manifest {key, kind, usage}
+    public/layout-gallery/<layout>.png         Blue Ocean (dark) — what the app served before
+    public/layout-gallery-light/<layout>.png   Pastel Blue (light) — same content, light theme
+    app/layout-gallery.json                    ordered manifest {key, kind, usage}
+
+Verbatim splices (ingredient, the benefits overview) ignore `background` entirely, so their
+light-mode PNG is identical to the dark one — expected, not a bug.
 
 Re-run after adding/removing a layout or changing the renderer's look:
 
@@ -38,6 +44,7 @@ from build_gallery import SYNTH, TMPL, notes_for          # noqa: E402
 
 APP_ROOT = ROOT.parent                                    # min-forste-app/
 PNG_DIR = APP_ROOT / "public" / "layout-gallery"
+PNG_DIR_LIGHT = APP_ROOT / "public" / "layout-gallery-light"
 MANIFEST = APP_ROOT / "app" / "layout-gallery.json"
 
 # The template's own placeholder layouts; everything else in the catalog is code built.
@@ -77,6 +84,30 @@ def _render_pngs(pptx: Path, out_dir: Path) -> list[Path]:
     return pngs
 
 
+def _export_set(slides: list[dict], keys: list[str], out_dir: Path, label: str) -> None:
+    """Render the given sample slides to one deck and export each to `out_dir/<key>.png`."""
+    data = renderer.render_deck({"deck_title": "Layout gallery", "language": "en",
+                                 "slides": slides})
+    with tempfile.TemporaryDirectory() as tmp:
+        pptx = Path(tmp) / "layout_gallery.pptx"
+        pptx.write_bytes(data)
+        raw = _render_pngs(pptx, Path(tmp) / "png")
+        # render_deck splices AKBM's verbatim "Proven Health Benefits" slide in as the
+        # second-to-last slide of EVERY deck, so the render is one slide longer than the plan.
+        if len(raw) != len(keys) + 1:
+            raise SystemExit(f"[{label}] Rendered {len(raw)} PNGs for {len(keys)} plan slides "
+                             f"(+1 verbatim benefits slide expected) — aborting.")
+        benefits_png = raw.pop(-2)
+        if out_dir.exists():
+            for old in out_dir.glob("*.png"):
+                old.unlink()
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for key, png in zip(keys, raw):
+            shutil.copyfile(png, out_dir / f"{key}.png")
+        shutil.copyfile(benefits_png, out_dir / "benefits_verbatim.png")
+    print(f"WROTE {len(keys)} {label} previews to {out_dir}")
+
+
 def main() -> None:
     # One sample slide per layout, cover first (it doubles as the `title` layout's preview).
     slides = [{"layout": "title", "title": "Superba by Aker BioMarine",
@@ -90,26 +121,12 @@ def main() -> None:
 
     for s in slides:
         s.setdefault("speaker_notes", notes_for(s["layout"]))
-    data = renderer.render_deck({"deck_title": "Layout gallery", "language": "en",
-                                 "slides": slides})
 
-    with tempfile.TemporaryDirectory() as tmp:
-        pptx = Path(tmp) / "layout_gallery.pptx"
-        pptx.write_bytes(data)
-        raw = _render_pngs(pptx, Path(tmp) / "png")
-        # render_deck splices AKBM's verbatim "Proven Health Benefits" slide in as the
-        # second-to-last slide of EVERY deck, so the render is one slide longer than the plan.
-        if len(raw) != len(keys) + 1:
-            raise SystemExit(f"Rendered {len(raw)} PNGs for {len(keys)} plan slides "
-                             f"(+1 verbatim benefits slide expected) — aborting.")
-        benefits_png = raw.pop(-2)
-        if PNG_DIR.exists():
-            for old in PNG_DIR.glob("*.png"):
-                old.unlink()
-        PNG_DIR.mkdir(parents=True, exist_ok=True)
-        for key, png in zip(keys, raw):
-            shutil.copyfile(png, PNG_DIR / f"{key}.png")
-        shutil.copyfile(benefits_png, PNG_DIR / "benefits_verbatim.png")
+    _export_set(slides, keys, PNG_DIR, "Blue Ocean (dark)")
+    # Same content, forced light — mirrors pipeline._apply_color_theme (verbatim splices like
+    # ingredient/benefits ignore `background`, so their light PNG is identical, by design).
+    light_slides = [{**s, "background": "light"} for s in slides]
+    _export_set(light_slides, keys, PNG_DIR_LIGHT, "Pastel Blue (light)")
 
     manifest = [{
         "key": k,

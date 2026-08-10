@@ -276,7 +276,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              custom_photo_blobs: dict[str, bytes] | None = None,
              preferred_layouts: str = "",
              disabled_photos: str = "",
-             preferred_photos: str = "") -> None:
+             preferred_photos: str = "",
+             color_theme: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -392,7 +393,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                        custom_photos=parsed_photos,
                                        preferred_layouts=parsed_preferred,
                                        disabled_photos=parsed_disabled_photos,
-                                       preferred_photos=parsed_preferred_photos))
+                                       preferred_photos=parsed_preferred_photos,
+                                       color_theme=color_theme.strip() or None))
 
         # Name each deck after its own generated deck_title (the topic), falling back to the source
         # file stem when the title yields no usable ASCII.
@@ -504,6 +506,7 @@ async def create_job(
     preferred_layouts: str = Form(default=""),
     disabled_photos: str = Form(default=""),
     preferred_photos: str = Form(default=""),
+    color_theme: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -558,7 +561,7 @@ async def create_job(
                            sprak, sider, study_meta, custom_rules, disabled_layouts,
                            design_settings, custom_slides_meta, custom_blobs,
                            custom_photos_meta, photo_blobs, preferred_layouts,
-                           disabled_photos, preferred_photos),
+                           disabled_photos, preferred_photos, color_theme),
                      daemon=True).start()
     return {"job_id": job_id}
 

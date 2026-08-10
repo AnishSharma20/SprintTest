@@ -61,6 +61,7 @@ export async function POST(req: Request) {
       "design_settings",
       "custom_slides_meta",
       "custom_photos_meta",
+      "color_theme",
     ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);

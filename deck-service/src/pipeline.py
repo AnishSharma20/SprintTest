@@ -180,6 +180,25 @@ def _strip_dashes_plan(plan: dict) -> dict:
     return walk(plan)
 
 
+# "auto" (default) leaves the AI's own per-slide light/dark rhythm choice alone. "dark"/"light"
+# force EVERY slide to one theme deck-wide — a deterministic override applied after planning, not
+# a prompt change, so it can never be second-guessed by the model. Named after the two real
+# backgrounds (see the About page's "Color themes" card): dark = Blue Ocean, light = Pastel Blue.
+_COLOR_THEMES = {"dark", "light"}
+
+
+def _apply_color_theme(plan: dict, color_theme: str | None) -> dict:
+    """Force every slide's `background` to the chosen theme, deck-wide. Verbatim slides (ingredient,
+    custom_*) and the benefits/appendix splices have no `background` concept and are untouched —
+    this only ever sets a field the renderer already reads."""
+    if color_theme not in _COLOR_THEMES:
+        return plan
+    slides = [{**s, "background": color_theme} if not (s.get("layout") or "").startswith("custom_")
+              and s.get("layout") != "ingredient" else s
+              for s in plan.get("slides", [])]
+    return {**plan, "slides": slides}
+
+
 def _wording(plan: dict) -> str:
     lines = [f"# {plan.get('deck_title', 'Superba deck')} — wording review", "",
              f"_Language: {plan.get('language', '?')} · {len(plan.get('slides', []))} slides._", ""]
@@ -279,12 +298,15 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              custom_photos: list[dict] | None = None,
              preferred_layouts: list[str] | None = None,
              disabled_photos: list[str] | None = None,
-             preferred_photos: list[str] | None = None) -> dict:
+             preferred_photos: list[str] | None = None,
+             color_theme: str | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
     and the starred house-favourite layouts — see renderer/planner. disabled_photos/
-    preferred_photos: the same on/off + star switches, but for individual BUILT-IN photos."""
+    preferred_photos: the same on/off + star switches, but for individual BUILT-IN photos.
+    color_theme: None/"auto" keeps the AI's own per-slide light/dark rhythm; "dark" or "light"
+    forces every slide deck-wide (Blue Ocean / Pastel Blue) — see _apply_color_theme."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -332,6 +354,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta)  # slide 2, before the agenda
     plan = _ensure_agenda(plan)                             # guarantee a contents/agenda slide
     plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
+    plan = _apply_color_theme(plan, color_theme)            # deck-wide theme override, if requested
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,
                                 custom_slides=custom_slides, custom_photos=custom_photos)

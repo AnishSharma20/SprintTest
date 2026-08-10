@@ -84,9 +84,36 @@ type TabKey = "rules" | "design" | "slides" | "photos";
 const TABS: { id: TabKey; label: string }[] = [
   { id: "rules", label: "Rules" },
   { id: "design", label: "Design" },
-  { id: "slides", label: "Slides" },
-  { id: "photos", label: "Photos" },
+  { id: "slides", label: "Slide library" },
+  { id: "photos", label: "Photo library" },
 ];
+
+/** Small line icons for the tab bar, matching the "About V2" mockup's sidebar concept. */
+function TabIcon({ id }: { id: TabKey }) {
+  const common = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8 } as const;
+  if (id === "rules") return <svg {...common} className="h-4 w-4"><path d="M4 6h16M4 12h16M4 18h10" /></svg>;
+  if (id === "design")
+    return (
+      <svg {...common} className="h-4 w-4">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+      </svg>
+    );
+  if (id === "slides")
+    return (
+      <svg {...common} className="h-4 w-4">
+        <rect x="3" y="5" width="18" height="12" rx="1.5" />
+        <path d="M8 21h8" />
+      </svg>
+    );
+  return (
+    <svg {...common} className="h-4 w-4">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="2" />
+      <path d="M21 16l-5.5-5.5L4 20" />
+    </svg>
+  );
+}
 
 const LOCKED = new Set(["title", "agenda"]);
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
@@ -717,10 +744,11 @@ export default function AboutV2Page() {
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              className={`flex-1 rounded-xl px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-[13.5px] font-semibold transition-colors ${
                 activeTab === t.id ? "bg-[#1D1D1F] text-white shadow-sm" : "text-[#6E6E73] hover:text-[#1D1D1F]"
               }`}
             >
+              <TabIcon id={t.id} />
               {t.label}
             </button>
           ))}

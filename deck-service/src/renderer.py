@@ -66,11 +66,14 @@ def _master_indices():
 _SZ_HERO = 60                          # hero data figures (stat values); ALSO the "big statement"
                                         # title layouts (cover, agenda, highlight) — matches what
                                         # those specific layouts used natively before normalization
-_SZ_TITLE = 18                         # regular slide titles (every other layout, native or code-built)
+_SZ_TITLE = 32                         # regular slide titles (every other layout, native or code-built)
 _SZ_SUBTITLE = 16                      # cover subtitle, column/text-picture headings
 _SZ_BODY = 14                          # body, bullets, table cells, items
 _SZ_SMALL = 12                         # eyebrows, captions, notes, footnotes, axis/step labels, footer
                                         # chrome — the floor; nothing in the deck goes smaller
+_SZ_AGENDA_ITEMS = 16                  # DELIBERATE exception to the scale above (client spec): the
+                                        # agenda's contents list, always Manrope BOLD at this size,
+                                        # never the deck-wide body size/weight.
 
 # When the About page's design settings override the body font, native template placeholders must
 # be forced onto it too (they otherwise inherit the template theme's font and the deck would mix
@@ -474,7 +477,14 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
     put(fields.get("heading"), _fit(spec.get("heading"), lim.get("heading")), size=_SZ_SUBTITLE)
     put(fields.get("body"), spec.get("body"), multiline=True, bullets=True)
     if spec.get("items"):
-        put(fields.get("items"), spec["items"], multiline=True, bullets=True)
+        if cat["kind"] == "agenda":
+            # Client spec: the agenda's contents list is ALWAYS Manrope Bold at _SZ_AGENDA_ITEMS,
+            # never the deck-wide body size/weight (only "agenda" maps an "items" field here — see
+            # config/layout_catalog.json — so this never reaches another kind).
+            put(fields.get("items"), spec["items"], multiline=True, bullets=True,
+                size=_SZ_AGENDA_ITEMS, bold=True, font=_BODY)
+        else:
+            put(fields.get("items"), spec["items"], multiline=True, bullets=True)
 
     col_head_max = (lim.get("columns") or {}).get("heading_max")
     col_maps = fields.get("columns", [])
@@ -812,9 +822,15 @@ _TBL_LINE = "C9D9D9"                  # table row-line colour (hex, for XML)
 # boxes use the same gutter; parallel boxes get equal heights. See _synth_slide().
 _MARGIN = 0.5                          # page margin — matches the template content-title LEFT (0.5)
 _CONTENT_W = 13.333 - 2 * _MARGIN      # 12.333 in usable width
-_TITLE_Y, _TITLE_H = 0.746, 0.95       # title TOP matches the template's content layouts exactly, so the
-_EYEBROW_Y = 1.72                      # title never shifts between a synthetic and a template slide
-_BODY_TOP, _BODY_BOTTOM = 2.1, 6.7     # fixed body zone (the footer band lives below 6.7)
+_TITLE_Y, _TITLE_H = 0.746, 1.3        # title TOP matches the template's content layouts exactly, so the
+                                        # title never shifts between a synthetic and a template slide.
+                                        # _TITLE_H covers a worst-case 2-line title at _SZ_TITLE (32pt
+                                        # needs ~1.11in for 2 lines); recalibrate together with
+                                        # _EYEBROW_Y/_BODY_TOP below if _SZ_TITLE changes again — this
+                                        # skeleton is FIXED, not dynamic (unlike the native-template
+                                        # title, which self-adjusts to its own real height).
+_EYEBROW_Y = 2.1                       # below the enlarged title zone; see _TITLE_H note
+_BODY_TOP, _BODY_BOTTOM = 2.55, 6.7    # fixed body zone (the footer band lives below 6.7)
 _BODY_H = _BODY_BOTTOM - _BODY_TOP     # 4.6 in
 _GUTTER = 0.3                          # the ONE gutter between all side-by-side boxes
 _PAD = 0.22                            # inner padding inside panels

@@ -643,7 +643,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 99
+                  "maxLength": 55
                 }
               }
             }
@@ -725,7 +725,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 167
+                  "maxLength": 94
                 }
               }
             }
@@ -750,7 +750,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 167
+                  "maxLength": 94
                 },
                 "body": {
                   "type": "string",
@@ -778,7 +778,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 84
+                  "maxLength": 47
                 },
                 "heading": {
                   "type": "string",
@@ -842,7 +842,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 81
+                  "maxLength": 45
                 },
                 "asset_id": {
                   "enum": [
@@ -898,7 +898,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 167
+                  "maxLength": 94
                 },
                 "columns": {
                   "type": "array",
@@ -997,7 +997,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 167
+                  "maxLength": 94
                 },
                 "columns": {
                   "type": "array",
@@ -1096,7 +1096,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 167
+                  "maxLength": 94
                 },
                 "columns": {
                   "type": "array",
@@ -1212,7 +1212,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "banner": {
                   "type": "string",
@@ -1318,7 +1318,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -1399,7 +1399,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "x_axis": {
                   "type": "string",
@@ -1500,7 +1500,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "headers": {
                   "type": "array",
@@ -1557,7 +1557,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -1614,7 +1614,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "options": {
                   "type": "array",
@@ -1677,7 +1677,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "stages": {
                   "type": "array",
@@ -1723,7 +1723,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "tagline": {
                   "type": "string",
@@ -1756,7 +1756,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -1812,7 +1812,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "phases": {
                   "type": "array",
@@ -1863,7 +1863,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "banner": {
                   "type": "string",
@@ -1965,7 +1965,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "items": {
                   "type": "array",
@@ -2013,7 +2013,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "before": {
                   "type": "object",
@@ -2072,7 +2072,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "banner": {
                   "type": "string",
@@ -2174,7 +2174,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "items": {
                   "type": "array",
@@ -2225,7 +2225,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -2284,7 +2284,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "items": {
                   "type": "array",
@@ -2333,7 +2333,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "center": {
                   "type": "string",
@@ -2385,7 +2385,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "center": {
                   "type": "string",
@@ -2436,7 +2436,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "center": {
                   "type": "string",
@@ -2488,7 +2488,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -2560,7 +2560,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "items": {
                   "type": "array",
@@ -2663,7 +2663,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -2732,7 +2732,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -2819,7 +2819,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "items": {
                   "type": "array",
@@ -2917,7 +2917,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "headers": {
                   "type": "array",
@@ -2980,7 +2980,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "total": {
                   "type": "string",
@@ -3037,7 +3037,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "caption": {
                   "type": "string",
@@ -3118,7 +3118,7 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "maxLength": 90
+                  "maxLength": 50
                 },
                 "headers": {
                   "type": "array",

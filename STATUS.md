@@ -296,6 +296,36 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   decision:** the two verbatim AKBM slides (`ingredient`, `benefits` overview) keep their own original
   sizes (9/10.5/20/28/36/54/55pt) — they are byte-identical splices, not renderer output.
 
+- **Titles bumped to 32pt; agenda items now a deliberate Manrope Bold exception — NEW
+  2026-08-10, client typography spec.** `_SZ_TITLE` 18→32 (still Exo 2 italic, unchanged font —
+  the client's "Headings" ask was already satisfied). Since the synthetic-slide skeleton's
+  title/eyebrow/body zone is FIXED geometry (not dynamic like the native-template path),
+  recalibrated `_TITLE_H` (0.95→1.3), `_EYEBROW_Y` (1.72→2.1) and `_BODY_TOP` (2.1→2.55, so
+  `_BODY_H` drops 4.6→4.15in) to fit a worst-case 2-line 32pt title without colliding with the
+  eyebrow — the native-template path needed no change (its title-height push/pull already
+  reads `title_size` dynamically). Every title char limit had to shrink to match the much
+  bigger font: `build_schema.py`'s `FONT_PT["content_title"/"section_title"]` 18→32 (regenerates
+  the 8 native layouts' limits correctly via the geometry formula), and the 31 synthetic
+  layouts' HAND-AUTHORED `"title": maxLength: 90` (never geometry-derived, chosen to match the
+  old "ACTION TITLES... roughly 90 characters" prompt line) dropped to 50 across all of them —
+  90 sat safely under the old ~167-char geometric ceiling but would have left almost no margin
+  under the new ~94-char ceiling at 32pt. Planner's ACTION TITLES rule updated to "roughly 50
+  characters... tight enough to usually fit on ONE line" so the model's own target matches the
+  new hard limit (previously a mismatch here would have driven constant shorten-retries).
+  **Agenda items — a deliberate, named exception to the 3-size rule**: new `_SZ_AGENDA_ITEMS=16`
+  constant, forced Manrope Bold (`font=_BODY` + `bold=True`) only for `cat["kind"]=="agenda"`'s
+  `items` field in `_fill_slide` (verified only that one kind maps an `items` field at all, via
+  `layout_catalog.json`, so the branch can never fire for another layout). `agenda_item` in
+  `build_schema.py`'s `FONT_PT` was ALREADY 16 (a pre-existing, unnoticed mismatch with the
+  renderer's actual 14pt/regular-weight output) — the geometry side needed no change, only the
+  renderer catching up to what the schema already assumed. Regenerated
+  `config/slide_schema.json` + the About page's 42 layout-gallery preview PNGs. Verified: direct
+  render+rasterize of a 2-line-title synthetic slide with an eyebrow (no collision), the agenda
+  slide (bold Manrope items, matches the client's reference screenshot exactly) and a native
+  `text` layout with a 2-line title (dynamic push/pull absorbed the bigger title cleanly); a REAL
+  end-to-end generation where every model-written title landed 33-48 chars (comfortably under
+  the new 50-char ceiling) with no title-related validation warnings; `tsc` clean.
+
 - **About page: team rules + layout on/off switches — NEW 2026-08-07, `/about`, 5th nav tab.**
   Two user-editable levers over PPTX generation, shared across users via Supabase (**migration
   `0004_generation_rules_and_layouts.sql`, must be run in the Supabase SQL editor**; until then the

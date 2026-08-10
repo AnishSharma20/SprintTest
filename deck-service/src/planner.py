@@ -377,12 +377,13 @@ the way AKBM's own presentations open before turning to Superba specific proof. 
 `serpentine`, `photo_stats`, `numbered_cards`, `stat`, `chart`, `implications`, `highlight`, or a `text`
 slide. Only after this scene setting should the deck turn to the first slide of product specific evidence.
 Keep full ACTION TITLE discipline even here — a real claim about the landscape (e.g. "Omega 3 deficiency
-now affects most of the adult population"), never a bare topic label ("Omega 3 status").
+now affects most adults"), never a bare topic label ("Omega 3 status").
 
 ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
 claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
-Index"). Keep it to AT MOST 2 lines, roughly 90 characters — a reader who skims only the titles should get
-the whole argument. Mirror this discipline across the deck.
+Index"). Titles render LARGE (32pt) — keep it to AT MOST 2 lines, roughly 50 characters, tight enough to
+usually fit on ONE line — a reader who skims only the titles should get the whole argument. Mirror this
+discipline across the deck.
 
 TEXT DENSITY (write substantially, not sparsely): every body/detail field has a real character budget for
 its box — the [bracketed] limit printed next to each layout below is that budget, measured from the actual

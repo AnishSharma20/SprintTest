@@ -141,14 +141,6 @@ export default function FindingsV2({
 
   const sidebar = (
     <div className="pb-6">
-      <div className="pt-8">
-        <button
-          onClick={() => setCreating(true)}
-          className="w-full rounded-full bg-[#1D1D1F] px-4 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
-        >
-          New finding
-        </button>
-      </div>
       <SideSection title="Status">
         {(["pending", "approved", "rejected", "all"] as StatusFilter[]).map((s) => (
           <SideItem key={s} active={status === s} onClick={() => setStatus(s)} count={statusCounts[s]}>
@@ -213,7 +205,13 @@ export default function FindingsV2({
               What we can say about the product · every finding is traceable to a verified study quote.
             </p>
           </div>
-          <div className="w-full sm:w-[300px]">
+          <div className="flex w-full flex-col gap-3 sm:w-[300px]">
+            <button
+              onClick={() => setCreating(true)}
+              className="rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C] sm:self-end"
+            >
+              + New finding
+            </button>
             <SearchBox value={q} onChange={setQ} placeholder="Search findings" />
           </div>
         </div>
@@ -377,43 +375,52 @@ function EvidencePanel({
             {backing.map((b) => {
               const qte = (b.claim_quotes ?? [])[0];
               return (
-                <div key={b.id} className="mb-5 border-l-2 border-[#D8D8DC] pl-4">
+                <div key={b.id} className="mb-4 overflow-hidden rounded-[16px] border border-[#E8E8ED]">
                   {/* The evidence IS the verbatim quote from the study, not a restated claim. */}
-                  <p className="text-[14.5px] leading-[1.6] text-[#2C2C2E]">
-                    “{decodeEntities(qte?.quote ?? b.text)}”
-                  </p>
-                  <div className="mt-2 text-[12.5px] leading-relaxed text-[#6E6E73]">
-                    {b.studies?.title && (
-                      <span className="font-semibold text-[#1D1D1F]">{b.studies.title}</span>
-                    )}
-                    {qte?.location && <span className="text-[#AEAEB2]"> · {qte.location}</span>}
-                    <span className="mt-0.5 flex flex-wrap items-center gap-x-3">
-                      {b.studies?.pmid && (
-                        <>
-                          <a
-                            href={`https://pubmed.ncbi.nlm.nih.gov/${b.studies.pmid}/`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-semibold text-[#0A7A8A] hover:underline"
-                          >
-                            PubMed
-                          </a>
-                          <a
-                            href={`/studies-v2?pmid=${b.studies.pmid}`}
-                            className="font-semibold text-[#0A7A8A] hover:underline"
-                          >
-                            Study summary
-                          </a>
-                        </>
-                      )}
-                      {qte &&
-                        (qte.verified ? (
-                          <span className="font-semibold text-[#2E7D4F]">✓ verbatim</span>
-                        ) : (
-                          <span className="font-semibold text-[#B3403A]">quote not verbatim</span>
-                        ))}
-                    </span>
+                  <div className="border-l-[3px] border-[#0A7A8A] bg-[#FAFDFE] px-5 py-4">
+                    <p className="text-[14.5px] leading-[1.6] text-[#2C2C2E]">
+                      “{decodeEntities(qte?.quote ?? b.text)}”
+                    </p>
                   </div>
+                  <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-3.5">
+                    <div className="min-w-0">
+                      {b.studies?.title && (
+                        <p className="text-[13px] font-semibold leading-snug text-[#1D1D1F]">
+                          {b.studies.title}
+                        </p>
+                      )}
+                      {qte?.location && (
+                        <p className="mt-0.5 text-[11.5px] text-[#AEAEB2]">Cited from: {qte.location}</p>
+                      )}
+                    </div>
+                    {qte && (
+                      <span
+                        className={`shrink-0 text-[11.5px] font-semibold ${
+                          qte.verified ? "text-[#2E7D4F]" : "text-[#B3403A]"
+                        }`}
+                      >
+                        {qte.verified ? "✓ Verbatim" : "Not verbatim"}
+                      </span>
+                    )}
+                  </div>
+                  {b.studies?.pmid && (
+                    <div className="flex gap-2 border-t border-[#F0F0F2] px-5 py-3">
+                      <a
+                        href={`/studies-v2?pmid=${b.studies.pmid}`}
+                        className="rounded-full bg-[#1D1D1F] px-4 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+                      >
+                        View study
+                      </a>
+                      <a
+                        href={`https://pubmed.ncbi.nlm.nih.gov/${b.studies.pmid}/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-full px-4 py-1.5 text-[12px] font-semibold text-[#1D1D1F] shadow-[inset_0_0_0_1px_#D9D9DE] transition-colors hover:bg-[#F5F5F7]"
+                      >
+                        PubMed
+                      </a>
+                    </div>
+                  )}
                 </div>
               );
             })}

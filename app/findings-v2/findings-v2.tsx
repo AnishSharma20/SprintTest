@@ -13,11 +13,26 @@ import {
   authorYearPrefix,
   composeFindingText,
   evidenceBasisLine,
+  splitDesignSuffix,
   stripCitationPrefix,
   REGULATORY_DISCLAIMER,
 } from "../lib/finding-format";
 import CategoryManager from "../category-manager";
 import type { Link, LibClaim } from "./page";
+import studyPdfsRaw from "../study-pdfs.json";
+
+const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
+
+/** The real paper's PDF when AKBM supplied one, else its DOI page, else its PubMed record — same
+ * fallback chain as Scientific Studies V2's "Open study in PDF" (app/studies-v2/wiki-v2.tsx). */
+function studySourceHref(s: { pmid: string | null; doi: string | null } | null | undefined): string | null {
+  if (!s) return null;
+  const local = s.pmid ? STUDY_PDFS[s.pmid] : undefined;
+  if (local) return `/study-pdfs/${local.file}`;
+  if (s.doi) return `https://doi.org/${s.doi}`;
+  if (s.pmid) return `https://pubmed.ncbi.nlm.nih.gov/${s.pmid}/`;
+  return null;
+}
 import {
   V2Shell,
   SideSection,
@@ -290,16 +305,18 @@ export default function FindingsV2({
                     </span>
                   </div>
                   <p className="text-[16px] font-semibold leading-[1.5] tracking-[-0.01em] text-[#1D1D1F]">
-                    {stripCitationPrefix(decodeEntities(c.text))}
+                    {splitDesignSuffix(stripCitationPrefix(decodeEntities(c.text))).body}
                   </p>
                   {c.studies?.pmid && (
-                    <a
-                      href={`/studies-v2?pmid=${c.studies.pmid}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-2 inline-block text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
-                    >
-                      Trace source →
-                    </a>
+                    <div className="mt-2 text-right">
+                      <a
+                        href={`/studies-v2?pmid=${c.studies.pmid}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-block text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+                      >
+                        Trace source →
+                      </a>
+                    </div>
                   )}
                 </li>
               );
@@ -376,10 +393,13 @@ function EvidencePanel({
 
   const comments = claim.claim_comments ?? [];
   const studies = new Set(backing.map((b) => b.study_id ?? b.id)).size;
+  // The trailing "(design)" parenthetical is design detail, not part of the headline sentence —
+  // shown as its own bullet list next to the source below instead (2026-08-10 feedback).
+  const { body: titleBody, design: claimDesign } = splitDesignSuffix(decodeEntities(claim.text));
 
   return (
     <div>
-      <PanelHeader eyebrow="Evidence chain" onClose={onClose} title={decodeEntities(claim.text)}>
+      <PanelHeader eyebrow="Evidence chain" onClose={onClose} title={titleBody}>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
           {statusPill(claim.status)}
           <span className="text-[12.5px] text-[#AEAEB2]">{categoryName}</span>
@@ -405,53 +425,53 @@ function EvidencePanel({
             </div>
             {backing.map((b) => {
               const qte = (b.claim_quotes ?? [])[0];
+              const pdfHref = studySourceHref(b.studies);
               return (
                 <div key={b.id} className="mb-4 overflow-hidden rounded-[16px] border border-[#E8E8ED]">
                   {/* The evidence IS the verbatim quote from the study, not a restated claim. */}
                   <div className="border-l-[3px] border-[#0A7A8A] bg-[#FAFDFE] px-5 py-4">
-                    <p className="text-[14.5px] leading-[1.6] text-[#2C2C2E]">
+                    <p className="text-[13px] leading-[1.6] text-[#2C2C2E]">
                       “{decodeEntities(qte?.quote ?? b.text)}”
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-3.5">
-                    <div className="min-w-0">
-                      {b.studies?.title && (
-                        <p className="text-[13px] font-semibold leading-snug text-[#1D1D1F]">
-                          {b.studies.title}
-                        </p>
-                      )}
-                      {qte?.location && (
-                        <p className="mt-0.5 text-[11.5px] text-[#AEAEB2]">Cited from: {qte.location}</p>
-                      )}
-                    </div>
-                    {qte && (
-                      <span
-                        className={`shrink-0 text-[11.5px] font-semibold ${
-                          qte.verified ? "text-[#2E7D4F]" : "text-[#B3403A]"
-                        }`}
-                      >
-                        {qte.verified ? "✓ Verbatim" : "Not verbatim"}
-                      </span>
+                  <div className="border-t border-[#F0F0F2] px-5 py-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#AEAEB2]">
+                      Study supporting this quote
+                    </p>
+                    {b.studies?.title && (
+                      <p className="mt-1 text-[13px] font-semibold leading-snug text-[#1D1D1F]">
+                        {b.studies.title}
+                      </p>
                     )}
-                  </div>
-                  {b.studies?.pmid && (
-                    <div className="flex gap-2 border-t border-[#F0F0F2] px-5 py-3">
+                    <p className="mt-1.5 text-[11.5px] text-[#6E6E73]">
+                      {qte && (
+                        <span className={`font-semibold ${qte.verified ? "text-[#2E7D4F]" : "text-[#B3403A]"}`}>
+                          {qte.verified ? "Verbatim quote" : "Not verified verbatim"}
+                        </span>
+                      )}
+                      {qte?.location && <> · from the {qte.location} section of the paper above</>}
+                    </p>
+                    {claimDesign.length > 0 && (
+                      <ul className="mt-2.5 space-y-1">
+                        {claimDesign.map((d, i) => (
+                          <li key={i} className="flex items-start gap-1.5 text-[11.5px] text-[#6E6E73]">
+                            <span className="mt-[6px] h-[3px] w-[3px] shrink-0 rounded-full bg-[#C7C7CC]" />
+                            {d}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {pdfHref && (
                       <a
-                        href={`/studies-v2?pmid=${b.studies.pmid}`}
-                        className="rounded-full bg-[#1D1D1F] px-4 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
-                      >
-                        Trace source
-                      </a>
-                      <a
-                        href={`https://pubmed.ncbi.nlm.nih.gov/${b.studies.pmid}/`}
+                        href={pdfHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-full px-4 py-1.5 text-[12px] font-semibold text-[#1D1D1F] shadow-[inset_0_0_0_1px_#D9D9DE] transition-colors hover:bg-[#F5F5F7]"
+                        className="mt-2.5 inline-block text-[11.5px] font-semibold text-[#0A7A8A] hover:underline"
                       >
-                        PubMed
+                        Open study in PDF →
                       </a>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })}

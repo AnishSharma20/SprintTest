@@ -54,6 +54,18 @@ export function stripCitationPrefix(text: string): string {
   return text.replace(/^[A-Za-zÀ-ÿ' .]+ \d{4}:\s*/, "");
 }
 
+/** Splits a finding's trailing "(design, terms, here)" parenthetical off the headline sentence, so
+ * the design detail can be shown as its own bullet list next to the source instead of cluttering
+ * the sentence (2026-08-10 feedback: the "(...)" reads noisy inline). Only the LAST parenthetical
+ * at the very end of the string counts as the design suffix — an inline aside earlier in the
+ * sentence (e.g. "Osbond acid (ObA)") is left untouched in the body. Falls back to no suffix if the
+ * text doesn't end in one (e.g. an aggregated category-scope finding, which has no design). */
+export function splitDesignSuffix(text: string): { body: string; design: string[] } {
+  const m = text.match(/^(.*)\s\(([^()]+)\)\s*$/);
+  if (!m) return { body: text, design: [] };
+  return { body: m[1], design: m[2].split(",").map((s) => s.trim()).filter(Boolean) };
+}
+
 /** Closest available signal for "human clinical study" vs "meta-analysis": the study's own title.
  * There is no structured study-design field in the schema (see deck-service-architecture memory) —
  * this is a transparent, inspectable heuristic, not a claim of certainty. */

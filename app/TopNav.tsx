@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import AkbmLogo from "./AkbmLogo";
 
 const TABS = [
+  { href: "/data-warehouse", label: "Data Warehouse" },
   { href: "/", label: "Scientific Studies" },
   { href: "/studies-v2", label: "Scientific Studies V2" },
   { href: "/claims", label: "Findings Library" },

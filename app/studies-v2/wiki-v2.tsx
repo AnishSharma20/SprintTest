@@ -13,8 +13,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
 import type { Summary } from "../studies-data";
 import { loadOverrides, saveOverride, type Override } from "../summary-overrides";
-import ClaimsModal from "../claims-panel";
 import CategoryManager from "../category-manager";
+import DiagramsModal from "../v2/diagrams-modal";
 import studyFiguresRaw from "../study-figures.json";
 import {
   applyStudyMeta,
@@ -71,8 +71,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   const [sok, setSok] = useState("");
   const [valgtKategori, setValgtKategori] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortBy>("quality");
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [fullTextOnly, setFullTextOnly] = useState(false);
   const [qualHigh, setQualHigh] = useState(true);
   const [qualModerate, setQualModerate] = useState(true);
   const [qualLowUnscored, setQualLowUnscored] = useState(true);
@@ -156,12 +154,10 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         s.tidsskrift.toLowerCase().includes(q) ||
         s.forfattere.toLowerCase().includes(q);
       const treffKat = !valgtKategori || (s.kategoriIds ?? []).includes(valgtKategori);
-      const treffVer = !verifiedOnly || !!s.verified || !!overrides[s.pmid];
-      const treffFt = !fullTextOnly || !!s.harFulltekst;
       const lbl = s.quality?.label;
       const treffKval =
         lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : qualLowUnscored;
-      return treffSok && treffKat && treffVer && treffFt && treffKval;
+      return treffSok && treffKat && treffKval;
     });
     return list.sort((a, b) => {
       if (sortBy === "quality") {
@@ -172,7 +168,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       }
       return (b.ar || "").localeCompare(a.ar || "");
     });
-  }, [studier, sok, valgtKategori, sortBy, verifiedOnly, fullTextOnly, qualHigh, qualModerate, qualLowUnscored, overrides]);
+  }, [studier, sok, valgtKategori, sortBy, qualHigh, qualModerate, qualLowUnscored]);
 
   const valgt = useMemo(
     () => (valgtPmid ? studier.find((s) => s.pmid === valgtPmid) ?? null : null),
@@ -209,22 +205,18 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           </button>
         )}
       </SideSection>
-      <SideSection title="Filter">
-        <SideCheck checked={verifiedOnly} onChange={setVerifiedOnly}>
-          Verified only
-        </SideCheck>
-        <SideCheck checked={fullTextOnly} onChange={setFullTextOnly}>
-          Full text
-        </SideCheck>
-        <SideCheck checked={qualHigh} onChange={setQualHigh}>
-          High quality
-        </SideCheck>
-        <SideCheck checked={qualModerate} onChange={setQualModerate}>
-          Moderate
-        </SideCheck>
-        <SideCheck checked={qualLowUnscored} onChange={setQualLowUnscored}>
-          Low or unscored
-        </SideCheck>
+      <SideSection title="Quality">
+        <div className="pl-1">
+          <SideCheck checked={qualHigh} onChange={setQualHigh}>
+            High quality
+          </SideCheck>
+          <SideCheck checked={qualModerate} onChange={setQualModerate}>
+            Moderate
+          </SideCheck>
+          <SideCheck checked={qualLowUnscored} onChange={setQualLowUnscored}>
+            Low or unscored
+          </SideCheck>
+        </div>
       </SideSection>
       <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
     </div>
@@ -440,7 +432,7 @@ function StudyPanel({
   onClose: () => void;
 }) {
   const [editing, setEditing] = useState(false);
-  const [claimsOpen, setClaimsOpen] = useState(false);
+  const [diagramsOpen, setDiagramsOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
 
   // Leaving a study closes any half-open edit state from the previous one.
@@ -478,21 +470,20 @@ function StudyPanel({
         <p className="mt-1.5 text-[12px] text-[#AEAEB2]" title={qTitle}>
           {crumbBits.join(" · ")}
         </p>
-        <div className="mt-4 flex flex-wrap gap-5 text-[13.5px] font-semibold">
-          <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[#0A7A8A] hover:underline">
-            PubMed
+        <div className="mt-4 flex flex-wrap items-baseline gap-5 text-[13.5px] font-semibold">
+          {/* The original PDFs are not stored in the tool, so this resolves via the DOI to the
+              publisher's page (where the PDF lives), falling back to the PubMed record. */}
+          <a
+            href={s.doiUrl ?? s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#0A7A8A] hover:underline"
+          >
+            Open study in PDF
           </a>
-          {s.doiUrl && (
-            <a href={s.doiUrl} target="_blank" rel="noopener noreferrer" className="text-[#0A7A8A] hover:underline">
-              DOI
-            </a>
-          )}
-          <button onClick={() => setClaimsOpen(true)} className="text-[#0A7A8A] hover:underline">
-            Evidence{figures > 0 ? ` & figures` : ""}
-          </button>
           {figures > 0 && (
             <span className="font-normal text-[#AEAEB2]">
-              {figures} figure{figures === 1 ? "" : "s"} from the paper
+              {figures} diagram{figures === 1 ? "" : "s"} from the paper
             </span>
           )}
         </div>
@@ -525,10 +516,10 @@ function StudyPanel({
             <PanelSection label="Limitations" text={summary.limitations} />
             <div className="mt-7 flex flex-wrap gap-2.5">
               <button
-                onClick={() => setClaimsOpen(true)}
+                onClick={() => setDiagramsOpen(true)}
                 className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
               >
-                View evidence
+                View diagrams
               </button>
               <button
                 onClick={() => setEditing(true)}
@@ -576,7 +567,7 @@ function StudyPanel({
         )}
       </div>
 
-      {claimsOpen && <ClaimsModal s={s} reviewer={reviewer} onClose={() => setClaimsOpen(false)} />}
+      {diagramsOpen && <DiagramsModal pmid={s.pmid} title={s.tittel} onClose={() => setDiagramsOpen(false)} />}
     </div>
   );
 }

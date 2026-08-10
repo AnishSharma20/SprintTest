@@ -908,6 +908,35 @@ export default function AboutV2Page() {
                 that open the decks; the page margin and box gutter apply to the code drawn slide types.
               </p>
 
+              {/* ----- color themes — informational only, names the two backgrounds the AI already
+                  alternates between per slide for visual rhythm; no new setting, no behavior change ----- */}
+              <div className="mt-4 rounded-[4px] border border-[#E3EDF2] bg-[#FBFBFD] p-4">
+                <div className="text-xs font-bold uppercase tracking-[0.08em] text-[#6E6E73]">Color themes</div>
+                <p className="mt-1 max-w-2xl text-xs text-zinc-500">
+                  Every deck alternates between these two background themes, slide by slide, for visual
+                  rhythm — the AI picks which one fits each slide; there is no separate switch for it.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span
+                      className="h-6 w-6 shrink-0 rounded-[4px]"
+                      style={{ background: "linear-gradient(135deg, #163536, #003462)" }}
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">Blue Ocean</div>
+                      <div className="text-[10.5px] text-zinc-400">Dark theme &middot; deep-sea gradient</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#E9F7F8" }} />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">Pastel Blue</div>
+                      <div className="text-[10.5px] text-zinc-400">Light theme</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {!designMigrated ? (
                 <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
                   Design settings live in the shared database and it is not ready yet: run migration

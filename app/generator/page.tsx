@@ -205,13 +205,15 @@ export default function ContentGenerator() {
     return [...m.entries()].sort((a, b) => b[1].count - a[1].count);
   }, [approvedClaims]);
 
-  const inkluderteClaims = useMemo(
+  // The category toggle's candidates — only "in play" while the master switch is on.
+  const kategoriKandidater = useMemo(
     () => (!inkluderClaims ? [] : approvedClaims.filter((c) => claimKatFilter.size === 0 || claimKatFilter.has(c.category_id))),
     [inkluderClaims, approvedClaims, claimKatFilter]
   );
 
-  // Findings that restate ONE study's own endpoint result (scope "paper") — shown right under
-  // that study in the picker below, the user's own choice per study rather than a category toggle.
+  // Findings that restate ONE study's own endpoint result (scope "paper"), keyed by that study's
+  // pmid — picking a study surfaces its own findings as candidates below, alongside the category
+  // toggle's, in the single unified "Approved findings" picker (no separate per-study checklist).
   const funnByPmid = useMemo(() => {
     const m: Record<string, ApprovedClaim[]> = {};
     approvedClaims.forEach((c) => {
@@ -220,17 +222,45 @@ export default function ContentGenerator() {
     return m;
   }, [approvedClaims]);
 
-  // A finding only stays selected while its study is still checked — deselecting the study drops
-  // any findings picked under it, so a hidden pick can never silently ride along into generation.
+  const studieKandidater = useMemo(
+    () => [...valgteStudier].flatMap((pmid) => funnByPmid[pmid] ?? []),
+    [valgteStudier, funnByPmid]
+  );
+
+  // Union of both sources, deduped — this is what renders as individually checkable findings.
+  const kandidatFunn = useMemo(() => {
+    const seen = new Set<string>();
+    const out: ApprovedClaim[] = [];
+    for (const c of [...studieKandidater, ...kategoriKandidater]) {
+      if (!seen.has(c.id)) {
+        seen.add(c.id);
+        out.push(c);
+      }
+    }
+    return out;
+  }, [studieKandidater, kategoriKandidater]);
+
+  // Auto-include a finding the moment it becomes a candidate (picking its study, or turning on/
+  // widening the category filter) — but once offered, respect the user unchecking it: only an
+  // outright loss of eligibility (its study gets deselected, or the category filter narrows past
+  // it) removes it again, never re-adding it on some unrelated re-render.
+  const tilbudtFunn = useRef<Set<string>>(new Set());
   useEffect(() => {
+    const eligible = new Set(kandidatFunn.map((c) => c.id));
+    // Snapshot the ref BEFORE scheduling the state update: the updater below runs after this
+    // effect body finishes (not synchronously at the setValgteFunn call), so if we mutated
+    // tilbudtFunn.current first, the updater would read the ALREADY-updated value and think
+    // every id had already been offered — silently skipping the auto-include entirely.
+    const forhandsTilbudt = tilbudtFunn.current;
     setValgteFunn((prev) => {
-      const visible = new Set(
-        [...valgteStudier].flatMap((pmid) => (funnByPmid[pmid] ?? []).map((c) => c.id))
-      );
-      const next = new Set([...prev].filter((id) => visible.has(id)));
-      return next.size === prev.size ? prev : next;
+      const next = new Set([...prev].filter((id) => eligible.has(id)));
+      for (const id of eligible) {
+        if (!forhandsTilbudt.has(id)) next.add(id);
+      }
+      return next;
     });
-  }, [valgteStudier, funnByPmid]);
+    tilbudtFunn.current = eligible;
+  }, [kandidatFunn]);
 
   function toggleFunn(id: string) {
     setValgteFunn((prev) => {
@@ -276,7 +306,7 @@ export default function ContentGenerator() {
   const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
   const harValgt = valgteTilgjengelige.length > 0;
   const visDeckOpsjoner = valgteTyper.has("deck");
-  const harKilder = filer.length > 0 || valgteStudier.size > 0 || inkluderteClaims.length > 0 || valgteFunn.size > 0;
+  const harKilder = filer.length > 0 || valgteStudier.size > 0 || valgteFunn.size > 0;
 
   function toggleType(t: ContentType) {
     const meta = CONTENT_TYPES.find((x) => x.id === t)!;
@@ -328,11 +358,10 @@ export default function ContentGenerator() {
   function byggKilder(): { files: File[]; claimIds: string[]; studyMeta: { pmid: string; cite: string }[] } {
     const kilder = [...filer];
     let claimIds: string[] = [];
-    // The category toggle's picks plus whichever per-study findings were picked below, deduped —
-    // both feed the generators the exact same way (one "Approved findings" source file).
+    // valgteFunn is the single unified selection now — whatever's individually checked in the
+    // "Approved findings" picker, whether it got there via a study pick or the category toggle.
     const funnValgt = approvedClaims.filter((c) => valgteFunn.has(c.id));
-    const alleClaims = [...inkluderteClaims, ...funnValgt.filter((c) => !inkluderteClaims.some((x) => x.id === c.id))];
-    const claimsKilde = buildClaimsSourceFile(alleClaims);
+    const claimsKilde = buildClaimsSourceFile(funnValgt);
     if (claimsKilde) {
       kilder.push(claimsKilde.file);
       claimIds = claimsKilde.claimIds;
@@ -635,25 +664,10 @@ export default function ContentGenerator() {
                               </span>
                             </label>
                             {valgt && funn.length > 0 && (
-                              <div className="ml-6 mt-1 space-y-1 border-l-2 border-[#E4EDF0] pl-3">
-                                <div className="pt-1 text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#6D8894]">
-                                  Findings for this study — pick any to include
-                                </div>
-                                {funn.map((c) => (
-                                  <label
-                                    key={c.id}
-                                    className="flex cursor-pointer items-start gap-1.5 rounded-lg p-1 text-xs hover:bg-[#F7FBFC]"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={valgteFunn.has(c.id)}
-                                      onChange={() => toggleFunn(c.id)}
-                                      className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0A7A8A]"
-                                    />
-                                    <span className="text-[#052A4E]">{c.text}</span>
-                                  </label>
-                                ))}
-                              </div>
+                              <p className="ml-6 mt-1 text-[10.5px] font-semibold text-[#0A7A8A]">
+                                {funn.length} approved finding{funn.length === 1 ? "" : "s"} for this study — added to
+                                Approved findings below
+                              </p>
                             )}
                           </div>
                         );
@@ -669,7 +683,9 @@ export default function ContentGenerator() {
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0A7A8A]">✓ Approved findings</div>
                   <p className="mt-1 max-w-sm text-xs text-zinc-500">
-                    {claimsConfigured ? "Facts reviewed and approved by the science team." : "The findings library is not set up yet."}
+                    {claimsConfigured
+                      ? "Facts reviewed and approved by the science team. Picking a study above adds its own findings here automatically."
+                      : "The findings library is not set up yet."}
                   </p>
                 </div>
                 {claimsConfigured && approvedClaims.length > 0 && (
@@ -683,20 +699,52 @@ export default function ContentGenerator() {
                         setKjoringer([]);
                       }}
                     />
-                    Include ({approvedClaims.length})
+                    Browse all ({approvedClaims.length})
                   </label>
                 )}
               </div>
               {inkluderClaims && approvedClaims.length > 0 && (
-                <div className="mt-3">
-                  <div className="mb-2 flex flex-wrap gap-2">
-                    <PickChip aktiv={claimKatFilter.size === 0} onClick={() => { setClaimKatFilter(new Set()); setKjoringer([]); }}>All ({approvedClaims.length})</PickChip>
-                    {claimKategorier.map(([id, { name, count }]) => (
-                      <PickChip key={id} aktiv={claimKatFilter.has(id)} onClick={() => toggleClaimKat(id)}>{name} ({count})</PickChip>
-                    ))}
-                  </div>
-                  <p className="text-xs font-semibold text-[#0A7A8A]">{inkluderteClaims.length} finding{inkluderteClaims.length === 1 ? "" : "s"} will be cited in the output.</p>
+                <div className="mb-2 mt-3 flex flex-wrap gap-2">
+                  <PickChip aktiv={claimKatFilter.size === 0} onClick={() => { setClaimKatFilter(new Set()); setKjoringer([]); }}>All ({approvedClaims.length})</PickChip>
+                  {claimKategorier.map(([id, { name, count }]) => (
+                    <PickChip key={id} aktiv={claimKatFilter.has(id)} onClick={() => toggleClaimKat(id)}>{name} ({count})</PickChip>
+                  ))}
                 </div>
+              )}
+              {kandidatFunn.length > 0 ? (
+                <div className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
+                  {kandidatFunn.map((c) => (
+                    <label
+                      key={c.id}
+                      className={`flex cursor-pointer items-start gap-2 rounded-xl border p-2.5 text-xs transition-colors ${
+                        valgteFunn.has(c.id) ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E9F1F4] hover:bg-[#F7FBFC]"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={valgteFunn.has(c.id)}
+                        onChange={() => toggleFunn(c.id)}
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0A7A8A]"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[#052A4E]">{c.text}</span>
+                        <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                          {c.categoryName}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-zinc-400">
+                  Pick a study above, or check &quot;Browse all&quot; to include findings by category — either way,
+                  they&apos;ll show up here to review and toggle individually.
+                </p>
+              )}
+              {valgteFunn.size > 0 && (
+                <p className="mt-2 text-xs font-semibold text-[#0A7A8A]">
+                  {valgteFunn.size} finding{valgteFunn.size === 1 ? "" : "s"} will be cited in the output.
+                </p>
               )}
             </div>
 

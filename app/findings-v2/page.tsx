@@ -15,7 +15,16 @@ import FindingsV2 from "./findings-v2";
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
 export type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
-export type LibClaim = Claim & { studies?: { pmid: string | null; title: string } | null };
+export type LibClaim = Claim & {
+  studies?: {
+    pmid: string | null;
+    title: string;
+    authors: string | null;
+    year: number | null;
+    journal: string | null;
+    doi: string | null;
+  } | null;
+};
 
 export default function FindingsV2Page() {
   const [configured, setConfigured] = useState(true);

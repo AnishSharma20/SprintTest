@@ -13,7 +13,16 @@ import PageHero, { ReviewerField } from "../PageHero";
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
 type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
-type LibClaim = Claim & { studies?: { pmid: string | null; title: string } | null };
+type LibClaim = Claim & {
+  studies?: {
+    pmid: string | null;
+    title: string;
+    authors: string | null;
+    year: number | null;
+    journal: string | null;
+    doi: string | null;
+  } | null;
+};
 
 export default function ClaimsLibrary() {
   const [configured, setConfigured] = useState(true);

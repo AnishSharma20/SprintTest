@@ -4,14 +4,29 @@
 // product" (plain, benefit-facing) — NOT a verbatim study sentence. Each is backed_by one or more
 // science claims (the evidence), so the statement is always traceable to its substantiation.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Claim, Category, ClaimStatus } from "./lib/claims-types";
 import { decodeEntities } from "./lib/text";
+import {
+  authorYearPrefix,
+  composeFindingText,
+  evidenceBasisLine,
+  REGULATORY_DISCLAIMER,
+} from "./lib/finding-format";
 import CategoryManager from "./category-manager";
 
 type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
-type LibClaim = Claim & { studies?: { pmid: string | null; title: string } | null };
+type LibClaim = Claim & {
+  studies?: {
+    pmid: string | null;
+    title: string;
+    authors: string | null;
+    year: number | null;
+    journal: string | null;
+    doi: string | null;
+  } | null;
+};
 
 const STATUS_STYLE: Record<string, string> = {
   approved: "bg-[#DFF3E4] text-[#1B7A3D]",
@@ -105,10 +120,13 @@ export default function MarketingClaims({
   return (
     <div>
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <p className="max-w-2xl text-sm text-zinc-500">
-          What marketing can say about the product. Each finding is written in plain, benefit facing
-          language and linked to the science that substantiates it, so it stays defensible.
-        </p>
+        <div className="max-w-2xl">
+          <p className="text-sm text-zinc-500">
+            What marketing can say about the product. Each finding is written in plain, benefit facing
+            language and linked to the science that substantiates it, so it stays defensible.
+          </p>
+          <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">{REGULATORY_DISCLAIMER}</p>
+        </div>
         <div className="flex shrink-0 gap-2">
           <button
             onClick={() => setAdministrerer(true)}
@@ -230,6 +248,10 @@ function MarketingCard({
   const [error, setError] = useState<string | null>(null);
 
   const approvedBacking = backing.filter((b) => b.status === "approved").length;
+  const evidenceLine =
+    claim.scope === "category" && backing.length > 0
+      ? evidenceBasisLine(backing.map((b) => ({ pmid: b.studies?.pmid ?? null, title: b.studies?.title ?? "" })))
+      : null;
 
   async function act(payload: Record<string, unknown>) {
     setBusy(true);
@@ -264,6 +286,9 @@ function MarketingCard({
         <span className="rounded-[4px] bg-[#E1F4F3] px-2.5 py-0.5 text-[10px] font-semibold text-[#0A7A8A]">
           {categoryName}
         </span>
+        <span className="text-[10px] font-semibold text-zinc-400">
+          {claim.scope === "paper" ? "Single study finding" : "Aggregated claim"}
+        </span>
       </div>
 
       <p className="text-[15px] font-semibold leading-relaxed text-[#052A4E]">{decodeEntities(claim.text)}</p>
@@ -272,8 +297,10 @@ function MarketingCard({
         onClick={() => setOpen((o) => !o)}
         className="mt-3 text-xs font-semibold text-[#0A7A8A] hover:underline"
       >
-        {open ? "Hide evidence ▲" : `Backed by ${backing.length} finding${backing.length === 1 ? "" : "s"}`}
-        {backing.length > 0 ? ` · ${approvedBacking} approved` : ""}
+        {open
+          ? "Hide evidence ▲"
+          : evidenceLine ?? `Backed by ${backing.length} finding${backing.length === 1 ? "" : "s"}`}
+        {!open && backing.length > 0 ? ` · ${approvedBacking} approved` : ""}
       </button>
 
       {open && (
@@ -372,11 +399,18 @@ function NewMarketingClaimModal({
   onCreated: () => void;
 }) {
   const [categoryId, setCategoryId] = useState("");
-  const [text, setText] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Structured composer fields for a single study finding — see app/lib/finding-format.ts.
+  const [authorYear, setAuthorYear] = useState("");
+  const [authorYearTouched, setAuthorYearTouched] = useState(false);
+  const [result, setResult] = useState("");
+  const [design, setDesign] = useState("");
+  // Freeform text, used only when evidence spans more than one study (an aggregated claim).
+  const [aggregateText, setAggregateText] = useState("");
 
   const catName = useMemo(() => {
     const m: Record<string, string> = {};
@@ -398,6 +432,27 @@ function NewMarketingClaimModal({
     return { shown: [...sel, ...rest].slice(0, 60), total: list.length };
   }, [scienceClaims, q, selected]);
 
+  const selectedClaims = useMemo(
+    () => scienceClaims.filter((c) => selected.has(c.id)),
+    [scienceClaims, selected]
+  );
+  // A finding restates ONE study's own endpoint result — evidence from a single study gets the
+  // structured "Author Year: result (design)" composer; evidence spanning several studies is a
+  // broader aggregated claim, which keeps the old freeform text plus an evidence-basis line.
+  const evidenceStudy = useMemo(() => {
+    const pmids = new Set(selectedClaims.map((c) => c.studies?.pmid).filter(Boolean));
+    return pmids.size === 1 ? selectedClaims.find((c) => c.studies?.pmid)!.studies! : null;
+  }, [selectedClaims]);
+
+  useEffect(() => {
+    if (evidenceStudy && !authorYearTouched) {
+      setAuthorYear(authorYearPrefix(evidenceStudy.authors, evidenceStudy.year));
+    }
+  }, [evidenceStudy, authorYearTouched]);
+
+  const composedText = evidenceStudy ? composeFindingText({ authorYear, result, design }) : aggregateText;
+  const canSubmit = !!categoryId && selected.size > 0 && (evidenceStudy ? !!result.trim() : !!aggregateText.trim());
+
   function toggle(id: string) {
     setSelected((prev) => {
       const n = new Set(prev);
@@ -407,12 +462,16 @@ function NewMarketingClaimModal({
   }
 
   async function submit() {
-    if (!text.trim() || !categoryId) {
-      setError("Pick a category and write the finding.");
+    if (!categoryId) {
+      setError("Pick a category.");
       return;
     }
     if (selected.size === 0) {
-      setError("Link at least one finding as evidence.");
+      setError("Link at least one piece of evidence.");
+      return;
+    }
+    if (!composedText.trim()) {
+      setError(evidenceStudy ? "Describe the endpoint result." : "Write the finding.");
       return;
     }
     setBusy(true);
@@ -422,12 +481,24 @@ function NewMarketingClaimModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          scope: "category",
+          scope: evidenceStudy ? "paper" : "category",
           claim_type: "marketing",
           category_id: categoryId,
-          text,
+          text: composedText,
           backed_by: [...selected],
           created_by: reviewer,
+          ...(evidenceStudy
+            ? {
+                study: {
+                  pmid: evidenceStudy.pmid,
+                  title: evidenceStudy.title,
+                  authors: evidenceStudy.authors,
+                  year: evidenceStudy.year,
+                  journal: evidenceStudy.journal,
+                  doi: evidenceStudy.doi,
+                },
+              }
+            : {}),
         }),
       });
       const data = await res.json();
@@ -458,11 +529,23 @@ function NewMarketingClaimModal({
         </div>
 
         <div className="max-h-[76vh] overflow-y-auto px-6 py-5">
+          <div className="mb-4 rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] px-3.5 py-2.5 text-[11.5px] leading-relaxed text-zinc-600">
+            A finding restates what the study itself measured, never a consumer benefit.
+            <br />
+            <span className="text-[#9A2A2A]">Not: </span>
+            "Your body handles X with ease", "reduces inflammation", "supports easy digestion"
+            <br />
+            <span className="text-[#1B7A3D]">Instead: </span>
+            "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
+            moderate knee osteoarthritis (6-month RCT, multicenter, double-blind,
+            placebo-controlled)"
+          </div>
+
           <label className="mb-1 block text-xs font-semibold text-zinc-600">Category</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="mb-3 w-full rounded-[4px] border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mb-4 w-full rounded-[4px] border border-[#B7D9DE] bg-white p-2 text-sm outline-none focus:border-[#3FD0C9]"
           >
             <option value="">Select a category…</option>
             <optgroup label="Science">
@@ -477,20 +560,9 @@ function NewMarketingClaimModal({
             </optgroup>
           </select>
 
-          <label className="mb-1 block text-xs font-semibold text-zinc-600">
-            Finding (what we can say about the product)
-          </label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={2}
-            placeholder="e.g. Superba krill oil supports joint comfort in adults."
-            className="mb-4 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-          />
-
           <div className="mb-1 flex items-center justify-between">
             <label className="text-xs font-semibold text-zinc-600">
-              Evidence — link the study evidence that backs this up
+              Evidence — pick the study result this finding restates
             </label>
             <span className="text-[11px] font-semibold text-[#0A7A8A]">{selected.size} selected</span>
           </div>
@@ -500,7 +572,7 @@ function NewMarketingClaimModal({
             placeholder="Search findings or studies…"
             className="mb-2 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
           />
-          <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-2">
+          <div className="max-h-56 space-y-1.5 overflow-y-auto rounded-[4px] border border-[#E2EDF2] bg-[#FAFDFE] p-2">
             {filtered.shown.map((c) => (
               <label
                 key={c.id}
@@ -526,12 +598,84 @@ function NewMarketingClaimModal({
             )}
           </div>
 
+          {selected.size === 0 ? null : evidenceStudy ? (
+            <div className="mt-4 rounded-[4px] border border-[#B7D9DE] p-3.5">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
+                One study detected · endpoint result
+              </p>
+              <div className="mb-2.5 flex gap-2.5">
+                <div className="w-[130px] shrink-0">
+                  <label className="mb-1 block text-[11px] font-semibold text-zinc-600">
+                    Author + year
+                  </label>
+                  <input
+                    value={authorYear}
+                    onChange={(e) => {
+                      setAuthorYear(e.target.value);
+                      setAuthorYearTouched(true);
+                    }}
+                    placeholder="Stonehouse 2022"
+                    className="w-full rounded-[4px] border border-[#B7D9DE] p-1.5 text-[13px] outline-none focus:border-[#3FD0C9]"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="mb-1 block text-[11px] font-semibold text-zinc-600">
+                    Study design
+                  </label>
+                  <input
+                    value={design}
+                    onChange={(e) => setDesign(e.target.value)}
+                    placeholder="e.g. 6-month RCT, multicenter, double-blind, placebo-controlled"
+                    className="w-full rounded-[4px] border border-[#B7D9DE] p-1.5 text-[13px] outline-none focus:border-[#3FD0C9]"
+                  />
+                </div>
+              </div>
+              <label className="mb-1 block text-[11px] font-semibold text-zinc-600">
+                Result on the primary or secondary endpoint
+              </label>
+              <textarea
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+                rows={2}
+                placeholder="e.g. Krill oil improved osteoarthritic knee pain in adults with mild to moderate knee osteoarthritis"
+                className="mb-2.5 w-full rounded-[4px] border border-[#B7D9DE] p-2 text-[13px] outline-none focus:border-[#3FD0C9]"
+              />
+              <p className="text-[11px] font-semibold text-zinc-500">Preview</p>
+              <p className="mt-1 rounded-[4px] bg-[#FAFDFE] p-2 text-[12.5px] text-[#052A4E]">
+                {composedText || "…"}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <div className="mb-2 rounded-[4px] bg-[#FBEED6] px-3 py-2 text-[11px] font-medium text-[#8A5A0B]">
+                Evidence spans more than one study, so this becomes an aggregated claim — describe
+                what the combined evidence shows, not a single study's result.
+              </div>
+              <label className="mb-1 block text-xs font-semibold text-zinc-600">
+                Aggregated finding
+              </label>
+              <textarea
+                value={aggregateText}
+                onChange={(e) => setAggregateText(e.target.value)}
+                rows={2}
+                className="w-full rounded-[4px] border border-[#B7D9DE] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+              />
+              <p className="mt-1.5 text-[11px] text-zinc-500">
+                {evidenceBasisLine(
+                  selectedClaims.map((c) => ({ pmid: c.studies?.pmid ?? null, title: c.studies?.title ?? "" }))
+                )}
+              </p>
+            </div>
+          )}
+
+          <p className="mt-3 text-[10.5px] leading-relaxed text-zinc-400">{REGULATORY_DISCLAIMER}</p>
+
           {error && <p className="mt-3 text-[11px] font-semibold text-[#9A2A2A]">{error}</p>}
 
           <div className="mt-4 flex gap-2">
             <button
               onClick={submit}
-              disabled={busy || !text.trim() || !categoryId || selected.size === 0}
+              disabled={busy || !canSubmit}
               className="rounded-[4px] bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433] disabled:opacity-40"
             >
               {busy ? "Creating…" : "Create finding"}

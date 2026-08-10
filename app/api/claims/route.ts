@@ -13,7 +13,7 @@ import { supabase, dbNotConfigured } from "../../lib/supabase";
 import { getOrCreateStudy, logEvent, type StudyMeta } from "../../lib/claims-db";
 
 const CLAIM_SELECT =
-  "*, claim_quotes(*), claim_comments(*), studies(pmid, title)";
+  "*, claim_quotes(*), claim_comments(*), studies(pmid, title, authors, year, journal, doi)";
 
 export async function GET(req: Request) {
   const sb = supabase();

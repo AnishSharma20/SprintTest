@@ -1,9 +1,15 @@
-// POST /api/admin/generate-marketing — draft the marketing-claims layer FROM the science evidence.
+// POST /api/admin/generate-marketing — draft FINDINGS (the endpoint-result layer) FROM the
+// science evidence, one study at a time.
 //
-// Per science category, feed the science claims (tagged [C1], [C2], ...) to Claude, which writes a
-// few marketing-usable product claims and says which findings back each one. We then create the
-// marketing claims (pending_review) and the backed_by links to their supporting science claims.
-// Idempotent: skips a category that already has marketing claims. Gated like the other admin routes.
+// Rewritten 2026-08-10 per regulatory feedback: a finding restates what ONE study measured on
+// its own primary/secondary endpoint ("Stonehouse 2022: Krill oil improved osteoarthritic knee
+// pain... (6-month RCT, ...)"), never a consumer benefit statement — that phrasing work moves
+// downstream, out of this library. So generation is now PER STUDY (mirrors extractForStudy's
+// per-study loop in app/lib/claims-extract.ts), producing paper-scope claims with a real
+// study_id, not category-scope rollups across many studies.
+//
+// Idempotent: skips a study that already has a paper-scope marketing finding. Gated like the
+// other admin routes.
 
 import Anthropic from "@anthropic-ai/sdk";
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
@@ -12,7 +18,8 @@ import { logEvent } from "../../../lib/claims-db";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-type Drafted = { text: string; supports: string[] };
+type Drafted = { text: string; category: string; supports: string[] };
+type StudyInfo = { id: string; pmid: string | null; title: string; authors: string | null; year: number | null };
 
 export async function POST(req: Request) {
   const sb = supabase();
@@ -32,80 +39,97 @@ export async function POST(req: Request) {
 
   const cats = await sb.from("categories").select("id, name").eq("parent", "science").order("sort_order");
   if (cats.error) return Response.json({ error: cats.error.message }, { status: 500 });
+  const catIds = new Set(cats.data.map((c) => c.id));
+  const catList = cats.data.map((c) => `${c.id} (${c.name})`).join(", ");
 
-  // Science claims (the evidence) + which categories already have marketing claims (skip those).
+  // Science claims (the evidence), grouped by study — a finding restates ONE study's own result.
   const science = await sb
     .from("claims")
-    .select("id, category_id, text, studies(title)")
+    .select("id, category_id, text, study_id, studies(id, pmid, title, authors, year)")
     .eq("claim_type", "science")
-    .neq("status", "superseded");
+    .neq("status", "superseded")
+    .not("study_id", "is", null);
   if (science.error) return Response.json({ error: science.error.message }, { status: 500 });
 
-  const existingMkt = await sb.from("claims").select("category_id").eq("claim_type", "marketing");
-  const catsWithMkt = new Set((existingMkt.data ?? []).map((c) => c.category_id));
+  // Skip studies that already have a paper-scope marketing finding, so re-runs never duplicate.
+  const existingMkt = await sb
+    .from("claims")
+    .select("study_id")
+    .eq("claim_type", "marketing")
+    .eq("scope", "paper")
+    .not("study_id", "is", null);
+  const studiesWithFindings = new Set((existingMkt.data ?? []).map((c) => c.study_id));
 
-  const byCat: Record<string, { id: string; text: string; study: string | null }[]> = {};
+  const byStudy: Record<string, { study: StudyInfo; evidence: { id: string; text: string }[] }> = {};
   for (const c of science.data ?? []) {
-    (byCat[c.category_id] ??= []).push({
-      id: c.id,
-      text: c.text,
-      study: (c.studies as unknown as { title: string } | null)?.title ?? null,
-    });
+    const s = c.studies as unknown as StudyInfo | null;
+    if (!s || !c.study_id) continue;
+    const entry = (byStudy[c.study_id] ??= { study: s, evidence: [] });
+    entry.evidence.push({ id: c.id, text: c.text });
   }
 
   const anthropic = new Anthropic();
-  const results: { category: string; created?: number; skipped?: boolean; error?: string }[] = [];
+  const results: { study_id: string; created?: number; skipped?: boolean; error?: string }[] = [];
   let totalCreated = 0;
 
-  for (const cat of cats.data) {
-    if (catsWithMkt.has(cat.id)) { results.push({ category: cat.id, skipped: true }); continue; }
-    const evidence = (byCat[cat.id] ?? []).slice(0, 40);
-    if (evidence.length < 2) { results.push({ category: cat.id, skipped: true }); continue; }
+  for (const [studyId, { study, evidence }] of Object.entries(byStudy)) {
+    if (studiesWithFindings.has(studyId)) { results.push({ study_id: studyId, skipped: true }); continue; }
+    if (evidence.length === 0) { results.push({ study_id: studyId, skipped: true }); continue; }
 
+    const authorYear = [study.authors?.split(",")[0]?.trim().split(/\s+/)[0], study.year]
+      .filter(Boolean)
+      .join(" ");
     const evText = evidence
-      .map((e, i) => `[C${i + 1}] ${e.text}${e.study ? ` (Source: ${e.study})` : ""}`)
+      .slice(0, 40)
+      .map((e, i) => `[C${i + 1}] ${e.text}`)
       .join("\n");
     const prompt =
-`You write MARKETING CLAIMS for Aker BioMarine's Superba krill oil — short, benefit facing statements the brand can make about the product in the "${cat.name}" area. These are NOT verbatim science; they are what marketing can say, and each must be defensible against the findings below.
+`You write FINDINGS for Aker BioMarine's Superba krill oil research library. A finding restates what ONE study measured on its own primary or secondary endpoint — never a consumer benefit statement. Marketing copy is written separately, downstream, FROM these findings; the finding itself must read like a fact sheet entry a scientist would sign off on.
 
-Findings from the reviewed studies, each tagged [C1], [C2], and so on:
+Study: "${study.title}"${authorYear ? ` (${authorYear})` : ""}
+
+Extracted findings from THIS study's reviewed evidence, each tagged [C1], [C2], and so on:
 ${evText}
 
-Write 2 to 4 MARKETING CLAIMS for "${cat.name}" — confident, benefit led copy of the kind that would appear on a product slide or in a brochure for supplement brands and informed consumers. The linked findings are the substantiation; the claim itself should read as marketing, not as a study.
+Write 1 to 3 FINDINGS for this study, each phrased EXACTLY as:
+"${authorYear || "[Author] [Year]"}: [short result on the primary or secondary endpoint] ([study design])"
+
+Example of the required pattern: "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to moderate knee osteoarthritis (6-month RCT, multicenter, double-blind, placebo-controlled)"
 
 Rules:
-- Lead with the product benefit, in plain, positive language (e.g. "Superba krill oil supports healthy joint comfort in adults", "Superba krill oil raises your Omega 3 Index"). Do NOT write hedged, regulatory sounding restatements of the study. Avoid clinical phrasings like "reported adverse events at a similar or lower rate", "no toxicologically significant effects", "well tolerated in clinical research" — say it plainly and positively instead.
-- Stay TRUE to the evidence: never claim a benefit, or a strength, the findings do not support. If the findings only show safety or tolerability, the claim is about being gentle and safe, not about efficacy. Never invent an effect.
-- Each claim must be backed by one or more of the findings.
+- FORBIDDEN: consumer benefit language ("supports easy X", "helps your body Y", "with ease", "reduces Z"). State the endpoint result plainly, the way the study itself reports it.
+- Every finding must state: the endpoint it concerns, the direction (and size, if the evidence gives a number) of the effect, and the study design in parentheses at the end.
+- Stay TRUE to the evidence: never state an effect the findings do not support.
+- Each finding must cite one or more of the tagged findings above.
+- Pick the single most relevant category id for each finding from: ${catList}
 - Do NOT use dash characters ("-", "—", "–"); reword instead.
-- Keep each claim to one sentence.
-Return ONLY JSON: {"claims":[{"text":"...","supports":["C1","C3"]}]}`;
+Return ONLY JSON: {"findings":[{"text":"...","category":"<id>","supports":["C1","C3"]}]}`;
 
     try {
       const msg = await anthropic.messages.create({
         model: process.env.CLAIMS_MODEL || "claude-sonnet-5",
-        max_tokens: 2000,
+        max_tokens: 1500,
         messages: [{ role: "user", content: prompt }],
       });
       const raw = msg.content.find((b) => b.type === "text")?.text ?? "";
-      const drafted = (JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)).claims ??
+      const drafted = (JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)).findings ??
         []) as Drafted[];
 
       let created = 0;
       for (const d of drafted) {
-        if (!d.text?.trim()) continue;
+        if (!d.text?.trim() || !catIds.has(d.category)) continue;
         const supportIdx = (d.supports ?? [])
           .map((t) => parseInt(String(t).replace(/[^0-9]/g, ""), 10) - 1)
           .filter((n) => n >= 0 && n < evidence.length);
-        if (supportIdx.length === 0) continue; // never create an unsubstantiated marketing claim
+        if (supportIdx.length === 0) continue; // never create an unsubstantiated finding
 
         const claim = await sb
           .from("claims")
           .insert({
-            scope: "category",
+            scope: "paper",
             claim_type: "marketing",
-            category_id: cat.id,
-            study_id: null,
+            category_id: d.category,
+            study_id: studyId,
             text: d.text.trim(),
             status: "pending_review",
             origin: "ai_extracted",
@@ -127,11 +151,11 @@ Return ONLY JSON: {"claims":[{"text":"...","supports":["C1","C3"]}]}`;
         created++;
       }
       totalCreated += created;
-      results.push({ category: cat.id, created });
+      results.push({ study_id: studyId, created });
     } catch (e) {
-      results.push({ category: cat.id, error: (e as Error).message });
+      results.push({ study_id: studyId, error: (e as Error).message });
     }
   }
 
-  return Response.json({ total_marketing_claims_created: totalCreated, results });
+  return Response.json({ total_findings_created: totalCreated, results });
 }

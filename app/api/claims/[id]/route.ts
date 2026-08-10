@@ -14,7 +14,7 @@
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
 import { logEvent } from "../../../lib/claims-db";
 
-const CLAIM_SELECT = "*, claim_quotes(*), claim_comments(*), studies(pmid, title)";
+const CLAIM_SELECT = "*, claim_quotes(*), claim_comments(*), studies(pmid, title, authors, year, journal, doi)";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const sb = supabase();

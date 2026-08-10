@@ -193,6 +193,7 @@ export default function ContentGenerator() {
   const [claimsConfigured, setClaimsConfigured] = useState(true);
   const [inkluderClaims, setInkluderClaims] = useState(false);
   const [claimKatFilter, setClaimKatFilter] = useState<Set<string>>(new Set());
+  const [valgteFunn, setValgteFunn] = useState<Set<string>>(new Set());
 
   const [laster, setLaster] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
@@ -214,6 +215,37 @@ export default function ContentGenerator() {
     () => (!inkluderClaims ? [] : approvedClaims.filter((c) => claimKatFilter.size === 0 || claimKatFilter.has(c.category_id))),
     [inkluderClaims, approvedClaims, claimKatFilter]
   );
+
+  // Findings that restate ONE study's own endpoint result (scope "paper") — shown right under
+  // that study in the picker below, the user's own choice per study rather than a category toggle.
+  const funnByPmid = useMemo(() => {
+    const m: Record<string, ApprovedClaim[]> = {};
+    approvedClaims.forEach((c) => {
+      if (c.scope === "paper" && c.pmid) (m[c.pmid] ??= []).push(c);
+    });
+    return m;
+  }, [approvedClaims]);
+
+  // A finding only stays selected while its study is still checked — deselecting the study drops
+  // any findings picked under it, so a hidden pick can never silently ride along into generation.
+  useEffect(() => {
+    setValgteFunn((prev) => {
+      const visible = new Set(
+        [...valgteStudier].flatMap((pmid) => (funnByPmid[pmid] ?? []).map((c) => c.id))
+      );
+      const next = new Set([...prev].filter((id) => visible.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [valgteStudier, funnByPmid]);
+
+  function toggleFunn(id: string) {
+    setValgteFunn((prev) => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+    setKjoringer([]);
+  }
 
   const studieKategorier = useMemo(() => {
     const m = new Map<string, number>();
@@ -250,7 +282,7 @@ export default function ContentGenerator() {
   const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
   const harValgt = valgteTilgjengelige.length > 0;
   const visDeckOpsjoner = valgteTyper.has("deck");
-  const harKilder = filer.length > 0 || valgteStudier.size > 0 || inkluderteClaims.length > 0;
+  const harKilder = filer.length > 0 || valgteStudier.size > 0 || inkluderteClaims.length > 0 || valgteFunn.size > 0;
 
   function toggleType(t: ContentType) {
     const meta = CONTENT_TYPES.find((x) => x.id === t)!;
@@ -302,7 +334,11 @@ export default function ContentGenerator() {
   function byggKilder(): { files: File[]; claimIds: string[]; studyMeta: { pmid: string; cite: string }[] } {
     const kilder = [...filer];
     let claimIds: string[] = [];
-    const claimsKilde = buildClaimsSourceFile(inkluderteClaims);
+    // The category toggle's picks plus whichever per-study findings were picked below, deduped —
+    // both feed the generators the exact same way (one "Approved findings" source file).
+    const funnValgt = approvedClaims.filter((c) => valgteFunn.has(c.id));
+    const alleClaims = [...inkluderteClaims, ...funnValgt.filter((c) => !inkluderteClaims.some((x) => x.id === c.id))];
+    const claimsKilde = buildClaimsSourceFile(alleClaims);
     if (claimsKilde) {
       kilder.push(claimsKilde.file);
       claimIds = claimsKilde.claimIds;
@@ -551,7 +587,11 @@ export default function ContentGenerator() {
             <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Or pick from Scientific Studies</div>
-                {valgteStudier.size > 0 && <span className="rounded-full bg-[#EEFAF9] px-2.5 py-0.5 text-xs font-bold text-[#0A7A8A]">{valgteStudier.size} selected</span>}
+                {valgteStudier.size > 0 && (
+                  <span className="rounded-full bg-[#EEFAF9] px-2.5 py-0.5 text-xs font-bold text-[#0A7A8A]">
+                    {valgteStudier.size} selected{valgteFunn.size > 0 && ` · ${valgteFunn.size} finding${valgteFunn.size === 1 ? "" : "s"}`}
+                  </span>
+                )}
               </div>
               {studier.length === 0 ? (
                 <p className="text-xs text-zinc-400">Loading studies…</p>
@@ -577,27 +617,50 @@ export default function ContentGenerator() {
                       filtrerteStudier.map((s) => {
                         const valgt = valgteStudier.has(s.pmid);
                         const verified = !!overrides[s.pmid] || s.verified;
+                        const funn = funnByPmid[s.pmid] ?? [];
                         return (
-                          <label
-                            key={s.pmid}
-                            className={`flex cursor-pointer items-start gap-2 rounded-xl border p-2.5 text-sm transition-colors ${
-                              valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E9F1F4] hover:bg-[#F7FBFC]"
-                            }`}
-                          >
-                            <input type="checkbox" checked={valgt} onChange={() => toggleStudie(s.pmid)} className="mt-1 h-4 w-4 accent-[#0A7A8A]" />
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
-                              <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
-                                {verified ? (
-                                  <span className="rounded-md bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">Verified</span>
-                                ) : (
-                                  <span className="rounded-md bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">AI</span>
-                                )}
-                                {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
-                                <span className="text-zinc-400">{s.ar}</span>
+                          <div key={s.pmid}>
+                            <label
+                              className={`flex cursor-pointer items-start gap-2 rounded-xl border p-2.5 text-sm transition-colors ${
+                                valgt ? "border-[#3FD0C9] bg-[#F4FBFC]" : "border-[#E9F1F4] hover:bg-[#F7FBFC]"
+                              }`}
+                            >
+                              <input type="checkbox" checked={valgt} onChange={() => toggleStudie(s.pmid)} className="mt-1 h-4 w-4 accent-[#0A7A8A]" />
+                              <span className="min-w-0 flex-1">
+                                <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
+                                <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
+                                  {verified ? (
+                                    <span className="rounded-md bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">Verified</span>
+                                  ) : (
+                                    <span className="rounded-md bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">AI</span>
+                                  )}
+                                  {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
+                                  <span className="text-zinc-400">{s.ar}</span>
+                                </span>
                               </span>
-                            </span>
-                          </label>
+                            </label>
+                            {valgt && funn.length > 0 && (
+                              <div className="ml-6 mt-1 space-y-1 border-l-2 border-[#E4EDF0] pl-3">
+                                <div className="pt-1 text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#6D8894]">
+                                  Findings for this study — pick any to include
+                                </div>
+                                {funn.map((c) => (
+                                  <label
+                                    key={c.id}
+                                    className="flex cursor-pointer items-start gap-1.5 rounded-lg p-1 text-xs hover:bg-[#F7FBFC]"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={valgteFunn.has(c.id)}
+                                      onChange={() => toggleFunn(c.id)}
+                                      className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0A7A8A]"
+                                    />
+                                    <span className="text-[#052A4E]">{c.text}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         );
                       })
                     )}

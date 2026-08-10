@@ -204,7 +204,8 @@ def _wording(plan: dict) -> str:
 
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
-                 custom_photos=None, preferred_layouts=None):
+                 custom_photos=None, preferred_layouts=None, disabled_photos=None,
+                 preferred_photos=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
     a gate error or a revision that breaks validation keeps the pre-gate deck."""
@@ -229,7 +230,9 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                disabled_layouts=disabled_layouts,
                                                custom_slides=custom_slides,
                                                custom_photos=custom_photos,
-                                               preferred_layouts=preferred_layouts, design=design)
+                                               preferred_layouts=preferred_layouts, design=design,
+                                               disabled_photos=disabled_photos,
+                                               preferred_photos=preferred_photos)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate, extra_layouts=extra,
@@ -242,7 +245,9 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             disabled_layouts=disabled_layouts,
                                             custom_slides=custom_slides,
                                             custom_photos=custom_photos,
-                                            preferred_layouts=preferred_layouts, design=design)
+                                            preferred_layouts=preferred_layouts, design=design,
+                                            disabled_photos=disabled_photos,
+                                            preferred_photos=preferred_photos)
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts)
@@ -272,11 +277,14 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              design: dict | None = None,
              custom_slides: list[dict] | None = None,
              custom_photos: list[dict] | None = None,
-             preferred_layouts: list[str] | None = None) -> dict:
+             preferred_layouts: list[str] | None = None,
+             disabled_photos: list[str] | None = None,
+             preferred_photos: list[str] | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
-    and the starred house-favourite layouts — see renderer/planner."""
+    and the starred house-favourite layouts — see renderer/planner. disabled_photos/
+    preferred_photos: the same on/off + star switches, but for individual BUILT-IN photos."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -292,7 +300,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
                              custom_rules=custom_rules, disabled_layouts=disabled_layouts,
                              custom_slides=custom_slides, custom_photos=custom_photos,
-                             preferred_layouts=preferred_layouts, design=design)
+                             preferred_layouts=preferred_layouts, design=design,
+                             disabled_photos=disabled_photos, preferred_photos=preferred_photos)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts)
@@ -302,7 +311,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    instructions=instructions, custom_rules=custom_rules,
                                    disabled_layouts=disabled_layouts, custom_slides=custom_slides,
                                    custom_photos=custom_photos,
-                                   preferred_layouts=preferred_layouts, design=design)
+                                   preferred_layouts=preferred_layouts, design=design,
+                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts)
         if errors:
@@ -333,7 +343,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                   study_meta=study_meta, custom_rules=custom_rules,
                                   disabled_layouts=disabled_layouts, design=design,
                                   custom_slides=custom_slides, custom_photos=custom_photos,
-                                  preferred_layouts=preferred_layouts)
+                                  preferred_layouts=preferred_layouts,
+                                  disabled_photos=disabled_photos, preferred_photos=preferred_photos)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

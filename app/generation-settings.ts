@@ -28,6 +28,8 @@ export type DeckSettings = {
   customRules: string;
   disabledLayouts: string;
   preferredLayouts: string;
+  disabledPhotos: string;
+  preferredPhotos: string;
   /** JSON string of the design overrides ("" when none are set). */
   designSettings: string;
   customSlides: CustomSlidePayload;
@@ -52,6 +54,8 @@ export function appendDeckSettings(form: FormData, s: DeckSettings): void {
   if (s.customRules) form.append("custom_rules", s.customRules);
   if (s.disabledLayouts) form.append("disabled_layouts", s.disabledLayouts);
   if (s.preferredLayouts) form.append("preferred_layouts", s.preferredLayouts);
+  if (s.disabledPhotos) form.append("disabled_photos", s.disabledPhotos);
+  if (s.preferredPhotos) form.append("preferred_photos", s.preferredPhotos);
   if (s.designSettings) form.append("design_settings", s.designSettings);
   if (s.customSlides.meta.length) {
     form.append("custom_slides_meta", JSON.stringify(s.customSlides.meta));
@@ -71,6 +75,8 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   let customRules = "";
   let disabledLayouts = "";
   let preferredLayouts = "";
+  let disabledPhotos = "";
+  const preferredPhotoIds: string[] = [];
   let designSettings = "";
   const customSlides: CustomSlidePayload = { meta: [], files: {} };
   const customPhotos: CustomPhotoPayload = { meta: [], files: {} };
@@ -88,6 +94,13 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     const l = await (await fetch("/api/layout-settings")).json();
     disabledLayouts = (l.disabled ?? []).join(",");
     preferredLayouts = (l.preferred ?? []).join(",");
+  } catch {
+    /* no settings — generate as before */
+  }
+  try {
+    const ps = await (await fetch("/api/photo-settings")).json();
+    disabledPhotos = (ps.disabled ?? []).join(",");
+    preferredPhotoIds.push(...((ps.preferred ?? []) as string[]));
   } catch {
     /* no settings — generate as before */
   }
@@ -133,7 +146,13 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   try {
     const p = await (await fetch("/api/custom-photos?blobs=1")).json();
     let budget = MAX_CUSTOM_BYTES; // photos get their own budget; each is a few hundred KB
-    for (const ph of (p.photos ?? []) as { id: string; name: string; description: string; image_b64?: string }[]) {
+    for (const ph of (p.photos ?? []) as {
+      id: string;
+      name: string;
+      description: string;
+      preferred?: boolean;
+      image_b64?: string;
+    }[]) {
       if (!ph.image_b64) continue;
       const cost = Math.ceil(ph.image_b64.length * 0.75);
       if (cost > budget) {
@@ -143,9 +162,20 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
       budget -= cost;
       customPhotos.files[ph.id] = ph.image_b64;
       customPhotos.meta.push({ id: ph.id, name: ph.name, description: ph.description });
+      // ?blobs=1 already filters to enabled photos, so a preferred one here is always usable.
+      if (ph.preferred) preferredPhotoIds.push(`team_photo_${ph.id}`);
     }
   } catch {
     /* no settings — generate as before */
   }
-  return { customRules, disabledLayouts, preferredLayouts, designSettings, customSlides, customPhotos };
+  return {
+    customRules,
+    disabledLayouts,
+    preferredLayouts,
+    disabledPhotos,
+    preferredPhotos: preferredPhotoIds.join(","),
+    designSettings,
+    customSlides,
+    customPhotos,
+  };
 }

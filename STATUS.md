@@ -213,6 +213,35 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   wrapper moved from "always stacked" to "shown when its tab is active". Verified live: all 43 slide
   renders load under the Slides tab exactly as on `/about`, pop animation fires on every tab switch,
   `/about` confirmed unaffected.
+- **Photo library: on/off + house-favourite stars, and a Favourites filter on both library tabs —
+  NEW 2026-08-10, `/about` AND `/about-v2` (client asked for parity with the slide library, which
+  already had this).** Built-in brand photos previously had no switches at all (just a "show/hide"
+  collapse) and team photos only had on/off, no star. Now both get the exact same treatment layouts
+  already had:
+  - **`photo_settings` table (migration `0007_photo_settings.sql`, must be run in the Supabase SQL
+    editor)**: per BUILT-IN photo id, `enabled` + `preferred`, mirroring `layout_settings`. `/api/
+    photo-settings` (GET/PUT) is the new route. `custom_photos` gained its own `preferred` column
+    (same migration); `/api/custom-photos` + `/api/custom-photos/[id]` now read/write it (disabling
+    a photo always clears its star, same rule as layouts).
+  - **UI**: the old "▸ Show the 26 built-in brand photos" toggle is gone; both `/about` and
+    `/about-v2`'s Photo library now render ONE filter-chip row (All / In use / Turned off /
+    Favourites / Your photos) over a single grid, team photos first then built-ins, each card
+    carrying a star (☆/★) next to its on/off switch — byte-identical between the two pages, same
+    as the rest of the library. The **Slide library** gained the missing **Favourites** filter chip
+    too (the star already existed there; only the filter to view starred-only was missing).
+  - **Generation wiring** (`deck-service/src/planner.py`): a disabled built-in photo is stripped from
+    every `asset_id` enum in the `emit_plan` tool schema (`remove_from_asset_enums`, the mirror of
+    the existing `extend_asset_enums`) AND from the PHOTOS prompt guide — the model cannot pick one
+    the team turned off, same enforcement level as a disabled layout. Starred photos (built-in ids or
+    `team_photo_<id>`) surface as a new "HOUSE FAVOURITE PHOTOS" prompt line, the photo analogue of
+    "HOUSE FAVOURITE LAYOUTS". Threaded end-to-end as `disabled_photos`/`preferred_photos`:
+    `planner.build_system/plan_deck/revise_plan/revise_plan_visual` → `pipeline.generate`/
+    `_visual_gate` → `main.py` `/jobs` (new `disabled_photos`/`preferred_photos` form fields) →
+    `app/generation-settings.ts` (fetches `/api/photo-settings`, folds in preferred custom photos)
+    → `/api/generate-deck` (forwards the two new fields). Verified: `tsc`/`py_compile` clean, a
+    direct `build_system()`/`_tool_schema()` check confirms a disabled id is absent from the guide
+    and every asset_id enum, and live in the browser (starred a slide, confirmed it persisted and
+    the new Favourites filter isolated it, on both `/about` and `/about-v2`).
 - **Blog generation** — `src/blog.py`: a science-based **blog draft** in the superbakrill.com/blog style
   (problem-hook → mechanism → clinical evidence → whitepaper CTA; cites the source studies). Shows editable in
   Tab 2; **Download Word (.docx)** via `/blog/docx` + `/api/blog-docx` (converts the *edited* draft).

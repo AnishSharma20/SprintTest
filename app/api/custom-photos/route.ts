@@ -22,8 +22,8 @@ export async function GET(req: Request) {
     .from("custom_photos")
     .select(
       withBlobs
-        ? "id, name, description, enabled, thumb_b64, image_b64, created_by, created_at, updated_by, updated_at"
-        : "id, name, description, enabled, thumb_b64, created_by, created_at, updated_by, updated_at"
+        ? "id, name, description, enabled, preferred, thumb_b64, image_b64, created_by, created_at, updated_by, updated_at"
+        : "id, name, description, enabled, preferred, thumb_b64, created_by, created_at, updated_by, updated_at"
     )
     .order("sort_order")
     .order("created_at");
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
         sort_order: sortOrder,
         created_by: (author ?? "").trim() || null,
       })
-      .select("id, name, description, enabled, thumb_b64, created_by, created_at")
+      .select("id, name, description, enabled, preferred, thumb_b64, created_by, created_at")
       .single();
     if (ins.error) return Response.json({ error: ins.error.message }, { status: 500 });
     return Response.json({ photo: ins.data });

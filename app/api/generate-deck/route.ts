@@ -56,6 +56,8 @@ export async function POST(req: Request) {
       "custom_rules",
       "disabled_layouts",
       "preferred_layouts",
+      "disabled_photos",
+      "preferred_photos",
       "design_settings",
       "custom_slides_meta",
       "custom_photos_meta",

@@ -163,9 +163,12 @@ def _custom_slide_guide(custom_slides) -> str:
         "never force one in.\n" + "\n".join(lines))
 
 
-def _asset_guide(custom_photos=None) -> str:
+def _asset_guide(custom_photos=None, disabled_photos: set[str] | None = None) -> str:
+    disabled_photos = disabled_photos or set()
     lines = []
     for a in config.selectable_photos():
+        if a["id"] in disabled_photos:
+            continue
         lines.append(f"- {a['id']} ({a.get('bg_fit','')}) — {a['description']}")
     for p in custom_photos or []:
         desc = (p.get("description") or "").strip() or p.get("name") or "a team photo"
@@ -176,6 +179,12 @@ def _asset_guide(custom_photos=None) -> str:
 def custom_photo_ids(custom_photos) -> list[str]:
     """The asset ids of the team's uploaded photos, for extending the schema's asset_id enums."""
     return [p["key"] for p in (custom_photos or []) if p.get("key")]
+
+
+def sanitize_disabled_photos(disabled_photos) -> set[str]:
+    """The About page's photo off switches, made safe: only real built-in photo ids."""
+    known = {a["id"] for a in config.selectable_photos()}
+    return {d for d in (disabled_photos or ()) if d in known}
 
 
 def _max_tokens(target: int) -> int:
@@ -199,9 +208,11 @@ def photo_minimum(total: int, photo_level: str) -> int:
 
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
                  disabled_layouts=None, custom_slides=None, custom_photos=None,
-                 preferred_layouts=None, design=None) -> str:
+                 preferred_layouts=None, design=None, disabled_photos=None,
+                 preferred_photos=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     disabled = sanitize_disabled(disabled_layouts)
+    disabled_photos_set = sanitize_disabled_photos(disabled_photos)
     design = design or {}
     photo_level = design.get("photo_level", "default")
     icon_level = design.get("icon_level", "default")
@@ -273,6 +284,15 @@ the deck's own slides and in their speaker_notes.
             "\nHOUSE FAVOURITE LAYOUTS: the team starred these as the house style — when several layouts "
             "fit a point EQUALLY well, pick a starred one first: " + ", ".join(preferred) + ". The shape "
             "of the content still wins: never force a favourite onto a point whose shape doesn't match.")
+    # Same "house favourite" idea, applied to individual photos rather than layouts.
+    known_photo_ids = {a["id"] for a in config.selectable_photos()} | set(custom_photo_ids(custom_photos))
+    preferred_photos_valid = [p for p in (preferred_photos or [])
+                              if p in known_photo_ids and p not in disabled_photos_set]
+    preferred_photos_line = ""
+    if preferred_photos_valid:
+        preferred_photos_line = ("\nHOUSE FAVOURITE PHOTOS: the team starred these as preferred picks — when "
+                                 "choosing an asset_id and several photos fit a slide EQUALLY well, prefer a "
+                                 "starred one first: " + ", ".join(preferred_photos_valid) + ".")
     # Photo density level from the About page. The paragraph wording and the enforced minimum
     # move together; validate._coverage_warnings uses the same photo_minimum() formula.
     if photo_level == "less":
@@ -281,7 +301,7 @@ but this deck should stay text and data led. Set `asset_id` only where an image 
 point (at least {photo_min} slide{'s' if photo_min != 1 else ''} across the deck, e.g. the cover or one breather beat); otherwise leave
 photos off. `text_with_picture` and `picture_full` require an asset_id by schema, so reach for those
 layouts only when you actually want their photo.
-{_asset_guide(custom_photos)}"""
+{_asset_guide(custom_photos, disabled_photos_set)}"""
     else:
         more_line = ("\nThe team asked for a PHOTO RICH deck: place photos generously, on every slide where "
                      "one fits." if photo_level == "more" else "")
@@ -294,7 +314,8 @@ the library; a cover, a mid-deck breather, and a closing beat are all good spots
 `asset_id` whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits
 a light slide). Only skip a photo on a given slide when truly nothing in the library fits that specific
 point — the {photo_min}-slide minimum still applies across the rest of the deck.{more_line}
-{_asset_guide(custom_photos)}"""
+{_asset_guide(custom_photos, disabled_photos_set)}"""
+    photos_block += preferred_photos_line
     if custom_photos:
         photos_block += ("\nTEAM PHOTOS: entries marked TEAM PHOTO above were uploaded by the team with that "
                          "description as your guidance — prefer one whenever its description matches the "
@@ -472,13 +493,16 @@ Emit the plan now via emit_plan."""
 
 
 def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None,
-                 extra_photo_ids: list[str] | None = None) -> dict:
+                 extra_photo_ids: list[str] | None = None,
+                 disabled_photo_ids: set[str] | None = None) -> dict:
     s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
-    if disabled or extra_layouts or extra_photo_ids:
+    if disabled or extra_layouts or extra_photo_ids or disabled_photo_ids:
         # Hard enforcement of the About page's switches: a disabled layout is removed from the
         # forced-tool enum, so the model cannot emit it at all (the prompt only explains why);
-        # the team's own 'auto' slides are added as pickable verbatim layout keys; and the
-        # team's photos join every asset_id enum. Deep copy first — config.schema() is cached.
+        # the team's own 'auto' slides are added as pickable verbatim layout keys; the team's
+        # photos join every asset_id enum; and a disabled BUILT-IN photo is removed from every
+        # asset_id enum the same way a disabled layout is removed from the layout enum. Deep
+        # copy first — config.schema() is cached.
         import copy
         s = copy.deepcopy(s)
         enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
@@ -487,6 +511,8 @@ def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | No
         s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum
         if extra_photo_ids:
             extend_asset_enums(s, extra_photo_ids)
+        if disabled_photo_ids:
+            remove_from_asset_enums(s, disabled_photo_ids)
     return s
 
 
@@ -505,6 +531,20 @@ def extend_asset_enums(node, extra_ids: list[str]) -> None:
             extend_asset_enums(v, extra_ids)
 
 
+def remove_from_asset_enums(node, remove_ids: set[str]) -> None:
+    """The inverse of extend_asset_enums: strip disabled built-in photo ids from EVERY
+    `asset_id` enum, so the model cannot emit one the About page turned off. Mutates in place."""
+    if isinstance(node, dict):
+        aid = node.get("asset_id")
+        if isinstance(aid, dict) and isinstance(aid.get("enum"), list):
+            aid["enum"] = [i for i in aid["enum"] if i not in remove_ids]
+        for v in node.values():
+            remove_from_asset_enums(v, remove_ids)
+    elif isinstance(node, list):
+        for v in node:
+            remove_from_asset_enums(v, remove_ids)
+
+
 def _extract_plan(msg) -> dict:
     for block in msg.content:
         if block.type == "tool_use" and isinstance(block.input, dict) and block.input.get("slides"):
@@ -514,12 +554,14 @@ def _extract_plan(msg) -> dict:
 
 
 def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None,
-          extra_layouts: list[str] | None = None, extra_photo_ids: list[str] | None = None):
+          extra_layouts: list[str] | None = None, extra_photo_ids: list[str] | None = None,
+          disabled_photo_ids: set[str] | None = None):
     def once(budget):
         return client.messages.create(
             model=model or config.MODEL, max_tokens=budget, system=system,
             tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
-                    "input_schema": _tool_schema(disabled, extra_layouts, extra_photo_ids)}],
+                    "input_schema": _tool_schema(disabled, extra_layouts, extra_photo_ids,
+                                                 disabled_photo_ids)}],
             tool_choice={"type": "tool", "name": "emit_plan"},
             messages=user,
         )
@@ -535,24 +577,28 @@ def _call(client, system, user, model, max_tokens, disabled: set[str] | None = N
 def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "standard",
               tone: str = "balansert", instructions: str = "", custom_rules: str = "",
               disabled_layouts=None, custom_slides=None, custom_photos=None,
-              preferred_layouts=None, design=None, model: str | None = None) -> dict:
+              preferred_layouts=None, design=None, disabled_photos=None,
+              preferred_photos=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     disabled = sanitize_disabled(disabled_layouts)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     photo_ids = custom_photo_ids(custom_photos)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
                                         f"(about {target} slides)."}]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
-                                                    preferred_layouts, design), user, model,
-                               max_tokens, disabled, extra, photo_ids))
+                                                    preferred_layouts, design, disabled_photos,
+                                                    preferred_photos), user, model,
+                               max_tokens, disabled, extra, photo_ids, disabled_photo_ids))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 custom_photos=None, preferred_layouts=None, design=None,
+                disabled_photos=None, preferred_photos=None,
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
@@ -639,17 +685,21 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
-                                                    preferred_layouts, design), user, model,
-                               max_tokens, disabled, extra, custom_photo_ids(custom_photos)))
+                                                    preferred_layouts, design, disabled_photos,
+                                                    preferred_photos), user, model,
+                               max_tokens, disabled, extra, custom_photo_ids(custom_photos),
+                               disabled_photo_ids))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
                        length: str = "standard", tone: str = "balansert", instructions: str = "",
                        custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                        custom_photos=None, preferred_layouts=None, design=None,
+                       disabled_photos=None, preferred_photos=None,
                        model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
@@ -677,8 +727,11 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
-                                                    preferred_layouts, design), user, model,
-                               max_tokens, disabled, extra, custom_photo_ids(custom_photos)))
+                                                    preferred_layouts, design, disabled_photos,
+                                                    preferred_photos), user, model,
+                               max_tokens, disabled, extra, custom_photo_ids(custom_photos),
+                               disabled_photo_ids))

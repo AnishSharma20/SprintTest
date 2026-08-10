@@ -74,6 +74,7 @@ type CustomPhoto = {
   name: string;
   description: string;
   enabled: boolean;
+  preferred: boolean;
   thumb_b64: string | null;
   created_by?: string | null;
 };
@@ -172,7 +173,7 @@ export default function AboutV2Page() {
   const [disabled, setDisabled] = useState<Set<string>>(new Set());
   const [preferred, setPreferred] = useState<Set<string>>(new Set());
   const [layoutError, setLayoutError] = useState("");
-  const [filter, setFilter] = useState<"all" | "on" | "off" | "mine">("all");
+  const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   // ----- design preview -----
@@ -190,7 +191,10 @@ export default function AboutV2Page() {
   const [editingPhoto, setEditingPhoto] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState("");
   const [photoDesc, setPhotoDesc] = useState("");
-  const [showBuiltins, setShowBuiltins] = useState(false);
+  const [photoSettingsMigrated, setPhotoSettingsMigrated] = useState(true);
+  const [photoDisabled, setPhotoDisabled] = useState<Set<string>>(new Set());
+  const [photoPreferred, setPhotoPreferred] = useState<Set<string>>(new Set());
+  const [photoFilter, setPhotoFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
 
   // ----- custom slides -----
   const [slidesMigrated, setSlidesMigrated] = useState(true);
@@ -232,6 +236,14 @@ export default function AboutV2Page() {
       setCustomPhotos(p.photos ?? []);
     } catch {
       setPhotosMigrated(false);
+    }
+    try {
+      const ps = await (await fetch("/api/photo-settings")).json();
+      setPhotoSettingsMigrated(ps.configured !== false && ps.migrated !== false);
+      setPhotoDisabled(new Set<string>(ps.disabled ?? []));
+      setPhotoPreferred(new Set<string>(ps.preferred ?? []));
+    } catch {
+      setPhotoSettingsMigrated(false);
     }
     try {
       const d = await (await fetch("/api/design-settings")).json();
@@ -495,7 +507,7 @@ export default function AboutV2Page() {
     }
   }
 
-  async function patchPhoto(id: string, patch: { name?: string; description?: string; enabled?: boolean }) {
+  async function patchPhoto(id: string, patch: { name?: string; description?: string; enabled?: boolean; preferred?: boolean }) {
     setPhotoError("");
     try {
       const res = await fetch(`/api/custom-photos/${id}`, {
@@ -522,6 +534,52 @@ export default function AboutV2Page() {
       }
       setCustomPhotos((p) => p.filter((x) => x.id !== id));
     } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function toggleBuiltinPhoto(id: string, enable: boolean) {
+    setPhotoError("");
+    const before = new Set(photoDisabled);
+    const next = new Set(photoDisabled);
+    if (enable) next.delete(id);
+    else next.add(id);
+    setPhotoDisabled(next); // optimistic — a toggle should feel instant
+    try {
+      const res = await fetch("/api/photo-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photo: id, enabled: enable, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not save the photo setting.");
+      }
+    } catch (e) {
+      setPhotoDisabled(before);
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function toggleBuiltinPhotoStar(id: string, star: boolean) {
+    setPhotoError("");
+    const before = new Set(photoPreferred);
+    const next = new Set(photoPreferred);
+    if (star) next.add(id);
+    else next.delete(id);
+    setPhotoPreferred(next); // optimistic
+    try {
+      const res = await fetch("/api/photo-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photo: id, preferred: star, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not save the favourite.");
+      }
+    } catch (e) {
+      setPhotoPreferred(before);
       setPhotoError((e as Error).message);
     }
   }
@@ -639,15 +697,33 @@ export default function AboutV2Page() {
   const entries = (gallery as GalleryEntry[]).filter((g) => {
     if (filter === "mine") return false;
     if (filter === "off") return disabled.has(g.key);
+    if (filter === "favourites") return preferred.has(g.key);
     if (filter === "on") return !disabled.has(g.key) && g.kind !== "verbatim";
     return true;
   });
   const shownCustom = customSlides.filter((c) => {
     if (filter === "on") return c.mode !== "off";
     if (filter === "off") return c.mode === "off";
+    if (filter === "favourites") return false;
     return true; // all + mine
   });
   const offCount = disabled.size + customSlides.filter((c) => c.mode === "off").length;
+
+  const shownCustomPhotos = customPhotos.filter((p) => {
+    if (photoFilter === "on") return p.enabled;
+    if (photoFilter === "off") return !p.enabled;
+    if (photoFilter === "favourites") return p.enabled && p.preferred;
+    return true; // all + mine
+  });
+  const shownBuiltinPhotos = (photoLibrary as BuiltinPhoto[]).filter((p) => {
+    if (photoFilter === "mine") return false;
+    if (photoFilter === "on") return !photoDisabled.has(p.id);
+    if (photoFilter === "off") return photoDisabled.has(p.id);
+    if (photoFilter === "favourites") return !photoDisabled.has(p.id) && photoPreferred.has(p.id);
+    return true; // all
+  });
+  const photoOffCount = photoDisabled.size + customPhotos.filter((p) => !p.enabled).length;
+  const photoFavCount = photoPreferred.size + customPhotos.filter((p) => p.enabled && p.preferred).length;
 
   const switchCls = (on: boolean) =>
     `relative h-5 w-9 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -1271,6 +1347,7 @@ export default function AboutV2Page() {
                     ["all", "All"],
                     ["on", "In use"],
                     ["off", `Turned off (${offCount})`],
+                    ["favourites", `Favourites (${preferred.size})`],
                     ["mine", `Your slides (${customSlides.length})`],
                   ] as const
                 ).map(([k, label]) => (
@@ -1472,15 +1549,25 @@ export default function AboutV2Page() {
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
                 <span className="text-xs text-zinc-500">
-                  {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team
+                  {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team ·{" "}
+                  {photoOffCount} turned off
                 </span>
               </div>
               <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-                The photos the AI can place on slides. Add your own brand photos with a short
-                description — the description is how the AI decides when to use a photo, so write it
-                like a caption (&quot;Athlete stretching outdoors, for sports performance slides&quot;).
-                Images are downscaled automatically before saving.
+                The photos the AI can place on slides. Turn a photo off and the AI can no longer pick
+                it; star one as a house favourite and the AI prefers it when several photos fit
+                equally well. Add your own brand photos with a short description — the description is
+                how the AI decides when to use a photo, so write it like a caption (&quot;Athlete
+                stretching outdoors, for sports performance slides&quot;). Images are downscaled
+                automatically before saving.
               </p>
+              {!photoSettingsMigrated && (
+                <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
+                  The built-in photo on/off switches and stars live in the shared database and it is
+                  not ready yet: run migration 0007_photo_settings.sql in the Supabase SQL editor.
+                  Until then every built-in photo stays on.
+                </p>
+              )}
               {photoError && <p className="mt-2 text-sm text-red-700">{photoError}</p>}
 
               <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
@@ -1557,10 +1644,33 @@ export default function AboutV2Page() {
                 )}
               </div>
 
-              {/* team photos */}
-              {customPhotos.length > 0 && (
-                <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {customPhotos.map((p) => (
+              {/* filters */}
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ["all", "All"],
+                    ["on", "In use"],
+                    ["off", `Turned off (${photoOffCount})`],
+                    ["favourites", `Favourites (${photoFavCount})`],
+                    ["mine", `Your photos (${customPhotos.length})`],
+                  ] as const
+                ).map(([k, label]) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => setPhotoFilter(k)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                      photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* team photos first, then the built-in library */}
+              <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {shownCustomPhotos.map((p) => (
                     <div
                       key={p.id}
                       className={`overflow-hidden rounded-[4px] border bg-white ${
@@ -1621,16 +1731,34 @@ export default function AboutV2Page() {
                                 <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
                                 <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your photo</div>
                               </div>
-                              <button
-                                type="button"
-                                role="switch"
-                                aria-checked={p.enabled}
-                                title={p.enabled ? "On: the AI can use this photo" : "Off: kept but not offered"}
-                                onClick={() => void patchPhoto(p.id, { enabled: !p.enabled })}
-                                className={switchCls(p.enabled)}
-                              >
-                                <span className={knobCls(p.enabled)} />
-                              </button>
+                              <div className="flex shrink-0 items-center gap-1.5">
+                                {p.enabled && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void patchPhoto(p.id, { preferred: !p.preferred })}
+                                    title={
+                                      p.preferred
+                                        ? "House favourite: the AI prefers this when several photos fit"
+                                        : "Star as a house favourite"
+                                    }
+                                    className={`text-lg leading-none ${
+                                      p.preferred ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                    }`}
+                                  >
+                                    {p.preferred ? "★" : "☆"}
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  role="switch"
+                                  aria-checked={p.enabled}
+                                  title={p.enabled ? "On: the AI can use this photo" : "Off: kept but not offered"}
+                                  onClick={() => void patchPhoto(p.id, { enabled: !p.enabled })}
+                                  className={switchCls(p.enabled)}
+                                >
+                                  <span className={knobCls(p.enabled)} />
+                                </button>
+                              </div>
                             </div>
                             <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
                             <div className="mt-2 flex gap-1">
@@ -1657,22 +1785,17 @@ export default function AboutV2Page() {
                         )}
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                ))}
 
-              {/* built-in brand photos, collapsed by default */}
-              <button
-                type="button"
-                onClick={() => setShowBuiltins((v) => !v)}
-                className="mt-4 rounded-[4px] px-3 py-1.5 text-sm font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-              >
-                {showBuiltins ? "▾ Hide" : "▸ Show"} the {(photoLibrary as BuiltinPhoto[]).length} built-in brand photos
-              </button>
-              {showBuiltins && (
-                <div className="mt-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {(photoLibrary as BuiltinPhoto[]).map((p) => (
-                    <div key={p.id} className="overflow-hidden rounded-[4px] border border-[#C2D9E3] bg-white">
+                {shownBuiltinPhotos.map((p) => {
+                  const off = photoDisabled.has(p.id);
+                  return (
+                    <div
+                      key={p.id}
+                      className={`overflow-hidden rounded-[4px] border bg-white ${
+                        off ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
+                      }`}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/photo-library/${p.id}.jpg`}
@@ -1681,13 +1804,47 @@ export default function AboutV2Page() {
                         loading="lazy"
                       />
                       <div className="p-3">
-                        <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            {!off && photoSettingsMigrated && (
+                              <button
+                                type="button"
+                                onClick={() => void toggleBuiltinPhotoStar(p.id, !photoPreferred.has(p.id))}
+                                title={
+                                  photoPreferred.has(p.id)
+                                    ? "House favourite: the AI prefers this when several photos fit"
+                                    : "Star as a house favourite"
+                                }
+                                className={`text-lg leading-none ${
+                                  photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                }`}
+                              >
+                                {photoPreferred.has(p.id) ? "★" : "☆"}
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              role="switch"
+                              aria-checked={!off}
+                              disabled={!photoSettingsMigrated}
+                              title={off ? "Off: the AI cannot pick this photo" : "On: available to the AI"}
+                              onClick={() => void toggleBuiltinPhoto(p.id, off)}
+                              className={switchCls(!off)}
+                            >
+                              <span className={knobCls(!off)} />
+                            </button>
+                          </div>
+                        </div>
                         <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </section>
           )}
         </div>

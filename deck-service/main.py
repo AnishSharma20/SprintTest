@@ -274,7 +274,9 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              custom_file_blobs: dict[str, bytes] | None = None,
              custom_photos_meta: str = "",
              custom_photo_blobs: dict[str, bytes] | None = None,
-             preferred_layouts: str = "") -> None:
+             preferred_layouts: str = "",
+             disabled_photos: str = "",
+             preferred_photos: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -364,6 +366,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
         parsed_photos = _parse_custom_photos(custom_photos_meta, custom_photo_blobs or {})
         parsed_preferred = [p.strip() for p in (preferred_layouts or "").split(",") if p.strip()]
+        parsed_disabled_photos = [p.strip() for p in (disabled_photos or "").split(",") if p.strip()]
+        parsed_preferred_photos = [p.strip() for p in (preferred_photos or "").split(",") if p.strip()]
 
         decks: list[dict] = []
         total = len(files)
@@ -386,7 +390,9 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                                                          if d.strip()],
                                        design=parsed_design, custom_slides=parsed_custom,
                                        custom_photos=parsed_photos,
-                                       preferred_layouts=parsed_preferred))
+                                       preferred_layouts=parsed_preferred,
+                                       disabled_photos=parsed_disabled_photos,
+                                       preferred_photos=parsed_preferred_photos))
 
         # Name each deck after its own generated deck_title (the topic), falling back to the source
         # file stem when the title yields no usable ASCII.
@@ -496,6 +502,8 @@ async def create_job(
     custom_photos_meta: str = Form(default=""),
     custom_photo_files: list[UploadFile] | None = File(default=None),
     preferred_layouts: str = Form(default=""),
+    disabled_photos: str = Form(default=""),
+    preferred_photos: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -518,7 +526,11 @@ async def create_job(
     custom_photos_meta + custom_photo_files: the team's photo library — meta is a JSON array of
     {id, name, description}; each custom_photo_files upload is named <id>.jpg; deck only.
     preferred_layouts: comma separated layout keys the team starred as house favourites —
-    a soft planner preference among equally fitting layouts; deck only."""
+    a soft planner preference among equally fitting layouts; deck only.
+    disabled_photos: comma separated BUILT-IN photo ids turned OFF on the About page — removed
+    from every asset_id enum so the model cannot pick them; deck only.
+    preferred_photos: comma separated photo ids (built-in or team_photo_<id>) starred as house
+    favourites — a soft planner preference among equally fitting photos; deck only."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -545,7 +557,8 @@ async def create_job(
                      args=(job_id, key, files, lengde, tone, kvalitet, instruksjoner, innholdstype,
                            sprak, sider, study_meta, custom_rules, disabled_layouts,
                            design_settings, custom_slides_meta, custom_blobs,
-                           custom_photos_meta, photo_blobs, preferred_layouts),
+                           custom_photos_meta, photo_blobs, preferred_layouts,
+                           disabled_photos, preferred_photos),
                      daemon=True).start()
     return {"job_id": job_id}
 

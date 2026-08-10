@@ -182,9 +182,10 @@ def _strip_dashes_plan(plan: dict) -> dict:
 
 # "auto" (default) leaves the AI's own per-slide light/dark rhythm choice alone. "dark"/"light"
 # force EVERY slide to one theme deck-wide — a deterministic override applied after planning, not
-# a prompt change, so it can never be second-guessed by the model. Named after the two real
-# backgrounds (see the About page's "Color themes" card): dark = Blue Ocean, light = Pastel Blue.
-_COLOR_THEMES = {"dark", "light"}
+# a prompt change, so it can never be second-guessed by the model. Named after the three real
+# backgrounds (see the About page's "Color themes" card): dark = Blue Ocean, light = White,
+# pastel = Pastel Blue (the light master with a solid mint override).
+_COLOR_THEMES = {"dark", "light", "pastel"}
 
 
 def _apply_color_theme(plan: dict, color_theme: str | None) -> dict:
@@ -305,8 +306,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
     and the starred house-favourite layouts — see renderer/planner. disabled_photos/
     preferred_photos: the same on/off + star switches, but for individual BUILT-IN photos.
-    color_theme: None/"auto" keeps the AI's own per-slide light/dark rhythm; "dark" or "light"
-    forces every slide deck-wide (Blue Ocean / Pastel Blue) — see _apply_color_theme."""
+    color_theme: None/"auto" keeps the AI's own per-slide light/dark rhythm; "dark", "light" or
+    "pastel" forces every slide deck-wide (Blue Ocean / White / Pastel Blue) — see _apply_color_theme."""
     def _p(pct, step):
         if on_progress:
             try:

@@ -174,7 +174,8 @@ export default function AboutV2Page() {
   const [preferred, setPreferred] = useState<Set<string>>(new Set());
   const [layoutError, setLayoutError] = useState("");
   const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
-  const [galleryTheme, setGalleryTheme] = useState<"dark" | "light">("dark");
+  const [galleryTheme, setGalleryTheme] = useState<"dark" | "light" | "pastel">("dark");
+  const GALLERY_THEME_LABEL = { dark: "Blue Ocean", light: "White", pastel: "Pastel Blue" } as const;
   const [expanded, setExpanded] = useState<string | null>(null);
 
   // ----- design preview -----
@@ -985,13 +986,15 @@ export default function AboutV2Page() {
                 that open the decks; the page margin and box gutter apply to the code drawn slide types.
               </p>
 
-              {/* ----- color themes — informational only, names the two backgrounds the AI already
-                  alternates between per slide for visual rhythm; no new setting, no behavior change ----- */}
+              {/* ----- color themes — informational only; the AI alternates between these per slide
+                  for rhythm by default, or the Content Generator's "Color theme" picker can force
+                  every slide in a deck to one of them ----- */}
               <div className="mt-4 rounded-[4px] border border-[#E3EDF2] bg-[#FBFBFD] p-4">
                 <div className="text-xs font-bold uppercase tracking-[0.08em] text-[#6E6E73]">Color themes</div>
                 <p className="mt-1 max-w-2xl text-xs text-zinc-500">
-                  Every deck alternates between these two background themes, slide by slide, for visual
-                  rhythm — the AI picks which one fits each slide; there is no separate switch for it.
+                  By default a deck alternates between these backgrounds, slide by slide, for visual
+                  rhythm — the AI picks which one fits each slide. The Content Generator's &quot;Color
+                  theme&quot; setting can also force every slide in a deck to just one of them.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
@@ -1005,10 +1008,17 @@ export default function AboutV2Page() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
-                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#E9F7F8" }} />
+                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#FFFFFF" }} />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">White</div>
+                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; plain white</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#A9DBD5" }} />
                     <div>
                       <div className="text-xs font-bold text-[#031B34]">Pastel Blue</div>
-                      <div className="text-[10.5px] text-zinc-400">Light theme</div>
+                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; solid mint</div>
                     </div>
                   </div>
                 </div>
@@ -1369,7 +1379,8 @@ export default function AboutV2Page() {
                   {(
                     [
                       ["dark", "Blue Ocean"],
-                      ["light", "Pastel Blue"],
+                      ["light", "White"],
+                      ["pastel", "Pastel Blue"],
                     ] as const
                   ).map(([k, label]) => (
                     <button
@@ -1502,8 +1513,8 @@ export default function AboutV2Page() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/layout-gallery${galleryTheme === "light" ? "-light" : ""}/${g.key}.png`}
-                        alt={`Example of the ${pretty(g.key)} slide in ${galleryTheme === "light" ? "Pastel Blue" : "Blue Ocean"}`}
+                        src={`/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`}
+                        alt={`Example of the ${pretty(g.key)} slide in ${GALLERY_THEME_LABEL[galleryTheme]}`}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"
                       />

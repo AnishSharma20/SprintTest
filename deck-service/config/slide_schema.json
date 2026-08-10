@@ -80,9 +80,10 @@
           "background": {
             "enum": [
               "dark",
-              "light"
+              "light",
+              "pastel"
             ],
-            "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."
+            "description": "dark = deep-sea master (default), light = white master, pastel = the same white master with a solid pastel-mint override. Alternate for rhythm."
           },
           "title": {
             "type": "string"

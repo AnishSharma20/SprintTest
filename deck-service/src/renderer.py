@@ -703,15 +703,22 @@ def _blank_layout(prs, master_index: int):
     return master.slide_layouts[-1]
 
 
-def _set_white_bg(slide) -> None:
-    """Force a solid-white slide background (the benefits slide is a white infographic; the host
-    master is the dark deep-sea one)."""
+def _set_bg(slide, rgb: RGBColor) -> None:
+    """Force a solid slide background of the given colour, overriding whatever the host master
+    would otherwise show (used for the white/pastel light-theme variants and the white benefits
+    infographic)."""
     cSld = slide._element.find(qn("p:cSld"))
     for old in cSld.findall(qn("p:bg")):
         cSld.remove(old)
     cSld.insert(0, parse_xml(
-        f'<p:bg {nsdecls("p", "a")}><p:bgPr><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'<p:bg {nsdecls("p", "a")}><p:bgPr><a:solidFill><a:srgbClr val="{rgb}"/></a:solidFill>'
         f'<a:effectLst/></p:bgPr></p:bg>'))
+
+
+def _set_white_bg(slide) -> None:
+    """Force a solid-white slide background (the benefits slide is a white infographic; the host
+    master is the dark deep-sea one)."""
+    _set_bg(slide, _WHITE)
 
 
 def _add_benefits_slide(prs, master_index: int) -> None:
@@ -964,7 +971,7 @@ def _place_text(slide, l, t, w, h, text, size, color, *, bold=False, font=None,
     return tb
 
 
-def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
+def _synth_slide(prs, master_index, *, white=False, pastel=False, title=None, eyebrow=None):
     """Create a blank-layout slide with the ONE fixed skeleton every synthetic layout shares:
     chrome (footer logos / date / page number) is preserved so it sits in an identical position on
     every slide; the takeaway title and optional eyebrow are placed in their fixed boxes. Returns the
@@ -975,7 +982,7 @@ def _synth_slide(prs, master_index, *, white=False, title=None, eyebrow=None):
             continue                            # keep date/footer/slide-number → cross-slide consistency
         sh._element.getparent().remove(sh._element)
     if white:
-        _set_white_bg(slide)
+        _set_bg(slide, _LTEAL if pastel else _WHITE)
     if title is not None:
         # Non-bold "Exo 2 italic" — matches the native template's own title placeholders exactly
         # (its dominant cut; the brand guide lists no non-italic Exo 2 weight at all).
@@ -1012,26 +1019,32 @@ def _muted(light: bool) -> RGBColor:
     return _TEAL if light else _LTEAL
 
 
-def _line_soft(light: bool) -> RGBColor:
+def _line_soft(light: bool, pastel: bool = False) -> RGBColor:
     """Connector lines, rules and arrow FILLS drawn directly on the bare background (not on a
-    colour panel). `_LTEAL` is tuned for contrast against the dark master; on the light master it
-    is nearly indistinguishable from the pale background, so use the darker `_TEAL2` instead —
-    which has enough contrast against both."""
-    return _TEAL2 if light else _LTEAL
+    colour panel). `_LTEAL` is tuned for contrast against the dark master; on a light master it is
+    nearly indistinguishable from the pale background, so use a darker teal instead - `_TEAL2`
+    against white, or plain `_TEAL` (more contrast margin) against the pastel-mint background,
+    which IS `_LTEAL` itself."""
+    if not light:
+        return _LTEAL
+    return _TEAL if pastel else _TEAL2
 
 
-def _chip_bg(light: bool) -> RGBColor:
+def _chip_bg(light: bool, pastel: bool = False) -> RGBColor:
     """Icon-chip / tile fill meant to contrast against the SLIDE background (built for the dark
-    master's near-black bg). On the light/white master the same near-white `_PANEL` tint would
-    disappear, so use a soft teal tint there instead."""
-    return _LTEAL if light else _PANEL
+    master's near-black bg). On the white master the same near-white `_PANEL` tint would
+    disappear, so use a soft teal tint there instead - but on the pastel-mint master the
+    background IS that same teal tint (`_LTEAL`), so use plain white chips there instead."""
+    if not light:
+        return _PANEL
+    return _WHITE if pastel else _LTEAL
 
 
-def _icon_disc(slide, cx, cy, d, icon_path=None, number=None, light=False):
+def _icon_disc(slide, cx, cy, d, icon_path=None, number=None, light=False, pastel=False):
     """A soft light disc centred at (cx, cy) holding the red brand icon (or a red number) — the
     consulting 'icon chip' treatment that replaces ad-hoc accent bars on list slides."""
     disc = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(cy - d / 2), Inches(d), Inches(d))
-    disc.fill.solid(); disc.fill.fore_color.rgb = _chip_bg(light); disc.line.fill.background(); disc.shadow.inherit = False
+    disc.fill.solid(); disc.fill.fore_color.rgb = _chip_bg(light, pastel); disc.line.fill.background(); disc.shadow.inherit = False
     if icon_path:
         pad = d * 0.28
         _place_icon(slide, (Inches(cx - d / 2 + pad), Inches(cy - d / 2 + pad), Inches(d - 2 * pad), Inches(d - 2 * pad)), icon_path)
@@ -1081,7 +1094,8 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
 
     The banner used to sit above the panels; it reads better as the conclusion the four cards add up
     to, and moving it down also reclaims the empty space the panels used to leave at the bottom."""
-    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
+    pastel = spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index, white=True, pastel=pastel, title=spec.get("title", ""))
     banner = spec.get("banner")
 
     items = (spec.get("items") or [])[:4]
@@ -1105,7 +1119,8 @@ def _fill_key_points(prs, spec: dict, light_index: int) -> None:
     for i, it in enumerate(items):
         x = _MARGIN + i * (pw + _GUTTER); cx = x + pw / 2
         pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(ptop), Inches(pw), Inches(pbot - ptop))
-        pan.fill.solid(); pan.fill.fore_color.rgb = _PANEL; pan.line.fill.background(); pan.shadow.inherit = False
+        pan.fill.solid(); pan.fill.fore_color.rgb = _WHITE if pastel else _PANEL
+        pan.line.fill.background(); pan.shadow.inherit = False
         hy = ptop + (0.6 if icons else 0.22)
         if icons:
             circ = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(ptop - d / 2), Inches(d), Inches(d))
@@ -1127,8 +1142,9 @@ _CHART_TYPES = {"column": XL_CHART_TYPE.COLUMN_CLUSTERED, "bar": XL_CHART_TYPE.B
 def _fill_chart(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Native, editable PowerPoint chart from the plan's categories + series, brand-coloured, on the
     deep-sea master (inherits background + logos). Data comes only from the plan (claim fidelity)."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""),
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""),
                          eyebrow=spec.get("caption"))
 
     cats = spec.get("categories") or []
@@ -1276,8 +1292,9 @@ def _fill_chart(prs, spec: dict, dark_index: int, light_index: int | None = None
 
 def _fill_matrix(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """2x2 matrix: four equal teal quadrants separated by the standard gutter, with axis labels."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     quads = (spec.get("quadrants") or [])[:4]
     mx, my = 3.0, _BODY_TOP
     mw = 13.333 - _MARGIN - mx
@@ -1340,8 +1357,9 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int, light_index: int | None
     labelled rows (Source / Key finding / Supporting findings / Relevance / Contents), each a
     bold lead-in label plus 1-2 sentences, rendered as the deck's own standard bulleted list — a
     clean, scannable summary rather than a stacked memo (client feedback on the first cut)."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title="Executive summary")
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title="Executive summary")
     rows = [(label, spec.get(key, "")) for key, label in _EXEC_SUMMARY_ROWS if spec.get(key)]
     if not rows:
         return
@@ -1351,7 +1369,8 @@ def _fill_exec_summary(prs, spec: dict, dark_index: int, light_index: int | None
 
 def _fill_comparison(prs, spec: dict, light_index: int) -> None:
     """Comparison table: a native, brand-styled table (teal header, light body) on white."""
-    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
+    pastel = spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index, white=True, pastel=pastel, title=spec.get("title", ""))
     headers = spec.get("headers") or []
     rows = spec.get("rows") or []
     ncols = len(headers)
@@ -1383,8 +1402,9 @@ def _fill_comparison(prs, spec: dict, light_index: int) -> None:
 
 def _fill_stat(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Hero stats: 1-3 big red figures with labels (the '50+ / 135+' treatment)."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     stats = (spec.get("stats") or [])[:3]
     n = max(1, len(stats))
     cw = (_CONTENT_W - (n - 1) * _GUTTER) / n     # equal columns, one standard gutter
@@ -1429,7 +1449,8 @@ def _harvey_ball(slide, cx, cy, d, score):
 
 def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
     """Harvey-ball rating grid: criteria (rows) x options (columns), each cell a 0-4 filled circle."""
-    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
+    pastel = spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index, white=True, pastel=pastel, title=spec.get("title", ""))
     options = spec.get("options") or []
     criteria = spec.get("criteria") or []
     ncols = len(options) + 1
@@ -1484,8 +1505,9 @@ def _fill_harvey_ball(prs, spec: dict, light_index: int) -> None:
 
 def _fill_funnel(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Funnel: centred bars that narrow top-to-bottom, one per stage, heading + body."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     stages = (spec.get("stages") or [])[:5]
     n = len(stages)
     if not n:
@@ -1511,8 +1533,9 @@ def _fill_funnel(prs, spec: dict, dark_index: int, light_index: int | None = Non
 
 def _fill_closing(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Closing / contact: a closing statement, optional tagline, and contact details."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light)
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel)
     cy = 2.6
     _place_text(slide, _MARGIN, cy, _CONTENT_W, 1.6, spec.get("title", ""), _SZ_TITLE, _ink(light),
                 bold=False, italic=False, font=_HEAD_TITLE)
@@ -1529,8 +1552,9 @@ _TEAL_TINTS = [_TEAL, RGBColor(0x24, 0x6C, 0x79), RGBColor(0x36, 0x86, 0x90),
 
 def _fill_kpi_dashboard(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """KPI dashboard: a grid of metric tiles (a hero figure + label + optional note) — the MBB scoreboard."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     metrics = (spec.get("metrics") or [])[:6]
     n = len(metrics)
     if not n:
@@ -1544,7 +1568,7 @@ def _fill_kpi_dashboard(prs, spec: dict, dark_index: int, light_index: int | Non
         x = _MARGIN + cc * (tw + _GUTTER)
         y = _BODY_TOP + rr * (th + _GUTTER)
         tile = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(tw), Inches(th))
-        tile.fill.solid(); tile.fill.fore_color.rgb = _chip_bg(light); tile.line.fill.background(); tile.shadow.inherit = False
+        tile.fill.solid(); tile.fill.fore_color.rgb = _chip_bg(light, pastel); tile.line.fill.background(); tile.shadow.inherit = False
         _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _RED,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
         _place_text(slide, x + _PAD, y + th * 0.52, tw - 2 * _PAD, 0.5, m.get("label", ""), _SZ_BODY, _INKC,
@@ -1557,8 +1581,9 @@ def _fill_kpi_dashboard(prs, spec: dict, dark_index: int, light_index: int | Non
 def _fill_roadmap(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Roadmap: left-to-right interlocking chevron phases, each with a date above, a heading inside, and
     activities below. Same-family teal tints so it reads as one sequence."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     phases = (spec.get("phases") or [])[:5]
     n = len(phases)
     if not n:
@@ -1588,8 +1613,9 @@ def _fill_roadmap(prs, spec: dict, dark_index: int, light_index: int | None = No
 def _fill_icon_grid(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """A grid of 3 to 6 icon tiles (icon chip + heading + body), 3 across. Optional teal banner. Icons
     are all-or-nothing from one source. Covers the client's icon-card slides."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     banner = spec.get("banner")
     top = _BODY_TOP
     if banner:
@@ -1616,7 +1642,7 @@ def _fill_icon_grid(prs, spec: dict, dark_index: int, light_index: int | None = 
         y = top + rr * (ch + _GUTTER)
         cx = x + cw / 2
         if icons:
-            _icon_disc(slide, cx, y + d / 2 + 0.08, d, icon_path=icons[i], light=light)
+            _icon_disc(slide, cx, y + d / 2 + 0.08, d, icon_path=icons[i], light=light, pastel=pastel)
             hy = y + d + 0.28
         else:
             hy = y + 0.25
@@ -1629,8 +1655,9 @@ def _fill_icon_grid(prs, spec: dict, dark_index: int, light_index: int | None = 
 def _fill_takeaways(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Numbered 'key messages' rows: a red-number chip + a bold statement + supporting detail, one per
     row with a thin divider between. Covers the client's summary / takeaways slides."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:6]
     n = len(items)
     if not n:
@@ -1639,7 +1666,7 @@ def _fill_takeaways(prs, spec: dict, dark_index: int, light_index: int | None = 
     d = 0.5
     for i, it in enumerate(items):
         y = _BODY_TOP + i * rh
-        _icon_disc(slide, _MARGIN + d / 2, y + rh / 2 - 0.05, d, number=i + 1, light=light)
+        _icon_disc(slide, _MARGIN + d / 2, y + rh / 2 - 0.05, d, number=i + 1, light=light, pastel=pastel)
         tx = _MARGIN + d + 0.35
         tw = _CONTENT_W - (d + 0.35)
         if it.get("body"):
@@ -1656,8 +1683,9 @@ def _fill_takeaways(prs, spec: dict, dark_index: int, light_index: int | None = 
 def _fill_from_to(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Transformation: a FROM panel, a teal arrow, and a TO panel — each with a small eyebrow, a heading
     and a body. Covers the client's from/to and before/after slides (no red block)."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     before = spec.get("before") or {}
     after = spec.get("after") or {}
     py = _BODY_TOP + 0.4
@@ -1676,7 +1704,7 @@ def _fill_from_to(prs, spec: dict, dark_index: int, light_index: int | None = No
     _panel(_MARGIN, RGBColor(0x22, 0x55, 0x5E), "FROM", before)
     ax = _MARGIN + pw + _GUTTER
     arr = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(ax), Inches(py + ph / 2 - 0.55), Inches(arrow_w), Inches(1.1))
-    arr.fill.solid(); arr.fill.fore_color.rgb = _line_soft(light); arr.line.fill.background(); arr.shadow.inherit = False
+    arr.fill.solid(); arr.fill.fore_color.rgb = _line_soft(light, pastel); arr.line.fill.background(); arr.shadow.inherit = False
     _panel(ax + arrow_w + _GUTTER, _TEAL2, "TO", after)
 
 
@@ -1690,8 +1718,9 @@ def _rule(slide, x, y, w, h, color):
 def _fill_pillars(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Pillars under a roof: an optional roof banner across the top, then 2 to 5 tall pillars, each with an
     icon chip, a heading and a body. For 'our approach rests on N pillars' framing."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:5]
     n = len(items)
     if not n:
@@ -1716,7 +1745,7 @@ def _fill_pillars(prs, spec: dict, dark_index: int, light_index: int | None = No
         pan.fill.solid(); pan.fill.fore_color.rgb = _TEAL; pan.line.fill.background(); pan.shadow.inherit = False
         hy = top + 0.3
         if icons:
-            _icon_disc(slide, x + pw / 2, top + 0.55, d, icon_path=icons[i], light=light); hy = top + 1.15
+            _icon_disc(slide, x + pw / 2, top + 0.55, d, icon_path=icons[i], light=light, pastel=pastel); hy = top + 1.15
         _place_text(slide, x + _PAD, hy, pw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x + _PAD, hy + 0.55, pw - 2 * _PAD, top + ph - (hy + 0.55) - _PAD,
@@ -1725,8 +1754,9 @@ def _fill_pillars(prs, spec: dict, dark_index: int, light_index: int | None = No
 
 def _fill_team(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Team cards: 2 to 4 members, each a person chip (light disc + person icon), name, role and short bio."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -1738,7 +1768,7 @@ def _fill_team(prs, spec: dict, dark_index: int, light_index: int | None = None)
     for i, m in enumerate(items):
         x = _MARGIN + i * (cw + _GUTTER); cx = x + cw / 2
         disc = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - d / 2), Inches(top), Inches(d), Inches(d))
-        disc.fill.solid(); disc.fill.fore_color.rgb = _chip_bg(light); disc.line.fill.background(); disc.shadow.inherit = False
+        disc.fill.solid(); disc.fill.fore_color.rgb = _chip_bg(light, pastel); disc.line.fill.background(); disc.shadow.inherit = False
         if ppl:
             pad = d * 0.26
             _place_icon(slide, (Inches(cx - d / 2 + pad), Inches(top + pad), Inches(d - 2 * pad), Inches(d - 2 * pad)), ppl)
@@ -1753,8 +1783,9 @@ def _fill_team(prs, spec: dict, dark_index: int, light_index: int | None = None)
 def _fill_metric_bars(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Metric bars: rows of label + a horizontal bar (length = pct) + the value on the right (bullet-chart
     style). For KPI rows where the magnitude matters."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     items = (spec.get("items") or [])[:6]
     n = len(items)
     if not n:
@@ -1779,8 +1810,9 @@ def _fill_metric_bars(prs, spec: dict, dark_index: int, light_index: int | None 
 
 def _fill_cause_effect(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Cause and effect: parallel rows, each a cause panel, a teal arrow, and the resulting effect text."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -1798,14 +1830,15 @@ def _fill_cause_effect(prs, spec: dict, dark_index: int, light_index: int | None
                     bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
         ar = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(_MARGIN + cause_w + 0.2), Inches(y + rh / 2 - 0.22),
                                     Inches(arrow_w), Inches(0.44))
-        ar.fill.solid(); ar.fill.fore_color.rgb = _line_soft(light); ar.line.fill.background(); ar.shadow.inherit = False
+        ar.fill.solid(); ar.fill.fore_color.rgb = _line_soft(light, pastel); ar.line.fill.background(); ar.shadow.inherit = False
         _place_text(slide, eff_x, y, eff_w, rh, it.get("body", ""), _SZ_BODY, _muted(light), anchor=MSO_ANCHOR.MIDDLE)
 
 
 def _fill_org_chart(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Org chart: a top box connected down to 2 to 4 child boxes with a bus connector."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -1821,11 +1854,11 @@ def _fill_org_chart(prs, spec: dict, dark_index: int, light_index: int | None = 
     chh = min(_BODY_BOTTOM - cy, 2.4)
     bus_y = tb_y + tb_h + 0.45
     centers = [_MARGIN + i * (cw + _GUTTER) + cw / 2 for i in range(n)]
-    _rule(slide, 13.333 / 2 - 0.01, tb_y + tb_h, 0.02, bus_y - (tb_y + tb_h), _line_soft(light))
-    _rule(slide, centers[0], bus_y - 0.01, centers[-1] - centers[0], 0.02, _line_soft(light))
+    _rule(slide, 13.333 / 2 - 0.01, tb_y + tb_h, 0.02, bus_y - (tb_y + tb_h), _line_soft(light, pastel))
+    _rule(slide, centers[0], bus_y - 0.01, centers[-1] - centers[0], 0.02, _line_soft(light, pastel))
     for i, it in enumerate(items):
         x = _MARGIN + i * (cw + _GUTTER); ccx = x + cw / 2
-        _rule(slide, ccx - 0.01, bus_y, 0.02, cy - bus_y, _line_soft(light))
+        _rule(slide, ccx - 0.01, bus_y, 0.02, cy - bus_y, _line_soft(light, pastel))
         cb = slide.shapes.add_shape(_BOX, Inches(x), Inches(cy), Inches(cw), Inches(chh))
         cb.fill.solid(); cb.fill.fore_color.rgb = _TEAL; cb.line.fill.background(); cb.shadow.inherit = False
         _place_text(slide, x + _PAD, cy + 0.18, cw - 2 * _PAD, 0.5, it.get("heading", ""), _SZ_BODY, _WHITE,
@@ -1836,8 +1869,9 @@ def _fill_org_chart(prs, spec: dict, dark_index: int, light_index: int | None = 
 
 def _fill_decision_tree(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Decision tree: a root box on the left branching to 2 to 4 outcome boxes on the right."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -1856,11 +1890,11 @@ def _fill_decision_tree(prs, spec: dict, dark_index: int, light_index: int | Non
     bh = (_BODY_H - (n - 1) * gap) / n
     root_cy = rb_y + rb_h / 2
     centers = [_BODY_TOP + i * (bh + gap) + bh / 2 for i in range(n)]
-    _rule(slide, rb_x + rb_w, root_cy - 0.01, 0.6, 0.02, _line_soft(light))
-    _rule(slide, bus_x - 0.01, min(centers[0], root_cy), 0.02, max(centers[-1], root_cy) - min(centers[0], root_cy), _line_soft(light))
+    _rule(slide, rb_x + rb_w, root_cy - 0.01, 0.6, 0.02, _line_soft(light, pastel))
+    _rule(slide, bus_x - 0.01, min(centers[0], root_cy), 0.02, max(centers[-1], root_cy) - min(centers[0], root_cy), _line_soft(light, pastel))
     for i, it in enumerate(items):
         y = _BODY_TOP + i * (bh + gap); bcy = y + bh / 2
-        _rule(slide, bus_x, bcy - 0.01, bx - bus_x, 0.02, _line_soft(light))
+        _rule(slide, bus_x, bcy - 0.01, bx - bus_x, 0.02, _line_soft(light, pastel))
         bb = slide.shapes.add_shape(_BOX, Inches(bx), Inches(y), Inches(bw), Inches(bh))
         bb.fill.solid(); bb.fill.fore_color.rgb = _TEAL; bb.line.fill.background(); bb.shadow.inherit = False
         _place_text(slide, bx + _PAD, y + 0.12, bw - 2 * _PAD, 0.45, it.get("heading", ""), _SZ_BODY, _WHITE,
@@ -1872,8 +1906,9 @@ def _fill_decision_tree(prs, spec: dict, dark_index: int, light_index: int | Non
 def _fill_cycle(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Cycle: 3 to 6 labelled nodes arranged in a ring around an optional hub."""
     import math
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:6]
     n = len(items)
     if not n:
@@ -1902,8 +1937,9 @@ def _fill_cycle(prs, spec: dict, dark_index: int, light_index: int | None = None
 def _fill_gantt(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Gantt / project schedule: task rows against a period axis. Each task spans `start`..`end`
     columns as a bar; a task flagged `milestone` renders as a red diamond at its `start` period."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     periods = spec.get("periods") or []
     items = (spec.get("items") or [])[:8]
     npp, n = len(periods), len(items)
@@ -1978,8 +2014,9 @@ def _fill_serpentine(prs, spec: dict, dark_index: int, light_index: int | None =
     A per-item `date` makes this the "wavy timeline": the date takes the slot the icon chip would use,
     because at this band height there is only room for one of them and a date is data while the icon is
     decoration. Undated items keep the icon chip as before."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -1989,7 +2026,7 @@ def _fill_serpentine(prs, spec: dict, dark_index: int, light_index: int | None =
     band_h = 1.45                              # text band at the top and at the bottom
     cy = _BODY_TOP + _BODY_H / 2
     amp = 0.55
-    nodes = _sine_spine(slide, _MARGIN + 0.35, _MARGIN + _CONTENT_W - 0.35, cy, amp, n, _line_soft(light))
+    nodes = _sine_spine(slide, _MARGIN + 0.35, _MARGIN + _CONTENT_W - 0.35, cy, amp, n, _line_soft(light, pastel))
     disc, ic = 0.46, 0.52
     cw = _CONTENT_W / n
     for i, (it, (nx, ny)) in enumerate(zip(items, nodes)):
@@ -1997,7 +2034,7 @@ def _fill_serpentine(prs, spec: dict, dark_index: int, light_index: int | None =
         d = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(nx - disc / 2), Inches(ny - disc / 2),
                                    Inches(disc), Inches(disc))
         d.fill.solid(); d.fill.fore_color.rgb = _TEAL2
-        d.line.color.rgb = _line_soft(light); d.line.width = Pt(1.25); d.shadow.inherit = False
+        d.line.color.rgb = _line_soft(light, pastel); d.line.width = Pt(1.25); d.shadow.inherit = False
         tf = d.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
         tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Emu(0)
         p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER; p.line_spacing = 1.0
@@ -2011,7 +2048,7 @@ def _fill_serpentine(prs, spec: dict, dark_index: int, light_index: int | None =
             icy = _BODY_BOTTOM - band_h + ic / 2
             hy, byy = _BODY_BOTTOM - band_h + ic + 0.06, _BODY_BOTTOM - band_h + ic + 0.54
         if icons:
-            _icon_disc(slide, nx, icy, ic, icon_path=icons[i], light=light)
+            _icon_disc(slide, nx, icy, ic, icon_path=icons[i], light=light, pastel=pastel)
         elif it.get("date"):
             # Same slot as the icon chip: nearest the curve, so the date reads as the node's label.
             _place_text(slide, tx, icy - 0.15, cw, 0.3, it["date"], _SZ_SMALL, _muted(light), bold=True,
@@ -2026,7 +2063,8 @@ def _fill_serpentine(prs, spec: dict, dark_index: int, light_index: int | None =
 def _fill_coverage_matrix(prs, spec: dict, light_index: int) -> None:
     """Coverage matrix: entities as rows, capabilities as columns, a filled tick where the entity
     covers that capability. The right home for BINARY yes/no comparisons (harvey balls misread those)."""
-    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""),
+    pastel = spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index, white=True, pastel=pastel, title=spec.get("title", ""),
                          eyebrow=spec.get("caption"))
     heads = spec.get("headers") or []
     items = (spec.get("items") or [])[:5]
@@ -2051,7 +2089,7 @@ def _fill_coverage_matrix(prs, spec: dict, light_index: int) -> None:
         if it.get("body"):
             _place_text(slide, _MARGIN, y + 0.54, label_w - 0.15, rh - 0.66, it["body"], _SZ_SMALL, _TEAL2)
         if i:
-            _rule(slide, _MARGIN, y, _CONTENT_W, 0.01, _PANEL)
+            _rule(slide, _MARGIN, y, _CONTENT_W, 0.01, _WHITE if pastel else _PANEL)
         for j, on in enumerate(list(it.get("marks") or [])[:nc]):
             if not on:
                 continue
@@ -2070,8 +2108,9 @@ def _fill_coverage_matrix(prs, spec: dict, light_index: int) -> None:
 def _fill_photo_stats(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Photo-topped stat cards: 2 or 3 cards, each a photo above a solid panel carrying an eyebrow
     label, ONE hero figure and a supporting line. High-impact proof-point opener."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     items = (spec.get("items") or [])[:3]
     n = len(items)
     if not n:
@@ -2126,8 +2165,9 @@ def _fill_numbered_cards(prs, spec: dict, dark_index: int, light_index: int | No
     """Numbered cards: 2 to 4 equal panels, each with a number badge top-left, an optional icon chip
     top-right, a bold heading and a body. The 'three reasons why' card set. Cards are sized to the
     LONGEST card's content (equal heights) and centred in the body zone, so they never stretch empty."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:4]
     n = len(items)
     if not n:
@@ -2160,7 +2200,7 @@ def _fill_numbered_cards(prs, spec: dict, dark_index: int, light_index: int | No
         r.font.name = _HEAD; r.font.color.rgb = _WHITE
         if icons:                              # brand icon chip (light disc), matching the rest of the library
             _icon_disc(slide, x + cw - _PAD - badge / 2, top + _PAD + badge / 2, badge + 0.06,
-                       icon_path=icons[i], light=light)
+                       icon_path=icons[i], light=light, pastel=pastel)
         # heading + body as ONE vertically-centred block, so a short card never leaves a dead gap
         ty = top + _PAD + badge + 0.2
         tb = slide.shapes.add_textbox(Inches(x + _PAD), Inches(ty), Inches(cw - 2 * _PAD),
@@ -2187,8 +2227,9 @@ def _fill_numbered_cards(prs, spec: dict, dark_index: int, light_index: int | No
 def _fill_implications(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Trend / overview / implication rows: a numbered label pill, the detail, then a chevron into the
     'so what'. The classic three-column analysis table (mega-trends → market implications)."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:5]
     n = len(items)
     if not n:
@@ -2214,14 +2255,14 @@ def _fill_implications(prs, spec: dict, dark_index: int, light_index: int | None
         pill = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y), Inches(lab_w), Inches(rh))
         pill.fill.solid(); pill.fill.fore_color.rgb = _TEAL
         pill.line.fill.background(); pill.shadow.inherit = False
-        _icon_disc(slide, _MARGIN + 0.1 + badge / 2, y + rh / 2, badge, number=i + 1, light=light)
+        _icon_disc(slide, _MARGIN + 0.1 + badge / 2, y + rh / 2, badge, number=i + 1, light=light, pastel=pastel)
         _place_text(slide, _MARGIN + 0.2 + badge, y, lab_w - 0.3 - badge, rh, it.get("heading", ""),
                     _SZ_BODY, _WHITE, bold=True, font=_HEAD, anchor=MSO_ANCHOR.MIDDLE)
         _place_text(slide, ov_x, y, ov_w, rh, it.get("body", ""), _SZ_SMALL, _muted(light),
                     anchor=MSO_ANCHOR.MIDDLE)
         ar = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, Inches(ar_x), Inches(y + rh / 2 - 0.17),
                                     Inches(arrow_w), Inches(0.34))
-        ar.fill.solid(); ar.fill.fore_color.rgb = _line_soft(light)
+        ar.fill.solid(); ar.fill.fore_color.rgb = _line_soft(light, pastel)
         ar.line.fill.background(); ar.shadow.inherit = False
         ip = slide.shapes.add_shape(_BOX, Inches(imp_x), Inches(y), Inches(imp_w), Inches(rh))
         ip.fill.solid(); ip.fill.fore_color.rgb = _TEAL2
@@ -2233,8 +2274,9 @@ def _fill_implications(prs, spec: dict, dark_index: int, light_index: int | None
 def _fill_breakdown(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Total broken into shares: a hub circle carrying the total, fanning out via thin connectors to
     one bar per component. Each bar shows its share and label, tinted largest-to-smallest."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""))
     items = (spec.get("items") or [])[:6]
     n = len(items)
     if not n:
@@ -2287,8 +2329,9 @@ def _fill_chart_bands(prs, spec: dict, dark_index: int, light_index: int | None 
     """Column chart with narrative phase bands: bars drawn as shapes (NOT a native chart) so the
     band pills under the axis line up EXACTLY with their category columns — the whole point of the
     layout. Bands carry a number badge and span `start`..`end` categories."""
-    light = light_index is not None and spec.get("background") == "light"
-    slide = _synth_slide(prs, light_index if light else dark_index, white=light, title=spec.get("title", ""), eyebrow=spec.get("caption"))
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel, title=spec.get("title", ""), eyebrow=spec.get("caption"))
     cats = spec.get("categories") or []
     vals = [float(v) for v in (spec.get("values") or [])]
     bands = (spec.get("bands") or [])[:4]
@@ -2337,7 +2380,7 @@ def _fill_chart_bands(prs, spec: dict, dark_index: int, light_index: int | None 
         pill.fill.solid(); pill.fill.fore_color.rgb = _TEAL_TINTS[j % len(_TEAL_TINTS)]
         pill.line.fill.background(); pill.shadow.inherit = False
         bd = min(0.3, band_h - 0.14)
-        _icon_disc(slide, bx + 0.12 + bd / 2, band_y + band_h / 2, bd, number=j + 1, light=light)
+        _icon_disc(slide, bx + 0.12 + bd / 2, band_y + band_h / 2, bd, number=j + 1, light=light, pastel=pastel)
         _place_text(slide, bx + 0.2 + bd, band_y, bwd - 0.3 - bd, band_h, b.get("label", ""),
                     _SZ_BODY, _WHITE, bold=True, font=_HEAD, align=PP_ALIGN.CENTER,
                     anchor=MSO_ANCHOR.MIDDLE)
@@ -2364,7 +2407,8 @@ def _fill_chart_takeaways(prs, spec: dict, light_index: int) -> None:
     """Bubble chart beside a key-takeaways column — the classic 'here is the landscape AND what it
     means' slide. Bubbles are drawn as shapes (python-pptx exposes no plot-area geometry for a native
     bubble chart, so labels could not be anchored to their points) with area proportional to `size`."""
-    slide = _synth_slide(prs, light_index, white=True, title=spec.get("title", ""))
+    pastel = spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index, white=True, pastel=pastel, title=spec.get("title", ""))
     bubbles = (spec.get("bubbles") or [])[:12]
     takeaways = [t for t in (spec.get("takeaways") or []) if t and t.strip()][:5]
     if not bubbles:
@@ -2404,7 +2448,7 @@ def _fill_chart_takeaways(prs, spec: dict, light_index: int) -> None:
         v = y_max * k / 4
         gy = py1 - ph * k / 4
         if k:
-            _rule(slide, px0, gy, pw, 0.008, _PANEL)
+            _rule(slide, px0, gy, pw, 0.008, _WHITE if pastel else _PANEL)
         _place_text(slide, _MARGIN, gy - 0.13, 0.58, 0.26, _fmt_num(v), _SZ_SMALL, _TEAL2,
                     align=PP_ALIGN.RIGHT)
     for k in range(5):                                  # x ticks
@@ -2660,11 +2704,13 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
     cat = catalog.get(layout_name)
     if not cat:
         raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")
-    want_light = spec.get("background") == "light" and "light" in cat["backgrounds"]
+    want_light = spec.get("background") in ("light", "pastel") and "light" in cat["backgrounds"]
     master_index = light if want_light else dark
     layout = _find_layout(prs, cat["template_layout"], master_index)
     slide = prs.slides.add_slide(layout)
     _fill_slide(slide, spec, cat, master_index, dark=not want_light)
+    if want_light and spec.get("background") == "pastel":
+        _set_bg(slide, _LTEAL)
 
 
 def render_deck(plan: dict, study_meta: list[dict] | None = None,

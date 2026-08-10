@@ -762,7 +762,7 @@ export default function ContentGenerator() {
                   <div>
                     <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Color theme</div>
                     <div className="flex rounded-full border border-[#E4EDF0] p-1">
-                      {[["auto", "Auto"], ["dark", "Blue Ocean"], ["light", "Pastel Blue"]].map(([val, label]) => (
+                      {[["auto", "Auto"], ["dark", "Blue Ocean"], ["light", "White"], ["pastel", "Pastel Blue"]].map(([val, label]) => (
                         <button
                           key={val}
                           type="button"
@@ -774,8 +774,8 @@ export default function ContentGenerator() {
                       ))}
                     </div>
                     <p className="mt-1.5 text-xs text-zinc-500">
-                      Auto lets the AI alternate backgrounds slide by slide for rhythm. Blue Ocean or Pastel
-                      Blue forces every slide to that one theme.
+                      Auto lets the AI alternate backgrounds slide by slide for rhythm. Blue Ocean, White or
+                      Pastel Blue forces every slide to that one theme.
                     </p>
                   </div>
                 </div>

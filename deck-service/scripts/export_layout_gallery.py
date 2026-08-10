@@ -2,16 +2,18 @@
 """Export a PNG preview of every slide layout for the About page's layout gallery.
 
 Renders ONE deck holding one sample slide per layout (the same samples build_gallery.py
-uses for the design-review decks), rasterises it TWICE — once as-is (Blue Ocean, the dark
-default) and once with every slide's `background` forced to "light" (Pastel Blue, mirroring
-pipeline._apply_color_theme) — and names each PNG after its layout key:
+uses for the design-review decks), rasterises it THREE times — once as-is (Blue Ocean, the
+dark default), once with every slide's `background` forced to "light" (White), and once
+forced to "pastel" (Pastel Blue) — mirroring pipeline._apply_color_theme — and names each
+PNG after its layout key:
 
-    public/layout-gallery/<layout>.png         Blue Ocean (dark) — what the app served before
-    public/layout-gallery-light/<layout>.png   Pastel Blue (light) — same content, light theme
-    app/layout-gallery.json                    ordered manifest {key, kind, usage}
+    public/layout-gallery/<layout>.png          Blue Ocean (dark) — what the app served before
+    public/layout-gallery-light/<layout>.png    White (light) — same content, white background
+    public/layout-gallery-pastel/<layout>.png   Pastel Blue (pastel) — same content, mint background
+    app/layout-gallery.json                     ordered manifest {key, kind, usage}
 
 Verbatim splices (ingredient, the benefits overview) ignore `background` entirely, so their
-light-mode PNG is identical to the dark one — expected, not a bug.
+light/pastel PNGs are identical to the dark one — expected, not a bug.
 
 Re-run after adding/removing a layout or changing the renderer's look:
 
@@ -45,6 +47,7 @@ from build_gallery import SYNTH, TMPL, notes_for          # noqa: E402
 APP_ROOT = ROOT.parent                                    # min-forste-app/
 PNG_DIR = APP_ROOT / "public" / "layout-gallery"
 PNG_DIR_LIGHT = APP_ROOT / "public" / "layout-gallery-light"
+PNG_DIR_PASTEL = APP_ROOT / "public" / "layout-gallery-pastel"
 MANIFEST = APP_ROOT / "app" / "layout-gallery.json"
 
 # The template's own placeholder layouts; everything else in the catalog is code built.
@@ -123,10 +126,12 @@ def main() -> None:
         s.setdefault("speaker_notes", notes_for(s["layout"]))
 
     _export_set(slides, keys, PNG_DIR, "Blue Ocean (dark)")
-    # Same content, forced light — mirrors pipeline._apply_color_theme (verbatim splices like
-    # ingredient/benefits ignore `background`, so their light PNG is identical, by design).
+    # Same content, forced light/pastel — mirrors pipeline._apply_color_theme (verbatim splices
+    # like ingredient/benefits ignore `background`, so those PNGs are identical, by design).
     light_slides = [{**s, "background": "light"} for s in slides]
-    _export_set(light_slides, keys, PNG_DIR_LIGHT, "Pastel Blue (light)")
+    _export_set(light_slides, keys, PNG_DIR_LIGHT, "White (light)")
+    pastel_slides = [{**s, "background": "pastel"} for s in slides]
+    _export_set(pastel_slides, keys, PNG_DIR_PASTEL, "Pastel Blue (pastel)")
 
     manifest = [{
         "key": k,

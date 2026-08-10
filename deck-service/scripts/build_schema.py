@@ -608,8 +608,10 @@ def main():
                                                             "numbered_cards", "implications",
                                                             "breakdown", "chart_bands",
                                                             "chart_takeaways"]},
-                        "background": {"enum": ["dark", "light"],
-                                       "description": "dark = deep-sea master (default), light = light master. Alternate for rhythm."},
+                        "background": {"enum": ["dark", "light", "pastel"],
+                                       "description": "dark = deep-sea master (default), light = white master, "
+                                                       "pastel = the same white master with a solid pastel-mint "
+                                                       "override. Alternate for rhythm."},
                         "title": {"type": "string"},
                         "subtitle": {"type": "string"},
                         "heading": {"type": "string"},

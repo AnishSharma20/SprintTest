@@ -403,6 +403,43 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     (preferred layout used; photo-rich prompt; footer+date verified in rendered PNG; team photo
     render path verified deterministically), `tsc` + `next build` clean.
 
+- **Speaker notes + executive summary + PPTX input — NEW 2026-08-10.** Three deck features in one
+  sweep:
+  - **Speaker notes on EVERY slide.** `speaker_notes` existed in the schema but was optional and
+    only written by the native-layout path; the 31 code-built layouts silently dropped it. Now:
+    a SPEAKER NOTES (REQUIRED) prompt block (3 to 6 spoken sentences per slide: takeaway,
+    walk-through, supporting detail incl. the heavy stats, bridge to the next slide, same language
+    as the deck); a soft `NOTES:` validation nudge (`validate._notes_warnings`) with its own
+    revise_plan repair bucket; notes written CENTRALLY in `render_deck` (the layout dispatch was
+    extracted into `renderer._make_slide`, and the loop writes `speaker_notes` onto whatever slide
+    each branch added — so synthetic, native AND spliced slides all get them; removed from
+    `_fill_slide`); and a deterministic backstop `pipeline._ensure_notes` composing a note from the
+    slide's own text (title, content in reading order, citations, ≤1400 chars) for any slide the
+    retry still missed. Verbatim slides (`ingredient`, `custom_*`) are exempt by contract (they are
+    emitted as bare `{"layout": key}`); the spliced benefits slide likewise carries none.
+  - **Executive summary in every deck.** An EXECUTIVE SUMMARY (REQUIRED) prompt block: the third
+    slide, right after the agenda, must be an `exec_summary` distilling the whole argument into
+    2 to 4 points (title = the deck's core claim). Soft `SUMMARY:` nudge (`validate._summary_warning`)
+    + repair bucket, and a deterministic net `pipeline._ensure_exec_summary` that builds a
+    takeaways-style "Executive summary" slide from the deck's own action titles (headings ≤90 fit;
+    exec_summary point headings ≤42 don't) and inserts it after the agenda. The requirement travels
+    with the layout: disabling `exec_summary` on the About page disables prompt block, nudge and
+    net (the net also stands down if `takeaways` is disabled). `validate_plan` gained a
+    `disabled_layouts` param, threaded from `pipeline.generate` + `_visual_gate`; `NOTES:`/`SUMMARY:`
+    joined the soft-error tuples so neither can ever fail a deck.
+  - **PPTX as input.** `main._read_summary` now handles `.pptx`/`.potx` via `main._pptx_text`
+    (python-pptx): all reader-facing text slide by slide — text frames, grouped shapes recursively,
+    table rows, chart data best-effort (categories + series values), and the old deck's own speaker
+    notes — under a header telling the planner the old slide split is source material, not required
+    structure. Frontend upload accepts `.pptx` (accept attr + helper copy in
+    `app/generator/page.tsx`); the API route needed no change (it forwards files as-is; the
+    existing ~4.5 MB Vercel body ceiling applies to big decks).
+  - Verified: component tests (extraction on a real AKBM deck, validators, nets, a rendered deck
+    read back with notes on all 9 slides incl. chart/key_points/exec_summary) + a REAL end-to-end
+    generation with a .pptx as the only source (13-slide plan, exec_summary at position 3, 12/13
+    slides with planner-written notes, only the two verbatim splices without) + `tsc` clean + the
+    upload UI verified live in the browser.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

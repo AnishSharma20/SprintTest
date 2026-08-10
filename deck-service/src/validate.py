@@ -64,6 +64,41 @@ def _coverage_warnings(plan: dict, photo_level: str = "default") -> list[str]:
     return warnings
 
 
+# Slides that are spliced in verbatim (fixed AKBM slides and the team's own uploads) are emitted
+# as bare {"layout": key} by contract — they are the only slides allowed to skip speaker notes.
+def _needs_notes(slide: dict) -> bool:
+    layout = slide.get("layout") or ""
+    return layout != "ingredient" and not layout.startswith("custom_")
+
+
+def _notes_warnings(plan: dict) -> list[str]:
+    """Soft nudge: every generated slide must carry presenter-ready speaker_notes (a house
+    requirement — the deck doubles as a talk script). Tagged NOTES: so the pipeline's
+    retry-then-warn split never hard-fails a deck over it, and pipeline._ensure_notes backstops
+    any slide still missing one after the retry."""
+    missing = [f"slides/{i} ({s.get('layout')}: \"{(s.get('title') or '')[:60]}\")"
+               for i, s in enumerate(plan.get("slides", []))
+               if _needs_notes(s) and not (s.get("speaker_notes") or "").strip()]
+    if not missing:
+        return []
+    return [f"NOTES: {len(missing)} slide(s) have no `speaker_notes`. Every slide needs a presenter "
+            f"script (3 to 6 spoken sentences: takeaway, walk-through, supporting detail, bridge to "
+            f"the next slide). Missing on: " + "; ".join(missing)]
+
+
+def _summary_warning(plan: dict, disabled_layouts=None) -> list[str]:
+    """Soft nudge: every deck opens with an executive summary right after the agenda (skipped
+    when the About page turned the exec_summary layout off). pipeline._ensure_exec_summary
+    backstops a deck that still lacks one after the retry."""
+    if "exec_summary" in (disabled_layouts or ()):
+        return []
+    slides = plan.get("slides", [])
+    if len(slides) < 4 or any(s.get("layout") == "exec_summary" for s in slides):
+        return []
+    return ["SUMMARY: the deck has no `exec_summary` slide — every deck needs one directly after "
+            "the agenda, distilling the whole argument into 2 to 4 points."]
+
+
 # Fields that intentionally stay short one-liners even when their maxLength happens to be
 # generous (a caption reading a chart, a banner summary, contact details) — never nudged toward
 # their limit; doing so would just pad a line that is supposed to stay a line.
@@ -164,7 +199,8 @@ def _schema_with_extras(extra_layouts: list[str] | None,
 
 def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   extra_photo_ids: list[str] | None = None,
-                  photo_level: str = "default") -> list[str]:
+                  photo_level: str = "default",
+                  disabled_layouts=None) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
     validator = jsonschema.Draft202012Validator(_schema_with_extras(extra_layouts, extra_photo_ids))
@@ -198,5 +234,7 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     # coverage checked at all, silently shipping under the photo/variety minimums.
     errors.extend(_coverage_warnings(plan, photo_level))
     errors.extend(_text_density_warnings(plan))
+    errors.extend(_notes_warnings(plan))
+    errors.extend(_summary_warning(plan, disabled_layouts))
 
     return errors[:25]

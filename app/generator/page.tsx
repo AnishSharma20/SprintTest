@@ -643,10 +643,10 @@ export default function ContentGenerator() {
             </div>
 
             <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#B9D8E0] bg-white p-7 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#EEFAF9]">
-              <input type="file" accept=".docx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />
+              <input type="file" accept=".docx,.pptx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />
               <div className="text-3xl">📄</div>
               <div className="mt-2 text-sm font-bold text-[#052A4E]">Click to add source files</div>
-              <div className="mt-1 text-xs text-zinc-500">.docx, .txt or .md · you can add several</div>
+              <div className="mt-1 text-xs text-zinc-500">.docx, .pptx, .txt or .md · you can add several · an existing PowerPoint is remade as a new on brand deck</div>
             </label>
 
             {filer.length > 0 && (

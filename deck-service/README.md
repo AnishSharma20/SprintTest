@@ -1,7 +1,9 @@
 # Superba Deck Generator
 
-Turns a free-text summary (pasted text or a `.docx`) into an **on-brand Aker BioMarine /
-Superba PowerPoint deck**. Built for non-technical AkerBM staff (Tab 2 of the content tool).
+Turns a free-text summary (pasted text, a `.docx`, or an existing `.pptx` — its text and speaker
+notes are extracted and the deck is regenerated on-brand) into an **on-brand Aker BioMarine /
+Superba PowerPoint deck** with presenter speaker notes on every slide and an executive summary
+slide after the agenda. Built for non-technical AkerBM staff (Tab 2 of the content tool).
 
 ## Core idea — two stages, and the LLM never touches design
 

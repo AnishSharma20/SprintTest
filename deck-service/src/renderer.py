@@ -601,11 +601,6 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
             continue
         ph._element.getparent().remove(ph._element)
 
-    notes = spec.get("speaker_notes")
-    if notes:
-        slide.notes_slide.notes_text_frame.text = notes
-
-
 _R_ATTRS = (qn("r:embed"), qn("r:link"), qn("r:id"))
 _DESIGN_SRC = None
 
@@ -2497,6 +2492,94 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
         _place_icon(slide, box, path)  # letterbox-fit — a chart must never be crop-to-filled
 
 
+def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
+                custom_by_key: dict, placed_custom: set, unnumbered: set) -> None:
+    """Add ONE slide for a plan spec — the layout dispatch, extracted from render_deck so the
+    loop can apply per-slide extras (speaker notes) to whatever slide any branch added."""
+    layout_name = spec["layout"]
+    if layout_name.startswith("custom_"):   # a team slide the planner placed in the storyline
+        c = custom_by_key.get(layout_name)
+        if c:
+            _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+            placed_custom.add(layout_name)
+        else:
+            print(f"[custom-slide] plan references unknown {layout_name}; skipped", file=sys.stderr)
+        return
+    if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
+        _add_ingredient_slide(prs, dark)
+        return
+    if layout_name == "key_points":   # code-built 4-icon-card layout (mechanism B)
+        _fill_key_points(prs, spec, light)
+        return
+    if layout_name == "chart":        # native pptx chart (mechanism B)
+        _fill_chart(prs, spec, dark)
+        return
+    if layout_name == "matrix":
+        _fill_matrix(prs, spec, dark); return
+    if layout_name == "exec_summary":
+        _fill_exec_summary(prs, spec, dark); return
+    if layout_name == "comparison":
+        _fill_comparison(prs, spec, light); return
+    if layout_name == "stat":
+        _fill_stat(prs, spec, dark); return
+    if layout_name == "harvey_ball":
+        _fill_harvey_ball(prs, spec, light); return
+    if layout_name == "funnel":
+        _fill_funnel(prs, spec, dark); return
+    if layout_name == "closing":
+        _fill_closing(prs, spec, dark); return
+    if layout_name == "kpi_dashboard":
+        _fill_kpi_dashboard(prs, spec, dark); return
+    if layout_name == "roadmap":
+        _fill_roadmap(prs, spec, dark); return
+    if layout_name == "icon_grid":
+        _fill_icon_grid(prs, spec, dark); return
+    if layout_name == "takeaways":
+        _fill_takeaways(prs, spec, dark); return
+    if layout_name == "from_to":
+        _fill_from_to(prs, spec, dark); return
+    if layout_name == "pillars":
+        _fill_pillars(prs, spec, dark); return
+    if layout_name == "team":
+        _fill_team(prs, spec, dark); return
+    if layout_name == "metric_bars":
+        _fill_metric_bars(prs, spec, dark); return
+    if layout_name == "cause_effect":
+        _fill_cause_effect(prs, spec, dark); return
+    if layout_name == "org_chart":
+        _fill_org_chart(prs, spec, dark); return
+    if layout_name == "decision_tree":
+        _fill_decision_tree(prs, spec, dark); return
+    if layout_name == "cycle":
+        _fill_cycle(prs, spec, dark); return
+    if layout_name == "gantt":
+        _fill_gantt(prs, spec, dark); return
+    if layout_name == "serpentine":
+        _fill_serpentine(prs, spec, dark); return
+    if layout_name == "coverage_matrix":
+        _fill_coverage_matrix(prs, spec, light); return
+    if layout_name == "photo_stats":
+        _fill_photo_stats(prs, spec, dark); return
+    if layout_name == "numbered_cards":
+        _fill_numbered_cards(prs, spec, dark); return
+    if layout_name == "implications":
+        _fill_implications(prs, spec, dark); return
+    if layout_name == "breakdown":
+        _fill_breakdown(prs, spec, dark); return
+    if layout_name == "chart_bands":
+        _fill_chart_bands(prs, spec, dark); return
+    if layout_name == "chart_takeaways":
+        _fill_chart_takeaways(prs, spec, light); return
+    cat = catalog.get(layout_name)
+    if not cat:
+        raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")
+    want_light = spec.get("background") == "light" and "light" in cat["backgrounds"]
+    master_index = light if want_light else dark
+    layout = _find_layout(prs, cat["template_layout"], master_index)
+    slide = prs.slides.add_slide(layout)
+    _fill_slide(slide, spec, cat, master_index, dark=not want_light)
+
+
 def render_deck(plan: dict, study_meta: list[dict] | None = None,
                 design: dict | None = None,
                 custom_slides: list[dict] | None = None,
@@ -2520,88 +2603,15 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     dark, light = _master_indices()
 
     for spec in plan["slides"]:
-        layout_name = spec["layout"]
-        if layout_name.startswith("custom_"):   # a team slide the planner placed in the storyline
-            c = custom_by_key.get(layout_name)
-            if c:
-                _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
-                placed_custom.add(layout_name)
-            else:
-                print(f"[custom-slide] plan references unknown {layout_name}; skipped", file=sys.stderr)
-            continue
-        if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
-            _add_ingredient_slide(prs, dark)
-            continue
-        if layout_name == "key_points":   # code-built 4-icon-card layout (mechanism B)
-            _fill_key_points(prs, spec, light)
-            continue
-        if layout_name == "chart":        # native pptx chart (mechanism B)
-            _fill_chart(prs, spec, dark)
-            continue
-        if layout_name == "matrix":
-            _fill_matrix(prs, spec, dark); continue
-        if layout_name == "exec_summary":
-            _fill_exec_summary(prs, spec, dark); continue
-        if layout_name == "comparison":
-            _fill_comparison(prs, spec, light); continue
-        if layout_name == "stat":
-            _fill_stat(prs, spec, dark); continue
-        if layout_name == "harvey_ball":
-            _fill_harvey_ball(prs, spec, light); continue
-        if layout_name == "funnel":
-            _fill_funnel(prs, spec, dark); continue
-        if layout_name == "closing":
-            _fill_closing(prs, spec, dark); continue
-        if layout_name == "kpi_dashboard":
-            _fill_kpi_dashboard(prs, spec, dark); continue
-        if layout_name == "roadmap":
-            _fill_roadmap(prs, spec, dark); continue
-        if layout_name == "icon_grid":
-            _fill_icon_grid(prs, spec, dark); continue
-        if layout_name == "takeaways":
-            _fill_takeaways(prs, spec, dark); continue
-        if layout_name == "from_to":
-            _fill_from_to(prs, spec, dark); continue
-        if layout_name == "pillars":
-            _fill_pillars(prs, spec, dark); continue
-        if layout_name == "team":
-            _fill_team(prs, spec, dark); continue
-        if layout_name == "metric_bars":
-            _fill_metric_bars(prs, spec, dark); continue
-        if layout_name == "cause_effect":
-            _fill_cause_effect(prs, spec, dark); continue
-        if layout_name == "org_chart":
-            _fill_org_chart(prs, spec, dark); continue
-        if layout_name == "decision_tree":
-            _fill_decision_tree(prs, spec, dark); continue
-        if layout_name == "cycle":
-            _fill_cycle(prs, spec, dark); continue
-        if layout_name == "gantt":
-            _fill_gantt(prs, spec, dark); continue
-        if layout_name == "serpentine":
-            _fill_serpentine(prs, spec, dark); continue
-        if layout_name == "coverage_matrix":
-            _fill_coverage_matrix(prs, spec, light); continue
-        if layout_name == "photo_stats":
-            _fill_photo_stats(prs, spec, dark); continue
-        if layout_name == "numbered_cards":
-            _fill_numbered_cards(prs, spec, dark); continue
-        if layout_name == "implications":
-            _fill_implications(prs, spec, dark); continue
-        if layout_name == "breakdown":
-            _fill_breakdown(prs, spec, dark); continue
-        if layout_name == "chart_bands":
-            _fill_chart_bands(prs, spec, dark); continue
-        if layout_name == "chart_takeaways":
-            _fill_chart_takeaways(prs, spec, light); continue
-        cat = catalog.get(layout_name)
-        if not cat:
-            raise ValueError(f"Unknown layout '{layout_name}' (not in catalog)")
-        want_light = spec.get("background") == "light" and "light" in cat["backgrounds"]
-        master_index = light if want_light else dark
-        layout = _find_layout(prs, cat["template_layout"], master_index)
-        slide = prs.slides.add_slide(layout)
-        _fill_slide(slide, spec, cat, master_index, dark=not want_light)
+        before = len(prs.slides._sldIdLst)
+        _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered)
+        # Speaker notes are written HERE, on whatever slide the dispatch just added, so every
+        # layout gets them — code-built, native template and verbatim splices alike (an unknown
+        # team-slide key adds nothing, hence the count guard). python-pptx creates the notes
+        # slide on first access.
+        notes = (spec.get("speaker_notes") or "").strip()
+        if notes and len(prs.slides._sldIdLst) > before:
+            prs.slides[-1].notes_slide.notes_text_frame.text = notes
 
     # Team slides marked "in every deck" that the plan didn't already place — appended after the
     # content, before the benefits overview below, so they read as part of the deck's fixed tail.

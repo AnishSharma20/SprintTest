@@ -104,10 +104,70 @@ def _photo_note(photos: dict | None) -> str:
     return "".join(lines) + "\n" if len(lines) > 1 else ""
 
 
+def _pptx_shape_lines(shape) -> list[str]:
+    """Every piece of human-readable text one shape carries: text frames, table cells (one line
+    per row, cells joined with a separator), chart data (best-effort: series names, categories and
+    values), and grouped shapes recursively."""
+    lines: list[str] = []
+    if getattr(shape, "shape_type", None) == 6:  # MSO_SHAPE_TYPE.GROUP
+        for sub in shape.shapes:
+            lines.extend(_pptx_shape_lines(sub))
+        return lines
+    if getattr(shape, "has_text_frame", False):
+        t = shape.text_frame.text.strip()
+        if t:
+            lines.append(t)
+    if getattr(shape, "has_table", False):
+        for row in shape.table.rows:
+            cells = [(c.text or "").strip() for c in row.cells]
+            if any(cells):
+                lines.append(" | ".join(cells))
+    if getattr(shape, "has_chart", False):
+        try:
+            chart = shape.chart
+            cats = [str(c) for c in chart.plots[0].categories]
+            if cats:
+                lines.append("Chart categories: " + ", ".join(cats))
+            for ser in chart.series:
+                vals = ", ".join("" if v is None else f"{v:g}" for v in ser.values)
+                lines.append(f"Chart series {ser.name or '?'}: {vals}")
+        except Exception:  # noqa: BLE001 — chart internals vary; text extraction must not fail on them
+            pass
+    return lines
+
+
+def _pptx_text(name: str, data: bytes) -> str:
+    """An existing PowerPoint as source material: all reader-facing text, slide by slide, plus any
+    speaker notes — so the tool can regenerate an old/off-brand deck as a proper Superba one. The
+    header tells the planner what it is looking at (the old deck's slide split is input, not a
+    required structure)."""
+    from pptx import Presentation  # python-pptx, already a renderer dependency
+
+    prs = Presentation(io.BytesIO(data))
+    parts = []
+    for i, slide in enumerate(prs.slides, 1):
+        lines: list[str] = []
+        for shape in slide.shapes:
+            lines.extend(_pptx_shape_lines(shape))
+        if slide.has_notes_slide:
+            n = slide.notes_slide.notes_text_frame.text.strip()
+            if n:
+                lines.append(f"Speaker notes: {n}")
+        if lines:
+            parts.append(f"## Slide {i}\n" + "\n".join(lines))
+    if not parts:
+        return ""
+    return (f"EXISTING PRESENTATION (text extracted from the PowerPoint file \"{name}\"; use its "
+            "content as source material — its slide split reflects the OLD deck, so restructure "
+            "freely into the best new storyline):\n\n" + "\n\n".join(parts))
+
+
 def _read_summary(name: str, data: bytes) -> str:
     if name.lower().endswith(".docx"):
         import docx  # python-docx
         return "\n".join(p.text for p in docx.Document(io.BytesIO(data)).paragraphs)
+    if name.lower().endswith((".pptx", ".potx")):
+        return _pptx_text(name, data)
     return data.decode("utf-8", errors="replace")
 
 

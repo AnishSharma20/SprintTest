@@ -57,6 +57,83 @@ def _ensure_agenda(plan: dict) -> dict:
     return {**plan, "slides": slides[:at] + [agenda] + slides[at:]}
 
 
+def _ensure_exec_summary(plan: dict, disabled_layouts=None) -> dict:
+    """Every deck opens with an executive summary right after the agenda. The planner is
+    instructed to write a proper `exec_summary` slide (and the SUMMARY: nudge drives the retry);
+    this is the deterministic net for when it still doesn't — built as a takeaways-style slide
+    from the deck's own ACTION TITLES, which already state each slide's takeaway as a full
+    sentence, so the derived summary is real content, not boilerplate. Skipped when the About
+    page turned exec_summary off (the requirement travels with the layout)."""
+    disabled = set(disabled_layouts or ())
+    slides = plan.get("slides", [])
+    if ("exec_summary" in disabled or "takeaways" in disabled or len(slides) < 4
+            or any(s.get("layout") == "exec_summary" for s in slides)):
+        return plan
+    skip = {"title", "agenda", "section", "highlight", "title_only", "closing", "ingredient"}
+    items, seen = [], set()
+    for s in slides:
+        layout = s.get("layout") or ""
+        t = (s.get("title") or "").strip()
+        if layout in skip or layout.startswith("custom_") or not t:
+            continue
+        if t.lower() in seen:
+            continue
+        seen.add(t.lower())
+        items.append({"heading": t[:90].rstrip()})
+        if len(items) >= 5:
+            break
+    if len(items) < 2:
+        return plan
+    summary = {"layout": "takeaways", "title": "Executive summary", "items": items,
+               "speaker_notes": " ".join(i["heading"] for i in items)}
+    # Directly after the agenda (or the cover, or at the very front — whichever exists).
+    at = 0
+    for i, s in enumerate(slides[:3]):
+        if s.get("layout") in ("title", "agenda"):
+            at = i + 1
+    return {**plan, "slides": slides[:at] + [summary] + slides[at:]}
+
+
+# Plan fields whose values are (or contain) reader-facing prose worth echoing into a derived
+# speaker note, in the order a presenter would read the slide.
+_NOTE_FIELDS = ("subtitle", "banner", "body", "caption", "items", "columns", "points", "stats",
+                "metrics", "quadrants", "stages", "phases", "criteria", "bubbles", "before",
+                "after", "center", "total", "tagline", "contact")
+
+
+def _note_lines(value) -> list[str]:
+    if isinstance(value, str):
+        return [value.strip()] if value.strip() else []
+    if isinstance(value, list):
+        return [ln for v in value for ln in _note_lines(v)]
+    if isinstance(value, dict):
+        parts = [str(value[k]).strip() for k in ("date", "heading", "name", "role", "value",
+                                                 "label", "body", "note", "implication", "bio")
+                 if str(value.get(k) or "").strip()]
+        return [": ".join(parts[:2]) + (". " + ". ".join(parts[2:]) if parts[2:] else "")] if parts else []
+    return []
+
+
+def _ensure_notes(plan: dict) -> dict:
+    """Deterministic backstop for the every-slide speaker-notes requirement: any generated slide
+    still missing `speaker_notes` after the planner's retry gets a note composed from the slide's
+    own text (takeaway title, content in reading order, citations) — same language as the slide,
+    no boilerplate. Verbatim slides (ingredient / team slides) are exempt by contract."""
+    slides = []
+    for s in plan.get("slides", []):
+        layout = s.get("layout") or ""
+        if (layout == "ingredient" or layout.startswith("custom_")
+                or (s.get("speaker_notes") or "").strip()):
+            slides.append(s)
+            continue
+        lines = _note_lines(s.get("title")) + [ln for f in _NOTE_FIELDS for ln in _note_lines(s.get(f))]
+        if s.get("source_citations"):
+            lines.append("; ".join(s["source_citations"]))
+        note = "\n".join(lines).strip()[:1400]
+        slides.append({**s, "speaker_notes": note} if note else s)
+    return {**plan, "slides": slides}
+
+
 def _strip_dashes_plan(plan: dict) -> dict:
     """Deterministic no-dash safety net over a validated plan, mutating only human-readable text."""
     def walk(obj, key=None):
@@ -125,7 +202,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate, extra_layouts=extra,
-                                      extra_photo_ids=photo_ids, photo_level=photo_level)
+                                      extra_photo_ids=photo_ids, photo_level=photo_level,
+                                      disabled_layouts=disabled_layouts)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -135,17 +213,19 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             custom_photos=custom_photos,
                                             preferred_layouts=preferred_layouts, design=design)
             errs = validate.validate_plan(candidate, extra_layouts=extra,
-                                          extra_photo_ids=photo_ids, photo_level=photo_level)
+                                          extra_photo_ids=photo_ids, photo_level=photo_level,
+                                          disabled_layouts=disabled_layouts)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
         # fine deck would get discarded here for a nudge it was never asked to address.
-        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:")
+        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:")
         hard = [e for e in errs if not any(s in e for s in soft)]
         if hard:
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
                   + "\n- ".join(hard), file=sys.stderr)
             break
+        candidate = _ensure_notes(candidate)
         candidate = _strip_dashes_plan(candidate)
         plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta,
                                                      design=design, custom_slides=custom_slides,
@@ -184,7 +264,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              preferred_layouts=preferred_layouts, design=design)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
-                                    photo_level=photo_level)
+                                    photo_level=photo_level, disabled_layouts=disabled_layouts)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -193,14 +273,14 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    custom_photos=custom_photos,
                                    preferred_layouts=preferred_layouts, design=design)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
-                                        photo_level=photo_level)
+                                        photo_level=photo_level, disabled_layouts=disabled_layouts)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
             # auto-fit, so a few chars over is cosmetically absorbed at render, and a deck that
             # still under-uses layouts/photos after one revision is still a valid deck — don't
             # deny a non-technical user their deck over either.
-            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:")
+            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:")
             hard = [e for e in errors if not any(s in e for s in soft)]
             if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))
@@ -208,7 +288,9 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                   + "\n- ".join(errors), file=sys.stderr)
 
     _p(70, "Rendering slides on the Superba template")
-    plan = _ensure_agenda(plan)      # guarantee a contents/agenda slide
+    plan = _ensure_agenda(plan)                             # guarantee a contents/agenda slide
+    plan = _ensure_exec_summary(plan, disabled_layouts)     # guarantee an executive summary
+    plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,
                                 custom_slides=custom_slides, custom_photos=custom_photos)

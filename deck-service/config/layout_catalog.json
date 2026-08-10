@@ -355,7 +355,8 @@
     "template_layout": "Blank",
     "kind": "chart",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -366,7 +367,8 @@
     "template_layout": "Blank",
     "kind": "matrix",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -377,7 +379,8 @@
     "template_layout": "Blank",
     "kind": "exec_summary",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -399,7 +402,8 @@
     "template_layout": "Blank",
     "kind": "stat",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -421,7 +425,8 @@
     "template_layout": "Blank",
     "kind": "funnel",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -432,7 +437,8 @@
     "template_layout": "Blank",
     "kind": "closing",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -443,7 +449,8 @@
     "template_layout": "Blank",
     "kind": "kpi_dashboard",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -454,7 +461,8 @@
     "template_layout": "Blank",
     "kind": "roadmap",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -465,7 +473,8 @@
     "template_layout": "Blank",
     "kind": "icon_grid",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -476,7 +485,8 @@
     "template_layout": "Blank",
     "kind": "takeaways",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -487,7 +497,8 @@
     "template_layout": "Blank",
     "kind": "from_to",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -498,7 +509,8 @@
     "template_layout": "Blank",
     "kind": "pillars",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -509,7 +521,8 @@
     "template_layout": "Blank",
     "kind": "team",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -520,7 +533,8 @@
     "template_layout": "Blank",
     "kind": "metric_bars",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -531,7 +545,8 @@
     "template_layout": "Blank",
     "kind": "cause_effect",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -542,7 +557,8 @@
     "template_layout": "Blank",
     "kind": "org_chart",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -553,7 +569,8 @@
     "template_layout": "Blank",
     "kind": "decision_tree",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -564,7 +581,8 @@
     "template_layout": "Blank",
     "kind": "cycle",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -575,7 +593,8 @@
     "template_layout": "Blank",
     "kind": "gantt",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -586,7 +605,8 @@
     "template_layout": "Blank",
     "kind": "serpentine",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -608,7 +628,8 @@
     "template_layout": "Blank",
     "kind": "photo_stats",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -619,7 +640,8 @@
     "template_layout": "Blank",
     "kind": "numbered_cards",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -630,7 +652,8 @@
     "template_layout": "Blank",
     "kind": "implications",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -641,7 +664,8 @@
     "template_layout": "Blank",
     "kind": "breakdown",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},
@@ -652,7 +676,8 @@
     "template_layout": "Blank",
     "kind": "chart_bands",
     "backgrounds": [
-      "dark"
+      "dark",
+      "light"
     ],
     "fields": {},
     "limits": {},

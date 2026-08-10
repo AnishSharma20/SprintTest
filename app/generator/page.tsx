@@ -174,7 +174,7 @@ export default function ContentGenerator() {
   const [filer, setFiler] = useState<File[]>([]);
   const [lengde, setLengde] = useState("standard");
   const [tone, setTone] = useState("balansert");
-  const [fargeTema, setFargeTema] = useState("auto");
+  const [fargeTema, setFargeTema] = useState("dark");
   const [sprak, setSprak] = useState("English");
   const [kontekst, setKontekst] = useState("");
   const [studier, setStudier] = useState<Studie[]>([]);
@@ -371,7 +371,7 @@ export default function ContentGenerator() {
       form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
-      if (type === "deck" && fargeTema !== "auto") form.append("color_theme", fargeTema);
+      if (type === "deck") form.append("color_theme", fargeTema);
       if (type === "deck" && studyMeta.length) form.append("study_meta", JSON.stringify(studyMeta));
       // The About page's rules, design settings, layout switches and team slides govern deck
       // planning/rendering only.
@@ -762,20 +762,26 @@ export default function ContentGenerator() {
                   <div>
                     <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Color theme</div>
                     <div className="flex rounded-full border border-[#E4EDF0] p-1">
-                      {[["auto", "Auto"], ["dark", "Blue Ocean"], ["light", "White"], ["pastel", "Pastel Blue"]].map(([val, label]) => (
+                      {[
+                        ["dark", "Blue Ocean", "linear-gradient(135deg, #163536, #003462)", "text-white"],
+                        ["pastel", "Pastel Blue", "#A9DBD5", "text-[#052A4E]"],
+                        ["light", "White", "#FFFFFF", "text-[#052A4E] shadow-[inset_0_0_0_1px_#E3EDF2]"],
+                      ].map(([val, label, swatch, activeText]) => (
                         <button
                           key={val}
                           type="button"
                           onClick={() => setFargeTema(val)}
-                          className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${fargeTema === val ? "bg-[#052A4E] text-white" : "text-[#5C7A85]"}`}
+                          style={fargeTema === val ? { background: swatch } : undefined}
+                          className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${
+                            fargeTema === val ? activeText : "text-[#5C7A85]"
+                          }`}
                         >
                           {label}
                         </button>
                       ))}
                     </div>
                     <p className="mt-1.5 text-xs text-zinc-500">
-                      Auto lets the AI alternate backgrounds slide by slide for rhythm. Blue Ocean, White or
-                      Pastel Blue forces every slide to that one theme.
+                      Forces every slide in the deck to this one background theme.
                     </p>
                   </div>
                 </div>

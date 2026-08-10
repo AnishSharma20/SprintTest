@@ -286,7 +286,7 @@ def main():
                                                         "icon_generic": {"enum": generic}}}}}}})
     summary.append(("key_points", "Blank (code-built: 4 icon cards)", ["light"], {"items": "3-4 x {head,body,icon}"}))
 
-    catalog["chart"] = {"template_layout": "Blank", "kind": "chart", "backgrounds": ["dark"],
+    catalog["chart"] = {"template_layout": "Blank", "kind": "chart", "backgrounds": ["dark", "light"],
                         "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
     conditionals.append({
         "if": {"properties": {"layout": {"const": "chart"}}, "required": ["layout"]},
@@ -304,17 +304,21 @@ def main():
                                           "required": ["name", "values"],
                                           "properties": {"name": {"type": "string", "maxLength": 40},
                                                          "values": {"type": "array", "items": {"type": "number"}}}}}}}})
-    summary.append(("chart", "Blank (native pptx chart)", ["dark"], {"data": "categories+series"}))
+    summary.append(("chart", "Blank (native pptx chart)", ["dark", "light"], {"data": "categories+series"}))
 
     # Batch 1 synthetic layouts (matrix / exec_summary / comparison).
     def _synth(name, kind, bg, required, props, note):
-        catalog[name] = {"template_layout": "Blank", "kind": kind, "backgrounds": [bg],
+        # bg is a single theme name ("light") for the handful of layouts that can ONLY render on
+        # the light master, or a list (["dark", "light"]) for the rest — the renderer.py _fill_*
+        # function's own signature is the ground truth for which is which.
+        backgrounds = bg if isinstance(bg, list) else [bg]
+        catalog[name] = {"template_layout": "Blank", "kind": kind, "backgrounds": backgrounds,
                          "fields": {}, "limits": {}, "picture_slots": [], "removable_idx": []}
         conditionals.append({"if": {"properties": {"layout": {"const": name}}, "required": ["layout"]},
                              "then": {"required": required, "properties": props}})
-        summary.append((name, f"Blank ({note})", [bg], {"fields": ",".join(required[1:])}))
+        summary.append((name, f"Blank ({note})", backgrounds, {"fields": ",".join(required[1:])}))
 
-    _synth("matrix", "matrix", "dark", ["layout", "title", "quadrants"], {
+    _synth("matrix", "matrix", ["dark", "light"], ["layout", "title", "quadrants"], {
         "title": {"type": "string", "maxLength": 50},
         "x_axis": {"type": "string", "maxLength": 40}, "y_axis": {"type": "string", "maxLength": 40},
         "quadrants": {"type": "array", "minItems": 4, "maxItems": 4, "items": {
@@ -327,7 +331,7 @@ def main():
     # `ingredient`, the model writes no title for it. Five fixed labelled rows, each a lead-in
     # label + 1-2 sentences; maxLengths sized so the 5 together cap just over the ~80-word target
     # (a safety ceiling against overflow, not the target itself — the prompt drives the real budget).
-    _synth("exec_summary", "exec_summary", "dark",
+    _synth("exec_summary", "exec_summary", ["dark", "light"],
           ["layout", "source", "key_finding", "supporting_findings", "relevance", "contents"], {
         "source": {"type": "string", "maxLength": 110},
         "key_finding": {"type": "string", "maxLength": 140},
@@ -345,7 +349,7 @@ def main():
                                      "items": {"type": "string", "maxLength": 70}}}}}}, "comparison table")
 
     # Batch 2 synthetic layouts (stat / harvey_ball / funnel).
-    _synth("stat", "stat", "dark", ["layout", "title", "stats"], {
+    _synth("stat", "stat", ["dark", "light"], ["layout", "title", "stats"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 90},
         "stats": {"type": "array", "minItems": 1, "maxItems": 3, "items": {
@@ -363,7 +367,7 @@ def main():
                            "scores": {"type": "array", "minItems": 2, "maxItems": 4,
                                       "items": {"type": "integer", "minimum": 0, "maximum": 4}}}}}}, "harvey-ball grid")
 
-    _synth("funnel", "funnel", "dark", ["layout", "title", "stages"], {
+    _synth("funnel", "funnel", ["dark", "light"], ["layout", "title", "stages"], {
         "title": {"type": "string", "maxLength": 50},
         "stages": {"type": "array", "minItems": 3, "maxItems": 5, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
@@ -371,13 +375,13 @@ def main():
                            "body": {"type": "string", "maxLength": 90}}}}}, "funnel")
 
     # Client-requested layouts.
-    _synth("closing", "closing", "dark", ["layout", "title"], {
+    _synth("closing", "closing", ["dark", "light"], ["layout", "title"], {
         "title": {"type": "string", "maxLength": 50},
         "tagline": {"type": "string", "maxLength": 90},
         "contact": {"type": "string", "maxLength": 160}}, "closing / contact")
 
     # More MBB layouts.
-    _synth("kpi_dashboard", "kpi_dashboard", "dark", ["layout", "title", "metrics"], {
+    _synth("kpi_dashboard", "kpi_dashboard", ["dark", "light"], ["layout", "title", "metrics"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 100},
         "metrics": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
@@ -386,7 +390,7 @@ def main():
                            "label": {"type": "string", "maxLength": 42},
                            "note": {"type": "string", "maxLength": 60}}}}}, "KPI dashboard tiles")
 
-    _synth("roadmap", "roadmap", "dark", ["layout", "title", "phases"], {
+    _synth("roadmap", "roadmap", ["dark", "light"], ["layout", "title", "phases"], {
         "title": {"type": "string", "maxLength": 50},
         "phases": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
@@ -394,7 +398,7 @@ def main():
                            "heading": {"type": "string", "maxLength": 26},
                            "body": {"type": "string", "maxLength": 170}}}}}, "roadmap phases (chevrons)")
 
-    _synth("icon_grid", "icon_grid", "dark", ["layout", "title", "items"], {
+    _synth("icon_grid", "icon_grid", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "banner": {"type": "string", "maxLength": 90},
         "items": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
@@ -403,14 +407,14 @@ def main():
                            "body": {"type": "string", "maxLength": 150},
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "icon tile grid")
 
-    _synth("takeaways", "takeaways", "dark", ["layout", "title", "items"], {
+    _synth("takeaways", "takeaways", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
             "properties": {"heading": {"type": "string", "maxLength": 90},
                            "body": {"type": "string", "maxLength": 170}}}}}, "numbered takeaways")
 
-    _synth("from_to", "from_to", "dark", ["layout", "title", "before", "after"], {
+    _synth("from_to", "from_to", ["dark", "light"], ["layout", "title", "before", "after"], {
         "title": {"type": "string", "maxLength": 50},
         "before": {"type": "object", "additionalProperties": False, "required": ["heading"],
                    "properties": {"heading": {"type": "string", "maxLength": 40},
@@ -419,7 +423,7 @@ def main():
                   "properties": {"heading": {"type": "string", "maxLength": 40},
                                  "body": {"type": "string", "maxLength": 220}}}}, "from-to transformation")
 
-    _synth("pillars", "pillars", "dark", ["layout", "title", "items"], {
+    _synth("pillars", "pillars", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "banner": {"type": "string", "maxLength": 90},
         "items": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
@@ -428,7 +432,7 @@ def main():
                            "body": {"type": "string", "maxLength": 220},
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "pillars under a roof")
 
-    _synth("team", "team", "dark", ["layout", "title", "items"], {
+    _synth("team", "team", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["name"],
@@ -436,7 +440,7 @@ def main():
                            "role": {"type": "string", "maxLength": 46},
                            "bio": {"type": "string", "maxLength": 160}}}}}, "team member cards")
 
-    _synth("metric_bars", "metric_bars", "dark", ["layout", "title", "items"], {
+    _synth("metric_bars", "metric_bars", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 100},
         "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
@@ -446,14 +450,14 @@ def main():
                            "pct": {"type": "number"},
                            "note": {"type": "string", "maxLength": 60}}}}}, "metric bars")
 
-    _synth("cause_effect", "cause_effect", "dark", ["layout", "title", "items"], {
+    _synth("cause_effect", "cause_effect", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading", "body"],
             "properties": {"heading": {"type": "string", "maxLength": 40},
                            "body": {"type": "string", "maxLength": 170}}}}}, "cause and effect rows")
 
-    _synth("org_chart", "org_chart", "dark", ["layout", "title", "center", "items"], {
+    _synth("org_chart", "org_chart", ["dark", "light"], ["layout", "title", "center", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "center": {"type": "string", "maxLength": 40},
         "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
@@ -461,7 +465,7 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 28},
                            "body": {"type": "string", "maxLength": 130}}}}}, "org chart")
 
-    _synth("decision_tree", "decision_tree", "dark", ["layout", "title", "center", "items"], {
+    _synth("decision_tree", "decision_tree", ["dark", "light"], ["layout", "title", "center", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "center": {"type": "string", "maxLength": 44},
         "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
@@ -469,7 +473,7 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 30},
                            "body": {"type": "string", "maxLength": 150}}}}}, "decision tree")
 
-    _synth("cycle", "cycle", "dark", ["layout", "title", "items"], {
+    _synth("cycle", "cycle", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "center": {"type": "string", "maxLength": 22},
         "items": {"type": "array", "minItems": 3, "maxItems": 6, "items": {
@@ -477,7 +481,7 @@ def main():
             "properties": {"heading": {"type": "string", "maxLength": 26},
                            "body": {"type": "string", "maxLength": 80}}}}}, "cycle around a hub")
 
-    _synth("gantt", "gantt", "dark", ["layout", "title", "periods", "items"], {
+    _synth("gantt", "gantt", ["dark", "light"], ["layout", "title", "periods", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 100},
         "periods": {"type": "array", "minItems": 2, "maxItems": 8,
@@ -490,7 +494,7 @@ def main():
                            "note": {"type": "string", "maxLength": 40},
                            "milestone": {"type": "boolean"}}}}}, "gantt / project schedule")
 
-    _synth("serpentine", "serpentine", "dark", ["layout", "title", "items"], {
+    _synth("serpentine", "serpentine", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 3, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
@@ -511,7 +515,7 @@ def main():
                            "marks": {"type": "array", "minItems": 2, "maxItems": 8,
                                      "items": {"type": "boolean"}}}}}}, "coverage tick matrix")
 
-    _synth("photo_stats", "photo_stats", "dark", ["layout", "title", "items"], {
+    _synth("photo_stats", "photo_stats", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 110},
         "items": {"type": "array", "minItems": 2, "maxItems": 3, "items": {
@@ -521,7 +525,7 @@ def main():
                            "note": {"type": "string", "maxLength": 90},
                            "asset_id": {"enum": asset_ids + [None]}}}}}, "photo-topped stat cards")
 
-    _synth("numbered_cards", "numbered_cards", "dark", ["layout", "title", "items"], {
+    _synth("numbered_cards", "numbered_cards", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 2, "maxItems": 4, "items": {
             "type": "object", "additionalProperties": False, "required": ["heading"],
@@ -530,7 +534,7 @@ def main():
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}},
            "numbered cards with corner icon")
 
-    _synth("implications", "implications", "dark", ["layout", "title", "items"], {
+    _synth("implications", "implications", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "headers": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "maxLength": 26}},
         "items": {"type": "array", "minItems": 2, "maxItems": 5, "items": {
@@ -540,7 +544,7 @@ def main():
                            "implication": {"type": "string", "maxLength": 130}}}}},
            "trend / overview / implication rows")
 
-    _synth("breakdown", "breakdown", "dark", ["layout", "title", "total", "items"], {
+    _synth("breakdown", "breakdown", ["dark", "light"], ["layout", "title", "total", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "total": {"type": "string", "maxLength": 12},
         "caption": {"type": "string", "maxLength": 60},
@@ -549,7 +553,7 @@ def main():
             "properties": {"label": {"type": "string", "maxLength": 34},
                            "pct": {"type": "number"}}}}}, "total broken into shares")
 
-    _synth("chart_bands", "chart_bands", "dark", ["layout", "title", "categories", "values", "bands"], {
+    _synth("chart_bands", "chart_bands", ["dark", "light"], ["layout", "title", "categories", "values", "bands"], {
         "title": {"type": "string", "maxLength": 50},
         "caption": {"type": "string", "maxLength": 110},
         "y_axis": {"type": "string", "maxLength": 40},

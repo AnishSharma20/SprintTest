@@ -55,8 +55,8 @@ export default function FindingsV2Page() {
 
   if (!configured) {
     return (
-      <div className="min-h-screen bg-[#F2F7F9] px-4 py-16">
-        <p className="mx-auto max-w-xl rounded-[8px] border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-500">
+      <div className="min-h-screen bg-[#FBFBFD] px-4 py-20">
+        <p className="mx-auto max-w-xl text-center text-[14px] text-[#6E6E73]">
           The findings library is not set up yet. Add the Supabase environment variables to enable it.
         </p>
       </div>
@@ -64,8 +64,8 @@ export default function FindingsV2Page() {
   }
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F2F7F9] px-4 py-16">
-        <p className="text-center text-zinc-400">Loading findings…</p>
+      <div className="min-h-screen bg-[#FBFBFD] px-4 py-20">
+        <p className="text-center text-[14px] text-[#AEAEB2]">Loading findings…</p>
       </div>
     );
   }

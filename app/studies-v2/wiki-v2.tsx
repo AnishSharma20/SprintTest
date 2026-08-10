@@ -1,8 +1,9 @@
 "use client";
 
-// Scientific Studies V2 — Concept A (sidebar explorer) for browsing, Concept B (reading panel)
-// for the summary. The list stays scannable: opening a study never pushes the list around, the
-// plain language summary lives in a panel on the right instead of an inline accordion.
+// Scientific Studies V2 — sidebar explorer for browsing, reading panel for the summary.
+// Restyled 2026-08-10 to the "floating & focused" design the client picked from three
+// mockups: calm near-white page, text-only sidebar with the red Superba benefit icons,
+// floating white cards, status as words instead of badge pills. See app/v2/ui.tsx.
 //
 // Functionally equivalent to app/wiki.tsx (which is untouched, V1 keeps working): same study
 // meta overlay, summary edit with write through, claims modal, category/quality reviewer tools.
@@ -30,9 +31,9 @@ import {
   SideCheck,
   SearchBox,
   PanelHeader,
-  Pill,
   SideReviewer,
 } from "../v2/ui";
+import { benefitIcon } from "../v2/benefit-icons";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 const STUDY_FIGURES = studyFiguresRaw as Record<string, unknown[]>;
@@ -44,6 +45,27 @@ const QUALITY_DEF =
   "result was positive. Shown for the verified key trials only.";
 
 type SortBy = "date" | "quality";
+
+/** The quality label as a calm colored word (no bars, no badges). */
+function QualityWord({ s }: { s: Studie }) {
+  const q = s.quality;
+  if (!q) return <span className="text-[#AEAEB2]">Not yet scored</span>;
+  const color =
+    q.label === "High" ? "text-[#2E7D4F]" : q.label === "Moderate" ? "text-[#B4884A]" : "text-[#B3403A]";
+  const title = s.qualityReviewer
+    ? `Rated by ${s.qualityReviewer} on ${formatDate(s.qualityReviewedAt)}${
+        s.qualityNote ? ` · ${s.qualityNote}` : ""
+      }`
+    : s.qualityNote ?? undefined;
+  return (
+    <span className="text-[#AEAEB2]" title={title}>
+      Quality{" "}
+      <b className={`font-semibold ${color}`}>
+        {q.score}% {q.label}
+      </b>
+    </span>
+  );
+}
 
 export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] }) {
   const [sok, setSok] = useState("");
@@ -161,28 +183,16 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     ? kategorier.find((k) => k.id === valgtKategori)?.navn ?? "Studies"
     : "All studies";
 
-  const aktiveFiltre: string[] = [];
-  if (verifiedOnly) aktiveFiltre.push("Verified");
-  if (fullTextOnly) aktiveFiltre.push("Full text");
-  if (!(qualHigh && qualModerate && qualLowUnscored)) {
-    const on = [qualHigh && "High", qualModerate && "Moderate", qualLowUnscored && "Low or unscored"]
-      .filter(Boolean)
-      .join(" + ");
-    aktiveFiltre.push(on || "no quality levels");
-  }
-
   const sidebar = (
-    <div className="pb-4">
-      <div className="px-4 pt-5">
-        <SearchBox value={sok} onChange={setSok} placeholder={`Search ${studier.length} studies…`} />
-      </div>
-      <SideSection title="Browse by benefit">
+    <div className="pb-6">
+      <SideSection title="Benefit areas">
         {kategorier.map((k) => (
           <SideItem
             key={k.id}
             active={valgtKategori === k.id}
             onClick={() => velgKategori(k.id)}
             count={k.antall}
+            icon={benefitIcon(k.navn)}
           >
             {k.navn}
           </SideItem>
@@ -193,29 +203,27 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         {meta.configured && (
           <button
             onClick={() => setAdministrerer(true)}
-            className="mt-1 w-full rounded-[6px] px-2.5 py-2 text-left text-[12px] font-bold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+            className="mt-2 py-[5px] text-left text-[13px] font-semibold text-[#0A7A8A] hover:underline"
           >
-            ⚙ Manage categories
+            Manage categories
           </button>
         )}
       </SideSection>
       <SideSection title="Filter">
         <SideCheck checked={verifiedOnly} onChange={setVerifiedOnly}>
-          Verified by science only
+          Verified only
         </SideCheck>
         <SideCheck checked={fullTextOnly} onChange={setFullTextOnly}>
-          Full text available
+          Full text
         </SideCheck>
-      </SideSection>
-      <SideSection title="Scientific quality">
         <SideCheck checked={qualHigh} onChange={setQualHigh}>
-          <span className="inline-block h-2 w-2 rounded-full bg-[#1B7A3D]" /> High
+          High quality
         </SideCheck>
         <SideCheck checked={qualModerate} onChange={setQualModerate}>
-          <span className="inline-block h-2 w-2 rounded-full bg-[#D9A21B]" /> Moderate
+          Moderate
         </SideCheck>
         <SideCheck checked={qualLowUnscored} onChange={setQualLowUnscored}>
-          <span className="inline-block h-2 w-2 rounded-full bg-[#9A2A2A]" /> Low or unscored
+          Low or unscored
         </SideCheck>
       </SideSection>
       <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
@@ -224,85 +232,82 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
   return (
     <V2Shell sidebar={sidebar} panel={valgt ? panelFor(valgt) : null} onClosePanel={() => setValgtPmid(null)}>
-      <div className="px-5 py-6 sm:px-8">
-        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#0A7A8A]">
-          Research wiki · {kategoriNavn}
-        </div>
-        <div className="mt-1 flex flex-wrap items-end justify-between gap-3">
+      <div className="px-6 pb-16 pt-10 sm:px-10">
+        <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
           <div>
-            <h1 className="text-2xl font-extrabold text-[#052A4E]">
-              {valgtKategori ? `${kategoriNavn} studies` : "All studies"}
+            <h1 className="text-[28px] font-bold tracking-[-0.022em] text-[#1D1D1F] sm:text-[32px]">
+              {valgtKategori ? kategoriNavn : "All studies"}
             </h1>
-            <p className="mt-1 max-w-xl text-[13px] text-zinc-500">
-              Aker BioMarine affiliated research from PubMed, with plain language summaries reviewed
-              by the science team.
+            <p className="mt-2 max-w-[540px] text-[15px] text-[#6E6E73]">
+              Aker BioMarine affiliated research from PubMed, summarized in plain language.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[12px] text-zinc-500">
-            Sort
-            <div className="flex overflow-hidden rounded-[8px] border border-[#D6E6EE] bg-white">
-              <button
-                onClick={() => setSortBy("quality")}
-                className={`group relative px-3.5 py-1.5 text-[12px] font-semibold ${
-                  sortBy === "quality" ? "bg-[#0A7A8A] text-white" : "text-zinc-600 hover:bg-[#E1F4F3]"
-                }`}
-              >
-                <span className="border-b border-dotted border-current">Quality</span>
-                <span aria-hidden> ⓘ</span>
-                <span className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-72 rounded-[6px] bg-[#052A4E] px-3 py-2 text-left text-[11px] font-normal leading-relaxed normal-case text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100">
-                  {QUALITY_DEF}
-                </span>
-              </button>
-              <button
-                onClick={() => setSortBy("date")}
-                className={`px-3.5 py-1.5 text-[12px] font-semibold ${
-                  sortBy === "date" ? "bg-[#0A7A8A] text-white" : "text-zinc-600 hover:bg-[#E1F4F3]"
-                }`}
-              >
-                Newest
-              </button>
-            </div>
+          <div className="w-full sm:w-[300px]">
+            <SearchBox value={sok} onChange={setSok} placeholder="Search studies" />
           </div>
         </div>
 
-        {/* On small screens the sidebar is hidden, so the categories surface as chips here. */}
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
+        {/* On small screens the sidebar is hidden, so the categories surface as pills here. */}
+        <div className="mt-5 flex gap-2 overflow-x-auto pb-1 lg:hidden">
           {kategorier.map((k) => (
             <button
               key={k.id}
               onClick={() => velgKategori(k.id)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-                valgtKategori === k.id
-                  ? "bg-[#0A7A8A] text-white"
-                  : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE]"
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold ${
+                valgtKategori === k.id ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
               }`}
             >
-              {k.navn} ({k.antall})
+              {k.navn} · {k.antall}
             </button>
           ))}
           <button
             onClick={() => velgKategori(null)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${
-              valgtKategori === null ? "bg-[#0A7A8A] text-white" : "bg-white text-zinc-600 ring-1 ring-[#D6E6EE]"
+            className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold ${
+              valgtKategori === null ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
             }`}
           >
-            All ({studier.length})
+            All · {studier.length}
           </button>
         </div>
 
-        <p className="mt-4 text-[12.5px] text-zinc-500">
-          Showing {filtrert.length} of {studier.length} studies
-          {aktiveFiltre.length > 0 && <> · filters: {aktiveFiltre.join(", ")}</>}
-        </p>
+        <div className="mt-7 flex items-baseline gap-6 border-b border-[#E8E8ED] pb-3.5 text-[13.5px] text-[#6E6E73]">
+          <span>Sort by</span>
+          <button
+            onClick={() => setSortBy("quality")}
+            className={`group relative -mb-[15px] pb-[13px] ${
+              sortBy === "quality"
+                ? "border-b-2 border-[#1D1D1F] font-semibold text-[#1D1D1F]"
+                : "hover:text-[#1D1D1F]"
+            }`}
+          >
+            Quality
+            <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-72 rounded-[10px] bg-[#1D1D1F] px-3.5 py-2.5 text-left text-[11.5px] font-normal leading-relaxed text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+              {QUALITY_DEF}
+            </span>
+          </button>
+          <button
+            onClick={() => setSortBy("date")}
+            className={`-mb-[15px] pb-[13px] ${
+              sortBy === "date"
+                ? "border-b-2 border-[#1D1D1F] font-semibold text-[#1D1D1F]"
+                : "hover:text-[#1D1D1F]"
+            }`}
+          >
+            Newest
+          </button>
+          <span className="ml-auto text-[12.5px] text-[#AEAEB2]">
+            {filtrert.length} of {studier.length} studies
+          </span>
+        </div>
 
         {filtrert.length === 0 ? (
-          <p className="mt-4 rounded-[8px] border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-400">
+          <p className="mt-10 text-center text-[14px] text-[#AEAEB2]">
             {studier.length === 0
               ? "Couldn't load studies right now. Try reloading the page."
               : "No studies match your search and filters."}
           </p>
         ) : (
-          <ul className="mt-4 space-y-2.5">
+          <ul>
             {filtrert.map((s) => (
               <StudyRow
                 key={s.pmid}
@@ -340,7 +345,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   }
 }
 
-/* ---------- the study list row (Concept A card) ---------- */
+/* ---------- the study list row (floating card) ---------- */
 
 function StudyRow({
   s,
@@ -354,102 +359,68 @@ function StudyRow({
   onOpen: () => void;
 }) {
   const verified = edited ? true : s.verified;
-  const q = s.quality;
-  const pct = q ? Math.max(0, Math.min(100, q.score)) : 0;
-  const barColor =
-    q?.label === "High"
-      ? "linear-gradient(90deg,#0A7A8A,#3FD0C9)"
-      : q?.label === "Moderate"
-      ? "linear-gradient(90deg,#D9A21B,#E8C566)"
-      : "linear-gradient(90deg,#9A2A2A,#C46A6A)";
-  const qTitle = s.qualityReviewer
-    ? `Rated by ${s.qualityReviewer} on ${formatDate(s.qualityReviewedAt)}${
-        s.qualityNote ? ` · ${s.qualityNote}` : ""
-      }`
-    : s.qualityNote ?? undefined;
 
   return (
     <li
       onClick={onOpen}
-      className={`grid cursor-pointer grid-cols-[52px_1fr] gap-4 rounded-[10px] border bg-white p-4 shadow-sm transition-all sm:grid-cols-[52px_1fr_150px] ${
-        selected ? "border-[#0A7A8A] ring-1 ring-[#0A7A8A]" : "border-[#D6E6EE] hover:border-[#3FD0C9] hover:shadow-md"
+      className={`mt-4 flex cursor-pointer items-start gap-6 rounded-[20px] bg-white p-6 transition-shadow sm:p-7 ${
+        selected
+          ? "shadow-[0_0_0_2px_#1D1D1F,0_2px_10px_rgba(29,29,31,.05)]"
+          : "shadow-[0_2px_10px_rgba(29,29,31,.05)] hover:shadow-[0_6px_24px_rgba(29,29,31,.1)]"
       }`}
     >
-      <div className="flex h-12 flex-col items-center justify-center rounded-[8px] border border-[#D6E6EE] bg-[#F4FBFC]">
-        <span className="text-[14px] font-extrabold text-[#052A4E]">{s.ar || "…"}</span>
+      <div className="hidden w-[64px] shrink-0 flex-col items-center rounded-[14px] bg-[#FBFBFD] py-2.5 sm:flex">
+        <span className="text-[17px] font-bold tabular-nums text-[#1D1D1F]">{s.ar || "…"}</span>
+        <span className="text-[10.5px] uppercase tracking-[0.05em] text-[#AEAEB2]">Study</span>
       </div>
-      <div className="min-w-0">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen();
-          }}
-          className="text-left text-[14px] font-bold leading-snug text-[#052A4E] hover:text-[#0A7A8A]"
-        >
+      <div className="min-w-0 flex-1">
+        <h3 className="text-[16.5px] font-semibold leading-[1.4] tracking-[-0.012em] text-[#1D1D1F]">
           {s.tittel}
-        </button>
-        <p className="mt-0.5 truncate text-[12px] text-zinc-500">
+        </h3>
+        <p className="mt-1.5 text-[13.5px] text-[#6E6E73]">
           {s.forfattere}
           {s.flereForfattere && " et al."}
           {s.tidsskrift && (
             <>
               {" · "}
-              <span className="italic">{s.tidsskrift}</span>
+              <span className="text-[#AEAEB2]">{s.tidsskrift}</span>
             </>
           )}
+          <span className="sm:hidden"> · {s.ar}</span>
         </p>
-        {s.akerNote && <p className="mt-0.5 text-[11px] text-zinc-400">{s.akerNote}</p>}
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {s.akerNote && <p className="mt-1 text-[12.5px] text-[#AEAEB2]">{s.akerNote}</p>}
+        <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
           {edited ? (
-            <Pill tone="green">✓ Verified · edited</Pill>
+            <span className="font-semibold text-[#0A7A8A]">✓ Verified · edited</span>
           ) : verified ? (
-            <Pill tone="green">✓ Verified by science</Pill>
+            <span className="font-semibold text-[#0A7A8A]">✓ Verified by science</span>
           ) : (
-            <Pill tone="amber">AI summary · unverified</Pill>
-          )}
-          {s.harFulltekst && <Pill tone="teal">Full text</Pill>}
-          {s.kategori.map((k) => (
-            <span key={k} className="text-[10.5px] font-semibold text-zinc-400">
-              {k}
+            <span className="text-[#AEAEB2]">
+              AI summary, awaiting review{s.harFulltekst ? " · full text" : ""}
             </span>
-          ))}
+          )}
+          <QualityWord s={s} />
+          <span className="flex-1" />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+            className={`whitespace-nowrap rounded-full px-5 py-2 text-[13px] font-semibold transition-colors ${
+              selected
+                ? "bg-[#1D1D1F] text-white"
+                : "text-[#1D1D1F] shadow-[inset_0_0_0_1px_#D9D9DE] hover:bg-[#F5F5F7]"
+            }`}
+          >
+            Read summary
+          </button>
         </div>
-      </div>
-      <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end sm:justify-center sm:gap-2">
-        <div className="w-[130px]" title={qTitle}>
-          <div className="mb-1 flex items-center justify-between text-[10.5px] text-zinc-500">
-            <span>Quality</span>
-            {q ? (
-              <b className={q.label === "High" ? "text-[#1B7A3D]" : q.label === "Moderate" ? "text-[#8A5A0B]" : "text-[#9A2A2A]"}>
-                {q.score}% {q.label}
-              </b>
-            ) : (
-              <b className="font-semibold text-zinc-400">Not yet scored</b>
-            )}
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-[#E8F0F4]">
-            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: barColor }} />
-          </div>
-        </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen();
-          }}
-          className={`rounded-[8px] px-4 py-2 text-[12px] font-bold transition-colors ${
-            selected
-              ? "bg-[#0A7A8A] text-white"
-              : "border border-[#D6E6EE] bg-white text-[#0A7A8A] hover:bg-[#E1F4F3]"
-          }`}
-        >
-          Read summary
-        </button>
       </div>
     </li>
   );
 }
 
-/* ---------- the reading panel (Concept B) ---------- */
+/* ---------- the reading panel ---------- */
 
 function StudyPanel({
   s,
@@ -483,59 +454,53 @@ function StudyPanel({
   const verified = edited ? true : s.verified;
   const q = s.quality;
   const figures = STUDY_FIGURES[s.pmid]?.length ?? 0;
-  const qTone = q?.label === "High" ? "green" : q?.label === "Moderate" ? "amber" : "red";
   const qTitle = s.qualityReviewer
     ? `Rated by ${s.qualityReviewer} on ${formatDate(s.qualityReviewedAt)}${
         s.qualityNote ? ` · ${s.qualityNote}` : ""
       }`
     : s.qualityNote ?? undefined;
 
+  const crumbBits = [
+    ...s.kategori,
+    edited ? "Verified · edited" : verified ? "Verified by science" : "AI summary, awaiting review",
+    ...(q ? [`${q.score}% ${q.label} quality`] : []),
+    ...(s.dato ? [s.dato] : []),
+  ];
+
   return (
     <div>
       <PanelHeader eyebrow="Plain language summary" onClose={onClose} title={s.tittel}>
-        <p className="mt-1.5 text-[12.5px] text-zinc-500">
+        <p className="mt-2 text-[13px] text-[#6E6E73]">
           {s.forfattere}
           {s.flereForfattere && " et al."}
           {s.tidsskrift && <> · {s.tidsskrift}</>}
-          {s.dato && <> · {s.dato}</>}
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {edited ? (
-            <Pill tone="green">✓ Verified · edited</Pill>
-          ) : verified ? (
-            <Pill tone="green">✓ Verified by science</Pill>
-          ) : (
-            <Pill tone="amber">AI · unverified</Pill>
-          )}
-          {q && (
-            <Pill tone={qTone as "green" | "amber" | "red"} title={qTitle}>
-              Quality {q.score}% · {q.label}
-            </Pill>
-          )}
-          {s.kategori.map((k) => (
-            <Pill key={k} tone="teal">
-              {k}
-            </Pill>
-          ))}
-        </div>
-        <div className="mt-3 flex flex-wrap gap-4 text-[12.5px] font-bold">
+        <p className="mt-1.5 text-[12px] text-[#AEAEB2]" title={qTitle}>
+          {crumbBits.join(" · ")}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-5 text-[13.5px] font-semibold">
           <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[#0A7A8A] hover:underline">
-            PubMed →
+            PubMed
           </a>
           {s.doiUrl && (
             <a href={s.doiUrl} target="_blank" rel="noopener noreferrer" className="text-[#0A7A8A] hover:underline">
-              DOI →
+              DOI
             </a>
           )}
           <button onClick={() => setClaimsOpen(true)} className="text-[#0A7A8A] hover:underline">
-            Evidence{figures > 0 ? ` & figures (${figures})` : ""} →
+            Evidence{figures > 0 ? ` & figures` : ""}
           </button>
+          {figures > 0 && (
+            <span className="font-normal text-[#AEAEB2]">
+              {figures} figure{figures === 1 ? "" : "s"} from the paper
+            </span>
+          )}
         </div>
       </PanelHeader>
 
-      <div className="px-6 py-5">
+      <div className="px-7 py-6">
         {!summary ? (
-          <p className="rounded-[8px] border border-dashed border-[#C2D9E3] p-6 text-center text-[13px] text-zinc-400">
+          <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
             No summary is available for this study yet.
           </p>
         ) : editing ? (
@@ -550,51 +515,63 @@ function StudyPanel({
         ) : (
           <>
             {!verified && (
-              <p className="mb-4 rounded-[6px] bg-[#FBEED6] px-3 py-2 text-[11.5px] font-medium text-[#8A5A0B]">
-                ⚠︎ AI generated summary from the abstract. Not yet verified by a scientist.
+              <p className="mb-5 rounded-[12px] border border-[#F2E3BC] bg-[#FFF8E9] px-4 py-2.5 text-[12.5px] text-[#8A6A2B]">
+                AI generated summary from the abstract. Not yet verified by a scientist.
               </p>
             )}
-            <PanelSection label="Background & rationale" text={summary.background} />
-            <PanelSection label="Design & participants" text={summary.design} />
+            <PanelSection label="Background" text={summary.background} />
+            <PanelSection label="Design" text={summary.design} />
             <PanelSection label="Key findings" text={summary.findings} />
-            <PanelSection label="Limitations & quality" text={summary.limitations} />
-            <div className="mt-5 flex gap-2">
+            <PanelSection label="Limitations" text={summary.limitations} />
+            <div className="mt-7 flex flex-wrap gap-2.5">
               <button
                 onClick={() => setClaimsOpen(true)}
-                className="flex-1 rounded-[8px] bg-[#0A7A8A] px-4 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#086472]"
+                className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
               >
-                View evidence & figures
+                View evidence
               </button>
               <button
                 onClick={() => setEditing(true)}
-                className="flex-1 rounded-[8px] border border-[#D6E6EE] bg-white px-4 py-2.5 text-[13px] font-bold text-[#0A7A8A] transition-colors hover:bg-[#E1F4F3]"
+                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
               >
-                ✎ Edit summary
+                Edit summary
               </button>
+              {meta.editable && (
+                <button
+                  onClick={() => setToolsOpen((v) => !v)}
+                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
+                >
+                  Reviewer tools
+                </button>
+              )}
             </div>
           </>
         )}
 
-        {meta.editable && !editing && (
-          <div className="mt-4 rounded-[10px] border border-[#D6E6EE] bg-[#F2F7F9]">
+        {/* A study with no summary still needs the reviewer entry point. */}
+        {!summary && meta.editable && !toolsOpen && (
+          <div className="mt-2 text-center">
             <button
-              onClick={() => setToolsOpen((v) => !v)}
-              className="flex w-full items-center justify-between px-4 py-3 text-left"
+              onClick={() => setToolsOpen(true)}
+              className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
             >
-              <span className="text-[12.5px] text-zinc-500">
-                <b className="block text-[13px] text-[#052A4E]">Reviewer tools</b>
-                Categories · scientific quality
-                {s.qualityReviewer && (
-                  <> · rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}</>
-                )}
-              </span>
-              <span className="text-[12px] font-bold text-[#0A7A8A]">{toolsOpen ? "Close ▴" : "Open ▾"}</span>
+              Reviewer tools
             </button>
-            {toolsOpen && (
-              <div className="border-t border-[#D6E6EE] px-4 py-3">
-                <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
-              </div>
-            )}
+          </div>
+        )}
+
+        {meta.editable && toolsOpen && !editing && (
+          <div className="mt-5 rounded-[16px] border border-[#E8E8ED] bg-[#FBFBFD] p-5">
+            <h3 className="text-[14.5px] font-bold text-[#1D1D1F]">Reviewer tools</h3>
+            <p className="mt-0.5 text-[12px] text-[#AEAEB2]">
+              Every change is recorded with your name and the date.
+              {s.qualityReviewer && (
+                <> Quality rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}.</>
+              )}
+            </p>
+            <div className="mt-3">
+              <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
+            </div>
           </div>
         )}
       </div>
@@ -606,14 +583,14 @@ function StudyPanel({
 
 function PanelSection({ label, text }: { label: string; text: string }) {
   return (
-    <div className="mb-4">
-      <div className="text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-[#0A7A8A]">{label}</div>
-      <p className="mt-1 text-[13px] leading-relaxed text-zinc-700">{text}</p>
+    <div className="mb-5">
+      <div className="mb-1.5 text-[12.5px] font-semibold text-[#AEAEB2]">{label}</div>
+      <p className="text-[14.5px] leading-[1.65] text-[#2C2C2E]">{text}</p>
     </div>
   );
 }
 
-/* ---------- reviewer tools (same behavior as V1's, panel styled) ---------- */
+/* ---------- reviewer tools (same behavior as V1's, calm styling) ---------- */
 
 function ReviewerTools({
   s,
@@ -648,9 +625,9 @@ function ReviewerTools({
             setRedigererKvalitet(false);
             setMelding(null);
           }}
-          className="rounded-[6px] border border-[#B7D9DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7]"
         >
-          ✎ Categories
+          Categories
         </button>
         <button
           onClick={() => {
@@ -658,18 +635,18 @@ function ReviewerTools({
             setRedigererKategorier(false);
             setMelding(null);
           }}
-          className="rounded-[6px] border border-[#B7D9DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#0A7A8A] hover:bg-[#E1F4F3]"
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7]"
         >
-          {s.quality ? "✎ Quality" : "＋ Add quality"}
+          {s.quality ? "Quality" : "Add quality"}
         </button>
-        <span className="text-[11px] text-zinc-500">
+        <span className="text-[11.5px] text-[#AEAEB2]">
           {s.kategori.length ? s.kategori.join(", ") : "No category"}
-          {s.quality ? ` · Quality ${s.quality.score}% ${s.quality.label}` : " · No quality score"}
+          {s.quality ? ` · ${s.quality.score}% ${s.quality.label}` : " · no quality score"}
         </span>
       </div>
 
       {melding && (
-        <p className="mb-2 rounded-[6px] bg-[#DFF3E4] px-3 py-1.5 text-[11px] font-semibold text-[#1B7A3D]">
+        <p className="mb-2 rounded-[10px] bg-[#E9F4EC] px-3 py-2 text-[12px] font-semibold text-[#2E7D4F]">
           {melding}
         </p>
       )}
@@ -759,39 +736,42 @@ function CategoryEditor({
   }
 
   return (
-    <div className="mb-3 rounded-[8px] border border-[#B7D9DE] bg-white p-3">
-      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
-        Categories for this study
+    <div className="mb-3 mt-3">
+      <div className="mb-2 text-[12.5px] font-semibold text-[#AEAEB2]">
+        Benefit areas for this study · findings move with it
       </div>
-      <div className="mb-2 grid gap-1 sm:grid-cols-2">
-        {vitenskap.map((c) => (
-          <label key={c.id} className="flex cursor-pointer items-center gap-2 rounded-[4px] px-1 py-0.5 hover:bg-[#F4FBFC]">
-            <input
-              type="checkbox"
-              className="h-4 w-4 accent-[#0A7A8A]"
-              checked={valgte.has(c.id)}
-              onChange={() => veksle(c.id)}
-            />
-            <span className="text-[12px] text-zinc-700">{c.name}</span>
-          </label>
-        ))}
+      <div className="grid gap-1.5 sm:grid-cols-2">
+        {vitenskap.map((c) => {
+          const on = valgte.has(c.id);
+          return (
+            <button
+              key={c.id}
+              onClick={() => veksle(c.id)}
+              className={`flex items-center justify-between rounded-[10px] border bg-white px-3 py-2 text-left text-[13px] transition-colors ${
+                on ? "border-[#1D1D1F] font-semibold text-[#1D1D1F]" : "border-[#E8E8ED] text-[#6E6E73]"
+              }`}
+            >
+              {c.name}
+              {on && <span className="font-bold">✓</span>}
+            </button>
+          );
+        })}
       </div>
-      <p className="mb-2 text-[11px] text-zinc-500">
-        Findings from this study move with it: anything filed under a category you remove is
-        re-filed under the category you add.
+      <p className="mt-2 text-[11.5px] text-[#AEAEB2]">
+        Findings filed under an area you remove are re-filed under the area you add.
       </p>
-      {feil && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{feil}</p>}
-      <div className="flex gap-2">
+      {feil && <p className="mt-2 text-[12px] font-semibold text-[#B3403A]">{feil}</p>}
+      <div className="mt-3 flex gap-2">
         <button
           onClick={() => void lagre()}
           disabled={busy}
-          className="rounded-[6px] bg-[#1B7A3D] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+          className="rounded-[10px] bg-[#1D1D1F] px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-[#3A3A3C] disabled:opacity-40"
         >
           {busy ? "Saving…" : "Save categories"}
         </button>
         <button
           onClick={onCancel}
-          className="rounded-[6px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"
         >
           Cancel
         </button>
@@ -878,23 +858,23 @@ function QualityEditor({
   }
 
   return (
-    <div className="mb-3 rounded-[8px] border border-[#B7D9DE] bg-white p-3">
-      <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">
-        Scientific quality
+    <div className="mb-3 mt-3">
+      <div className="mb-2 text-[12.5px] font-semibold text-[#AEAEB2]">
+        Scientific quality · how rigorously the study was designed and run
       </div>
-      <div className="mb-2 flex flex-wrap items-end gap-3">
-        <label className="text-[11px] font-semibold text-zinc-600">
-          Score (0 to 100)
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="text-[11.5px] font-semibold text-[#6E6E73]">
+          Score, 0 to 100
           <input
             type="number"
             min={0}
             max={100}
             value={score}
             onChange={(e) => endreScore(e.target.value)}
-            className="mt-1 block w-24 rounded-[6px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mt-1 block w-24 rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
           />
         </label>
-        <label className="text-[11px] font-semibold text-zinc-600">
+        <label className="text-[11.5px] font-semibold text-[#6E6E73]">
           Rating
           <select
             value={label}
@@ -902,33 +882,33 @@ function QualityEditor({
               egenVurdering.current = true;
               setLabel(e.target.value as "High" | "Moderate" | "Low");
             }}
-            className="mt-1 block rounded-[6px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mt-1 block rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
           >
             <option value="High">High</option>
             <option value="Moderate">Moderate</option>
             <option value="Low">Low</option>
           </select>
         </label>
-        <label className="min-w-[10rem] flex-1 text-[11px] font-semibold text-zinc-600">
-          Note (optional)
+        <label className="min-w-[10rem] flex-1 text-[11.5px] font-semibold text-[#6E6E73]">
+          Note, optional
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="What the score is based on"
-            className="mt-1 block w-full rounded-[6px] border border-[#B7D9DE] bg-white px-2 py-1.5 text-sm outline-none focus:border-[#3FD0C9]"
+            className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
           />
         </label>
       </div>
-      <p className="mb-2 text-[11px] text-zinc-500">
+      <p className="mt-2 text-[11.5px] text-[#AEAEB2]">
         Saved as {reviewer || "…"} on {formatDate(new Date().toISOString())}. The name and date are
         stored with the score.
       </p>
-      {feil && <p className="mb-2 text-[11px] font-semibold text-[#9A2A2A]">{feil}</p>}
-      <div className="flex flex-wrap gap-2">
+      {feil && <p className="mt-2 text-[12px] font-semibold text-[#B3403A]">{feil}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={() => void lagre()}
           disabled={busy}
-          className="rounded-[6px] bg-[#1B7A3D] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#166433] disabled:opacity-40"
+          className="rounded-[10px] bg-[#1D1D1F] px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-[#3A3A3C] disabled:opacity-40"
         >
           {busy ? "Saving…" : "Save quality"}
         </button>
@@ -936,14 +916,14 @@ function QualityEditor({
           <button
             onClick={() => void fjern()}
             disabled={busy}
-            className="rounded-[6px] border border-[#E6C9C9] bg-white px-3 py-1.5 text-xs font-semibold text-[#9A2A2A] hover:bg-[#F9EFEF] disabled:opacity-40"
+            className="rounded-[10px] border border-[#E6C9C9] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#B3403A] hover:bg-[#FBF3F3] disabled:opacity-40"
           >
             Clear score
           </button>
         )}
         <button
           onClick={onCancel}
-          className="rounded-[6px] border border-[#D6E6EE] bg-white px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"
         >
           Cancel
         </button>
@@ -970,7 +950,7 @@ function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onInput={grow}
-      className="mt-1 min-h-[7rem] w-full resize-y overflow-hidden rounded-[6px] border border-[#B7D9DE] bg-white p-3 text-sm leading-relaxed text-zinc-700 outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+      className="mt-1.5 min-h-[7rem] w-full resize-y overflow-hidden rounded-[12px] border border-[#E8E8ED] bg-white p-3.5 text-[14px] leading-relaxed text-[#2C2C2E] shadow-[0_1px_2px_rgba(29,29,31,.03)] outline-none focus:border-[#C7C7CC]"
     />
   );
 }
@@ -986,33 +966,38 @@ function SummaryEditor({
 }) {
   const [draft, setDraft] = useState<Summary>(initial);
   const fields: { key: keyof Summary; label: string }[] = [
-    { key: "background", label: "Background & rationale" },
-    { key: "design", label: "Design & participants" },
+    { key: "background", label: "Background" },
+    { key: "design", label: "Design" },
     { key: "findings", label: "Key findings" },
-    { key: "limitations", label: "Limitations & quality" },
+    { key: "limitations", label: "Limitations" },
   ];
   return (
-    <div className="space-y-3">
-      {fields.map((f) => (
-        <div key={f.key}>
-          <div className="text-[11px] font-bold uppercase tracking-wide text-[#0A7A8A]">{f.label}</div>
-          <AutoTextarea value={draft[f.key]} onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))} />
-        </div>
-      ))}
-      <div className="flex flex-wrap items-center gap-2">
+    <div>
+      <p className="mb-4 rounded-[12px] border border-[#F2E3BC] bg-[#FFF8E9] px-4 py-2.5 text-[12.5px] text-[#8A6A2B]">
+        You are editing this summary. Saving marks it as human reviewed and shares it with the whole team.
+      </p>
+      <div className="space-y-4">
+        {fields.map((f) => (
+          <div key={f.key}>
+            <div className="text-[12.5px] font-semibold text-[#AEAEB2]">{f.label}</div>
+            <AutoTextarea value={draft[f.key]} onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))} />
+          </div>
+        ))}
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-2.5">
         <button
           onClick={() => onSave(draft)}
-          className="rounded-[8px] bg-[#1B7A3D] px-4 py-2 text-sm font-bold text-white hover:bg-[#166433]"
+          className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white hover:bg-[#3A3A3C]"
         >
           Save summary
         </button>
         <button
           onClick={onCancel}
-          className="rounded-[8px] border border-[#D6E6EE] bg-white px-4 py-2 text-sm font-semibold text-zinc-600 hover:bg-zinc-50"
+          className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] hover:bg-[#E4E4E7]"
         >
           Cancel
         </button>
-        <span className="text-[11px] text-zinc-400">Saved to the shared library (visible to everyone).</span>
+        <span className="text-[11.5px] text-[#AEAEB2]">Saved to the shared library, visible to everyone.</span>
       </div>
     </div>
   );

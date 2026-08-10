@@ -4,9 +4,21 @@
 // Both pages use the same three pane shell — filter sidebar on the left, a scannable list in
 // the middle, and a reading/evidence panel on the right — so the two pages stay identical to
 // interact with. The V1 pages do not use anything in this file.
+//
+// Design language (the "floating & focused" concept the client picked from three mockups,
+// 2026-08-10): calm, Apple-like. One near-white background, black/gray typography, hairlines
+// instead of boxed borders, a sidebar that is pure text (no chrome), study/finding cards that
+// float with soft shadows, and ONE quiet accent (the brand teal) for links and the verified
+// mark. Status is words, not colored badge pills; the red Superba benefit icons are the only
+// illustration.
+
+/* eslint-disable @next/next/no-img-element -- tiny local line-art PNGs, next/image adds nothing */
 
 // TopNav is sticky; the sidebar and the docked panel stick right below it.
 const NAV_H = "57px";
+
+const FONT_STACK =
+  "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif";
 
 export function V2Shell({
   sidebar,
@@ -21,10 +33,10 @@ export function V2Shell({
   onClosePanel?: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-[#F2F7F9]">
-      <div className="mx-auto flex w-full max-w-[1600px]">
+    <div className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F]" style={{ fontFamily: FONT_STACK }}>
+      <div className="mx-auto flex w-full max-w-[1480px]">
         <aside
-          className="hidden w-[264px] shrink-0 self-start border-r border-[#D6E6EE] bg-white lg:sticky lg:block lg:overflow-y-auto"
+          className="hidden w-[280px] shrink-0 self-start px-8 lg:sticky lg:block lg:overflow-y-auto"
           style={{ top: NAV_H, height: `calc(100vh - ${NAV_H})` }}
         >
           {sidebar}
@@ -34,11 +46,11 @@ export function V2Shell({
           <>
             {/* Below xl the panel becomes a full height drawer; the backdrop closes it. */}
             <div
-              className="fixed inset-0 z-[55] bg-[#031B34]/50 backdrop-blur-sm xl:hidden"
+              className="fixed inset-0 z-[55] bg-[#1D1D1F]/30 backdrop-blur-sm xl:hidden"
               onClick={onClosePanel}
             />
-            <aside className="fixed bottom-0 right-0 top-0 z-[56] w-full max-w-[520px] overflow-y-auto border-l border-[#D6E6EE] bg-white shadow-lg xl:sticky xl:bottom-auto xl:top-[57px] xl:z-auto xl:h-[calc(100vh-57px)] xl:w-[480px] xl:max-w-none xl:shrink-0 xl:self-start xl:shadow-none">
-              {panel}
+            <aside className="fixed bottom-0 right-0 top-0 z-[56] w-full max-w-[520px] overflow-y-auto border-l border-[#E8E8ED] bg-white shadow-xl xl:sticky xl:bottom-auto xl:top-[57px] xl:z-auto xl:h-[calc(100vh-57px)] xl:w-[480px] xl:max-w-none xl:shrink-0 xl:self-start xl:shadow-none">
+            {panel}
             </aside>
           </>
         ) : null}
@@ -49,8 +61,8 @@ export function V2Shell({
 
 export function SideSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="px-3 pt-5">
-      <div className="mb-2 px-2 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-zinc-400">
+    <div className="pt-8">
+      <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[#AEAEB2]">
         {title}
       </div>
       {children}
@@ -58,7 +70,7 @@ export function SideSection({ title, children }: { title: string; children: Reac
   );
 }
 
-/** A row in the sidebar: label + count, highlighted when selected. */
+/** A row in the sidebar: pure text with an optional brand icon, bold when selected. */
 export function SideItem({
   active,
   onClick,
@@ -69,26 +81,27 @@ export function SideItem({
   active: boolean;
   onClick: () => void;
   count?: number | string;
-  icon?: React.ReactNode;
+  /** URL of a small brand icon shown before the label. */
+  icon?: string;
   children: React.ReactNode;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-2.5 rounded-[6px] px-2.5 py-2 text-left text-[13px] font-semibold transition-colors ${
-        active ? "bg-[#0A7A8A] text-white" : "text-zinc-700 hover:bg-[#E1F4F3]"
+      className={`flex w-full items-center gap-2.5 py-[5px] text-left text-[14px] transition-colors ${
+        active ? "font-bold text-[#1D1D1F]" : "text-[#6E6E73] hover:text-[#1D1D1F]"
       }`}
     >
-      {icon}
-      <span className="min-w-0 flex-1 truncate">{children}</span>
-      {count !== undefined && (
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${
-            active ? "bg-white/20 text-white" : "bg-[#F2F7F9] text-zinc-400"
-          }`}
-        >
-          {count}
+      {icon && (
+        <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+          <img src={icon} alt="" className={`max-h-full max-w-full ${active ? "" : "opacity-60"}`} />
         </span>
+      )}
+      <span className="min-w-0 flex-1 truncate" title={typeof children === "string" ? children : undefined}>
+        {children}
+      </span>
+      {count !== undefined && (
+        <span className="shrink-0 text-[12.5px] tabular-nums text-[#C7C7CC]">{count}</span>
       )}
     </button>
   );
@@ -104,12 +117,12 @@ export function SideCheck({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2.5 rounded-[6px] px-2.5 py-1.5 text-[12.5px] text-zinc-600 hover:bg-[#F2F7F9]">
+    <label className="flex cursor-pointer items-center gap-2.5 py-[5px] text-[13.5px] text-[#6E6E73]">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 shrink-0 accent-[#0A7A8A]"
+        className="h-[15px] w-[15px] shrink-0 accent-[#1D1D1F]"
       />
       {children}
     </label>
@@ -128,13 +141,13 @@ export function SearchBox({
   return (
     <div className="relative">
       <svg
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
+        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 opacity-40"
         width="15"
         height="15"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#052A4E"
-        strokeWidth="2.4"
+        stroke="#1D1D1F"
+        strokeWidth="2.2"
       >
         <circle cx="11" cy="11" r="7" />
         <path d="M21 21l-4.3-4.3" />
@@ -144,7 +157,7 @@ export function SearchBox({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-[8px] border border-[#D6E6EE] bg-white py-2.5 pl-9 pr-3 text-[13px] shadow-sm outline-none focus:border-[#3FD0C9] focus:ring-2 focus:ring-[#3FD0C9]/25"
+        className="w-full rounded-[12px] border border-[#E8E8ED] bg-white py-2.5 pl-[38px] pr-3 text-[14px] shadow-[0_1px_3px_rgba(29,29,31,.04)] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
       />
     </div>
   );
@@ -164,25 +177,25 @@ export function PanelHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-[#D6E6EE] bg-[#F4FBFC] px-6 py-5">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-[#0A7A8A]">
-          {eyebrow}
-        </span>
+    <div className="border-b border-[#E8E8ED] px-7 py-6">
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="text-[12px] font-semibold text-[#AEAEB2]">{eyebrow}</span>
         <button
           onClick={onClose}
-          className="rounded-[4px] px-1.5 text-[11px] font-bold uppercase tracking-wide text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+          className="rounded-[6px] px-1.5 text-[12px] font-semibold text-[#AEAEB2] hover:bg-[#F2F2F4] hover:text-[#6E6E73]"
         >
           Close ✕
         </button>
       </div>
-      <h2 className="text-[17px] font-extrabold leading-snug text-[#052A4E]">{title}</h2>
+      <h2 className="text-[18px] font-bold leading-snug tracking-[-0.015em] text-[#1D1D1F]">
+        {title}
+      </h2>
       {children}
     </div>
   );
 }
 
-/** Small rounded status/category pill, shared look across both V2 pages. */
+/** Small status marker: a muted dot + word instead of a colored badge pill. */
 export function Pill({
   tone,
   title,
@@ -192,21 +205,19 @@ export function Pill({
   title?: string;
   children: React.ReactNode;
 }) {
-  const cls =
+  const dot =
     tone === "green"
-      ? "bg-[#DFF3E4] text-[#1B7A3D]"
+      ? "bg-[#2E7D4F]"
       : tone === "amber"
-      ? "bg-[#FBEED6] text-[#8A5A0B]"
+      ? "bg-[#E0A93E]"
       : tone === "red"
-      ? "bg-[#F3E0E0] text-[#9A2A2A]"
+      ? "bg-[#B3403A]"
       : tone === "gray"
-      ? "bg-zinc-100 text-zinc-500"
-      : "bg-[#E1F4F3] text-[#0A7A8A]";
+      ? "bg-[#C7C7CC]"
+      : "bg-[#0A7A8A]";
   return (
-    <span
-      title={title}
-      className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wide ${cls}`}
-    >
+    <span title={title} className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#6E6E73]">
+      <span className={`h-[7px] w-[7px] rounded-full ${dot}`} />
       {children}
     </span>
   );
@@ -223,17 +234,17 @@ export function SideReviewer({
   hint: string;
 }) {
   return (
-    <div className="mx-3 mb-5 mt-6 rounded-[8px] border border-[#D6E6EE] bg-[#F4FBFC] p-3">
-      <label className="mb-1 block text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-[#0A7A8A]">
+    <div className="mb-8 pt-9">
+      <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[#AEAEB2]">
         Reviewer
-      </label>
+      </div>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Your name"
-        className="w-full rounded-[6px] border border-[#B7D9DE] bg-white px-2.5 py-1.5 text-[13px] outline-none focus:border-[#3FD0C9]"
+        className="w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
       />
-      <p className="mt-1.5 text-[10.5px] leading-snug text-zinc-400">{hint}</p>
+      <p className="mt-1.5 text-[11.5px] leading-snug text-[#AEAEB2]">{hint}</p>
     </div>
   );
 }

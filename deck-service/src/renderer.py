@@ -1259,10 +1259,13 @@ _EXEC_SUMMARY_ROWS = (("source", "Source"), ("key_finding", "Key finding"),
                      ("contents", "Contents"))
 
 
-def _place_labeled_row(slide, l, t, w, h, label: str, text: str) -> None:
-    """One executive-summary row: a bold lead-in label followed inline by its sentence(s), in a
-    single wrapped paragraph — the business-memo style the slide's spec calls for, not a
-    heading-then-body stack."""
+def _place_labeled_bullets(slide, l, t, w, h, rows, size, color, *, font=None, anchor=MSO_ANCHOR.TOP):
+    """Render (label, text) rows as the deck's STANDARD teal picture-bullet list — each bullet a
+    bold lead-in label followed inline by its sentence(s). One flowing text box (not fixed
+    per-row height slots), so a longer row just wraps to another line instead of colliding with
+    the next bullet — the failure mode a fixed-slot layout risks when row lengths vary."""
+    if font is None:
+        font = _BODY
     tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
     tf = tb.text_frame
     tf.word_wrap = True
@@ -1270,31 +1273,34 @@ def _place_labeled_row(slide, l, t, w, h, label: str, text: str) -> None:
         tf.auto_size = MSO_AUTO_SIZE.NONE
     except Exception:  # noqa: BLE001
         pass
+    tf.vertical_anchor = anchor
     tf.margin_left = tf.margin_right = Emu(0)
-    p = tf.paragraphs[0]
-    p.line_spacing = _LINE_SPACING
-    r1 = p.add_run(); r1.text = f"{label}: "
-    r1.font.size = Pt(_SZ_BODY); r1.font.bold = True; r1.font.name = _HEAD; r1.font.color.rgb = _WHITE
-    r2 = p.add_run(); r2.text = text or ""
-    r2.font.size = Pt(_SZ_BODY); r2.font.bold = False; r2.font.name = _BODY; r2.font.color.rgb = _LTEAL
+    rid = _bullet_rid(slide)
+    for i, (label, text) in enumerate(rows):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.line_spacing = _LINE_SPACING
+        p.space_after = Pt(10)
+        r1 = p.add_run(); r1.text = f"{label}: "
+        r1.font.size = Pt(size); r1.font.bold = True; r1.font.name = _HEAD; r1.font.color.rgb = _WHITE
+        r2 = p.add_run(); r2.text = text or ""
+        r2.font.size = Pt(size); r2.font.bold = False; r2.font.name = font; r2.font.color.rgb = color
+        if rid:
+            _apply_picture_bullet(p._p, rid)
+    return tb
 
 
 def _fill_exec_summary(prs, spec: dict, dark_index: int) -> None:
     """The deck's REQUIRED executive summary (slide 2, right after the cover): a FIXED static
     title (never the model's — matches ingredient/agenda's forced-text pattern) and exactly 5
     labelled rows (Source / Key finding / Supporting findings / Relevance / Contents), each a
-    bold lead-in label plus 1-2 sentences. A business-memo layout, not icon cards, so the whole
-    deck's argument reads in one glance — no photo, no icons, per the spec."""
+    bold lead-in label plus 1-2 sentences, rendered as the deck's own standard bulleted list — a
+    clean, scannable summary rather than a stacked memo (client feedback on the first cut)."""
     slide = _synth_slide(prs, dark_index, title="Executive summary")
     rows = [(label, spec.get(key, "")) for key, label in _EXEC_SUMMARY_ROWS if spec.get(key)]
-    n = max(1, len(rows))
-    rh = _BODY_H / n
-    for i, (label, text) in enumerate(rows):
-        y = _BODY_TOP + i * rh
-        _place_labeled_row(slide, _MARGIN, y + 0.1, _CONTENT_W, rh - 0.22, label, text)
-        if i < n - 1:
-            ln = slide.shapes.add_shape(_BOX, Inches(_MARGIN), Inches(y + rh - 0.02), Inches(_CONTENT_W), Inches(0.012))
-            ln.fill.solid(); ln.fill.fore_color.rgb = _TEAL2; ln.line.fill.background(); ln.shadow.inherit = False
+    if not rows:
+        return
+    _place_labeled_bullets(slide, _MARGIN, _BODY_TOP + 0.15, _CONTENT_W, _BODY_H - 0.3,
+                           rows, _SZ_BODY, _LTEAL)
 
 
 def _fill_comparison(prs, spec: dict, light_index: int) -> None:

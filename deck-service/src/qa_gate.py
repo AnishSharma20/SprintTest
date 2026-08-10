@@ -72,11 +72,26 @@ def _render_pngs(pptx: Path, out_dir: Path) -> bool:
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if soffice:
         with tempfile.TemporaryDirectory() as tmp:
-            subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
-                           check=True, capture_output=True)
-            pdf = next(Path(tmp).glob("*.pdf"))
+            # An isolated --env:UserInstallation profile per call, not soffice's shared default
+            # one: without it, a soffice invocation that overlaps with another (a concurrent
+            # request, or a not-yet-exited previous one) can silently fail to acquire the shared
+            # profile lock and exit 0 with NO pdf written — `next()` below then raises a bare,
+            # unhelpfully empty StopIteration. This was a real, previously-latent bug: the old
+            # 4 MB upload cap made this endpoint rarely exercised in production, so it never
+            # surfaced until larger files started actually reaching LibreOffice on Render.
+            profile = Path(tmp) / "lo_profile"
+            result = subprocess.run(
+                [soffice, "--headless", "--norestore",
+                 f"-env:UserInstallation=file://{profile.as_posix()}",
+                 "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                capture_output=True, text=True,
+            )
+            pdfs = list(Path(tmp).glob("*.pdf"))
+            if not pdfs:
+                detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                raise RuntimeError(f"LibreOffice produced no PDF (exit {result.returncode}): {detail}")
             import fitz  # PyMuPDF
-            doc = fitz.open(str(pdf))
+            doc = fitz.open(str(pdfs[0]))
             for n, page in enumerate(doc, 1):
                 page.get_pixmap(dpi=110).save(str(out_dir / f"slide{n:03d}.png"))
         return True

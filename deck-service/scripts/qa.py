@@ -76,9 +76,20 @@ def render_pngs(pptx: Path, out_dir: Path) -> bool:
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if soffice:
         with tempfile.TemporaryDirectory() as tmp:
-            subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
-                           check=True, capture_output=True)
-            pdf = next(Path(tmp).glob("*.pdf"))
+            # Isolated profile per call — see qa_gate._render_pngs for why (shared-profile lock
+            # contention can make soffice exit 0 with no pdf written).
+            profile = Path(tmp) / "lo_profile"
+            result = subprocess.run(
+                [soffice, "--headless", "--norestore",
+                 f"-env:UserInstallation=file://{profile.as_posix()}",
+                 "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                capture_output=True, text=True,
+            )
+            pdfs = list(Path(tmp).glob("*.pdf"))
+            if not pdfs:
+                detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                raise RuntimeError(f"LibreOffice produced no PDF (exit {result.returncode}): {detail}")
+            pdf = pdfs[0]
             if shutil.which("pdftoppm"):
                 subprocess.run(["pdftoppm", "-png", "-r", "120", str(pdf), str(out_dir / "slide")], check=True)
             else:

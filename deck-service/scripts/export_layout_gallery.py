@@ -63,11 +63,21 @@ def _render_pngs(pptx: Path, out_dir: Path) -> list[Path]:
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if soffice:
         with tempfile.TemporaryDirectory() as tmp:
-            subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir", tmp,
-                            str(pptx)], check=True, capture_output=True)
-            pdf = next(Path(tmp).glob("*.pdf"))
+            # Isolated profile per call — see deck-service/src/qa_gate.py's _render_pngs for why
+            # (shared-profile lock contention can make soffice exit 0 with no pdf written).
+            profile = Path(tmp) / "lo_profile"
+            result = subprocess.run(
+                [soffice, "--headless", "--norestore",
+                 f"-env:UserInstallation=file://{profile.as_posix()}",
+                 "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                capture_output=True, text=True,
+            )
+            pdfs = list(Path(tmp).glob("*.pdf"))
+            if not pdfs:
+                detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                raise RuntimeError(f"LibreOffice produced no PDF (exit {result.returncode}): {detail}")
             import fitz  # PyMuPDF
-            doc = fitz.open(pdf)
+            doc = fitz.open(pdfs[0])
             for n, page in enumerate(doc, 1):
                 page.get_pixmap(dpi=110).save(str(out_dir / f"Slide{n}.png"))
     elif sys.platform.startswith("win"):

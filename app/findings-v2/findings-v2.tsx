@@ -235,7 +235,7 @@ export default function FindingsV2({
     >
       <div className="px-6 pb-16 pt-10 sm:px-10">
         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="text-[28px] font-bold tracking-[-0.022em] text-[#1D1D1F] sm:text-[32px]">
               {valgtKategori ? `${catName[valgtKategori] ?? "Category"} Findings` : "All findings"}
             </h1>
@@ -246,7 +246,7 @@ export default function FindingsV2({
               {REGULATORY_DISCLAIMER}
             </p>
           </div>
-          <div className="flex w-full flex-col gap-3 sm:w-[300px]">
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-[300px]">
             <button
               onClick={() => setCreating(true)}
               className="self-end rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"

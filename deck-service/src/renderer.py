@@ -2479,8 +2479,11 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
     if not entries:
         return
 
-    _synth_slide(prs, master_index, title="Appendix",
-                 eyebrow="Source charts and tables from the cited studies")
+    divider = _synth_slide(prs, master_index, title="Appendix",
+                           eyebrow="Source charts and tables from the cited studies")
+    divider.notes_slide.notes_text_frame.text = (
+        "Appendix: the original charts and tables from the cited studies, reproduced unmodified "
+        "for reference.")
     for pmid, cite, e in entries:
         path = config.figure_path(pmid, e["file"])
         if not path.exists():
@@ -2490,6 +2493,9 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
                               eyebrow=_fit(f"{cite} — {kind_label}, page {e['page']}", 100))
         box = (Inches(_MARGIN), Inches(_BODY_TOP), Inches(_CONTENT_W), Inches(_BODY_H))
         _place_icon(slide, box, path)  # letterbox-fit — a chart must never be crop-to-filled
+        # These deterministic slides get a deterministic note: the exact source of the image.
+        slide.notes_slide.notes_text_frame.text = (
+            f"{kind_label} reproduced unmodified from the source study: {cite}, page {e['page']}.")
 
 
 def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,

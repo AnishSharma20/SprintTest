@@ -34,6 +34,8 @@ export type WarehouseStudy = {
   qualityRating: "Low" | "Moderate" | "High";
   limitations: string;
   fictive: boolean;
+  /** AKBM's own benefit categories (see CATEGORIES in ../studies), not part of the client's Excel. */
+  categories: string[];
 };
 
 export type WarehouseResult = {
@@ -100,6 +102,7 @@ export const WAREHOUSE_STUDIES: WarehouseStudy[] = [
     qualityRating: "Low",
     limitations: "Small heterogeneous sample; short duration; limited methodological reporting; high risk of bias",
     fictive: false,
+    categories: ["Wellness & Immune Support", "Joint Support"], // per ARCHIVE_CATEGORIES (PMID 17353582)
   },
   {
     reference: "Suzuki et al. (2016)",
@@ -131,6 +134,7 @@ export const WAREHOUSE_STUDIES: WarehouseStudy[] = [
     qualityRating: "Moderate",
     limitations: "Small sample; short duration; non-ITT analysis; Japanese-specific tools; single site; industry funded",
     fictive: false,
+    categories: ["Joint Support"], // per ARCHIVE_CATEGORIES (PMID 27701428)
   },
   {
     reference: "Stonehouse et al. (2022)",
@@ -162,6 +166,7 @@ export const WAREHOUSE_STUDIES: WarehouseStudy[] = [
     qualityRating: "High",
     limitations: "Normo- to borderline hyperlipidaemic population; MCID for WOMAC uncertain; no effusion-synovitis criterion",
     fictive: false,
+    categories: ["Joint Support", "Healthy Aging Support"], // per ARCHIVE_CATEGORIES (PMID 35880828)
   },
   {
     reference: "Laslett et al. (2024)",
@@ -193,6 +198,7 @@ export const WAREHOUSE_STUDIES: WarehouseStudy[] = [
     qualityRating: "High",
     limitations: "Only tested 2 g/day; effusion-synovitis criterion limits generalisability; does not rule out benefit at higher doses",
     fictive: false,
+    categories: ["Joint Support"], // per ARCHIVE_CATEGORIES (PMID 38776073, KARAOKE 2024 results)
   },
   {
     reference: "Andersen et al. (2026)*",
@@ -224,6 +230,7 @@ export const WAREHOUSE_STUDIES: WarehouseStudy[] = [
     qualityRating: "High",
     limitations: "FICTIVE PROTOCOL — not a real study. Full industry sponsorship with design involvement is a potential source of bias.",
     fictive: true,
+    categories: ["Joint Support"], // not in ARCHIVE_CATEGORIES (fictive); assigned by the same knee/OA content judgment as the fallback keyword rule in ../studies.ts
   },
 ];
 

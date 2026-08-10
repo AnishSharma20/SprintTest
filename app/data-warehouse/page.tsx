@@ -11,6 +11,7 @@
 import { useMemo, useState } from "react";
 import PageHero from "../PageHero";
 import { Pill } from "../v2/ui";
+import { CATEGORIES } from "../studies";
 import {
   WAREHOUSE_STUDIES,
   WAREHOUSE_RESULTS,
@@ -24,6 +25,7 @@ type SignificanceFilter = "any" | "Significant" | "Not Significant" | "Pending";
 
 type Params = {
   studyType: "any" | "RCT" | "Protocol (fictive)";
+  category: "any" | (typeof CATEGORIES)[number];
   keyword: string;
   outcomeMeasure: string; // "any" or an exact WarehouseResult.outcomeMeasure
   significance: SignificanceFilter;
@@ -34,6 +36,7 @@ type Params = {
 
 const DEFAULT_PARAMS: Params = {
   studyType: "any",
+  category: "any",
   keyword: "",
   outcomeMeasure: "any",
   significance: "any",
@@ -98,6 +101,7 @@ export default function DataWarehousePage() {
     return WAREHOUSE_STUDIES.filter((s) => {
       if (!sentParams.includeFictive && s.fictive) return false;
       if (sentParams.studyType !== "any" && s.studyType !== sentParams.studyType) return false;
+      if (sentParams.category !== "any" && !s.categories.includes(sentParams.category)) return false;
       if (sentParams.minN > 0 && leadingNumber(s.n) < sentParams.minN) return false;
       if (sentParams.minQuality > 0 && s.qualityScore < sentParams.minQuality) return false;
 
@@ -128,14 +132,10 @@ export default function DataWarehousePage() {
       <main className="mx-auto max-w-5xl px-4 pb-16 pt-8">
         {/* ----- disclaimer — this does not work yet, by design ----- */}
         <div className="rounded-[4px] border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <p className="font-bold">Preview only — not a live connection.</p>
+          <p className="font-bold uppercase tracking-[0.02em]">Preview only - not a live connection</p>
           <p className="mt-1 max-w-3xl">
-            AKBM is building their own data warehouse of studies separately from this tool
-            (deeper backend data, real endpoints, agents querying it). It does not exist yet, so
-            nothing on this page reads from or writes to a live system. The parameters below run
-            against a mocked dataset transcribed from AKBM&apos;s own solution design
-            (<code className="rounded bg-amber-100 px-1 py-0.5 text-[12px]">krill_oil_evidence_database_v4.xlsx</code>),
-            so the flow can be reviewed before their real API exists.
+            AKBM&apos;s own data warehouse solution is coming; this page is just a preview of how
+            this website could connect to it once it exists.
           </p>
         </div>
 
@@ -163,6 +163,22 @@ export default function DataWarehousePage() {
                 <option value="any">Any</option>
                 <option value="RCT">RCT</option>
                 <option value="Protocol (fictive)">Protocol (fictive)</option>
+              </select>
+            </label>
+
+            <label className="block text-xs font-semibold text-[#06456B]">
+              Benefit category
+              <select
+                value={params.category}
+                onChange={(e) => setField("category", e.target.value as Params["category"])}
+                className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
+              >
+                <option value="any">Any</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -314,6 +330,16 @@ export default function DataWarehousePage() {
                           </div>
                           <div className="text-xs text-zinc-500">
                             {s.journal} · {s.year} · {s.studyType} · N={s.n}
+                          </div>
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {s.categories.map((c) => (
+                              <span
+                                key={c}
+                                className="rounded-[3px] bg-[#EAF3F7] px-1.5 py-0.5 text-[10px] font-semibold text-[#06456B]"
+                              >
+                                {c}
+                              </span>
+                            ))}
                           </div>
                         </div>
                         <Pill tone={qualityTone(s.qualityRating)} title={`Quality score ${s.qualityScore}%`}>

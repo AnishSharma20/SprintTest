@@ -213,6 +213,37 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   wrapper moved from "always stacked" to "shown when its tab is active". Verified live: all 43 slide
   renders load under the Slides tab exactly as on `/about`, pop animation fires on every tab switch,
   `/about` confirmed unaffected.
+- **Real deck-wide color theme: Blue Ocean (dark) / Pastel Blue (light) — NEW 2026-08-10.** Client
+  spotted the tool's two backgrounds in a PowerPoint screenshot and asked for them as pickable named
+  themes. Turned out only the 11 native template layouts + 5 of the 31 code-built layouts
+  (`key_points`, `comparison`, `harvey_ball`, `coverage_matrix`, `chart_takeaways`) could render on
+  the light master — the other **26** had their background AND every text/panel colour hardcoded
+  for dark. Gave each of those 26 a light-mode pair: a `light_index` param threaded through, the
+  slide's master picked accordingly, and new shared helpers — `_ink()` (white↔`_INKC`), `_muted()`
+  (`_LTEAL`↔`_TEAL`), `_line_soft()` (connector lines/arrow fills — `_LTEAL` is invisible on the
+  light master, `_TEAL2` isn't), `_chip_bg()` (icon-chip/tile fills — `_PANEL`'s near-white tint
+  disappears on light, so `_LTEAL` instead) — applied ONLY to text/shapes drawn directly on the
+  bare slide background; text sitting ON a colour panel/bar/chevron (e.g. white heading on a `_TEAL`
+  card) is untouched, since that already contrasts regardless of the slide's own background.
+  `_icon_disc` and `_place_labeled_bullets` (executive summary) take the same `light` flag. The
+  dispatch table in `render_deck` now passes both `dark` and `light` master indices to every one
+  of those 26 `_fill_*` functions.
+  A deterministic `pipeline._apply_color_theme(plan, theme)` forces every content slide's
+  `background` field to the chosen theme AFTER validation/rendering-prep — bypassing the schema
+  entirely rather than teaching the model to choose "light" for layouts it currently can't (that
+  stays an `_ensure_*`-style net, not a prompt change); verbatim slides (`ingredient`, `custom_*`)
+  are left alone since they carry no background concept. New `color_theme` form field threaded
+  `main.py` → `pipeline.generate()`; a "Color theme" pill row (Auto / Blue Ocean / Pastel Blue) on
+  the Content Generator's Style step, matching the Length/Tone selectors — Auto keeps the AI's own
+  per-slide rhythm, the other two force the whole deck.
+  Verified: rendered all 26 reworked layouts forced light in one 29-slide deck via
+  `renderer.render_deck` directly (no crashes), visually inspected charts/org-chart/decision-tree/
+  serpentine/breakdown/team/icon-grid/executive-summary renders for contrast (all clean — see
+  screenshots in that session), confirmed the DARK theme renders byte-identical to before when no
+  theme is forced (regression check), and ran the exact plan→`_apply_color_theme`→`render_deck`
+  path `generate()` uses end to end (a live model call hit an unrelated Anthropic billing limit
+  mid-session, so this substituted for the full round trip — worth a real live-model verification
+  once credits are back). `tsc` clean.
 - **Photo library: on/off + house-favourite stars, and a Favourites filter on both library tabs —
   NEW 2026-08-10, `/about` AND `/about-v2` (client asked for parity with the slide library, which
   already had this).** Built-in brand photos previously had no switches at all (just a "show/hide"

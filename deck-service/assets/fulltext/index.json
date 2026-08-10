@@ -250,7 +250,7 @@
     "matched_by": "doi"
   },
   "29372051": {
-    "pdf": "Rundbland 2018.pdf",
+    "pdf": "Rundblad 2018 (1).pdf",
     "pages": 11,
     "chars": 57076,
     "doi": "10.1017/jns.2017.64",
@@ -368,5 +368,55 @@
     "first_author": "SenGupta T",
     "year": "2022",
     "matched_by": "manual"
+  },
+  "12777162": {
+    "pdf": "Sampalis 2003.pdf",
+    "pages": 9,
+    "chars": 35322,
+    "doi": null,
+    "title": "Evaluation of the effects of Neptune Krill Oil on the management of premenstrual syndrome and dysmenorrhea.",
+    "first_author": "Sampalis F",
+    "year": "2003",
+    "matched_by": "author+year"
+  },
+  "30261756": {
+    "pdf": "Bjorndal 2017.pdf",
+    "pages": 7,
+    "chars": 0,
+    "doi": null,
+    "title": "Plasma choline, homocysteine and vitamin status in healthy adults supplemented with krill oil",
+    "first_author": "Bjørndal B",
+    "year": "2018",
+    "matched_by": "manual (scanned, no text layer)"
+  },
+  "17353582": {
+    "pdf": "Deutch 2007.pdf",
+    "pages": 10,
+    "chars": 0,
+    "doi": "10.1080/07315724.2007.10719584",
+    "title": "Evaluation of the effect of Neptune Krill Oil on chronic inflammation and arthritic symptoms",
+    "first_author": "Deutsch L",
+    "year": "2007",
+    "matched_by": "manual (scanned, no text layer)"
+  },
+  "19854375": {
+    "pdf": "Maki et al 2009.pdf",
+    "pages": 7,
+    "chars": 0,
+    "doi": null,
+    "title": "Krill oil supplementation increases plasma concentrations of eicosapentaenoic and docosahexaenoic acids",
+    "first_author": "Maki KC",
+    "year": "2009",
+    "matched_by": "manual (scanned, no text layer)"
+  },
+  "36566465": {
+    "pdf": "Yang 2022.pdf",
+    "pages": 12,
+    "chars": 0,
+    "doi": null,
+    "title": "Impact of Antarctic krill oil supplementation on skeletal muscle injury recovery after resistance exercise",
+    "first_author": "Yang S",
+    "year": "2023",
+    "matched_by": "manual (scanned, no text layer)"
   }
 }

@@ -1,4 +1,11 @@
 {
+  "12777162": {
+    "pdf": "Sampalis 2003.pdf",
+    "title": "Evaluation of the effects of Neptune Krill Oil on the management of premenstrual syndrome and dysmenorrhea.",
+    "year": "2003",
+    "first_author": "Sampalis F",
+    "chars": 35322
+  },
   "15656713": {
     "pdf": "Bunea 2004.pdf",
     "title": "Evaluation of the effects of Neptune Krill Oil on the clinical course of hyperlipidemia.",
@@ -6,9 +13,16 @@
     "first_author": "Bunea R",
     "chars": 30725
   },
+  "17353582": {
+    "pdf": "Deutch 2007.pdf",
+    "title": "Evaluation of the effect of Neptune Krill Oil on chronic inflammation and arthritic symptoms",
+    "year": "2007",
+    "first_author": "Deutsch L",
+    "chars": 0
+  },
   "19854375": {
     "pdf": "Maki et al 2009.pdf",
-    "title": "Krill oil supplementation increases plasma concentrations of eicosapentaenoic and docosahexaenoic acids in overweight and obese men and women",
+    "title": "Krill oil supplementation increases plasma concentrations of eicosapentaenoic and docosahexaenoic acids",
     "year": "2009",
     "first_author": "Maki KC",
     "chars": 0
@@ -140,7 +154,7 @@
     "chars": 53421
   },
   "29372051": {
-    "pdf": "Rundbland 2018.pdf",
+    "pdf": "Rundblad 2018 (1).pdf",
     "title": "Effects of krill oil and lean and fatty fish on cardiovascular risk markers: a randomised controlled trial.",
     "year": "2018",
     "first_author": "Rundblad A",
@@ -155,9 +169,9 @@
   },
   "30261756": {
     "pdf": "Bjorndal 2017.pdf",
-    "title": "Plasma choline, homocysteine and vitamin status in healthy adults supplemented with krill oil: a pilot study",
+    "title": "Plasma choline, homocysteine and vitamin status in healthy adults supplemented with krill oil",
     "year": "2018",
-    "first_author": "Bjorndal B",
+    "first_author": "Bjørndal B",
     "chars": 0
   },
   "31652561": {

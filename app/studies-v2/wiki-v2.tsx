@@ -5,9 +5,12 @@
 // mockups: calm near-white page, text-only sidebar with the red Superba benefit icons,
 // floating white cards, status as words instead of badge pills. See app/v2/ui.tsx.
 //
-// Functionally equivalent to app/wiki.tsx (which is untouched, V1 keeps working): same study
-// meta overlay, summary edit with write through, claims modal, category/quality reviewer tools.
-// The duplication is deliberate — collapse it only if V2 is adopted as the replacement.
+// Diverges from app/wiki.tsx (untouched, V1 keeps working) on purpose, per 2026-08-10 feedback:
+// "View diagrams" opens ONLY the charts/tables extracted from the study's PDF (app/v2/diagrams-
+// modal.tsx), not V1's combined findings-review modal; "Open study in PDF" links straight to the
+// real paper (app/study-pdfs.json) when AKBM supplied one, falling back to its DOI/PubMed page;
+// quality filtering is granular (High/Moderate/Low/Unscored + an "All scores" master toggle); the
+// category/quality editor is labelled "Categorize & score", not "Reviewer tools".
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../wiki";
@@ -15,7 +18,7 @@ import type { Summary } from "../studies-data";
 import { loadOverrides, saveOverride, type Override } from "../summary-overrides";
 import CategoryManager from "../category-manager";
 import DiagramsModal from "../v2/diagrams-modal";
-import studyFiguresRaw from "../study-figures.json";
+import studyPdfsRaw from "../study-pdfs.json";
 import {
   applyStudyMeta,
   formatDate,
@@ -36,7 +39,13 @@ import {
 import { benefitIcon } from "../v2/benefit-icons";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
-const STUDY_FIGURES = studyFiguresRaw as Record<string, unknown[]>;
+const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
+
+/** The real paper's PDF when AKBM supplied it, else its DOI page, else its PubMed record. */
+function studyPdfHref(s: Studie): string {
+  const local = STUDY_PDFS[s.pmid];
+  return local ? `/study-pdfs/${local.file}` : s.doiUrl ?? s.url;
+}
 
 const QUALITY_DEF =
   "Scientific quality = how rigorously the study was designed and run. A methodological score across 8 criteria " +
@@ -73,7 +82,15 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   const [sortBy, setSortBy] = useState<SortBy>("quality");
   const [qualHigh, setQualHigh] = useState(true);
   const [qualModerate, setQualModerate] = useState(true);
-  const [qualLowUnscored, setQualLowUnscored] = useState(true);
+  const [qualLow, setQualLow] = useState(true);
+  const [qualUnscored, setQualUnscored] = useState(true);
+  const qualAll = qualHigh && qualModerate && qualLow && qualUnscored;
+  const setQualAll = (v: boolean) => {
+    setQualHigh(v);
+    setQualModerate(v);
+    setQualLow(v);
+    setQualUnscored(v);
+  };
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [reviewer, setReviewer] = useState("");
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
@@ -156,7 +173,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       const treffKat = !valgtKategori || (s.kategoriIds ?? []).includes(valgtKategori);
       const lbl = s.quality?.label;
       const treffKval =
-        lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : qualLowUnscored;
+        lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : lbl === "Low" ? qualLow : qualUnscored;
       return treffSok && treffKat && treffKval;
     });
     return list.sort((a, b) => {
@@ -168,7 +185,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       }
       return (b.ar || "").localeCompare(a.ar || "");
     });
-  }, [studier, sok, valgtKategori, sortBy, qualHigh, qualModerate, qualLowUnscored]);
+  }, [studier, sok, valgtKategori, sortBy, qualHigh, qualModerate, qualLow, qualUnscored]);
 
   const valgt = useMemo(
     () => (valgtPmid ? studier.find((s) => s.pmid === valgtPmid) ?? null : null),
@@ -206,6 +223,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         )}
       </SideSection>
       <SideSection title="Quality">
+        <SideCheck checked={qualAll} onChange={setQualAll}>
+          All scores
+        </SideCheck>
         <div className="pl-1">
           <SideCheck checked={qualHigh} onChange={setQualHigh}>
             High quality
@@ -213,8 +233,11 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           <SideCheck checked={qualModerate} onChange={setQualModerate}>
             Moderate
           </SideCheck>
-          <SideCheck checked={qualLowUnscored} onChange={setQualLowUnscored}>
-            Low or unscored
+          <SideCheck checked={qualLow} onChange={setQualLow}>
+            Low
+          </SideCheck>
+          <SideCheck checked={qualUnscored} onChange={setQualUnscored}>
+            Unscored
           </SideCheck>
         </div>
       </SideSection>
@@ -404,7 +427,7 @@ function StudyRow({
                 : "text-[#1D1D1F] shadow-[inset_0_0_0_1px_#D9D9DE] hover:bg-[#F5F5F7]"
             }`}
           >
-            Read summary
+            View study
           </button>
         </div>
       </div>
@@ -444,20 +467,6 @@ function StudyPanel({
   const edited = !!override;
   const summary: Summary | null | undefined = override?.summary ?? s.summary;
   const verified = edited ? true : s.verified;
-  const q = s.quality;
-  const figures = STUDY_FIGURES[s.pmid]?.length ?? 0;
-  const qTitle = s.qualityReviewer
-    ? `Rated by ${s.qualityReviewer} on ${formatDate(s.qualityReviewedAt)}${
-        s.qualityNote ? ` · ${s.qualityNote}` : ""
-      }`
-    : s.qualityNote ?? undefined;
-
-  const crumbBits = [
-    ...s.kategori,
-    edited ? "Verified · edited" : verified ? "Verified by science" : "AI summary, awaiting review",
-    ...(q ? [`${q.score}% ${q.label} quality`] : []),
-    ...(s.dato ? [s.dato] : []),
-  ];
 
   return (
     <div>
@@ -467,26 +476,14 @@ function StudyPanel({
           {s.flereForfattere && " et al."}
           {s.tidsskrift && <> · {s.tidsskrift}</>}
         </p>
-        <p className="mt-1.5 text-[12px] text-[#AEAEB2]" title={qTitle}>
-          {crumbBits.join(" · ")}
-        </p>
-        <div className="mt-4 flex flex-wrap items-baseline gap-5 text-[13.5px] font-semibold">
-          {/* The original PDFs are not stored in the tool, so this resolves via the DOI to the
-              publisher's page (where the PDF lives), falling back to the PubMed record. */}
-          <a
-            href={s.doiUrl ?? s.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#0A7A8A] hover:underline"
-          >
-            Open study in PDF
-          </a>
-          {figures > 0 && (
-            <span className="font-normal text-[#AEAEB2]">
-              {figures} diagram{figures === 1 ? "" : "s"} from the paper
-            </span>
-          )}
-        </div>
+        <a
+          href={studyPdfHref(s)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block text-[13.5px] font-semibold text-[#0A7A8A] hover:underline"
+        >
+          Open study in PDF
+        </a>
       </PanelHeader>
 
       <div className="px-7 py-6">
@@ -532,7 +529,7 @@ function StudyPanel({
                   onClick={() => setToolsOpen((v) => !v)}
                   className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
                 >
-                  Reviewer tools
+                  Categorize & score
                 </button>
               )}
             </div>
@@ -546,14 +543,14 @@ function StudyPanel({
               onClick={() => setToolsOpen(true)}
               className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
             >
-              Reviewer tools
+              Categorize & score
             </button>
           </div>
         )}
 
         {meta.editable && toolsOpen && !editing && (
           <div className="mt-5 rounded-[16px] border border-[#E8E8ED] bg-[#FBFBFD] p-5">
-            <h3 className="text-[14.5px] font-bold text-[#1D1D1F]">Reviewer tools</h3>
+            <h3 className="text-[14.5px] font-bold text-[#1D1D1F]">Categorize & score</h3>
             <p className="mt-0.5 text-[12px] text-[#AEAEB2]">
               Every change is recorded with your name and the date.
               {s.qualityReviewer && (

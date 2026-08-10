@@ -350,8 +350,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
             return
 
         # Only the synthesized "picked studies" file (byggKilder() in the frontend) carries a PMID
-        # for each source - a raw uploaded doc has none, so the appendix only ever attaches to that
-        # one deck, not to every deck in a multi-file batch.
+        # for each source - a raw uploaded doc has none, so the appendix is only ever built from
+        # that file's study_meta, never invented for the others.
         try:
             parsed_study_meta = json.loads(study_meta) if study_meta else []
         except Exception:  # noqa: BLE001 — malformed input is never worth failing the whole job over
@@ -370,58 +370,35 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         parsed_disabled_photos = [p.strip() for p in (disabled_photos or "").split(",") if p.strip()]
         parsed_preferred_photos = [p.strip() for p in (preferred_photos or "").split(",") if p.strip()]
 
-        decks: list[dict] = []
-        total = len(files)
-        for k, (fname, data) in enumerate(files):
-            text = _read_summary(fname, data).strip()
-            if not text:
-                raise ValueError(f"No text found in {fname}.")
-            base = (fname or f"deck-{k + 1}").rsplit(".", 1)[0]
+        # One deck from ALL attached sources combined (uploaded files + picked studies +
+        # approved claims), same rule as blog/whitepaper_mix above — a run with several sources
+        # used to spin up one independent deck PER file and zip them together, which surprised
+        # users expecting "one generation = one deck" (client feedback 2026-08-10).
+        parts = [t for (fname, data) in files if (t := _read_summary(fname, data).strip())]
+        if not parts:
+            raise ValueError("No text found in the provided files/studies.")
+        source = "\n\n".join(parts)
+        base = files[0][0].rsplit(".", 1)[0] if files else "deck"
+        has_study_meta = any(fname == "Selected-scientific-studies.txt" for fname, _ in files)
 
-            def on_prog(pct, step, k=k):
-                overall = int((k * 100 + pct) / total)
-                JOBS[job_id].update(progress=overall,
-                                    step=(f"Deck {k + 1}/{total}: {step}" if total > 1 else step))
+        d = src.generate(client, source, base, length=lengde, tone=tone,
+                         quality=kvalitet, instructions=instruksjoner,
+                         on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s),
+                         study_meta=parsed_study_meta if has_study_meta else None,
+                         custom_rules=custom_rules,
+                         disabled_layouts=[dl.strip() for dl in disabled_layouts.split(",") if dl.strip()],
+                         design=parsed_design, custom_slides=parsed_custom,
+                         custom_photos=parsed_photos,
+                         preferred_layouts=parsed_preferred,
+                         disabled_photos=parsed_disabled_photos,
+                         preferred_photos=parsed_preferred_photos,
+                         color_theme=color_theme.strip() or None)
 
-            this_study_meta = parsed_study_meta if fname == "Selected-scientific-studies.txt" else None
-            decks.append(src.generate(client, text, base, length=lengde, tone=tone,
-                                       quality=kvalitet, instructions=instruksjoner, on_progress=on_prog,
-                                       study_meta=this_study_meta, custom_rules=custom_rules,
-                                       disabled_layouts=[d.strip() for d in disabled_layouts.split(",")
-                                                         if d.strip()],
-                                       design=parsed_design, custom_slides=parsed_custom,
-                                       custom_photos=parsed_photos,
-                                       preferred_layouts=parsed_preferred,
-                                       disabled_photos=parsed_disabled_photos,
-                                       preferred_photos=parsed_preferred_photos,
-                                       color_theme=color_theme.strip() or None))
-
-        # Name each deck after its own generated deck_title (the topic), falling back to the source
-        # file stem when the title yields no usable ASCII.
-        def deck_stem(d: dict) -> str:
-            return _slug((d.get("plan") or {}).get("deck_title", "")) or d["filename"].rsplit(".", 1)[0]
-
-        if len(decks) == 1:
-            d = decks[0]
-            result, media, filename = d["pptx"], PPTX_MEDIA, deck_stem(d) + ".pptx"
-        else:
-            zbuf = io.BytesIO()
-            with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-                seen: set[str] = set()
-                for d in decks:
-                    stem = deck_stem(d)
-                    if stem in seen:                      # two decks can share a title
-                        n = 2
-                        while f"{stem}-{n}" in seen:
-                            n += 1
-                        stem = f"{stem}-{n}"
-                    seen.add(stem)
-                    z.writestr(stem + ".pptx", d["pptx"])
-                    z.writestr(stem + ".wording.md", d["wording_md"])
-            result, media, filename = zbuf.getvalue(), "application/zip", "superba-decks.zip"
-
+        # Named after the deck's own generated deck_title (the topic), falling back to the
+        # source file stem when the title yields no usable ASCII.
+        stem = _slug((d.get("plan") or {}).get("deck_title", "")) or d["filename"].rsplit(".", 1)[0]
         JOBS[job_id].update(status="done", progress=100, step="Done",
-                            result=result, media_type=media, filename=filename)
+                            result=d["pptx"], media_type=PPTX_MEDIA, filename=stem + ".pptx")
     except Exception as e:  # noqa: BLE001 — record the failure for the client to read
         JOBS[job_id].update(status="error", step="Failed", error=str(e))
 

@@ -58,7 +58,7 @@ type SortBy = "date" | "quality";
 /** The quality label as a calm colored word (no bars, no badges). */
 function QualityWord({ s }: { s: Studie }) {
   const q = s.quality;
-  if (!q) return <span className="text-[#AEAEB2]">Not yet scored</span>;
+  if (!q) return <span className="font-semibold text-[#B4884A]">Not yet scored</span>;
   const color =
     q.label === "High" ? "text-[#2E7D4F]" : q.label === "Moderate" ? "text-[#B4884A]" : "text-[#B3403A]";
   const title = s.qualityReviewer
@@ -90,6 +90,13 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     setQualModerate(v);
     setQualLow(v);
     setQualUnscored(v);
+  };
+  const [verVerified, setVerVerified] = useState(true);
+  const [verUnverified, setVerUnverified] = useState(true);
+  const verAll = verVerified && verUnverified;
+  const setVerAll = (v: boolean) => {
+    setVerVerified(v);
+    setVerUnverified(v);
   };
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [reviewer, setReviewer] = useState("");
@@ -174,7 +181,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       const lbl = s.quality?.label;
       const treffKval =
         lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : lbl === "Low" ? qualLow : qualUnscored;
-      return treffSok && treffKat && treffKval;
+      const erVerifisert = !!overrides[s.pmid] || s.verified;
+      const treffVer = erVerifisert ? verVerified : verUnverified;
+      return treffSok && treffKat && treffKval && treffVer;
     });
     return list.sort((a, b) => {
       if (sortBy === "quality") {
@@ -185,7 +194,19 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       }
       return (b.ar || "").localeCompare(a.ar || "");
     });
-  }, [studier, sok, valgtKategori, sortBy, qualHigh, qualModerate, qualLow, qualUnscored]);
+  }, [
+    studier,
+    sok,
+    valgtKategori,
+    sortBy,
+    qualHigh,
+    qualModerate,
+    qualLow,
+    qualUnscored,
+    verVerified,
+    verUnverified,
+    overrides,
+  ]);
 
   const valgt = useMemo(
     () => (valgtPmid ? studier.find((s) => s.pmid === valgtPmid) ?? null : null),
@@ -193,7 +214,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   );
 
   const kategoriNavn = valgtKategori
-    ? kategorier.find((k) => k.id === valgtKategori)?.navn ?? "Studies"
+    ? kategorier.find((k) => k.id === valgtKategori)?.navn ?? "Category"
     : "All studies";
 
   const sidebar = (
@@ -241,6 +262,19 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           </SideCheck>
         </div>
       </SideSection>
+      <SideSection title="Verification">
+        <SideCheck checked={verAll} onChange={setVerAll}>
+          All studies
+        </SideCheck>
+        <div className="pl-1">
+          <SideCheck checked={verVerified} onChange={setVerVerified}>
+            Verified by science
+          </SideCheck>
+          <SideCheck checked={verUnverified} onChange={setVerUnverified}>
+            Unverified AI summaries
+          </SideCheck>
+        </div>
+      </SideSection>
       <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
     </div>
   );
@@ -251,10 +285,10 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
           <div>
             <h1 className="text-[28px] font-bold tracking-[-0.022em] text-[#1D1D1F] sm:text-[32px]">
-              {valgtKategori ? kategoriNavn : "All studies"}
+              {valgtKategori ? `${kategoriNavn} Studies` : kategoriNavn}
             </h1>
             <p className="mt-2 max-w-[540px] text-[15px] text-[#6E6E73]">
-              Aker BioMarine affiliated research from PubMed, summarized in plain language.
+              Aker BioMarine affiliated research from AKBM's internal Science Archive, summarized in plain language.
             </p>
           </div>
           <div className="w-full sm:w-[300px]">
@@ -410,7 +444,7 @@ function StudyRow({
           ) : verified ? (
             <span className="font-semibold text-[#0A7A8A]">✓ Verified by science</span>
           ) : (
-            <span className="text-[#AEAEB2]">
+            <span className="font-semibold text-[#B4884A]">
               AI summary, awaiting review{s.harFulltekst ? " · full text" : ""}
             </span>
           )}

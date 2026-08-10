@@ -19,12 +19,13 @@ import { appendDeckSettings, deckGenerationSettings } from "../generation-settin
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
-type ProductId = "superba" | "lysoveta" | "revervia";
+type ProductId = "superba" | "lysoveta" | "revervia" | "pl_plus";
 
 const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean }[] = [
   { id: "superba", label: "Superba", hint: "Krill oil", available: true },
   { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
   { id: "revervia", label: "Revervia", hint: "", available: false },
+  { id: "pl_plus", label: "PL+", hint: "", available: false },
 ];
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
@@ -524,7 +525,7 @@ export default function ContentGenerator() {
           <div className="space-y-8">
             <div>
               <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Which product is this for?</div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {PRODUCTS.map((p) => {
                   const valgt = produkt === p.id && p.available;
                   return (

@@ -4,7 +4,7 @@
 // Restyled 2026-08-10 to the same "floating & focused" design as Scientific Studies V2
 // (calm near-white page, text sidebar with brand icons, floating cards, status as words).
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Category, ClaimStatus } from "../lib/claims-types";
 import { decodeEntities } from "../lib/text";
@@ -150,6 +150,22 @@ export default function FindingsV2({
       .sort((a, b) => b.antall - a.antall || a.navn.localeCompare(b.navn));
   }, [marketing, catName]);
 
+  // Same default-view rule as Scientific Studies: the biggest benefit area, until the user
+  // picks one themselves; a category that disappears hands the selection back.
+  const brukerHarValgtKategori = useRef(false);
+  useEffect(() => {
+    if (kategorier.length === 0) return;
+    const finnes = valgtKategori !== null && kategorier.some((k) => k.id === valgtKategori);
+    if (!brukerHarValgtKategori.current || (valgtKategori !== null && !finnes)) {
+      setValgtKategori(kategorier[0].id);
+    }
+  }, [kategorier, valgtKategori]);
+
+  const velgKategori = (id: string | null) => {
+    brukerHarValgtKategori.current = true;
+    setValgtKategori(id);
+  };
+
   const filtrert = useMemo(() => {
     const needle = q.toLowerCase().trim();
     return marketing.filter((c) => {
@@ -175,20 +191,20 @@ export default function FindingsV2({
         ))}
       </SideSection>
       <SideSection title="Benefit areas">
-        <SideItem active={valgtKategori === null} onClick={() => setValgtKategori(null)} count={marketing.length}>
-          All benefit areas
-        </SideItem>
         {kategorier.map((k) => (
           <SideItem
             key={k.id}
             active={valgtKategori === k.id}
-            onClick={() => setValgtKategori(k.id)}
+            onClick={() => velgKategori(k.id)}
             count={k.antall}
             icon={benefitIcon(k.navn)}
           >
             {k.navn}
           </SideItem>
         ))}
+        <SideItem active={valgtKategori === null} onClick={() => velgKategori(null)} count={marketing.length}>
+          All benefit areas
+        </SideItem>
         <button
           onClick={() => setAdministrerer(true)}
           className="mt-2 py-[5px] text-left text-[13px] font-semibold text-[#0A7A8A] hover:underline"
@@ -221,11 +237,10 @@ export default function FindingsV2({
         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
           <div>
             <h1 className="text-[28px] font-bold tracking-[-0.022em] text-[#1D1D1F] sm:text-[32px]">
-              {STATUS_FILTER_LABEL[status]}
-              {valgtKategori && <span className="text-[#AEAEB2]"> · {catName[valgtKategori] ?? valgtKategori}</span>}
+              {valgtKategori ? `${catName[valgtKategori] ?? "Category"} Findings` : "All findings"}
             </h1>
             <p className="mt-2 max-w-[540px] text-[15px] text-[#6E6E73]">
-              What we can say about the product · every finding is traceable to a verified study quote.
+              What we can say about the product, every finding is traceable to a verified study quote.
             </p>
             <p className="mt-1.5 max-w-[540px] text-[11.5px] leading-relaxed text-[#AEAEB2]">
               {REGULATORY_DISCLAIMER}

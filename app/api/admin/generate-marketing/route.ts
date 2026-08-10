@@ -9,11 +9,20 @@
 // study_id, not category-scope rollups across many studies.
 //
 // Idempotent: skips a study that already has a paper-scope marketing finding. Gated like the
-// other admin routes.
+// other admin routes. Optional body {"study_ids": [<studies.id>, ...]} restricts the run to a
+// test batch, so a sample can be reviewed before running the full library.
+//
+// Favorable-only, per 2026-08-10 follow-up feedback: Superba is a krill oil company, so this
+// only drafts findings for a result that comes out FAVORABLE for krill oil (a benefit shown, or
+// a favorable safety/tolerability result) — a study whose evidence is only null/unfavorable
+// yields zero findings rather than one forced into shape. The WORDING stays an honest endpoint
+// restatement either way (no benefit is invented) — this is a selection rule on which endpoints
+// get drafted, not license to spin a negative result positive.
 
 import Anthropic from "@anthropic-ai/sdk";
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
 import { logEvent } from "../../../lib/claims-db";
+import { authorYearPrefix } from "../../../lib/finding-format";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -68,17 +77,22 @@ export async function POST(req: Request) {
     entry.evidence.push({ id: c.id, text: c.text });
   }
 
+  // Optional test-batch filter: {"study_ids": [...]} restricts the run to just those studies
+  // (by their studies.id, not pmid), so a sample can be reviewed before running the full library.
+  const onlyIds: string[] | undefined = Array.isArray(body?.study_ids) ? body.study_ids : undefined;
+  const studyEntries = onlyIds
+    ? Object.entries(byStudy).filter(([id]) => onlyIds.includes(id))
+    : Object.entries(byStudy);
+
   const anthropic = new Anthropic();
   const results: { study_id: string; created?: number; skipped?: boolean; error?: string }[] = [];
   let totalCreated = 0;
 
-  for (const [studyId, { study, evidence }] of Object.entries(byStudy)) {
+  for (const [studyId, { study, evidence }] of studyEntries) {
     if (studiesWithFindings.has(studyId)) { results.push({ study_id: studyId, skipped: true }); continue; }
     if (evidence.length === 0) { results.push({ study_id: studyId, skipped: true }); continue; }
 
-    const authorYear = [study.authors?.split(",")[0]?.trim().split(/\s+/)[0], study.year]
-      .filter(Boolean)
-      .join(" ");
+    const authorYear = authorYearPrefix(study.authors, study.year);
     const evText = evidence
       .slice(0, 40)
       .map((e, i) => `[C${i + 1}] ${e.text}`)
@@ -99,6 +113,8 @@ Example of the required pattern: "Stonehouse 2022: Krill oil improved osteoarthr
 Rules:
 - FORBIDDEN: consumer benefit language ("supports easy X", "helps your body Y", "with ease", "reduces Z"). State the endpoint result plainly, the way the study itself reports it.
 - Every finding must state: the endpoint it concerns, the direction (and size, if the evidence gives a number) of the effect, and the study design in parentheses at the end.
+- Only draft a finding for a result that is FAVORABLE to krill oil: a benefit shown versus placebo/control, a favorable safety or tolerability result (e.g. adverse events similar to or lower than placebo), or another outcome krill oil comes out ahead on. Do NOT draft a finding for a null result (no significant difference), a result unfavorable to krill oil, or an inconclusive endpoint — skip that endpoint rather than including it. This is a selection rule about WHICH endpoints become findings, not permission to overstate one: the wording must still say only what the evidence supports.
+- If NONE of this study's evidence supports a favorable finding, return an empty findings array for this study. Do not force one.
 - Stay TRUE to the evidence: never state an effect the findings do not support.
 - Each finding must cite one or more of the tagged findings above.
 - Pick the single most relevant category id for each finding from: ${catList}

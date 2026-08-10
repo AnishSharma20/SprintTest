@@ -13,6 +13,7 @@ import {
   authorYearPrefix,
   composeFindingText,
   evidenceBasisLine,
+  stripCitationPrefix,
   REGULATORY_DISCLAIMER,
 } from "../lib/finding-format";
 import CategoryManager from "../category-manager";
@@ -289,8 +290,17 @@ export default function FindingsV2({
                     </span>
                   </div>
                   <p className="text-[16px] font-semibold leading-[1.5] tracking-[-0.01em] text-[#1D1D1F]">
-                    {decodeEntities(c.text)}
+                    {stripCitationPrefix(decodeEntities(c.text))}
                   </p>
+                  {c.studies?.pmid && (
+                    <a
+                      href={`/studies-v2?pmid=${c.studies.pmid}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 inline-block text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+                    >
+                      Trace source →
+                    </a>
+                  )}
                 </li>
               );
             })}
@@ -430,7 +440,7 @@ function EvidencePanel({
                         href={`/studies-v2?pmid=${b.studies.pmid}`}
                         className="rounded-full bg-[#1D1D1F] px-4 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
                       >
-                        View study
+                        Trace source
                       </a>
                       <a
                         href={`https://pubmed.ncbi.nlm.nih.gov/${b.studies.pmid}/`}
@@ -724,6 +734,10 @@ function NewFindingModal({
             "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
             moderate knee osteoarthritis (6-month RCT, multicenter, double-blind,
             placebo-controlled)"
+            <br />
+            Only add a finding for a result favorable to krill oil — a benefit shown, or a
+            favorable safety/tolerability result. Skip null or unfavorable endpoints rather than
+            wording around them.
           </div>
 
           <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">Category</label>

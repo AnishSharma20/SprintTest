@@ -12,10 +12,20 @@
 // any claim_type just needs a study_id) — this module only composes the string and offers a
 // best-guess starting point the reviewer can edit before saving.
 
-/** First author's surname, guessed from a PubMed-style "Last FM, Last2 FM2, ..." string. */
+/** First author's surname, guessed from a PubMed-style "Last FM, Last2 FM2, ..." string.
+ *
+ * PubMed's own format is "Surname Initials" — initials are a short, ALL CAPS token (e.g. "AF",
+ * "ISM", "L"). Everything before that first all caps token is the surname, so a multi word
+ * surname survives whole ("van der Wurff ISM" -> "van der Wurff", not just "van"). */
 export function guessAuthorSurname(authors: string | null | undefined): string {
   const first = (authors ?? "").split(",")[0]?.trim() ?? "";
-  return first.split(/\s+/)[0] ?? "";
+  const tokens = first.split(/\s+/).filter(Boolean);
+  const surname: string[] = [];
+  for (const t of tokens) {
+    if (/^[A-Z]{1,4}$/.test(t)) break;
+    surname.push(t);
+  }
+  return surname.join(" ") || tokens[0] || "";
 }
 
 /** "[Author] [Year]" prefix, blank pieces omitted gracefully so a half-known study still helps. */
@@ -33,6 +43,15 @@ export function composeFindingText(parts: { authorYear: string; result: string; 
   const design = parts.design.trim();
   const body = head && result ? `${head}: ${result}` : result || head;
   return design ? `${body} (${design})` : body;
+}
+
+/** The "Author(s) Year: " prefix a stored finding always carries, so a list card can show just
+ * the result sentence — the citation stays in the data (that's the required format) but moves
+ * into an on-demand "Trace source" action rather than heading every card (2026-08-10 feedback:
+ * "we don't need the study this clear"). Falls back to the untouched text if it doesn't match —
+ * an aggregated (category-scope) finding was never given this prefix in the first place. */
+export function stripCitationPrefix(text: string): string {
+  return text.replace(/^[A-Za-zÀ-ÿ' .]+ \d{4}:\s*/, "");
 }
 
 /** Closest available signal for "human clinical study" vs "meta-analysis": the study's own title.

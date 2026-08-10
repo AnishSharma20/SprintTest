@@ -12,6 +12,7 @@ import {
   authorYearPrefix,
   composeFindingText,
   evidenceBasisLine,
+  stripCitationPrefix,
   REGULATORY_DISCLAIMER,
 } from "./lib/finding-format";
 import CategoryManager from "./category-manager";
@@ -291,7 +292,17 @@ function MarketingCard({
         </span>
       </div>
 
-      <p className="text-[15px] font-semibold leading-relaxed text-[#052A4E]">{decodeEntities(claim.text)}</p>
+      <p className="text-[15px] font-semibold leading-relaxed text-[#052A4E]">
+        {stripCitationPrefix(decodeEntities(claim.text))}
+      </p>
+      {claim.studies?.pmid && (
+        <a
+          href={`/studies-v2?pmid=${claim.studies.pmid}`}
+          className="mt-1 inline-block text-xs font-semibold text-[#0A7A8A] hover:underline"
+        >
+          Trace source →
+        </a>
+      )}
 
       <button
         onClick={() => setOpen((o) => !o)}
@@ -539,6 +550,10 @@ function NewMarketingClaimModal({
             "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
             moderate knee osteoarthritis (6-month RCT, multicenter, double-blind,
             placebo-controlled)"
+            <br />
+            Only add a finding for a result favorable to krill oil — a benefit shown, or a
+            favorable safety/tolerability result. Skip null or unfavorable endpoints rather than
+            wording around them.
           </div>
 
           <label className="mb-1 block text-xs font-semibold text-zinc-600">Category</label>

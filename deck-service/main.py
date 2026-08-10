@@ -15,6 +15,8 @@ ANTHROPIC_API_KEY is read from the environment, server-side only.
 from __future__ import annotations
 
 import base64
+import hashlib
+import hmac
 import io
 import json
 import os
@@ -27,12 +29,27 @@ import zipfile
 
 import anthropic
 from fastapi import FastAPI, File, Form, Header, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 import src
 from src import config
 
 app = FastAPI(title="Superba Deck Generator")
+
+# Lets the browser call /slides/inspect directly (see _verify_upload_ticket below) instead of
+# proxying the .pptx through Vercel's ~4.5 MB serverless body ceiling. The real security
+# boundary here is the ticket, not CORS — an attacker without a valid ticket gets 401 regardless
+# of origin, and a valid ticket only exists because the caller already passed the app's own
+# password gate to mint one (see app/api/custom-slides/inspect-ticket/route.ts) — so a wide-open
+# origin list costs nothing extra and avoids hardcoding/maintaining Vercel's preview-deploy
+# domains, which change per branch.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -412,6 +429,25 @@ def _auth_or_error(x_deck_token):
     return None
 
 
+def _verify_upload_ticket(ticket: str | None) -> bool:
+    """A short-lived, HMAC-signed ticket minted by app/api/custom-slides/inspect-ticket — lets
+    the browser call /slides/inspect directly (bypassing Vercel's body-size ceiling) without
+    ever handing it the real DECK_SERVICE_TOKEN. Format: "<exp_ms>.<hex hmac-sha256 of exp_ms,
+    keyed with DECK_SERVICE_TOKEN>". No DECK_SERVICE_TOKEN configured -> no ticket can ever be
+    valid (mirrors _auth_or_error: an unset token means auth is off entirely, checked earlier)."""
+    secret = os.environ.get("DECK_SERVICE_TOKEN")
+    if not secret or not ticket or "." not in ticket:
+        return False
+    exp_str, _, sig = ticket.partition(".")
+    try:
+        if int(exp_str) < time.time() * 1000:
+            return False
+    except ValueError:
+        return False
+    expected_sig = hmac.new(secret.encode(), exp_str.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected_sig, sig)
+
+
 @app.get("/health")
 def health():
     try:
@@ -601,14 +637,20 @@ async def design_preview(payload: dict, x_deck_token: str | None = Header(defaul
 async def slides_inspect(
     file: UploadFile,
     x_deck_token: str | None = Header(default=None),
+    x_upload_ticket: str | None = Header(default=None),
 ):
     """Render every slide of an uploaded .pptx to a preview image, so the About page can let the
     user pick which slides to add as team slides. Pure rasterisation, no LLM — LibreOffice on the
     deployed service, PowerPoint COM in local dev. Returns {slides: [{index, preview_b64}]}
     (JPEG, ≤1280px wide) — the same previews are stored and reused as gallery thumbnails and as
-    the pixel-perfect fallback when a slide can't be shape-spliced."""
+    the pixel-perfect fallback when a slide can't be shape-spliced.
+
+    Callable two ways: server-to-server with X-Deck-Token (the static shared secret — used
+    nowhere today but kept for parity/future use), or directly from the browser with
+    X-Upload-Ticket (a short-lived signed ticket — see _verify_upload_ticket) so a large .pptx
+    never has to transit through Vercel's ~4.5 MB serverless body ceiling."""
     expected = os.environ.get("DECK_SERVICE_TOKEN")
-    if expected and x_deck_token != expected:
+    if expected and x_deck_token != expected and not _verify_upload_ticket(x_upload_ticket):
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
     data = await file.read()
     if not data:

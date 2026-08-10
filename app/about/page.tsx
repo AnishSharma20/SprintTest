@@ -104,13 +104,6 @@ function cleanUsage(s: string): string {
   return s.replace(/`/g, "");
 }
 
-function toB64(buf: ArrayBuffer): string {
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  return btoa(bin);
-}
 
 export default function AboutPage() {
   const [reviewer, setReviewer] = useState("");
@@ -592,13 +585,23 @@ export default function AboutPage() {
     setPicks(null);
     setUploadFile(file);
     try {
-      if (file.size > 4 * 1024 * 1024)
-        throw new Error("Keep the file under 4 MB — save just the slides you want as a smaller .pptx first.");
+      if (file.size > 100 * 1024 * 1024)
+        throw new Error("That file is too large (over 100 MB) — trim it down before uploading.");
+      // Rasterise directly against the deck service (a short-lived ticket, not the file, is the
+      // only thing that goes through Vercel) so a big .pptx never hits the ~4.5 MB serverless
+      // body ceiling here.
+      const ticketRes = await fetch("/api/custom-slides/inspect-ticket", { method: "POST" });
+      const ticket = await ticketRes.json();
+      if (!ticketRes.ok) throw new Error(ticket.error || "Could not prepare the upload.");
       const form = new FormData();
       form.append("file", file, file.name);
-      const res = await fetch("/api/custom-slides/inspect", { method: "POST", body: form });
+      const res = await fetch(ticket.url, {
+        method: "POST",
+        body: form,
+        headers: { "X-Upload-Ticket": ticket.ticket },
+      });
       const d = await res.json();
-      if (!res.ok) throw new Error(d.error || "Could not read the presentation.");
+      if (!res.ok) throw new Error(d.feil || d.error || "Could not read the presentation.");
       setPicks(
         (d.slides ?? []).map((s: { index: number; preview_b64: string }) => ({
           index: s.index,
@@ -631,13 +634,24 @@ export default function AboutPage() {
     setSavingPicks(true);
     setUploadError("");
     try {
-      const pptx_b64 = toB64(await uploadFile.arrayBuffer());
+      // Upload the raw file straight to Storage (a signed URL, not the file, transits Vercel)
+      // so saving a large .pptx doesn't hit the same body-size ceiling the old base64-in-JSON
+      // approach did — see supabase/migrations/0008_custom_slide_storage.sql.
+      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const uploadUrl = await urlRes.json();
+      if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
+      const uploadForm = new FormData();
+      uploadForm.append("cacheControl", "3600");
+      uploadForm.append("", uploadFile);
+      const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
+      if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
+
       const res = await fetch("/api/custom-slides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filename: uploadFile.name,
-          pptx_b64,
+          storage_path: uploadUrl.path,
           author: reviewer,
           slides: chosen.map((p) => ({
             slide_index: p.index,
@@ -1157,7 +1171,7 @@ export default function AboutPage() {
               <div>
                 <div className="text-sm font-bold text-[#031B34]">Add your own slides</div>
                 <p className="text-xs text-zinc-500">
-                  Upload a .pptx (under 4 MB), pick the slides you want, give each a name and a line
+                  Upload a .pptx, pick the slides you want, give each a name and a line
                   on when to use it.
                 </p>
               </div>

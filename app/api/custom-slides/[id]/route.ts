@@ -63,7 +63,12 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   // Garbage-collect the uploaded file once nothing references it — the blobs are the heavy part.
   const rest = await sb.from("custom_slides").select("id").eq("file_id", row.data.file_id).limit(1);
   if (!rest.error && rest.data.length === 0) {
+    const f = await sb.from("custom_slide_files").select("storage_path").eq("id", row.data.file_id).maybeSingle();
     await sb.from("custom_slide_files").delete().eq("id", row.data.file_id);
+    if (f.data?.storage_path) {
+      const rm = await sb.storage.from("custom-slides").remove([f.data.storage_path]);
+      if (rm.error) console.warn(`custom-slides: could not remove ${f.data.storage_path}: ${rm.error.message}`);
+    }
   }
   return Response.json({ ok: true });
 }

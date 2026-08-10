@@ -4,18 +4,24 @@
 //   GET  /api/custom-slides?blobs=1    adds pptx_b64 per unique file — used by the generator
 //                                      pages at generation time to ship the slides to the
 //                                      deck service as job files.
-//   POST /api/custom-slides            { filename, pptx_b64, slides: [{ slide_index, name,
-//                                        description, mode, preview_b64 }], author? }
-//                                      → stores the file once + one row per picked slide.
+//   POST /api/custom-slides            { filename, storage_path | pptx_b64, slides: [{
+//                                        slide_index, name, description, mode, preview_b64 }],
+//                                        author? } → stores the file once + one row per slide.
 //
 // Slides are spliced verbatim (shapes + images) into generated decks: mode 'auto' lets the
 // AI place the slide where it fits the storyline, 'always' includes it in every deck.
+//
+// storage_path (Supabase Storage, see 0008_custom_slide_storage.sql) is how every new upload
+// arrives — the browser PUTs the file straight to Storage via a signed URL first (see
+// upload-url/route.ts), so it never transits this server. pptx_b64 (inline base64) still works
+// for old rows saved before that migration; MAX_PPTX_B64 only applies to that legacy path.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 
-const MAX_PPTX_B64 = 6_000_000; // ~4 MB file as base64 — the same cap the inspect route enforces,
-                                // and comfortably under Vercel's ~4.5 MB serverless body ceiling
+const MAX_PPTX_B64 = 6_000_000; // legacy inline path only — comfortably under Vercel's ~4.5 MB
+                                // serverless body ceiling; storage_path has no such limit
 const MODES = new Set(["auto", "always", "off"]);
+const BUCKET = "custom-slides";
 
 export async function GET(req: Request) {
   const sb = supabase();
@@ -35,9 +41,22 @@ export async function GET(req: Request) {
     const active = res.data.filter((s) => s.mode !== "off");
     const ids = [...new Set(active.map((s) => s.file_id))];
     if (ids.length) {
-      const f = await sb.from("custom_slide_files").select("id, pptx_b64").in("id", ids);
+      const f = await sb.from("custom_slide_files").select("id, pptx_b64, storage_path").in("id", ids);
       if (f.error) return Response.json({ error: f.error.message }, { status: 500 });
-      files = Object.fromEntries(f.data.map((r) => [r.id, r.pptx_b64]));
+      const entries = await Promise.all(
+        f.data.map(async (r) => {
+          if (r.pptx_b64) return [r.id, r.pptx_b64] as const;
+          if (!r.storage_path) return null;
+          const dl = await sb.storage.from(BUCKET).download(r.storage_path);
+          if (dl.error) {
+            console.warn(`custom-slides: could not download ${r.storage_path}: ${dl.error.message}`);
+            return null;
+          }
+          const b64 = Buffer.from(await dl.data.arrayBuffer()).toString("base64");
+          return [r.id, b64] as const;
+        })
+      );
+      files = Object.fromEntries(entries.filter((e): e is readonly [string, string] => e !== null));
     }
   }
 
@@ -49,15 +68,16 @@ export async function POST(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { filename, pptx_b64, slides, author } = (await req.json()) as {
+    const { filename, pptx_b64, storage_path, slides, author } = (await req.json()) as {
       filename?: string;
       pptx_b64?: string;
+      storage_path?: string;
       slides?: { slide_index?: number; name?: string; description?: string; mode?: string; preview_b64?: string }[];
       author?: string;
     };
-    if (!pptx_b64 || typeof pptx_b64 !== "string")
+    if (!storage_path && (!pptx_b64 || typeof pptx_b64 !== "string"))
       return Response.json({ error: "The PowerPoint file is missing." }, { status: 400 });
-    if (pptx_b64.length > MAX_PPTX_B64)
+    if (pptx_b64 && pptx_b64.length > MAX_PPTX_B64)
       return Response.json({ error: "Keep the PowerPoint file under 4 MB." }, { status: 400 });
     if (!slides?.length)
       return Response.json({ error: "Pick at least one slide to add." }, { status: 400 });
@@ -75,7 +95,8 @@ export async function POST(req: Request) {
     const file = await sb.from("custom_slide_files").insert({
       id: fileId,
       filename: (filename ?? "slides.pptx").slice(0, 120),
-      pptx_b64,
+      pptx_b64: pptx_b64 ?? null,
+      storage_path: storage_path ?? null,
       created_by: by,
     });
     if (file.error) return Response.json({ error: file.error.message }, { status: 500 });

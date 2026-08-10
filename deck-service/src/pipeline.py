@@ -12,7 +12,7 @@ import sys
 
 import anthropic
 
-from . import planner, qa_gate, renderer, validate
+from . import planner, qa_gate, qa_geometry, renderer, validate
 
 # Reader-facing text fields in a plan (the no-dash brand rule applies to these). Enum/id fields
 # (layout, benefit, icon, icon_generic, asset_id, background, language) and `source_citations`
@@ -222,25 +222,46 @@ def _wording(plan: dict) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+def _log_geometry_issues(issues: list[dict]) -> None:
+    """[qa-geometry] stderr trail for the deterministic pass — visible even in fast mode, where
+    nothing else looks at the rendered deck at all."""
+    if not issues:
+        return
+    fixed = sum(1 for i in issues if i.get("fixed"))
+    print(f"[qa-geometry] {fixed}/{len(issues)} deterministic issue(s) found, {fixed} auto-fixed:\n- "
+          + "\n- ".join(f"slide {i['slide']} [{i['category']}]: {i['detail']}" for i in issues),
+          file=sys.stderr)
+
+
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
                  custom_photos=None, preferred_layouts=None, disabled_photos=None,
-                 preferred_photos=None):
+                 preferred_photos=None, slide_map=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
-    DECK_QA_ROUNDS passes (default 1). No-op if no rasteriser is available. Never fails the deck —
-    a gate error or a revision that breaks validation keeps the pre-gate deck."""
+    DECK_QA_ROUNDS passes (default 1). Never fails the deck — a gate error or a revision that
+    breaks validation keeps the pre-gate deck.
+
+    Each round runs the deterministic geometry/contrast/asset pass FIRST (fixes margins/
+    alignment/contrast in place so the vision call has less to flag, and surfaces any icon/photo/
+    chart the plan called for that never actually rendered) and only then the vision review — the
+    two sets of findings are merged before the single revision call. The vision half still
+    degrades to a no-op without a rasteriser; the deterministic half never does."""
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
     photo_ids = planner.custom_photo_ids(custom_photos)
     photo_level = (design or {}).get("photo_level", "default")
     rounds = max(1, int(os.environ.get("DECK_QA_ROUNDS", "1")))
     for _ in range(rounds):
+        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map)
+        _log_geometry_issues(geo_issues)
+        asset_flags = [{"slide": i["slide"], "issues": [i["category"]], "fix": i["detail"]}
+                       for i in geo_issues if not i["fixed"] and i["category"] == "asset"]
         _p(80, "Reviewing the rendered slides")
         images = qa_gate.rasterize(pptx)
         if not images:
-            print("[qa-gate] no rasteriser available (install LibreOffice); skipping visual QA",
+            print("[qa-gate] no rasteriser available (install LibreOffice); skipping vision QA",
                   file=sys.stderr)
-            break
-        flags = qa_gate.flagged(qa_gate.review(client, images, plan))
+        vision_flags = qa_gate.flagged(qa_gate.review(client, images, plan)) if images else []
+        flags = vision_flags + asset_flags
         if not flags:
             break
         _p(90, f"Polishing {len(flags)} flagged slide(s)")
@@ -283,9 +304,10 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             break
         candidate = _ensure_notes(candidate)
         candidate = _strip_dashes_plan(candidate)
-        plan, pptx = candidate, renderer.render_deck(candidate, study_meta=study_meta,
-                                                     design=design, custom_slides=custom_slides,
-                                                     custom_photos=custom_photos)
+        plan = candidate
+        pptx, slide_map = renderer.render_deck(candidate, study_meta=study_meta,
+                                               design=design, custom_slides=custom_slides,
+                                               custom_photos=custom_photos, return_slide_map=True)
     return pptx, plan
 
 
@@ -357,8 +379,9 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
     plan = _apply_color_theme(plan, color_theme)            # deck-wide theme override, if requested
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
-    pptx = renderer.render_deck(plan, study_meta=study_meta, design=design,
-                                custom_slides=custom_slides, custom_photos=custom_photos)
+    pptx, slide_map = renderer.render_deck(plan, study_meta=study_meta, design=design,
+                                           custom_slides=custom_slides, custom_photos=custom_photos,
+                                           return_slide_map=True)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
@@ -368,7 +391,14 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                   disabled_layouts=disabled_layouts, design=design,
                                   custom_slides=custom_slides, custom_photos=custom_photos,
                                   preferred_layouts=preferred_layouts,
-                                  disabled_photos=disabled_photos, preferred_photos=preferred_photos)
+                                  disabled_photos=disabled_photos, preferred_photos=preferred_photos,
+                                  slide_map=slide_map)
+    else:
+        # Fast mode never runs the vision gate (no LLM/rasteriser call), but the deterministic
+        # margin/alignment/contrast/asset pass is nearly free — run it here too so every deck gets
+        # it, not just polished ones. Polished mode already ran this inside _visual_gate.
+        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map)
+        _log_geometry_issues(geo_issues)
 
     _p(99, "Finalizing")
     return {"pptx": pptx, "filename": f"{base_name}.pptx", "plan": plan,

@@ -360,7 +360,9 @@ def _place_icon(slide, box, icon_path) -> bool:
             dh, dw = h, int(h * iw / ih)
         slide.shapes.add_picture(str(icon_path), left + (w - dw) // 2, top + (h - dh) // 2, dw, dh)
         return True
-    except Exception:  # noqa: BLE001 — an icon is decorative; never break the render
+    except Exception as e:  # noqa: BLE001 — an icon is decorative; never break the render
+        print(f"[renderer] icon placement failed for {icon_path} ({e}); slide loses this icon "
+              f"silently — see qa_geometry's asset check", file=sys.stderr)
         return False
 
 
@@ -380,7 +382,9 @@ def _place_cropped(slide, path, l, t, w, h) -> bool:
             keep = src / box
             pic.crop_top = pic.crop_bottom = (1 - keep) / 2
         return True
-    except Exception:  # noqa: BLE001 — fall back to the caller's solid panel
+    except Exception as e:  # noqa: BLE001 — fall back to the caller's solid panel
+        print(f"[renderer] photo placement failed for {path} ({e}); slide falls back to its "
+              f"solid panel silently — see qa_geometry's asset check", file=sys.stderr)
         return False
 
 
@@ -2716,14 +2720,21 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
 def render_deck(plan: dict, study_meta: list[dict] | None = None,
                 design: dict | None = None,
                 custom_slides: list[dict] | None = None,
-                custom_photos: list[dict] | None = None) -> bytes:
+                custom_photos: list[dict] | None = None,
+                return_slide_map: bool = False) -> bytes | tuple[bytes, list[int | None]]:
     """design: the About page's deterministic overrides (fonts/sizes/spacing/margins/footer) —
     applied (or reset to brand defaults when empty) before anything is drawn.
     custom_slides: the team's own verbatim slides, each {key, name, mode, bytes, index, png}.
     mode 'auto' slides appear where the PLAN placed them (layout == their key); mode 'always'
     slides are appended after the content (before the benefits overview) on every deck.
     custom_photos: the team's uploaded photo library, each {key, bytes} — resolvable wherever
-    the plan sets an asset_id, exactly like a built-in library photo."""
+    the plan sets an asset_id, exactly like a built-in library photo.
+    return_slide_map: when True, also return a list (one entry per FINAL rendered slide, in
+    order) of the plan['slides'] index it came from, or None for a slide with no plan entry
+    (the benefits overview, an "always" team slide, an appendix figure/table) — the benefits
+    splice reorders slides after they're added, and an unresolved custom_ layout key adds none
+    at all, so a caller can never assume rendered-slide index == plan-slide index without this.
+    Default False keeps the plain `bytes` return every existing caller relies on."""
     apply_design(design)
     register_custom_photos(custom_photos)
     custom_by_key = {c["key"]: c for c in (custom_slides or [])}
@@ -2735,37 +2746,47 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     catalog = config.catalog()
     dark, light = _master_indices()
 
-    for spec in plan["slides"]:
+    owners: list[int | None] = []  # parallel to prs.slides, kept in sync through every reorder
+    for plan_idx, spec in enumerate(plan["slides"]):
         before = len(prs.slides._sldIdLst)
         _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered)
+        added = len(prs.slides._sldIdLst) - before
+        owners.extend([plan_idx] * added)
         # Speaker notes are written HERE, on whatever slide the dispatch just added, so every
         # layout gets them — code-built, native template and verbatim splices alike (an unknown
         # team-slide key adds nothing, hence the count guard). python-pptx creates the notes
         # slide on first access.
         notes = (spec.get("speaker_notes") or "").strip()
-        if notes and len(prs.slides._sldIdLst) > before:
+        if notes and added:
             prs.slides[-1].notes_slide.notes_text_frame.text = notes
 
     # Team slides marked "in every deck" that the plan didn't already place — appended after the
     # content, before the benefits overview below, so they read as part of the deck's fixed tail.
     for c in (custom_slides or []):
         if c.get("mode") == "always" and c["key"] not in placed_custom:
+            before = len(prs.slides._sldIdLst)
             _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+            owners.extend([None] * (len(prs.slides._sldIdLst) - before))
 
     # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last
     # slide of every deck (appended, then moved into place).
     _add_benefits_slide(prs, light)
+    owners.append(None)
     sldIdLst = prs.slides._sldIdLst
     ids = list(sldIdLst)
     benefits = ids[-1]
     sldIdLst.remove(benefits)
     sldIdLst.insert(max(1, len(sldIdLst) - 1), benefits)
+    ben_owner = owners.pop()                              # mirrors sldIdLst.remove(benefits) —
+    owners.insert(max(1, len(owners) - 1), ben_owner)      # benefits was owners' own last entry
 
     # The reviewer's own source charts/tables, appended after everything else (added here, so it
     # naturally lands after the just-reordered benefits slide, and picks up page numbers below like
     # any other slide). Dark master, like every other synthetic content slide — the white margin
     # baked into each extracted image already gives it a clean card-like frame against that background.
+    before = len(prs.slides._sldIdLst)
     _add_appendix_slides(prs, dark, study_meta)
+    owners.extend([None] * (len(prs.slides._sldIdLst) - before))
 
     # Footer line (page number / footer text / date) in a fixed position on every slide (cover
     # excluded; team slides carry their own baked chrome and would double-print), in final order.
@@ -2776,4 +2797,5 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
 
     buf = io.BytesIO()
     prs.save(buf)
-    return buf.getvalue()
+    data = buf.getvalue()
+    return (data, owners) if return_slide_map else data

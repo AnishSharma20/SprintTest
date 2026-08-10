@@ -16,17 +16,9 @@ import {
   type ApprovedClaim,
 } from "../claims-source";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
+import { PRODUCTS, type ProductId } from "../products";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
-
-type ProductId = "superba" | "lysoveta" | "revervia" | "pl_plus";
-
-const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean }[] = [
-  { id: "superba", label: "Superba", hint: "Krill oil", available: true },
-  { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
-  { id: "revervia", label: "Revervia", hint: "", available: false },
-  { id: "pl_plus", label: "PL+", hint: "", available: false },
-];
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 

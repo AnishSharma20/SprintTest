@@ -21,6 +21,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import PageHero, { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
+import { PRODUCTS, type ProductId } from "../products";
 
 const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
@@ -112,6 +113,8 @@ function toB64(buf: ArrayBuffer): string {
 
 export default function AboutPage() {
   const [reviewer, setReviewer] = useState("");
+  const [product, setProduct] = useState<ProductId>("superba");
+  const selectedProduct = PRODUCTS.find((p) => p.id === product) ?? PRODUCTS[0];
 
   // ----- rules -----
   const [rulesConfigured, setRulesConfigured] = useState(true);
@@ -665,6 +668,42 @@ export default function AboutPage() {
       </PageHero>
 
       <main className="mx-auto max-w-5xl px-4 py-8">
+        {/* ----- brand ----- */}
+        <section className="mb-8">
+          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">
+            Which brand are these settings for?
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {PRODUCTS.map((p) => {
+              const valgt = product === p.id && p.available;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => p.available && setProduct(p.id)}
+                  disabled={!p.available}
+                  className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                    valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
+                  } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
+                >
+                  {!p.available && (
+                    <span className="absolute right-2 top-2 rounded-md bg-[#F1F5F7] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#8FA5AE]">
+                      Soon
+                    </span>
+                  )}
+                  <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
+                  {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">
+            Settings below are for <strong className="text-[#052A4E]">{selectedProduct.label}</strong>.
+            Lysoveta, Revervia and PL+ will get their own rules, design settings and slide library once
+            they are onboarded — they will not inherit Superba&apos;s.
+          </p>
+        </section>
+
         {/* ----- what the tool is ----- */}
         <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
           <h2 className="text-lg font-bold text-[#031B34]">What this tool is</h2>

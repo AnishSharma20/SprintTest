@@ -198,6 +198,21 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   yet. Came out of a 3-option proposal (Tidy Up / Brand Switcher / Layout Studio) for combining the About
   page cleanup with real multi-brand support — this is a first, safe slice of the "Brand Switcher" tier,
   not the tier itself (no Supabase migration, no per-brand template).
+- **About V2 — NEW 2026-08-10, `/about-v2`, 7th nav tab.** The client picked "Tabbed card" (option C of
+  3 layout mockups: sidebar / accordion / tabbed card) after reviewing them as an interactive artifact,
+  then asked for the real page — a NEW route, same pattern as Scientific Studies V2 / Findings Library
+  V2 (a separate page to compare against, not a replacement; `/about` is untouched, verified byte
+  identical). Reuses 100% of `/about`'s logic/API calls (rules, design settings, layout on/off +
+  favourites, custom slide upload, photo library upload) copied verbatim — same Supabase tables, same
+  behaviour. What changed is only the shell: the "What this tool is" primer is gone, a slim masthead
+  (no descriptive paragraph) replaces `PageHero`, and Rules/Design/Slides/Photos sit one at a time
+  behind a segmented tab bar instead of four stacked boxes, with a CSS pop transition on switch
+  (`key={activeTab}` forces a remount so the animation replays every time). Per explicit client
+  instruction, the slide and photo library GRIDS themselves (real PNG/JPEG renders, on/off switches,
+  star favourites, filter chips, upload flow) are untouched pixel-for-pixel — only their outer section
+  wrapper moved from "always stacked" to "shown when its tab is active". Verified live: all 43 slide
+  renders load under the Slides tab exactly as on `/about`, pop animation fires on every tab switch,
+  `/about` confirmed unaffected.
 - **Blog generation** — `src/blog.py`: a science-based **blog draft** in the superbakrill.com/blog style
   (problem-hook → mechanism → clinical evidence → whitepaper CTA; cites the source studies). Shows editable in
   Tab 2; **Download Word (.docx)** via `/blog/docx` + `/api/blog-docx` (converts the *edited* draft).

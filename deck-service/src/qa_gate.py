@@ -71,30 +71,41 @@ def _render_pngs(pptx: Path, out_dir: Path) -> bool:
     out_dir.mkdir(parents=True, exist_ok=True)
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if soffice:
-        with tempfile.TemporaryDirectory() as tmp:
-            # An isolated --env:UserInstallation profile per call, not soffice's shared default
-            # one: without it, a soffice invocation that overlaps with another (a concurrent
-            # request, or a not-yet-exited previous one) can silently fail to acquire the shared
-            # profile lock and exit 0 with NO pdf written — `next()` below then raises a bare,
-            # unhelpfully empty StopIteration. This was a real, previously-latent bug: the old
-            # 4 MB upload cap made this endpoint rarely exercised in production, so it never
-            # surfaced until larger files started actually reaching LibreOffice on Render.
-            profile = Path(tmp) / "lo_profile"
-            result = subprocess.run(
-                [soffice, "--headless", "--norestore",
-                 f"-env:UserInstallation=file://{profile.as_posix()}",
-                 "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
-                capture_output=True, text=True,
-            )
-            pdfs = list(Path(tmp).glob("*.pdf"))
-            if not pdfs:
-                detail = result.stderr.strip() or result.stdout.strip() or "no output"
-                raise RuntimeError(f"LibreOffice produced no PDF (exit {result.returncode}): {detail}")
-            import fitz  # PyMuPDF
-            doc = fitz.open(str(pdfs[0]))
-            for n, page in enumerate(doc, 1):
-                page.get_pixmap(dpi=110).save(str(out_dir / f"slide{n:03d}.png"))
-        return True
+        # An isolated --env:UserInstallation profile per attempt, not soffice's shared default
+        # one: without it, an invocation that overlaps with another (a concurrent request, or a
+        # background generation job's own visual-QA rasterise running in another thread) can
+        # silently fail to acquire the shared profile lock and exit 0 with NO pdf written. This
+        # was a real, previously-latent bug: the old 4 MB upload cap made this endpoint rarely
+        # exercised in production, so it never surfaced until larger files started actually
+        # reaching LibreOffice on Render.
+        #
+        # Even isolated, a from-scratch profile bootstrap is itself a known source of headless
+        # LibreOffice flakiness under a constrained container (seen live on Render: exit 0 but an
+        # `SfxBaseModel::impl_store` write failure on the very first attempt) — so retry once
+        # with a brand new temp dir + profile before giving up; a transient failure typically
+        # does not repeat.
+        last_error = None
+        for attempt in range(2):
+            with tempfile.TemporaryDirectory() as tmp:
+                profile = Path(tmp) / "lo_profile"
+                result = subprocess.run(
+                    [soffice, "--headless", "--norestore",
+                     f"-env:UserInstallation=file://{profile.as_posix()}",
+                     "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                    capture_output=True, text=True,
+                )
+                pdfs = list(Path(tmp).glob("*.pdf"))
+                if not pdfs:
+                    detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                    last_error = f"LibreOffice produced no PDF (exit {result.returncode}): {detail}"
+                    continue
+                import fitz  # PyMuPDF
+                doc = fitz.open(str(pdfs[0]))
+                for n, page in enumerate(doc, 1):
+                    page.get_pixmap(dpi=110).save(str(out_dir / f"slide{n:03d}.png"))
+                doc.close()
+                return True
+        raise RuntimeError(f"{last_error} (failed on both attempts)")
     if sys.platform.startswith("win"):
         ps = (f'$pp=New-Object -ComObject PowerPoint.Application;'
               f'$pres=$pp.Presentations.Open("{pptx}",$true,$true,$false);'

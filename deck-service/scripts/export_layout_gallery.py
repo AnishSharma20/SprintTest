@@ -62,24 +62,32 @@ def _render_pngs(pptx: Path, out_dir: Path) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if soffice:
-        with tempfile.TemporaryDirectory() as tmp:
-            # Isolated profile per call — see deck-service/src/qa_gate.py's _render_pngs for why
-            # (shared-profile lock contention can make soffice exit 0 with no pdf written).
-            profile = Path(tmp) / "lo_profile"
-            result = subprocess.run(
-                [soffice, "--headless", "--norestore",
-                 f"-env:UserInstallation=file://{profile.as_posix()}",
-                 "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
-                capture_output=True, text=True,
-            )
-            pdfs = list(Path(tmp).glob("*.pdf"))
-            if not pdfs:
-                detail = result.stderr.strip() or result.stdout.strip() or "no output"
-                raise RuntimeError(f"LibreOffice produced no PDF (exit {result.returncode}): {detail}")
-            import fitz  # PyMuPDF
-            doc = fitz.open(pdfs[0])
-            for n, page in enumerate(doc, 1):
-                page.get_pixmap(dpi=110).save(str(out_dir / f"Slide{n}.png"))
+        # Isolated profile per attempt + one retry — see deck-service/src/qa_gate.py's
+        # _render_pngs for why (shared-profile lock contention, or a from-scratch profile
+        # bootstrap itself, can make soffice exit 0 with no pdf written, or fail to write it).
+        last_error = None
+        for attempt in range(2):
+            with tempfile.TemporaryDirectory() as tmp:
+                profile = Path(tmp) / "lo_profile"
+                result = subprocess.run(
+                    [soffice, "--headless", "--norestore",
+                     f"-env:UserInstallation=file://{profile.as_posix()}",
+                     "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                    capture_output=True, text=True,
+                )
+                pdfs = list(Path(tmp).glob("*.pdf"))
+                if not pdfs:
+                    detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                    last_error = f"LibreOffice produced no PDF (exit {result.returncode}): {detail}"
+                    continue
+                import fitz  # PyMuPDF
+                doc = fitz.open(pdfs[0])
+                for n, page in enumerate(doc, 1):
+                    page.get_pixmap(dpi=110).save(str(out_dir / f"Slide{n}.png"))
+                doc.close()
+                break
+        else:
+            raise RuntimeError(f"{last_error} (failed on both attempts)")
     elif sys.platform.startswith("win"):
         ps = (f'$pp=New-Object -ComObject PowerPoint.Application;'
               f'$pres=$pp.Presentations.Open("{pptx}",$true,$true,$false);'

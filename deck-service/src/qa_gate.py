@@ -128,9 +128,58 @@ def _natkey(p: Path):
     return int(m[-1]) if m else 0
 
 
+_SHRINK_MAX_DIM = 1920  # comfortably above any on-screen preview need
+
+
+def _shrink_pptx_images(data: bytes) -> bytes:
+    """Downscale any oversized embedded image before handing the file to LibreOffice — what
+    costs memory during PDF conversion is the DECODED bitmap (proportional to pixel count), not
+    the compressed file size, and Render's free-tier 512 MB instance can run out of room holding
+    just one large photo (confirmed live: a ~9 MB single-image .pptx consistently failed to
+    convert there — SfxBaseModel::impl_store write failures — with disk space and every LibreOffice
+    invocation flag already ruled out as the cause). Returns the ORIGINAL bytes unchanged if
+    nothing needs shrinking or if anything about this step goes wrong — this is a memory
+    optimisation for rasterising a temporary copy, never something that should affect what's
+    actually stored or generated from."""
+    import zipfile
+
+    try:
+        from PIL import Image
+
+        src = zipfile.ZipFile(io.BytesIO(data))
+        shrunk_any = False
+        out_buf = io.BytesIO()
+        with zipfile.ZipFile(out_buf, "w", zipfile.ZIP_DEFLATED) as dst:
+            for item in src.infolist():
+                content = src.read(item.filename)
+                ext = item.filename.lower().rsplit(".", 1)[-1] if "." in item.filename else ""
+                if item.filename.startswith("ppt/media/") and ext in ("jpg", "jpeg", "png", "bmp", "tiff", "gif"):
+                    try:
+                        im = Image.open(io.BytesIO(content))
+                        if max(im.size) > _SHRINK_MAX_DIM:
+                            ratio = _SHRINK_MAX_DIM / max(im.size)
+                            new_size = (max(1, round(im.width * ratio)), max(1, round(im.height * ratio)))
+                            fmt = "JPEG" if ext in ("jpg", "jpeg") else im.format or "PNG"
+                            if fmt == "JPEG" and im.mode not in ("RGB", "L"):
+                                im = im.convert("RGB")
+                            im = im.resize(new_size)
+                            buf = io.BytesIO()
+                            im.save(buf, fmt, quality=85) if fmt == "JPEG" else im.save(buf, fmt)
+                            content = buf.getvalue()
+                            shrunk_any = True
+                    except Exception:  # noqa: BLE001 — one bad image must not break the whole pass
+                        pass
+                dst.writestr(item, content)
+        return out_buf.getvalue() if shrunk_any else data
+    except Exception as e:  # noqa: BLE001 — this is an optimisation, never a hard requirement
+        print(f"[qa-gate] image shrink skipped ({e}); rasterising the file as-is", file=sys.stderr)
+        return data
+
+
 def rasterize(pptx_bytes: bytes) -> list[bytes] | None:
     """Render a deck to one PNG per slide, in order. None if no rasteriser is available (gate off)."""
     try:
+        pptx_bytes = _shrink_pptx_images(pptx_bytes)
         with tempfile.TemporaryDirectory() as tmp:
             deck = Path(tmp) / "deck.pptx"
             deck.write_bytes(pptx_bytes)

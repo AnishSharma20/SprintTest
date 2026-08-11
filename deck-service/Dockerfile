@@ -5,8 +5,15 @@ WORKDIR /app
 # LibreOffice = the rasteriser the "polished" visual-QA gate needs to turn the rendered .pptx into
 # images for the vision pass. Without it, polished mode degrades to fast (no-op gate) — fast mode
 # needs nothing here. Impress-only keeps the image smaller than full libreoffice.
+#
+# default-jre-headless: --no-install-recommends above skips it (normally just a "recommends", not
+# a hard dependency) but some of LibreOffice's PDF export filter machinery genuinely needs a JRE
+# at runtime — its absence surfaces as "failed to launch javaldx" on EVERY conversion (harmless-
+# looking) and, for some documents, an outright PDF export failure
+# (SfxBaseModel::impl_store ... Io/Write) with no clearer diagnostic than that. Headless variant
+# only — no X11/GUI dependencies pulled in.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libreoffice-impress \
+    && apt-get install -y --no-install-recommends libreoffice-impress default-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies first for better layer caching.

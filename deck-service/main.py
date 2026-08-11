@@ -732,6 +732,49 @@ async def slides_export(payload: dict, x_deck_token: str | None = Header(default
         return JSONResponse({"feil": f"Could not export the slide: {e}"}, status_code=500)
 
 
+@app.post("/slides/export-all")
+async def slides_export_all(payload: dict, x_deck_token: str | None = Header(default=None)):
+    """Export EVERY standard layout (all 42; the fixed benefits_verbatim brand asset excluded, same
+    as the single-slide export) as ONE multi-slide .pptx, in catalog order — the bulk version of
+    /slides/export. Edit any subset of slides in PowerPoint, then use the existing team-slides
+    upload flow (which already lets you tick individual slides out of a multi-slide file and name
+    each one) to save just the ones you changed, without re-picking all 42.
+
+    { background? ("dark" | "light" | "pastel") } -> the .pptx bytes.
+    """
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    background = (payload or {}).get("background") or "dark"
+    try:
+        from pptx import Presentation
+
+        from src import renderer
+        slides = [dict(s) for key, s in _gallery_samples().items() if key != "benefits_verbatim"]
+        if background != "dark":
+            for s in slides:
+                s["background"] = background
+        n = len(slides)
+        data = renderer.render_deck(
+            {"deck_title": "Superba slide templates", "language": "en", "slides": slides}
+        )
+        # Same benefits-splice quirk as /slides/export, generalised: render_deck always appends the
+        # verbatim benefits overview then moves it to the SECOND-TO-LAST position (max(1, n - 1),
+        # n = the number of content slides fed in) — drop exactly that index to get back all n (and
+        # only those n) slides, in their original order.
+        prs = Presentation(io.BytesIO(data))
+        _drop_slide(prs, max(1, n - 1))
+        buf = io.BytesIO()
+        prs.save(buf)
+        return Response(
+            content=buf.getvalue(),
+            media_type=PPTX_MEDIA,
+            headers={"Content-Disposition": 'attachment; filename="superba-slide-templates.pptx"'},
+        )
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not export the slide templates: {e}"}, status_code=500)
+
+
 @app.post("/slides/extract")
 async def slides_extract(
     file: UploadFile,

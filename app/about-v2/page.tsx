@@ -200,6 +200,7 @@ export default function AboutV2Page() {
 
   // ----- edit round trip: download a slide as .pptx / replace one already in the library -----
   const [exportingLayout, setExportingLayout] = useState<string | null>(null);
+  const [exportingAll, setExportingAll] = useState(false);
   const [exportingSlide, setExportingSlide] = useState<string | null>(null);
   const [replacingSlide, setReplacingSlide] = useState<string | null>(null);
 
@@ -767,6 +768,30 @@ export default function AboutV2Page() {
       setLayoutError((e as Error).message);
     } finally {
       setExportingLayout(null);
+    }
+  }
+
+  // Bulk sibling of downloadStandardLayout: all 42 standard slides in ONE file, so several can be
+  // edited in one PowerPoint session instead of downloading them one at a time. Re-upload the
+  // edited file through the existing "＋ Upload PowerPoint" flow, ticking just the ones you changed.
+  async function downloadAllStandardLayouts() {
+    setLayoutError("");
+    setExportingAll(true);
+    try {
+      const res = await fetch("/api/layout-gallery/export-all", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ background: galleryTheme }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not export the slide templates.");
+      }
+      triggerDownload(await res.blob(), "superba-slide-templates.pptx");
+    } catch (e) {
+      setLayoutError((e as Error).message);
+    } finally {
+      setExportingAll(false);
     }
   }
 
@@ -1549,6 +1574,18 @@ export default function AboutV2Page() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => void downloadAllStandardLayouts()}
+                  disabled={exportingAll}
+                  title="Download all 42 standard slides as one PowerPoint file to edit several at once"
+                  className="rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                >
+                  {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
+                </button>
               </div>
 
               {/* the grid: custom slides first, then built-ins */}

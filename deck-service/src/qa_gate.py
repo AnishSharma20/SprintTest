@@ -91,12 +91,20 @@ def _render_pngs(pptx: Path, out_dir: Path) -> bool:
                 result = subprocess.run(
                     [soffice, "--headless", "--norestore",
                      f"-env:UserInstallation=file://{profile.as_posix()}",
-                     "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                     "--convert-to", "pdf:impress_pdf_Export", "--outdir", tmp, str(pptx)],
                     capture_output=True, text=True,
                 )
                 pdfs = list(Path(tmp).glob("*.pdf"))
                 if not pdfs:
                     detail = result.stderr.strip() or result.stdout.strip() or "no output"
+                    # A write failure could plausibly be disk exhaustion on a constrained
+                    # container (a large embedded image inflates during PDF re-encoding) — log
+                    # free space so a recurrence is diagnosable instead of another guess.
+                    try:
+                        free_mb = shutil.disk_usage(tmp).free // (1024 * 1024)
+                        detail += f" [free space at {tmp}: {free_mb} MB]"
+                    except OSError:
+                        pass
                     last_error = f"LibreOffice produced no PDF (exit {result.returncode}): {detail}"
                     continue
                 import fitz  # PyMuPDF

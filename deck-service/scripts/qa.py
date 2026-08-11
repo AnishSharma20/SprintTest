@@ -85,7 +85,7 @@ def render_pngs(pptx: Path, out_dir: Path) -> bool:
                 result = subprocess.run(
                     [soffice, "--headless", "--norestore",
                      f"-env:UserInstallation=file://{profile.as_posix()}",
-                     "--convert-to", "pdf", "--outdir", tmp, str(pptx)],
+                     "--convert-to", "pdf:impress_pdf_Export", "--outdir", tmp, str(pptx)],
                     capture_output=True, text=True,
                 )
                 pdfs = list(Path(tmp).glob("*.pdf"))

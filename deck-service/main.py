@@ -655,7 +655,16 @@ def _gallery_samples() -> dict[str, dict]:
         scripts_dir = Path(__file__).resolve().parent / "scripts"
         if str(scripts_dir) not in sys.path:
             sys.path.insert(0, str(scripts_dir))
-        from build_gallery import SYNTH, TMPL  # type: ignore
+        # build_gallery.py reads sys.argv[1] as an optional output dir at IMPORT time (for its own
+        # CLI use as `python scripts/build_gallery.py [outdir]`) and mkdir's it immediately. Inside
+        # a live server process argv[1] is whatever the server was launched with (e.g. uvicorn's
+        # "main:app"), which isn't a valid path — hide argv for the duration of the import so that
+        # branch takes its harmless default (ROOT / "build") instead of crashing on it.
+        saved_argv, sys.argv = sys.argv, sys.argv[:1]
+        try:
+            from build_gallery import SYNTH, TMPL  # type: ignore
+        finally:
+            sys.argv = saved_argv
 
         title = {"layout": "title", "title": "Superba by Aker BioMarine",
                  "subtitle": "Science backed krill oil"}

@@ -1,18 +1,31 @@
-// /api/custom-slides/inspect — turn an uploaded .pptx into per-slide preview images, so the
-// user can pick which slides to add. Thin proxy to the deck service's rasteriser (LibreOffice
-// on Render, PowerPoint locally); the file itself is only stored when the user confirms.
+// /api/custom-slides/inspect — turn an uploaded .pptx (already sitting in Supabase Storage) into
+// per-slide preview images, so the user can pick which slides to add.
 //
-//   POST multipart { file } → { slides: [{ index, preview_b64 }] }
+//   POST JSON { storage_path, filename? } → { slides: [{ index, preview_b64 }] }
 //
-// Kept under Vercel's serverless request-body ceiling (~4.5 MB), hence the 4 MB file cap —
-// the same cap the save route enforces.
+// Unlike the old version of this route (which received the raw .pptx as a multipart body,
+// capped at Vercel's ~4.5 MB serverless request ceiling), the browser now uploads the file
+// straight to Storage first (see upload-url/route.ts) and only sends this route a storage path —
+// a few bytes. This route then does two SERVER-TO-SERVER hops, neither subject to that ceiling
+// (which only gates what a browser sends a Vercel function directly, not what the function goes
+// on to fetch/send itself): download the file from Storage, then forward it to the deck
+// service's rasteriser exactly as before. Chosen over having the browser call the deck service
+// directly, which would need CORS + a new auth mechanism there and still depends on the browser
+// reaching Render's origin directly (a real, separate failure mode from Vercel's body ceiling) —
+// this keeps the deck service's only caller as Vercel, server-to-server, same as every other
+// endpoint it exposes.
+
+import { supabase, dbNotConfigured } from "../../../lib/supabase";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MAX_BYTES = 4 * 1024 * 1024;
+const BUCKET = "custom-slides";
 
 export async function POST(req: Request) {
+  const sb = supabase();
+  if (!sb) return dbNotConfigured();
+
   const base = process.env.DECK_SERVICE_URL?.replace(/\/$/, "");
   if (!base) {
     return Response.json(
@@ -22,19 +35,16 @@ export async function POST(req: Request) {
   }
 
   try {
-    const incoming = await req.formData();
-    const file = incoming.get("file");
-    if (!(file instanceof File)) return Response.json({ error: "No file uploaded." }, { status: 400 });
-    if (!file.name.toLowerCase().endsWith(".pptx"))
-      return Response.json({ error: "Upload a PowerPoint .pptx file." }, { status: 400 });
-    if (file.size > MAX_BYTES)
-      return Response.json(
-        { error: "Keep the file under 4 MB — save just the slides you want as a smaller .pptx and try again." },
-        { status: 400 }
-      );
+    const { storage_path, filename } = (await req.json()) as { storage_path?: string; filename?: string };
+    if (!storage_path) return Response.json({ error: "Missing storage_path." }, { status: 400 });
+
+    const dl = await sb.storage.from(BUCKET).download(storage_path);
+    if (dl.error) {
+      return Response.json({ error: `Could not read the uploaded file: ${dl.error.message}` }, { status: 500 });
+    }
 
     const forward = new FormData();
-    forward.append("file", file, file.name);
+    forward.append("file", dl.data, filename || "slides.pptx");
     const res = await fetch(`${base}/slides/inspect`, {
       method: "POST",
       body: forward,

@@ -15,8 +15,6 @@ ANTHROPIC_API_KEY is read from the environment, server-side only.
 from __future__ import annotations
 
 import base64
-import hashlib
-import hmac
 import io
 import json
 import os
@@ -29,27 +27,12 @@ import zipfile
 
 import anthropic
 from fastapi import FastAPI, File, Form, Header, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 import src
 from src import config
 
 app = FastAPI(title="Superba Deck Generator")
-
-# Lets the browser call /slides/inspect directly (see _verify_upload_ticket below) instead of
-# proxying the .pptx through Vercel's ~4.5 MB serverless body ceiling. The real security
-# boundary here is the ticket, not CORS — an attacker without a valid ticket gets 401 regardless
-# of origin, and a valid ticket only exists because the caller already passed the app's own
-# password gate to mint one (see app/api/custom-slides/inspect-ticket/route.ts) — so a wide-open
-# origin list costs nothing extra and avoids hardcoding/maintaining Vercel's preview-deploy
-# domains, which change per branch.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["POST"],
-    allow_headers=["*"],
-)
 
 PPTX_MEDIA = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 DOCX_MEDIA = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -429,25 +412,6 @@ def _auth_or_error(x_deck_token):
     return None
 
 
-def _verify_upload_ticket(ticket: str | None) -> bool:
-    """A short-lived, HMAC-signed ticket minted by app/api/custom-slides/inspect-ticket — lets
-    the browser call /slides/inspect directly (bypassing Vercel's body-size ceiling) without
-    ever handing it the real DECK_SERVICE_TOKEN. Format: "<exp_ms>.<hex hmac-sha256 of exp_ms,
-    keyed with DECK_SERVICE_TOKEN>". No DECK_SERVICE_TOKEN configured -> no ticket can ever be
-    valid (mirrors _auth_or_error: an unset token means auth is off entirely, checked earlier)."""
-    secret = os.environ.get("DECK_SERVICE_TOKEN")
-    if not secret or not ticket or "." not in ticket:
-        return False
-    exp_str, _, sig = ticket.partition(".")
-    try:
-        if int(exp_str) < time.time() * 1000:
-            return False
-    except ValueError:
-        return False
-    expected_sig = hmac.new(secret.encode(), exp_str.encode(), hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected_sig, sig)
-
-
 @app.get("/health")
 def health():
     try:
@@ -637,7 +601,6 @@ async def design_preview(payload: dict, x_deck_token: str | None = Header(defaul
 async def slides_inspect(
     file: UploadFile,
     x_deck_token: str | None = Header(default=None),
-    x_upload_ticket: str | None = Header(default=None),
 ):
     """Render every slide of an uploaded .pptx to a preview image, so the About page can let the
     user pick which slides to add as team slides. Pure rasterisation, no LLM — LibreOffice on the
@@ -645,12 +608,13 @@ async def slides_inspect(
     (JPEG, ≤1280px wide) — the same previews are stored and reused as gallery thumbnails and as
     the pixel-perfect fallback when a slide can't be shape-spliced.
 
-    Callable two ways: server-to-server with X-Deck-Token (the static shared secret — used
-    nowhere today but kept for parity/future use), or directly from the browser with
-    X-Upload-Ticket (a short-lived signed ticket — see _verify_upload_ticket) so a large .pptx
-    never has to transit through Vercel's ~4.5 MB serverless body ceiling."""
+    Called server-to-server from app/api/custom-slides/inspect/route.ts (same X-Deck-Token as
+    every other endpoint here) — the browser never calls this directly. A large .pptx avoids
+    Vercel's ~4.5 MB serverless body ceiling by living in Supabase Storage first: the route
+    downloads it there and forwards it here, so what transits this endpoint's own caller (Vercel)
+    is a server-to-server hop, never subject to that browser-facing limit."""
     expected = os.environ.get("DECK_SERVICE_TOKEN")
-    if expected and x_deck_token != expected and not _verify_upload_ticket(x_upload_ticket):
+    if expected and x_deck_token != expected:
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
     data = await file.read()
     if not data:
@@ -674,6 +638,127 @@ async def slides_inspect(
         return {"slides": out}
     except Exception as e:  # noqa: BLE001 — surface a clean error to the client
         return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
+
+
+_GALLERY_SAMPLES: dict[str, dict] | None = None
+
+
+def _gallery_samples() -> dict[str, dict]:
+    """Lazily load the same one-slide-per-layout sample content the About page's static preview
+    gallery is built from (scripts/build_gallery.py), keyed by layout name — lets a standard
+    layout be exported as a real, editable .pptx on demand instead of only ever being a flat PNG."""
+    global _GALLERY_SAMPLES
+    if _GALLERY_SAMPLES is None:
+        import sys
+        from pathlib import Path
+
+        scripts_dir = Path(__file__).resolve().parent / "scripts"
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        from build_gallery import SYNTH, TMPL  # type: ignore
+
+        title = {"layout": "title", "title": "Superba by Aker BioMarine",
+                 "subtitle": "Science backed krill oil"}
+        _GALLERY_SAMPLES = {s["layout"]: s for s in [title] + SYNTH + TMPL}
+    return _GALLERY_SAMPLES
+
+
+def _drop_slide(prs, index: int) -> None:
+    """Remove one slide (and its relationship) from an already-built Presentation. python-pptx
+    exposes no public API for this; mirrors renderer._delete_example_slides."""
+    from pptx.oxml.ns import qn
+
+    lst = prs.slides._sldIdLst
+    sld_id = list(lst)[index]
+    r_id = sld_id.get(qn("r:id"))
+    if r_id:
+        prs.part.drop_rel(r_id)
+    lst.remove(sld_id)
+
+
+@app.post("/slides/export")
+async def slides_export(payload: dict, x_deck_token: str | None = Header(default=None)):
+    """Export ONE standard layout as a real, editable single-slide .pptx — half of the "view it,
+    then make it yours" round trip: download this file, edit it freely in PowerPoint, then hand
+    the edited file back through the team-slides upload flow to save it as your own version.
+
+    { layout, background? ("dark" | "light" | "pastel") } -> the .pptx bytes.
+    """
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    layout = (payload or {}).get("layout")
+    background = (payload or {}).get("background") or "dark"
+    if not isinstance(layout, str) or not layout:
+        return JSONResponse({"feil": "Missing layout key."}, status_code=400)
+    if layout == "benefits_verbatim":
+        return JSONResponse(
+            {"feil": "The Proven Health Benefits slide is a fixed brand asset and can't be exported."},
+            status_code=400,
+        )
+    try:
+        from pptx import Presentation
+
+        from src import renderer
+        sample = _gallery_samples().get(layout)
+        if sample is None:
+            return JSONResponse({"feil": f'Unknown layout "{layout}".'}, status_code=404)
+        slide = dict(sample)
+        if background != "dark":
+            slide["background"] = background
+        data = renderer.render_deck({"deck_title": "Sample", "language": "en", "slides": [slide]})
+        # A single-slide plan always renders as [that slide, AKBM's verbatim benefits overview]
+        # (render_deck splices the benefits slide onto every deck) — drop the trailing one so the
+        # download is exactly the one layout the user asked for.
+        prs = Presentation(io.BytesIO(data))
+        _drop_slide(prs, len(prs.slides) - 1)
+        buf = io.BytesIO()
+        prs.save(buf)
+        return Response(
+            content=buf.getvalue(),
+            media_type=PPTX_MEDIA,
+            headers={"Content-Disposition": f'attachment; filename="{layout}.pptx"'},
+        )
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not export the slide: {e}"}, status_code=500)
+
+
+@app.post("/slides/extract")
+async def slides_extract(
+    file: UploadFile,
+    slide_index: int = Form(...),
+    x_deck_token: str | None = Header(default=None),
+):
+    """Pull ONE slide out of an uploaded .pptx as its own standalone file — the other half of the
+    edit round trip, for a team slide already sitting in the library: download just this slide,
+    edit it, re-upload it to replace what's stored. { file, slide_index } -> the .pptx bytes."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    data = await file.read()
+    if not data:
+        return JSONResponse({"feil": "Empty file."}, status_code=400)
+    try:
+        from pptx import Presentation
+
+        prs = Presentation(io.BytesIO(data))
+        n = len(prs.slides)
+        if not (0 <= slide_index < n):
+            return JSONResponse(
+                {"feil": f"Slide {slide_index + 1} does not exist (the file has {n})."}, status_code=400
+            )
+        for i in range(n - 1, -1, -1):
+            if i != slide_index:
+                _drop_slide(prs, i)
+        buf = io.BytesIO()
+        prs.save(buf)
+        return Response(
+            content=buf.getvalue(),
+            media_type=PPTX_MEDIA,
+            headers={"Content-Disposition": 'attachment; filename="slide.pptx"'},
+        )
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not extract the slide: {e}"}, status_code=500)
 
 
 @app.get("/jobs/{job_id}")

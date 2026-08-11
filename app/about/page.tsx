@@ -166,6 +166,11 @@ export default function AboutPage() {
   const [slideName, setSlideName] = useState("");
   const [slideDesc, setSlideDesc] = useState("");
 
+  // ----- edit round trip: download a slide as .pptx / replace one already in the library -----
+  const [exportingLayout, setExportingLayout] = useState<string | null>(null);
+  const [exportingSlide, setExportingSlide] = useState<string | null>(null);
+  const [replacingSlide, setReplacingSlide] = useState<string | null>(null);
+
   // ----- upload flow -----
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -579,6 +584,30 @@ export default function AboutPage() {
   }
 
   // ---------- upload flow ----------
+  // The storage path of a file uploaded for the CURRENT pick session, not yet saved as a real
+  // custom_slides row. A ref, not state — nothing renders from it, it's purely bookkeeping for
+  // discardUploadedFile(), and a ref sidesteps any risk of the update landing after a stale read
+  // (see the ref-timing bug fixed in the generator's findings picker this same session).
+  const uploadPathRef = useRef<string | null>(null);
+
+  /** Best-effort cleanup of a just-uploaded file that never became a saved slide (cancelled, or
+   * inspect/save failed) — paths are fresh random UUIDs per attempt, so nothing else can be
+   * referencing it yet and a bare delete is always safe. */
+  async function discardUploadedFile() {
+    const path = uploadPathRef.current;
+    uploadPathRef.current = null;
+    if (!path) return;
+    try {
+      await fetch("/api/custom-slides/discard-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storage_path: path }),
+      });
+    } catch {
+      /* best-effort only — an orphaned Storage object is a minor cleanup gap, not a failure */
+    }
+  }
+
   async function inspectUpload(file: File) {
     setUploadError("");
     setUploadBusy(true);
@@ -587,21 +616,29 @@ export default function AboutPage() {
     try {
       if (file.size > 100 * 1024 * 1024)
         throw new Error("That file is too large (over 100 MB) — trim it down before uploading.");
-      // Rasterise directly against the deck service (a short-lived ticket, not the file, is the
-      // only thing that goes through Vercel) so a big .pptx never hits the ~4.5 MB serverless
-      // body ceiling here.
-      const ticketRes = await fetch("/api/custom-slides/inspect-ticket", { method: "POST" });
-      const ticket = await ticketRes.json();
-      if (!ticketRes.ok) throw new Error(ticket.error || "Could not prepare the upload.");
-      const form = new FormData();
-      form.append("file", file, file.name);
-      const res = await fetch(ticket.url, {
+      // Upload ONCE, straight to Storage (a signed URL, not the file, transits Vercel) — both the
+      // preview below and the eventual save reuse this same stored path, so the file never rides
+      // through Vercel's ~4.5 MB body ceiling, and never gets re-uploaded on save either.
+      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const uploadUrl = await urlRes.json();
+      if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
+      const uploadForm = new FormData();
+      uploadForm.append("cacheControl", "3600");
+      uploadForm.append("", file);
+      const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
+      if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
+      uploadPathRef.current = uploadUrl.path;
+
+      // Rasterise via the app's own route: it downloads the file from Storage server-to-server
+      // and forwards it to the deck service server-to-server — this request's own body is just
+      // a path string, so it's tiny regardless of how big the actual .pptx is.
+      const res = await fetch("/api/custom-slides/inspect", {
         method: "POST",
-        body: form,
-        headers: { "X-Upload-Ticket": ticket.ticket },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storage_path: uploadUrl.path, filename: file.name }),
       });
       const d = await res.json();
-      if (!res.ok) throw new Error(d.feil || d.error || "Could not read the presentation.");
+      if (!res.ok) throw new Error(d.error || "Could not read the presentation.");
       setPicks(
         (d.slides ?? []).map((s: { index: number; preview_b64: string }) => ({
           index: s.index,
@@ -615,13 +652,14 @@ export default function AboutPage() {
     } catch (e) {
       setUploadError((e as Error).message);
       setUploadFile(null);
+      void discardUploadedFile();
     } finally {
       setUploadBusy(false);
     }
   }
 
   async function savePicks() {
-    if (!uploadFile || !picks) return;
+    if (!uploadFile || !picks || !uploadPathRef.current) return;
     const chosen = picks.filter((p) => p.picked);
     if (!chosen.length) {
       setUploadError("Tick at least one slide to add.");
@@ -634,24 +672,12 @@ export default function AboutPage() {
     setSavingPicks(true);
     setUploadError("");
     try {
-      // Upload the raw file straight to Storage (a signed URL, not the file, transits Vercel)
-      // so saving a large .pptx doesn't hit the same body-size ceiling the old base64-in-JSON
-      // approach did — see supabase/migrations/0008_custom_slide_storage.sql.
-      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
-      const uploadUrl = await urlRes.json();
-      if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
-      const uploadForm = new FormData();
-      uploadForm.append("cacheControl", "3600");
-      uploadForm.append("", uploadFile);
-      const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
-      if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
-
       const res = await fetch("/api/custom-slides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filename: uploadFile.name,
-          storage_path: uploadUrl.path,
+          storage_path: uploadPathRef.current,
           author: reviewer,
           slides: chosen.map((p) => ({
             slide_index: p.index,
@@ -664,6 +690,7 @@ export default function AboutPage() {
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "Could not save the slides.");
+      uploadPathRef.current = null; // now owned by the saved row — ours to discard no longer
       setPicks(null);
       setUploadFile(null);
       if (fileInput.current) fileInput.current.value = "";
@@ -673,6 +700,115 @@ export default function AboutPage() {
       setUploadError((e as Error).message);
     } finally {
       setSavingPicks(false);
+    }
+  }
+
+  function triggerDownload(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- edit round trip, half 1: download a STANDARD slide as an editable .pptx ----------
+  // The user edits it in PowerPoint, then uses "＋ Upload PowerPoint" above to save it as their
+  // own version — no separate save path needed for this half.
+  async function downloadStandardLayout(key: string) {
+    setLayoutError("");
+    setExportingLayout(key);
+    try {
+      const res = await fetch("/api/layout-gallery/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layout: key, background: "dark" }), // /about has no theme picker; always Blue Ocean
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not export the slide.");
+      }
+      triggerDownload(await res.blob(), `${key}.pptx`);
+    } catch (e) {
+      setLayoutError((e as Error).message);
+    } finally {
+      setExportingLayout(null);
+    }
+  }
+
+  // ---------- edit round trip, half 2: download / replace a slide ALREADY in "Your slides" ----------
+  async function downloadCustomSlide(id: string, name: string) {
+    setCustomError("");
+    setExportingSlide(id);
+    try {
+      const res = await fetch(`/api/custom-slides/${id}/export`);
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not export the slide.");
+      }
+      triggerDownload(await res.blob(), `${name || "slide"}.pptx`);
+    } catch (e) {
+      setCustomError((e as Error).message);
+    } finally {
+      setExportingSlide(null);
+    }
+  }
+
+  async function replaceCustomSlide(id: string, file: File) {
+    setCustomError("");
+    setReplacingSlide(id);
+    let storagePath: string | null = null;
+    try {
+      // Upload the edited file straight to Storage once, then reuse that same path for both the
+      // rasterised preview and the save — the same "upload once" flow the main upload above
+      // uses, so a big edited file never rides through Vercel's body ceiling twice. If the
+      // edited file has several slides, the first one is what gets saved.
+      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const uploadUrl = await urlRes.json();
+      if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
+      storagePath = uploadUrl.path;
+      const uploadForm = new FormData();
+      uploadForm.append("cacheControl", "3600");
+      uploadForm.append("", file);
+      const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
+      if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
+
+      const inspectRes = await fetch("/api/custom-slides/inspect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storage_path: storagePath, filename: file.name }),
+      });
+      const inspected = await inspectRes.json();
+      if (!inspectRes.ok) throw new Error(inspected.error || "Could not read the presentation.");
+      const preview_b64: string | null = inspected.slides?.[0]?.preview_b64 ?? null;
+
+      const res = await fetch(`/api/custom-slides/${id}/replace`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storage_path: storagePath,
+          filename: file.name,
+          preview_b64,
+          slide_index: 0,
+          author: reviewer,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not save the replacement.");
+      setCustomSlides((s) => s.map((x) => (x.id === id ? { ...x, ...d.slide } : x)));
+    } catch (e) {
+      setCustomError((e as Error).message);
+      if (storagePath) {
+        void fetch("/api/custom-slides/discard-upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ storage_path: storagePath }),
+        }).catch(() => {});
+      }
+    } finally {
+      setReplacingSlide(null);
     }
   }
 
@@ -1152,7 +1288,10 @@ export default function AboutPage() {
             Every slide the tool can put in a deck, with real example renders. Turn a slide type off
             and the AI can no longer pick it; turn it back on any time. Add your own finished slides
             from a PowerPoint file — they are inserted exactly as designed, either where the AI
-            judges they fit or in every deck. Cover and Agenda are required and stay on.
+            judges they fit or in every deck. Cover and Agenda are required and stay on. Want to
+            change how one looks? Use <span className="font-semibold">⬇ Download to edit</span> on any
+            card to get a real, editable PowerPoint file — edit it, then upload it back through
+            &ldquo;Add your own slides&rdquo; below to save your own version.
           </p>
 
           {!layoutsMigrated && (
@@ -1284,6 +1423,7 @@ export default function AboutPage() {
                   <button
                     type="button"
                     onClick={() => {
+                      void discardUploadedFile();
                       setPicks(null);
                       setUploadFile(null);
                       if (fileInput.current) fileInput.current.value = "";
@@ -1418,6 +1558,36 @@ export default function AboutPage() {
                           Delete
                         </button>
                       </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => void downloadCustomSlide(c.id, c.name)}
+                          disabled={exportingSlide === c.id}
+                          title="Download this slide as an editable PowerPoint file"
+                          className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                        >
+                          {exportingSlide === c.id ? "Downloading…" : "⬇ Download to edit"}
+                        </button>
+                        <label
+                          title="Replace this slide with an edited PowerPoint file"
+                          className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
+                            replacingSlide === c.id ? "opacity-40" : "cursor-pointer"
+                          }`}
+                        >
+                          {replacingSlide === c.id ? "Replacing…" : "↻ Replace with edited file"}
+                          <input
+                            type="file"
+                            accept=".pptx"
+                            className="hidden"
+                            disabled={replacingSlide === c.id}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) void replaceCustomSlide(c.id, f);
+                              e.target.value = "";
+                            }}
+                          />
+                        </label>
+                      </div>
                     </>
                   )}
                 </div>
@@ -1492,6 +1662,17 @@ export default function AboutPage() {
                     >
                       {cleanUsage(g.usage)}
                     </p>
+                    {g.kind !== "verbatim" && (
+                      <button
+                        type="button"
+                        onClick={() => void downloadStandardLayout(g.key)}
+                        disabled={exportingLayout === g.key}
+                        title="Download this slide as an editable PowerPoint file — edit it, then upload it above to save your own version"
+                        className="mt-2 rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                      >
+                        {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
+                      </button>
+                    )}
                   </div>
                 </div>
               );

@@ -29,38 +29,49 @@ export async function GET(req: Request) {
 
   const withBlobs = new URL(req.url).searchParams.get("blobs") === "1";
 
-  const res = await sb
-    .from("custom_slides")
-    .select("id, file_id, slide_index, name, description, mode, preview_b64, created_by, created_at, updated_by, updated_at")
-    .order("sort_order")
-    .order("created_at");
-  if (res.error) return Response.json({ configured: true, migrated: false, slides: [] });
+  try {
+    const res = await sb
+      .from("custom_slides")
+      .select("id, file_id, slide_index, name, description, mode, preview_b64, created_by, created_at, updated_by, updated_at")
+      .order("sort_order")
+      .order("created_at");
+    if (res.error) return Response.json({ configured: true, migrated: false, slides: [] });
 
-  let files: Record<string, string> = {};
-  if (withBlobs && res.data.length) {
-    const active = res.data.filter((s) => s.mode !== "off");
-    const ids = [...new Set(active.map((s) => s.file_id))];
-    if (ids.length) {
-      const f = await sb.from("custom_slide_files").select("id, pptx_b64, storage_path").in("id", ids);
-      if (f.error) return Response.json({ error: f.error.message }, { status: 500 });
-      const entries = await Promise.all(
-        f.data.map(async (r) => {
-          if (r.pptx_b64) return [r.id, r.pptx_b64] as const;
-          if (!r.storage_path) return null;
-          const dl = await sb.storage.from(BUCKET).download(r.storage_path);
-          if (dl.error) {
-            console.warn(`custom-slides: could not download ${r.storage_path}: ${dl.error.message}`);
-            return null;
-          }
-          const b64 = Buffer.from(await dl.data.arrayBuffer()).toString("base64");
-          return [r.id, b64] as const;
-        })
-      );
-      files = Object.fromEntries(entries.filter((e): e is readonly [string, string] => e !== null));
+    let files: Record<string, string> = {};
+    if (withBlobs && res.data.length) {
+      const active = res.data.filter((s) => s.mode !== "off");
+      const ids = [...new Set(active.map((s) => s.file_id))];
+      if (ids.length) {
+        const f = await sb.from("custom_slide_files").select("id, pptx_b64, storage_path").in("id", ids);
+        if (f.error) return Response.json({ error: f.error.message }, { status: 500 });
+        const entries = await Promise.all(
+          f.data.map(async (r) => {
+            try {
+              if (r.pptx_b64) return [r.id, r.pptx_b64] as const;
+              if (!r.storage_path) return null;
+              const dl = await sb.storage.from(BUCKET).download(r.storage_path);
+              if (dl.error) {
+                console.warn(`custom-slides: could not download ${r.storage_path}: ${dl.error.message}`);
+                return null;
+              }
+              const b64 = Buffer.from(await dl.data.arrayBuffer()).toString("base64");
+              return [r.id, b64] as const;
+            } catch (e) {
+              // A single file's blob failing to resolve must never take down the whole list —
+              // generation-settings.ts already skips any slide it can't find a file for.
+              console.warn(`custom-slides: could not resolve blob for file ${r.id}: ${(e as Error).message}`);
+              return null;
+            }
+          })
+        );
+        files = Object.fromEntries(entries.filter((e): e is readonly [string, string] => e !== null));
+      }
     }
-  }
 
-  return Response.json({ configured: true, migrated: true, slides: res.data, files });
+    return Response.json({ configured: true, migrated: true, slides: res.data, files });
+  } catch (e) {
+    return Response.json({ error: "Could not load slides: " + (e as Error).message }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {

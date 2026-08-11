@@ -15,9 +15,13 @@ export async function POST() {
   const sb = supabase();
   if (!sb) return dbNotConfigured();
 
-  const path = `${crypto.randomUUID()}.pptx`;
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUploadUrl(path);
-  if (error) return Response.json({ error: error.message }, { status: 500 });
+  try {
+    const path = `${crypto.randomUUID()}.pptx`;
+    const { data, error } = await sb.storage.from(BUCKET).createSignedUploadUrl(path);
+    if (error) return Response.json({ error: error.message }, { status: 500 });
 
-  return Response.json({ path, token: data.token, signedUrl: data.signedUrl });
+    return Response.json({ path, token: data.token, signedUrl: data.signedUrl });
+  } catch (e) {
+    return Response.json({ error: "Could not prepare the upload: " + (e as Error).message }, { status: 500 });
+  }
 }

@@ -16,6 +16,10 @@ export async function POST(req: Request) {
   const { storage_path } = (await req.json().catch(() => ({}))) as { storage_path?: string };
   if (!storage_path) return Response.json({ ok: true });
 
-  await sb.storage.from(BUCKET).remove([storage_path]);
+  try {
+    await sb.storage.from(BUCKET).remove([storage_path]);
+  } catch {
+    /* best-effort cleanup only — the caller never surfaces this */
+  }
   return Response.json({ ok: true });
 }

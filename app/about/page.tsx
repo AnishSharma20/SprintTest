@@ -2628,40 +2628,32 @@ export default function AboutV2Page() {
               </div>
               )}
 
-              {/* filters */}
+              {/* One row for everything above the grid: the filters (Deleted items among them, since
+                  choosing it is the same kind of choice), then the theme preview and the download on
+                  the right, all on one centre line instead of stacked on a second row. Picking any
+                  filter comes back from the deleted view, so no separate "back" control is needed. */}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {slidesView === "library" &&
-                    (
-                      [
-                        ["all", "All"],
-                        ["on", "In use"],
-                        ["off", `Turned off (${offCount})`],
-                        ["favourites", `Favourites (${preferred.size})`],
-                      ] as const
-                    ).map(([k, label]) => (
-                      <button
-                        key={k}
-                        type="button"
-                        onClick={() => setFilter(k)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                          filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  {slidesView === "deleted" && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {(
+                    [
+                      ["all", "All"],
+                      ["on", "In use"],
+                      ["off", `Turned off (${offCount})`],
+                      ["favourites", `★ Favourites (${preferred.size})`],
+                    ] as const
+                  ).map(([k, label]) => (
                     <button
+                      key={k}
                       type="button"
-                      onClick={() => setSlidesView("library")}
-                      className="rounded-full px-3 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                      onClick={() => {
+                        setSlidesView("library");
+                        setFilter(k);
+                      }}
+                      className={CHIP(slidesView === "library" && filter === k)}
                     >
-                      ← Back to the library
+                      {label}
                     </button>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
+                  ))}
                   <button
                     type="button"
                     disabled={!metaMigrated && customSlides.every((c) => !c.removed)}
@@ -2670,48 +2662,43 @@ export default function AboutV2Page() {
                         ? "Removed slides land here and can be restored"
                         : "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor"
                     }
-                    onClick={() => setSlidesView((v) => (v === "deleted" ? "library" : "deleted"))}
-                    className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                      slidesView === "deleted"
-                        ? "border-[#031B34] bg-[#031B34] text-white"
-                        : "border-[#C2D9E3] bg-white text-[#6E6E73] hover:bg-[#EAF3F7]"
-                    }`}
+                    onClick={() => setSlidesView("deleted")}
+                    className={CHIP(slidesView === "deleted")}
                   >
                     🗑 Deleted items ({deletedSlidesCount})
                   </button>
-                  {slidesView === "library" && galleryThemeDirs > 1 && (
-                    <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
-                      {BRAND_FEATURES[product].colorThemes.map(({ id, label }) => (
-                        <button
-                          key={id}
-                          type="button"
-                          onClick={() => setGalleryTheme(id as "dark" | "light" | "pastel")}
-                          title={`Preview slides in the ${label} color theme`}
-                          className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                            galleryTheme === id ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
+                {slidesView === "library" && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {galleryThemeDirs > 1 && (
+                      <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
+                        {BRAND_FEATURES[product].colorThemes.map(({ id, label }) => (
+                          <button
+                            key={id}
+                            type="button"
+                            onClick={() => setGalleryTheme(id as "dark" | "light" | "pastel")}
+                            title={`Preview slides in the ${label} color theme`}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                              galleryTheme === id ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => void downloadAllStandardLayouts()}
+                      disabled={exportingAll}
+                      title="Download all standard slides as one PowerPoint file to edit several at once"
+                      className="rounded-full border border-[#C2D9E3] bg-white px-3 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                    >
+                      {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
+                    </button>
+                  </div>
+                )}
               </div>
-
-              {slidesView === "library" && (
-              <div className="mt-3 flex items-center justify-end">
-                <button
-                  type="button"
-                  onClick={() => void downloadAllStandardLayouts()}
-                  disabled={exportingAll}
-                  title="Download all 42 standard slides as one PowerPoint file to edit several at once"
-                  className="rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-                >
-                  {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
-                </button>
-              </div>
-              )}
 
               {/* Deleted items: removed slides, restorable (team slides can also be purged) */}
               {slidesView === "deleted" && (
@@ -3279,39 +3266,29 @@ export default function AboutV2Page() {
               </div>
               )}
 
-              {/* filters */}
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {photosView === "library" &&
-                    (
-                      [
-                        ["all", "All"],
-                        ["on", "In use"],
-                        ["off", `Turned off (${photoOffCount})`],
-                        ["favourites", `Favourites (${photoFavCount})`],
-                      ] as const
-                    ).map(([k, label]) => (
-                      <button
-                        key={k}
-                        type="button"
-                        onClick={() => setPhotoFilter(k)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                          photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  {photosView === "deleted" && (
-                    <button
-                      type="button"
-                      onClick={() => setPhotosView("library")}
-                      className="rounded-full px-3 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                    >
-                      ← Back to the library
-                    </button>
-                  )}
-                </div>
+              {/* Same row, same chips as the Slide library — the two libraries are deliberately the
+                  same thing twice, so Deleted items sits with the filters here too. */}
+              <div className="mt-4 flex flex-wrap items-center gap-1.5">
+                {(
+                  [
+                    ["all", "All"],
+                    ["on", "In use"],
+                    ["off", `Turned off (${photoOffCount})`],
+                    ["favourites", `★ Favourites (${photoFavCount})`],
+                  ] as const
+                ).map(([k, label]) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => {
+                      setPhotosView("library");
+                      setPhotoFilter(k);
+                    }}
+                    className={CHIP(photosView === "library" && photoFilter === k)}
+                  >
+                    {label}
+                  </button>
+                ))}
                 <button
                   type="button"
                   disabled={!photoMetaMigrated && customPhotos.every((p) => !p.removed)}
@@ -3320,12 +3297,8 @@ export default function AboutV2Page() {
                       ? "Removed photos land here and can be restored"
                       : "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor"
                   }
-                  onClick={() => setPhotosView((v) => (v === "deleted" ? "library" : "deleted"))}
-                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                    photosView === "deleted"
-                      ? "border-[#031B34] bg-[#031B34] text-white"
-                      : "border-[#C2D9E3] bg-white text-[#6E6E73] hover:bg-[#EAF3F7]"
-                  }`}
+                  onClick={() => setPhotosView("deleted")}
+                  className={CHIP(photosView === "deleted")}
                 >
                   🗑 Deleted items ({deletedPhotosCount})
                 </button>

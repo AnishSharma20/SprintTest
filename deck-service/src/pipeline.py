@@ -13,6 +13,7 @@ import sys
 import anthropic
 
 from . import brand as _brand
+from . import config
 from . import planner, qa_gate, qa_geometry, renderer, rules_gate, validate
 
 # Reader-facing text fields in a plan (the no-dash brand rule applies to these). Enum/id fields
@@ -193,6 +194,43 @@ def _ensure_title(plan: dict, required: set[str] | None = None) -> dict:
     cover = {"layout": "title", "title": _cap(deck_title, 60),
              "speaker_notes": f"Welcome. {deck_title}."}
     return {**plan, "slides": [cover] + slides}
+
+
+def _sanitize_icons(plan: dict, brand: str | None = None) -> dict:
+    """Drop icon names this brand has no icon for, in place.
+
+    A brand's benefit-icon set is whatever its pack actually stages, so the schema enum can be as
+    small as ["none"] — and then ONE invented icon name fails the whole plan and, after a retry,
+    costs the user their deck. The prompt already withholds the benefit vocabulary from a brand
+    with no benefit icons, but the model can still reach for a name it has seen elsewhere, and a
+    decorative icon is never worth a lost deck.
+
+    Dropped rather than remapped: guessing which generic keyword the model meant would put an icon
+    whose meaning differs from the words next to them, which is the one thing the icon rules exist
+    to prevent. The renderer's all-or-nothing rule then quietly clears the rest of that slide.
+    """
+    try:
+        allowed = set(config.manifest(brand)["benefits"]) | {"none"}
+        generic_ok = set(config.manifest(brand).get("generic_icons", [])) | {"none"}
+    except Exception:  # noqa: BLE001 — never fail a deck over the icon net itself
+        return plan
+    dropped = []
+    for i, slide in enumerate(plan.get("slides") or []):
+        if not isinstance(slide, dict):
+            continue
+        if slide.get("benefit") and slide["benefit"] not in allowed:
+            dropped.append(f"slide {i + 1} benefit={slide.pop('benefit')!r}")
+        for item in slide.get("items") or []:
+            if not isinstance(item, dict):
+                continue
+            if item.get("icon") and item["icon"] not in allowed:
+                dropped.append(f"slide {i + 1} icon={item.pop('icon')!r}")
+            if item.get("icon_generic") and item["icon_generic"] not in generic_ok:
+                dropped.append(f"slide {i + 1} icon_generic={item.pop('icon_generic')!r}")
+    if dropped:
+        print(f"[icons] dropped {len(dropped)} icon name(s) this brand has no icon for: "
+              + ", ".join(dropped[:6]) + (" ..." if len(dropped) > 6 else ""))
+    return plan
 
 
 def _ensure_agenda(plan: dict, required: set[str] | None = None) -> dict:
@@ -575,6 +613,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
+    plan = _sanitize_icons(plan, brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
                                     layout_overrides=slot_layouts, brand=brand)
@@ -588,6 +627,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                    layout_overrides=layout_overrides, required_slides=required,
                                    managed_blocks=managed_blocks, brand=brand)
+        plan = _sanitize_icons(plan, brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts, brand=brand)

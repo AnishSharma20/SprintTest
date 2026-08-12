@@ -631,8 +631,21 @@ via `icon_generic`. Add icons ONLY when a slide clearly benefits (e.g. a benefit
 item IS a distinct health benefit) — never by default. The renderer's rules still apply: one source per
 slide, all columns or none, exact topic match (no heart icon on a liver point). When in doubt, leave
 icons off; a clean text slide is the preferred look here."""
+    elif not benefits:
+        # This brand has no branded benefit-icon set (only the generic line-art library), so the
+        # benefit vocabulary is withheld entirely rather than listed as empty.
+        icons_block = f"""ICONS — clean brand line-art. This brand has NO branded benefit-icon set, so there is exactly ONE
+source available and every icon must come from it.
+- NEVER set a column's `icon` or a slide's top-level `benefit`. Those name branded health-benefit icons
+  that do not exist for this brand; anything you put there is invalid.
+- ALWAYS use `icon_generic` instead, set to the closest keyword from: {generic}
+- The renderer's rules still apply: all items on a slide get an icon or none do, and the keyword must
+  match the item's actual topic (no `heart` on a sourcing point).
+RULES (column layouts):
+- ADD `icon_generic` BY DEFAULT to two/three/four_columns, key_points and icon_grid: these layouts look
+  empty without one per item. Choose the keyword that fits each item's meaning."""
     else:
-        icons_block = f"""ICONS — clean brand-red line-art from TWO sources; a slide uses ONLY ONE source. Every rule below is ENFORCED
+        icons_block = f"""ICONS — clean brand line-art from TWO sources; a slide uses ONLY ONE source. Every rule below is ENFORCED
 by the renderer, so follow them exactly or the icons are silently dropped.
 (A) BRANDED BENEFIT ICONS — one per HEALTH BENEFIT ({benefits}). Set a column's `icon`, or a slide's top-level
     `benefit`, to the benefit it depicts. MATCH THE TOPIC EXACTLY: heart→heart, liver→liver,

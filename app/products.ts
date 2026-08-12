@@ -16,19 +16,24 @@ export type ProductId = "superba" | "revervia" | "lysoveta" | "pl_plus";
  *  whose plus sign overshoots the banner top and bottom. One shared height would therefore render
  *  the text at visibly different sizes. Each value below is measured so all four show lettering
  *  about 11px tall, which is what the eye actually compares. Re-run the script after replacing a
- *  file; it prints the value to use. */
+ *  file; it prints the value to use.
+ *
+ *  logoNudge: vertical correction in px, because centring a mark's ink does NOT centre its
+ *  lettering. Revervia's droplet rises far above its wordmark, so centring the artwork left its
+ *  text sitting ~3px below the other three across a row of tiles. The script measures this too. */
 export type Product = {
   id: ProductId;
   label: string;
   hint: string;
   logo?: string;
   logoH?: number;
+  logoNudge?: number;
   available: boolean;
 };
 
 export const PRODUCTS: Product[] = [
   { id: "superba", label: "Superba", hint: "", logo: "/logos/superba.png", logoH: 15, available: true },
-  { id: "revervia", label: "Revervia", hint: "", logo: "/logos/revervia.svg", logoH: 22, available: false },
+  { id: "revervia", label: "Revervia", hint: "", logo: "/logos/revervia.svg", logoH: 22, logoNudge: -3, available: false },
   { id: "lysoveta", label: "Lysoveta", hint: "", logo: "/logos/lysoveta.svg", logoH: 18, available: false },
   { id: "pl_plus", label: "PL+", hint: "", logo: "/logos/pl-plus.svg", logoH: 32, available: false },
 ];

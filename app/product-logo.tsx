@@ -15,18 +15,27 @@
 // inside a content-sized flex parent then resolves circularly and the image collapses to zero
 // width. An explicit height gives the browser the one number it needs to derive the rest from the
 // aspect ratio. max-w-full stays as the guard for the widest marks in a narrow tile.
+//
+// `logoNudge` then corrects the vertical position, because centring a mark's ink is not the same as
+// centring its lettering: a mark whose icon rises above its wordmark (Revervia) ends up with its
+// text low relative to the others. The nudge is a transform rather than a margin so it shifts the
+// mark optically without changing the row's layout.
 
 import type { Product } from "./products";
 
 export function ProductLogo({ product }: { product: Product }) {
   if (!product.logo) return null;
+  const nudge = product.logoNudge ?? 0;
   return (
     <div className="flex h-9 items-center justify-center">
       {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
       <img
         src={product.logo}
         alt={product.label}
-        style={{ height: product.logoH ?? 22 }}
+        style={{
+          height: product.logoH ?? 22,
+          ...(nudge ? { transform: `translateY(${nudge}px)` } : {}),
+        }}
         className="max-w-full object-contain"
       />
     </div>

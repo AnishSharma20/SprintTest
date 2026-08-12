@@ -72,17 +72,24 @@ def _ink_bbox(im: Image.Image) -> tuple[int, int, int, int]:
     return bbox
 
 
-def _lettering_fraction(im: Image.Image, name: str) -> float:
+def _lettering(im: Image.Image, name: str) -> tuple[float, float]:
+    """Returns (height of the lettering / height of the mark, centre of the lettering / height).
+
+    The second number is why `logoNudge` exists. Centring a mark's ink does NOT centre its text
+    when the mark is vertically lopsided — Revervia's droplet rises far above its wordmark, so its
+    text lands below everyone else's on a row of tiles. Anything away from 0.5 needs nudging."""
     (x0f, x1f), pred = LETTERING[name]
     W, H = im.size
     px = im.load()
     x0, x1 = int(W * x0f), int(W * x1f)
     step = max(1, (x1 - x0) // 300)
     ys = [y for y in range(H) if any(pred(px[x, y]) for x in range(x0, x1, step))]
-    return ((max(ys) - min(ys) + 1) / H) if ys else 1.0
+    if not ys:
+        return 1.0, 0.5
+    return (max(ys) - min(ys) + 1) / H, (min(ys) + max(ys)) / 2 / H
 
 
-def process(name: str, write: bool) -> tuple[float, float]:
+def process(name: str, write: bool) -> tuple[float, float, float]:
     path = LOGOS / name
     if name.endswith(".png"):
         im = Image.open(path).convert("RGBA")
@@ -109,20 +116,24 @@ def process(name: str, write: bool) -> tuple[float, float]:
             path.write_text(new, encoding="utf-8")
         measured = _render(_inline_classes(new), RENDER_W / nvw)
     ratio = measured.width / measured.height
-    return ratio, _lettering_fraction(measured, name)
+    frac, mid = _lettering(measured, name)
+    return ratio, frac, mid
 
 
 def main() -> None:
     write = "--write" in sys.argv
     if not LOGOS.is_dir():
         raise SystemExit("run me from the repo root (public/logos not found)")
-    print(f"{'mark':15s} {'ratio':>6s} {'lettering':>10s}   logoH for 11px of lettering")
+    print(f"{'mark':15s} {'ratio':>6s} {'lettering':>10s} {'logoH':>7s} {'width':>7s} {'logoNudge':>10s}")
     for name in LETTERING:
         if not (LOGOS / name).exists():
             print(f"{name:15s} (missing, skipped)")
             continue
-        ratio, frac = process(name, write)
-        print(f"{name:15s} {ratio:6.2f} {frac*100:9.1f}% {11.0/frac:8.0f}px  -> w {11.0/frac*ratio:.0f}px")
+        ratio, frac, mid = process(name, write)
+        h = 11.0 / frac                      # height that shows ~11px of lettering
+        nudge = -(mid - 0.5) * h             # shift that puts the LETTERING on the box centre
+        print(f"{name:15s} {ratio:6.2f} {frac*100:9.1f}% {h:6.0f}px {h*ratio:6.0f}px "
+              f"{round(nudge):+9d}px")
     print("\nwrote files" if write else "\nreport only; pass --write to rewrite")
 
 

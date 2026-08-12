@@ -8,8 +8,9 @@ import { useCallback, useEffect, useState } from "react";
 import type { Claim, Category } from "../lib/claims-types";
 import type { Studie } from "../studies";
 import { applyStudyMeta, loadStudyMeta } from "../study-meta";
-import { useCurrentUser } from "../lib/use-current-user";
 import FindingsV2 from "./findings-v2";
+
+const REVIEWER_KEY = "claimsReviewerName:v1";
 
 export type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
 export type LibClaim = Claim & {
@@ -30,7 +31,7 @@ export default function FindingsV2Page() {
   const [links, setLinks] = useState<Link[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [studies, setStudies] = useState<Studie[]>([]);
-  const { name: reviewer } = useCurrentUser();
+  const [reviewer, setReviewer] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -55,7 +56,17 @@ export default function FindingsV2Page() {
 
   useEffect(() => {
     void load();
+    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
   }, [load]);
+
+  const onReviewerChange = (v: string) => {
+    setReviewer(v);
+    try {
+      window.localStorage.setItem(REVIEWER_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  };
 
   if (!configured) {
     return (
@@ -81,6 +92,7 @@ export default function FindingsV2Page() {
       categories={categories}
       studies={studies}
       reviewer={reviewer}
+      onReviewerChange={onReviewerChange}
       onChanged={load}
     />
   );

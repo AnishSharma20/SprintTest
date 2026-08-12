@@ -61,7 +61,7 @@ export async function PUT(req: Request) {
 
     if (!pmid) return Response.json({ error: "pmid is required." }, { status: 400 });
     if (!reviewer)
-      return Response.json({ error: "Could not identify your signed in account. Try signing in again." }, { status: 400 });
+      return Response.json({ error: "Add your name in the Reviewer field before setting a quality score." }, { status: 400 });
     if (!Number.isFinite(score) || score < 0 || score > 100)
       return Response.json({ error: "The score must be a number between 0 and 100." }, { status: 400 });
     if (!LABELS.includes(label))
@@ -115,7 +115,7 @@ export async function DELETE(req: Request) {
   const reviewer = (searchParams.get("reviewer") ?? "").trim();
   if (!pmid) return Response.json({ error: "pmid is required." }, { status: 400 });
   if (!reviewer)
-    return Response.json({ error: "Could not identify your signed in account. Try signing in again." }, { status: 400 });
+    return Response.json({ error: "Add your name in the Reviewer field before clearing a score." }, { status: 400 });
 
   const del = await sb.from("study_quality").delete().eq("pmid", pmid);
   if (del.error) return Response.json({ error: del.error.message }, { status: 500 });

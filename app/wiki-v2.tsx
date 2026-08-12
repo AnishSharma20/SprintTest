@@ -42,8 +42,8 @@ import {
 import { benefitIcon } from "./v2/benefit-icons";
 import AddFindingModal from "./add-finding-modal";
 import AddStudyModal from "./add-study-modal";
-import { useCurrentUser } from "./lib/use-current-user";
 
+const REVIEWER_KEY = "claimsReviewerName:v1";
 const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
 
 /** The real paper's PDF when AKBM supplied it, else its DOI page, else its PubMed record. */
@@ -136,7 +136,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   };
   const [showRemoved, setShowRemoved] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
-  const { name: reviewer } = useCurrentUser();
+  const [reviewer, setReviewer] = useState("");
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
   const [administrerer, setAdministrerer] = useState(false);
   const [addingStudy, setAddingStudy] = useState(false);
@@ -159,11 +159,21 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   );
 
   useEffect(() => {
+    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
     // Deep link: /?pmid=... opens that study's reading panel directly
     // (the Findings Library evidence chain links here).
     const pmid = new URLSearchParams(window.location.search).get("pmid");
     if (pmid) setValgtPmid(pmid);
   }, []);
+  const onReviewerChange = (v: string) => {
+    setReviewer(v);
+    try {
+      window.localStorage.setItem(REVIEWER_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  };
+
   useEffect(() => {
     let alive = true;
     loadOverrides().then((o) => {
@@ -344,7 +354,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           </SideCheck>
         </SideSection>
       )}
-      <SideReviewer value={reviewer} hint="Recorded on approvals and quality scores." />
+      <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
     </div>
   );
 

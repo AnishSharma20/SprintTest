@@ -652,31 +652,21 @@ is pre-filled + reviewed in a dedicated surface.
 - Adopt template2; add NEW MBB *layouts* (2×2, funnel, pillars…) — needs OOXML layout-cloning (no python-pptx
   add-layout API). Speed/parallelism.
 
-**Client demo access gate — NEW 2026-08-04; REPLACED WITH MICROSOFT SIGN IN 2026-08-12.** `proxy.ts`
-(Next 16 renamed Middleware to **Proxy**, so the file is `proxy.ts`, NOT `middleware.ts`) gates the
-whole site. It runs in the proxy on purpose: a React only gate would leave **`/api/*` open, and those
-cost money** (every generation is an Anthropic call). API requests get 401, browsers get redirected to
-`/login`. **Fails OPEN when `AZURE_CLIENT_ID` is unset** so a deploy cannot lock the team out; the gate
-switches on the moment the var exists.
-The original gate (single shared username + password, `app/lib/access.ts`) was replaced 2026-08-12 with
-**"Sign in with Microsoft"**, accepting ANY Microsoft account (work, school or personal) — a deliberate
-client decision to capture a verified reviewer identity, not to tighten access; anyone with a Microsoft
-account can reach the tool now, same cost exposure as the old gate had for anyone who found the URL.
-Implemented by hand (OAuth 2.0 auth code flow against the `common` tenant), not NextAuth/Auth.js — Next
-16 is too new for third-party auth library support to be trusted yet, and the codebase already hand
-rolls its API routes. `app/lib/session.ts` (session + signed OAuth `state`, via `jose`) +
-`app/api/auth/{login,callback,logout,me}` (replacing the old `/api/login`+`/api/logout`). The session
-cookie holds `{name, email}` from the Microsoft `id_token`, httpOnly, Secure in production, 30 days.
-**Reviewer name is no longer free text.** Every "Reviewer" field (`app/v2/ui.tsx` `SideReviewer`,
-`app/PageHero.tsx` `ReviewerField`) that used to read/write a `claimsReviewerName:v1` localStorage key
-is now a read only display of `app/lib/use-current-user.ts`'s `useCurrentUser()` hook (calls
-`/api/auth/me`) — study quality ratings, claim approvals/rejections and rule/layout/photo changes are
-attributed to the signed in Microsoft identity, not a typed name. Requires an Azure Portal app
-registration (any Microsoft account can create one; account type "Accounts in any organizational
-directory and personal Microsoft accounts", NOT scoped to AKBM's own tenant) — `AZURE_CLIENT_ID`,
-`AZURE_CLIENT_SECRET`, `AUTH_SECRET` (session/state signing key, `openssl rand -base64 32`). **Known
-limitation:** Vercel preview deployments get a fresh URL per PR that can't be pre-registered as a
-redirect URI, so sign in only works on `localhost` and the production domain.
+**Client demo access gate — NEW 2026-08-04.** `proxy.ts` (Next 16 renamed Middleware to **Proxy**, so the
+file is `proxy.ts`, NOT `middleware.ts`) gates the whole site behind one shared username + password, with
+`/login` + `/api/login` + `/api/logout` and a Sign out in `TopNav`. It runs in the proxy on purpose: a React
+only gate would leave **`/api/*` open, and those cost money** (every generation is an Anthropic call). API
+requests get 401, browsers get redirected to `/login`. The cookie is a SHA-256 digest of the password
+(never the password), httpOnly, Secure in production, 30 days. **Fails OPEN when `APP_PASSWORD` is unset**
+so a deploy cannot lock the team out; the gate switches on the moment the var exists. Shared helpers live in
+`app/lib/access.ts` — importing the special `proxy.ts` from a route handler makes that route silently 404.
+Not per-user auth; fine for a client preview, not for production multi-user.
+> A "Sign in with Microsoft" (any account) replacement was built and briefly shipped 2026-08-12, then
+> reverted the same day at the client's request back to this password gate — the OAuth code isn't in the
+> codebase; if revisited, an Azure Portal app registration (any Microsoft account, not AKBM's tenant) is
+> the prerequisite step. `app/lib/use-current-user.ts`'s `useCurrentUser()` hook survived the revert (kept
+> as a thin `claimsReviewerName:v1`-localStorage reader) because newer code (`add-study-modal.tsx`,
+> `add-finding-modal.tsx`) had already started depending on it.
 
 > **Vercel env var gotcha (cost 20 minutes once).** A new environment variable only reaches
 > deployments created AFTER it is saved; saving it never touches the running deployment. Trigger a
@@ -689,9 +679,8 @@ redirect URI, so sign in only works on `localhost` and the production domain.
 
 **Env vars.** `ANTHROPIC_API_KEY` in `min-forste-app/.env.local` (server-side only); `DECK_SERVICE_URL` +
 `DECK_SERVICE_TOKEN` (Vercel→Render); `DECK_MODEL` (default `claude-sonnet-5`), `DECK_GATE_MODEL`,
-`DECK_QA_ROUNDS`, `DECK_TEMPLATE`. **Sign in with Microsoft:** `AZURE_CLIENT_ID` (required to switch the
-gate on), `AZURE_CLIENT_SECRET`, `AUTH_SECRET` (session/state signing key) — set all three in Vercel AND
-`.env.local`.
+`DECK_QA_ROUNDS`, `DECK_TEMPLATE`. **Access gate:** `APP_PASSWORD` (required to switch the gate on) and
+`APP_USER` (defaults to `superba`) — set both in Vercel AND `.env.local`.
 
 **Windows dev notes.** Use `python` (NOT `python3`). Render `.pptx`→PNG via **PowerPoint COM through
 PowerShell** (LibreOffice is absent locally, present on Render). Bash tool = git-bash; run the service with

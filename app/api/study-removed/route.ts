@@ -37,7 +37,7 @@ export async function PUT(req: Request) {
 
     if (!pmid) return Response.json({ error: "pmid is required." }, { status: 400 });
     if (!reviewer)
-      return Response.json({ error: "Could not identify your signed in account. Try signing in again." }, { status: 400 });
+      return Response.json({ error: "Add your name in the Reviewer field before removing a study." }, { status: 400 });
 
     const up = await sb
       .from("study_removed")

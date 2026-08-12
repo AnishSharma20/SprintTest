@@ -20,7 +20,7 @@ export default function TopNav() {
   if (pathname === "/login") return null;
 
   async function signOut() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/logout", { method: "POST" });
     window.location.href = "/login";
   }
 

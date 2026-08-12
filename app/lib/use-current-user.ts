@@ -2,29 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * The signed-in Microsoft identity, used as the "Reviewer" name recorded on approvals, quality
- * scores and rule changes. Replaces the old free-text localStorage field: the name is only ever
- * what Microsoft gave us at sign in, not something typed in.
- */
+const REVIEWER_KEY = "claimsReviewerName:v1";
+
+/** The reviewer name typed into the sidebar's Reviewer field (shared via localStorage, same key
+ * every page uses) — a lightweight read-only view for call sites that only need the name. */
 export function useCurrentUser(): { name: string; email: string; loading: boolean } {
-  const [user, setUser] = useState({ name: "", email: "" });
-  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/auth/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!cancelled && data) setUser({ name: data.name, email: data.email });
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    setName(window.localStorage.getItem(REVIEWER_KEY) || "");
   }, []);
 
-  return { ...user, loading };
+  return { name, email: "", loading: false };
 }

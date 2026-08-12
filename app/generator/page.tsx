@@ -17,7 +17,8 @@ import {
 } from "../claims-source";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
 import { PRODUCTS, type ProductId } from "../products";
-import { useCurrentUser } from "../lib/use-current-user";
+
+const REVIEWER_KEY = "claimsReviewerName:v1";
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 
@@ -166,7 +167,6 @@ type Kjoring = {
 };
 
 export default function ContentGenerator() {
-  const { name: reviewerName } = useCurrentUser();
   const [wizardStep, setWizardStep] = useState(1);
 
   const [produkt, setProdukt] = useState<ProductId>("superba");
@@ -442,7 +442,8 @@ export default function ContentGenerator() {
       }
 
       if (claimIds.length && (type === "deck" || type === "blog" || type === "whitepaper_mix")) {
-        void recordAssetClaims(type, claimIds, { title: `${type} · ${new Date().toISOString().slice(0, 10)}`, createdBy: reviewerName || undefined });
+        const reviewer = typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
+        void recordAssetClaims(type, claimIds, { title: `${type} · ${new Date().toISOString().slice(0, 10)}`, createdBy: reviewer });
       }
     } catch (e) {
       oppdaterKjoring(type, { status: "error", step: "Failed", error: (e as Error).message });

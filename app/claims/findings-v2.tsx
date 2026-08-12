@@ -104,6 +104,7 @@ export default function FindingsV2({
   categories,
   studies,
   reviewer,
+  onReviewerChange,
   onChanged,
 }: {
   claims: LibClaim[];
@@ -111,6 +112,7 @@ export default function FindingsV2({
   categories: Category[];
   studies: Studie[];
   reviewer: string;
+  onReviewerChange: (v: string) => void;
   onChanged: () => Promise<void>;
 }) {
   const [q, setQ] = useState("");
@@ -235,7 +237,7 @@ export default function FindingsV2({
           Manage categories
         </button>
       </SideSection>
-      <SideReviewer value={reviewer} hint="Recorded on approvals, rejections and comments." />
+      <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals, rejections and comments." />
     </div>
   );
 

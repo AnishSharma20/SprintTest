@@ -6,10 +6,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ReviewerField } from "../PageHero";
-import { useCurrentUser } from "../lib/use-current-user";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
 import { PRODUCTS, type ProductId } from "../products";
+
+const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
 type Rule = {
   id: number;
@@ -140,7 +141,7 @@ function cleanUsage(s: string): string {
 }
 
 export default function AboutV2Page() {
-  const { name: reviewer } = useCurrentUser();
+  const [reviewer, setReviewer] = useState("");
   const [product, setProduct] = useState<ProductId>("superba");
   const selectedProduct = PRODUCTS.find((p) => p.id === product) ?? PRODUCTS[0];
   const [activeTab, setActiveTab] = useState<TabKey>("rules");
@@ -304,7 +305,17 @@ export default function AboutV2Page() {
 
   useEffect(() => {
     void load();
+    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
   }, [load]);
+
+  const onReviewerChange = (v: string) => {
+    setReviewer(v);
+    try {
+      window.localStorage.setItem(REVIEWER_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const canEdit = rulesConfigured && rulesMigrated;
 
@@ -967,6 +978,33 @@ export default function AboutV2Page() {
     }
   }
 
+  /** Parse a response that SHOULD be JSON but may be an infrastructure error page (e.g.
+   * Vercel's plain-text timeout) — turn that into a readable error instead of the browser's
+   * cryptic "Unexpected token ... is not valid JSON". */
+  async function safeJson(res: Response): Promise<Record<string, unknown>> {
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { error: text.slice(0, 160) || `The server responded ${res.status} with no detail.` };
+    }
+  }
+
+  /** Preview rendering runs as a deck-service JOB (a many-slide file takes minutes — longer
+   * than any single request may last); poll until the previews are ready. */
+  async function pollInspect(jobId: string): Promise<{ index: number; preview_b64: string }[]> {
+    const deadline = Date.now() + 15 * 60 * 1000; // a 42-slide render on the small server is slow
+    for (;;) {
+      if (Date.now() > deadline) throw new Error("Preview rendering timed out — try a smaller file.");
+      await new Promise((r) => setTimeout(r, 3000));
+      const res = await fetch(`/api/custom-slides/inspect?job=${encodeURIComponent(jobId)}`);
+      const d = await safeJson(res);
+      if (!res.ok) throw new Error((d.error as string) || "Could not check the preview rendering.");
+      if (d.status === "error") throw new Error((d.error as string) || "Preview rendering failed.");
+      if (d.status === "done") return (d.slides as { index: number; preview_b64: string }[]) ?? [];
+    }
+  }
+
   async function inspectUpload(file: File) {
     setUploadError("");
     setUploadBusy(true);
@@ -990,16 +1028,19 @@ export default function AboutV2Page() {
 
       // Rasterise via the app's own route: it downloads the file from Storage server-to-server
       // and forwards it to the deck service server-to-server — this request's own body is just
-      // a path string, so it's tiny regardless of how big the actual .pptx is.
+      // a path string, so it's tiny regardless of how big the actual .pptx is. The rendering
+      // itself runs as a background JOB we poll: a many-slide file (the full 42-slide template
+      // export) renders for minutes, longer than any single request is allowed to last.
       const res = await fetch("/api/custom-slides/inspect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: uploadUrl.path, filename: file.name }),
       });
-      const d = await res.json();
-      if (!res.ok) throw new Error(d.error || "Could not read the presentation.");
+      const d = await safeJson(res);
+      if (!res.ok) throw new Error((d.error as string) || "Could not read the presentation.");
+      const slides = await pollInspect(d.job_id as string);
       setPicks(
-        (d.slides ?? []).map((s: { index: number; preview_b64: string }) => ({
+        slides.map((s) => ({
           index: s.index,
           preview_b64: s.preview_b64,
           picked: false,
@@ -1167,9 +1208,10 @@ export default function AboutV2Page() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: storagePath, filename: file.name }),
       });
-      const inspected = await inspectRes.json();
-      if (!inspectRes.ok) throw new Error(inspected.error || "Could not read the presentation.");
-      const preview_b64: string | null = inspected.slides?.[0]?.preview_b64 ?? null;
+      const inspected = await safeJson(inspectRes);
+      if (!inspectRes.ok) throw new Error((inspected.error as string) || "Could not read the presentation.");
+      const slides = await pollInspect(inspected.job_id as string);
+      const preview_b64: string | null = slides[0]?.preview_b64 ?? null;
 
       const res = await fetch(`/api/custom-slides/${id}/replace`, {
         method: "POST",
@@ -1293,7 +1335,7 @@ export default function AboutV2Page() {
             <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#0A7A8A]">About V2</div>
             <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[#1D1D1F]">Generation settings</h1>
           </div>
-          <ReviewerField value={reviewer} />
+          <ReviewerField value={reviewer} onChange={onReviewerChange} placeholder="Your name (recorded on changes)" />
         </div>
 
         {/* ----- brand — same picker as /about ----- */}

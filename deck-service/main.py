@@ -1005,9 +1005,11 @@ async def slides_inspect_slots(
                 {"feil": "No editable text found on this slide — the AI would have nothing to "
                          "write into."}, status_code=400)
         if len(slots) > MAX_SLOTS:
+            over = len(slots) - MAX_SLOTS
             return JSONResponse(
                 {"feil": f"This slide has {len(slots)} text areas — the limit is {MAX_SLOTS}. "
-                         f"Simplify the design and try again."}, status_code=400)
+                         f"Merge {over} of them (a label and the text under it can share one box) "
+                         f"and try again."}, status_code=400)
 
         preview_b64 = None
         try:

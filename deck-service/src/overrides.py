@@ -20,9 +20,15 @@ from pptx.oxml.ns import qn
 # slot plans would fight the nets. Enforced at inspect time, parse time and sanitize time.
 OVERRIDE_EXCLUDED = {"title", "agenda", "exec_summary", "ingredient"}
 
-# Guard against prompt/schema bloat: each slot adds a described property to the tool schema and
-# a guide line to the system prompt.
-MAX_SLOTS = 24
+# Guard against prompt/schema bloat: each slot adds a described property to the tool schema, a
+# guide line to the system prompt, and one more REQUIRED field the model has to fill on that slide.
+# Raised from 24 to 32 on 2026-08-12: a real team slide (a five row trend table) came to 25 boxes
+# and was refused by one, which is a silly place to stop. 32 keeps the guard meaningful while
+# clearing the dense tables people actually build. The cost of a slot is small (roughly a line of
+# prompt and one schema property, and the text it writes is text the deck needed anyway), so the
+# real reason not to remove the cap is that every slot is required: the more there are, the more
+# likely the model misses one and lands in the repair pass.
+MAX_SLOTS = 32
 
 _EMU_PER_IN = 914400
 

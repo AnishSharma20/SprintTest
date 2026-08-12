@@ -62,15 +62,15 @@ export async function POST(req: Request) {
       created_by?: string;
     };
 
-    const reviewer = (created_by ?? "").trim();
+    // Unlike findings/quality (scientific judgements that must be attributable), adding a study
+    // is not traced to a person — no sign in is required for this flow.
+    const reviewer = (created_by ?? "").trim() || "Unattributed";
     const cleanTitle = (title ?? "").trim();
     const cleanAuthors = (authors ?? "").trim();
     const cleanYear = year ? parseInt(String(year), 10) || null : null;
     const cleanPmid = (pmid ?? "").trim() || null;
     const path = (storage_path ?? "").trim();
 
-    if (!reviewer)
-      return Response.json({ error: "Could not identify your signed in account. Try signing in again." }, { status: 400 });
     if (!cleanTitle) return Response.json({ error: "Title is required." }, { status: 400 });
     if (!cleanAuthors) return Response.json({ error: "Authors are required." }, { status: 400 });
     if (!cleanYear) return Response.json({ error: "Year is required." }, { status: 400 });

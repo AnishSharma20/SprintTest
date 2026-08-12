@@ -11,8 +11,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import type { Category, ClaimSentiment } from "./lib/claims-types";
 import type { OutcomeDirection } from "./studies-data";
-import { OUTCOME_LABEL } from "./study-meta";
-import { useCurrentUser } from "./lib/use-current-user";
+import { OUTCOME_LABEL, suggestLabel } from "./study-meta";
 import { benefitIcon } from "./v2/benefit-icons";
 
 type Step = "upload" | "extracting" | "details";
@@ -38,7 +37,6 @@ export default function AddStudyModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const { name: reviewer } = useCurrentUser();
   const [step, setStep] = useState<Step>("upload");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -53,13 +51,10 @@ export default function AddStudyModal({
   const [authorsAuto, setAuthorsAuto] = useState(false);
   const [year, setYear] = useState("");
   const [yearAuto, setYearAuto] = useState(false);
-  const [journal, setJournal] = useState("");
-  const [pmid, setPmid] = useState("");
-  const [doi, setDoi] = useState("");
   const [abstract, setAbstract] = useState("");
   const [abstractVerified, setAbstractVerified] = useState(false);
   const [qualityScore, setQualityScore] = useState("");
-  const [qualityLabel, setQualityLabel] = useState<"High" | "Moderate" | "Low" | "">("");
+  const qualityLabel = qualityScore.trim() ? suggestLabel(Number(qualityScore)) : "";
   const [outcomeDirection, setOutcomeDirection] = useState<OutcomeDirection | "">("");
   const [categoryIds, setCategoryIds] = useState<Set<string>>(new Set());
   const [findings, setFindings] = useState<FindingDraft[]>([newFinding()]);
@@ -155,12 +150,9 @@ export default function AddStudyModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          pmid: pmid.trim() || null,
-          doi: doi.trim() || null,
           title: title.trim(),
           authors: authors.trim(),
           year: year.trim(),
-          journal: journal.trim() || null,
           storage_path: storagePath,
           pdf_filename: pdfFilename,
           full_text: fullText || null,
@@ -169,7 +161,6 @@ export default function AddStudyModal({
           quality_label: qualityLabel || null,
           outcome_direction: outcomeDirection || null,
           category_ids: [...categoryIds],
-          created_by: reviewer,
         }),
       });
       const data = await res.json();
@@ -183,8 +174,8 @@ export default function AddStudyModal({
         title: data.study.title,
         authors: data.study.authors,
         year: data.study.year,
-        journal: data.study.journal,
-        doi: data.study.doi,
+        journal: null as string | null,
+        doi: null as string | null,
       };
       const toCreate = findings.filter((f) => f.text.trim());
       const results = await Promise.all(
@@ -198,7 +189,6 @@ export default function AddStudyModal({
               category_id: f.categoryId,
               text: f.text.trim(),
               sentiment: f.sentiment,
-              created_by: reviewer,
               study: studyRef,
             }),
           }).then((r) => r.ok)
@@ -272,8 +262,8 @@ export default function AddStudyModal({
                 {pdfFilename} · {charsExtracted.toLocaleString()} characters extracted.
               </p>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="text-[11.5px] font-semibold text-[#6E6E73]">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <label className="text-[11.5px] font-semibold text-[#6E6E73] sm:col-span-1">
                   Title
                   <input
                     value={title}
@@ -301,31 +291,6 @@ export default function AddStudyModal({
                       setYear(e.target.value);
                       setYearAuto(false);
                     }}
-                    className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
-                  />
-                </label>
-                <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  Journal, optional
-                  <input
-                    value={journal}
-                    onChange={(e) => setJournal(e.target.value)}
-                    className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
-                  />
-                </label>
-                <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  PMID, optional
-                  <input
-                    value={pmid}
-                    onChange={(e) => setPmid(e.target.value)}
-                    placeholder="Leave blank if none"
-                    className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-                  />
-                </label>
-                <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  DOI, optional
-                  <input
-                    value={doi}
-                    onChange={(e) => setDoi(e.target.value)}
                     className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
                   />
                 </label>
@@ -450,19 +415,19 @@ export default function AddStudyModal({
                     className="mt-1 block w-24 rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
                   />
                 </label>
-                <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  Rating
-                  <select
-                    value={qualityLabel}
-                    onChange={(e) => setQualityLabel(e.target.value as "High" | "Moderate" | "Low" | "")}
-                    className="mt-1 block rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
+                {qualityLabel && (
+                  <span
+                    className={`mb-2 rounded-[10px] px-3 py-1.5 text-[13px] font-semibold ${
+                      qualityLabel === "High"
+                        ? "bg-[#E9F4EC] text-[#2E7D4F]"
+                        : qualityLabel === "Moderate"
+                        ? "bg-[#FFF8E9] text-[#8A6A2B]"
+                        : "bg-[#FBF3F3] text-[#B3403A]"
+                    }`}
                   >
-                    <option value="">Not set</option>
-                    <option value="High">High</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Low">Low</option>
-                  </select>
-                </label>
+                    {qualityLabel}
+                  </span>
+                )}
               </div>
 
               <div className="mt-4 text-[12.5px] font-semibold text-[#AEAEB2]">

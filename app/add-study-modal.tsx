@@ -177,23 +177,28 @@ export default function AddStudyModal({
         journal: null as string | null,
         doi: null as string | null,
       };
+      // Sequential, not Promise.all: this is the FIRST finding ever created for this brand new
+      // study, so the first request's getOrCreateStudy() call is what inserts its row into the
+      // findings library's own `studies` table (keyed by the synthetic pmid above). Firing every
+      // finding at once raced two inserts for that same new pmid — the loser hit the table's
+      // unique constraint and failed outright, even though the study itself had saved fine.
       const toCreate = findings.filter((f) => f.text.trim());
-      const results = await Promise.all(
-        toCreate.map((f) =>
-          fetch("/api/claims", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              scope: "paper",
-              claim_type: "marketing",
-              category_id: f.categoryId,
-              text: f.text.trim(),
-              sentiment: f.sentiment,
-              study: studyRef,
-            }),
-          }).then((r) => r.ok)
-        )
-      );
+      const results: boolean[] = [];
+      for (const f of toCreate) {
+        const ok = await fetch("/api/claims", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope: "paper",
+            claim_type: "marketing",
+            category_id: f.categoryId,
+            text: f.text.trim(),
+            sentiment: f.sentiment,
+            study: studyRef,
+          }),
+        }).then((r) => r.ok);
+        results.push(ok);
+      }
       const failed = results.filter((ok) => !ok).length;
       if (failed > 0) {
         setError(`Study saved, but ${failed} of ${toCreate.length} finding(s) could not be added — add them from the study's card.`);

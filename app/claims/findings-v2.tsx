@@ -89,14 +89,6 @@ function sentimentPill(s: ClaimSentiment | null | undefined) {
   return <Pill tone={s === "positive" ? "green" : s === "negative" ? "red" : "gray"}>{SENTIMENT_LABEL[s]}</Pill>;
 }
 
-/** Manual entries are clearly distinguished from AI extracted ones everywhere a finding shows. */
-function originPill(origin: LibClaim["origin"], createdBy: string | null) {
-  return origin === "ai_extracted" ? (
-    <Pill tone="gray">AI extracted</Pill>
-  ) : (
-    <Pill tone="teal">Manual{createdBy ? ` · ${createdBy}` : ""}</Pill>
-  );
-}
 
 export default function FindingsV2({
   claims,
@@ -336,7 +328,6 @@ export default function FindingsV2({
                   <div className="mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
                     {statusPill(c.status)}
                     {sentimentPill(c.sentiment)}
-                    {originPill(c.origin, c.created_by)}
                     {!valgtKategori && (
                       <span className="text-[12.5px] text-[#AEAEB2]">{catName[c.category_id] ?? c.category_id}</span>
                     )}
@@ -474,7 +465,6 @@ function EvidencePanel({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
           {statusPill(claim.status)}
           {sentimentPill(claim.sentiment)}
-          {originPill(claim.origin, claim.created_by)}
           <span className="text-[12.5px] text-[#AEAEB2]">{categoryName}</span>
           <span className="text-[12.5px] text-[#AEAEB2]">
             {claim.scope === "paper" ? "Single study finding" : "Aggregated claim"}

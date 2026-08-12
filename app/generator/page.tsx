@@ -17,6 +17,7 @@ import {
 } from "../claims-source";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
 import { PRODUCTS, type ProductId } from "../products";
+import { ProductLogo } from "../product-logo";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
@@ -29,13 +30,6 @@ const CONTENT_TYPES: { id: ContentType; label: string; hint: string; available: 
   { id: "video", label: "Video", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", hint: "Episode audio", available: false },
 ];
-
-/** The product's brand mark, or nothing at all when we don't have the official asset yet — a
- *  stand-in shape would misrepresent the brand, so the tile falls back to its name alone. */
-function ProductLogo({ product }: { product: (typeof PRODUCTS)[0] }) {
-  if (!product.logo) return null;
-  return <img src={product.logo} alt={product.label} className="h-8 w-8 object-contain" />;
-}
 
 function ContentTypeIcon({ type }: { type: ContentType }) {
   const common = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8 } as const;
@@ -610,12 +604,9 @@ export default function ContentGenerator() {
                       } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                     >
                       {!p.available && <span className="absolute right-2 top-2 rounded-md bg-[#F1F5F7] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#8FA5AE]">Soon</span>}
-                      {p.logo && (
-                        <div className="mb-2 flex justify-center">
-                          <ProductLogo product={p} />
-                        </div>
-                      )}
-                      <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
+                      <ProductLogo product={p} />
+                      {/* The logo is a wordmark, so repeating the name below it would be redundant. */}
+                      {!p.logo && <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>}
                       {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
                     </button>
                   );

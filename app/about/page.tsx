@@ -9,6 +9,7 @@ import { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
 import { PRODUCTS, type ProductId } from "../products";
+import { ProductLogo } from "../product-logo";
 
 const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
@@ -1485,14 +1486,9 @@ export default function AboutV2Page() {
                       Soon
                     </span>
                   )}
-                  {/* The real brand mark when we have it; nothing at all when we don't, rather than
-                      a stand-in shape that would misrepresent the brand. */}
-                  {p.logo && (
-                    <div className="mb-2 flex justify-center">
-                      <img src={p.logo} alt={p.label} className="h-8 w-8 object-contain" />
-                    </div>
-                  )}
-                  <div className="text-sm font-semibold text-[#1D1D1F]">{p.label}</div>
+                  <ProductLogo product={p} />
+                  {/* The logo is a wordmark, so repeating the name below it would be redundant. */}
+                  {!p.logo && <div className="text-sm font-semibold text-[#1D1D1F]">{p.label}</div>}
                   {p.hint && <div className="text-xs text-[#6E6E73]">{p.hint}</div>}
                 </button>
               );

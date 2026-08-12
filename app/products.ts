@@ -6,13 +6,23 @@
 
 export type ProductId = "superba" | "revervia" | "lysoveta" | "pl_plus";
 
-// `logo` is the path to the product's REAL brand mark under public/logos/. Left unset until the
-// official asset is in hand — both pickers simply render no logo for a product without one, so a
-// missing file degrades to the previous text-only tile rather than a broken image or a stand-in
-// mark that would misrepresent the brand.
-export const PRODUCTS: { id: ProductId; label: string; hint: string; logo?: string; available: boolean }[] = [
-  { id: "superba", label: "Superba", hint: "Krill oil", available: true },
-  { id: "revervia", label: "Revervia", hint: "", available: false },
-  { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
-  { id: "pl_plus", label: "PL+", hint: "", available: false },
+/** logo: the product's REAL brand mark under public/logos/, taken from that brand's own site.
+ *  Omit it and the tile falls back to its text name — never a stand-in shape, which would
+ *  misrepresent the brand. logoOnDark: the only published lockup is the INVERTED one (white
+ *  wordmark, meant for a dark background), so it is drawn on a dark chip instead of being
+ *  recoloured. See ProductLogo in product-logo.tsx. */
+export type Product = {
+  id: ProductId;
+  label: string;
+  hint: string;
+  logo?: string;
+  logoOnDark?: boolean;
+  available: boolean;
+};
+
+export const PRODUCTS: Product[] = [
+  { id: "superba", label: "Superba", hint: "Krill oil", logo: "/logos/superba.png", available: true },
+  { id: "revervia", label: "Revervia", hint: "", logo: "/logos/revervia.svg", available: false },
+  { id: "lysoveta", label: "Lysoveta", hint: "", logo: "/logos/lysoveta.svg", logoOnDark: true, available: false },
+  { id: "pl_plus", label: "PL+", hint: "", logo: "/logos/pl-plus.svg", available: false },
 ];

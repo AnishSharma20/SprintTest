@@ -128,6 +128,74 @@ def _natkey(p: Path):
     return int(m[-1]) if m else 0
 
 
+def _has_video(prs) -> bool:
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+    return any(shape.shape_type == MSO_SHAPE_TYPE.MEDIA
+               for slide in prs.slides for shape in slide.shapes)
+
+
+def _extract_image_previews(prs, target_w: int = 1280) -> list[bytes] | None:
+    """Fallback preview for a deck containing embedded video, which LibreOffice/PowerPoint's PDF
+    export path cannot be trusted to handle (see rasterize() for the full story: profile isolation,
+    an explicit export filter, a JRE, and shrinking a separate oversized image all failed to fix a
+    real, reproducible write failure on Render caused by a slide's embedded mp4 — and three
+    different attempts to strip/replace the video shape via python-pptx, verified locally, each
+    left the FILE ITSELF something PowerPoint calls corrupted [0x80070570], even the most
+    conservative one that only removed the shape and re-added a brand new plain picture via
+    add_picture(). Isolated the trigger precisely: removing this ONE shape (regardless of what, if
+    anything, replaces it) breaks python-pptx's own save/serialise round trip for this file;
+    removing an unrelated shape on the same file does not. Given three independent surgical
+    approaches all failed the same way, the safer engineering call is to stop trying to resave a
+    modified copy of the pptx at all when video is present.
+
+    For each slide, letterbox its LARGEST embedded picture (a video's own poster frame counts, and
+    typically wins — it's usually the biggest thing on the slide) onto a plain canvas at the deck's
+    own aspect ratio. Not a full slide render (no text, no layout), but a real, reliable image good
+    enough for the 'pick which slide to add' picker — and this whole path only ever READS the
+    original bytes, never re-saves them, so none of the resave fragility above can apply. Returns
+    None if the deck has no picture content at all to show."""
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+    from pptx.oxml.ns import qn
+    from PIL import Image
+
+    sw, sh = prs.slide_width, prs.slide_height
+    canvas_h = round(target_w * sh / sw)
+    pngs = []
+    any_image = False
+    for slide in prs.slides:
+        best_blob, best_area = None, 0
+        for shape in slide.shapes:
+            blob = None
+            try:
+                if shape.shape_type == MSO_SHAPE_TYPE.MEDIA:
+                    blip = shape._element.find(f".//{qn('a:blip')}")
+                    if blip is not None:
+                        rid = blip.get(qn("r:embed"))
+                        blob = slide.part.related_part(rid).blob
+                elif hasattr(shape, "image"):
+                    blob = shape.image.blob
+            except Exception:  # noqa: BLE001 — one bad shape must not break the whole preview
+                blob = None
+            area = (shape.width or 0) * (shape.height or 0)
+            if blob and area > best_area:
+                best_blob, best_area = blob, area
+        canvas = Image.new("RGB", (target_w, canvas_h), (255, 255, 255))
+        if best_blob:
+            try:
+                im = Image.open(io.BytesIO(best_blob)).convert("RGB")
+                ratio = min(target_w / im.width, canvas_h / im.height)
+                new_size = (max(1, round(im.width * ratio)), max(1, round(im.height * ratio)))
+                im = im.resize(new_size)
+                canvas.paste(im, ((target_w - new_size[0]) // 2, (canvas_h - new_size[1]) // 2))
+                any_image = True
+            except Exception:  # noqa: BLE001 — fall through to the blank canvas for this slide
+                pass
+        buf = io.BytesIO()
+        canvas.save(buf, "PNG")
+        pngs.append(buf.getvalue())
+    return pngs if any_image else None
+
+
 _SHRINK_MAX_DIM = 1920  # comfortably above any on-screen preview need
 
 
@@ -186,6 +254,17 @@ def _shrink_pptx_images(data: bytes) -> bytes:
 def rasterize(pptx_bytes: bytes) -> list[bytes] | None:
     """Render a deck to one PNG per slide, in order. None if no rasteriser is available (gate off)."""
     try:
+        from pptx import Presentation
+
+        prs = Presentation(io.BytesIO(pptx_bytes))
+        if _has_video(prs):
+            # LibreOffice/PowerPoint's PDF export cannot be trusted with embedded video on this
+            # environment (see _extract_image_previews' docstring for the full investigation) —
+            # use the read-only image-extraction fallback instead of ever resaving this file.
+            print("[qa-gate] embedded video detected; using the image-extraction fallback "
+                  "preview instead of LibreOffice/PowerPoint", file=sys.stderr)
+            return _extract_image_previews(prs)
+
         orig_size = len(pptx_bytes)
         pptx_bytes = _shrink_pptx_images(pptx_bytes)
         print(f"[qa-gate] pptx size before/after shrink: {orig_size}b / {len(pptx_bytes)}b", file=sys.stderr)

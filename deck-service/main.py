@@ -727,7 +727,7 @@ async def slides_inspect_job(
 
     def run() -> None:
         try:
-            slides = _inspect_previews(data)
+            slides = _inspect_previews_chunked(data, job_id)
             JOBS[job_id].update(status="done", progress=100, step="Done",
                                 result=json.dumps({"slides": slides}).encode("utf-8"),
                                 media_type="application/json", filename="previews.json")
@@ -736,6 +736,56 @@ async def slides_inspect_job(
 
     threading.Thread(target=run, daemon=True).start()
     return {"job_id": job_id}
+
+
+_INSPECT_CHUNK = 8  # slides per LibreOffice conversion — small enough for real progress steps,
+                    # large enough that the per-invocation startup overhead stays a minor cost
+
+
+def _inspect_previews_chunked(data: bytes, job_id: str) -> list[dict]:
+    """_inspect_previews with REAL progress for big decks: convert in chunks of a few slides and
+    update the job's progress/step after each, so the About page can show "12 of 42" instead of
+    a silent minutes-long wait (LibreOffice's PDF conversion is one monolithic call per file —
+    the only way to get progress out of it is to hand it smaller files).
+
+    Chunking needs a python-pptx resave of a trimmed copy, so it is skipped for decks with
+    embedded video (rasterize() routes those to a read-only image-extraction fallback that never
+    resaves — see the qa_gate saga) and for small decks where one conversion is quick anyway.
+    Any chunking failure falls back to the plain whole-file render."""
+    from pptx import Presentation
+
+    from src import qa_gate
+    try:
+        prs = Presentation(io.BytesIO(data))
+        total = len(prs.slides)
+        if total <= _INSPECT_CHUNK or qa_gate._has_video(prs):
+            return _inspect_previews(data)
+
+        slides: list[dict] = []
+        for start in range(0, total, _INSPECT_CHUNK):
+            end = min(start + _INSPECT_CHUNK, total)
+            trimmed = Presentation(io.BytesIO(data))
+            for i in reversed(range(total)):
+                if not start <= i < end:
+                    _drop_slide(trimmed, i)
+            buf = io.BytesIO()
+            trimmed.save(buf)
+            chunk = _inspect_previews(buf.getvalue())
+            if len(chunk) != end - start:
+                # ValueError, not RuntimeError: the latter is reserved for "no rasteriser at
+                # all", which must propagate — this one should fall back to a whole-file pass.
+                raise ValueError(f"chunk rendered {len(chunk)} of {end - start} slides")
+            for j, s in enumerate(chunk):
+                slides.append({"index": start + j, "preview_b64": s["preview_b64"]})
+            JOBS[job_id].update(progress=5 + round(90 * end / total),
+                                step=f"Rendering slide previews ({end} of {total})")
+        return slides
+    except RuntimeError:
+        raise  # "no rasteriser available" — chunking again won't help
+    except Exception as e:  # noqa: BLE001 — chunking is an optimisation, never a requirement
+        print(f"[inspect-job] chunked render failed ({e}); falling back to one pass", file=sys.stderr)
+        JOBS[job_id].update(step="Rendering slide previews")
+        return _inspect_previews(data)
 
 
 @app.post("/slides/inspect-slots")

@@ -231,6 +231,7 @@ export default function AboutV2Page() {
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ pct: number; step: string } | null>(null);
   const [uploadError, setUploadError] = useState("");
   const [picks, setPicks] = useState<UploadPick[] | null>(null);
   const [savingPicks, setSavingPicks] = useState(false);
@@ -991,8 +992,12 @@ export default function AboutV2Page() {
   }
 
   /** Preview rendering runs as a deck-service JOB (a many-slide file takes minutes — longer
-   * than any single request may last); poll until the previews are ready. */
-  async function pollInspect(jobId: string): Promise<{ index: number; preview_b64: string }[]> {
+   * than any single request may last); poll until the previews are ready. onProgress receives
+   * the job's real progress (the service renders big decks in chunks and reports "12 of 42"). */
+  async function pollInspect(
+    jobId: string,
+    onProgress?: (p: { pct: number; step: string }) => void
+  ): Promise<{ index: number; preview_b64: string }[]> {
     const deadline = Date.now() + 15 * 60 * 1000; // a 42-slide render on the small server is slow
     for (;;) {
       if (Date.now() > deadline) throw new Error("Preview rendering timed out — try a smaller file.");
@@ -1002,6 +1007,7 @@ export default function AboutV2Page() {
       if (!res.ok) throw new Error((d.error as string) || "Could not check the preview rendering.");
       if (d.status === "error") throw new Error((d.error as string) || "Preview rendering failed.");
       if (d.status === "done") return (d.slides as { index: number; preview_b64: string }[]) ?? [];
+      onProgress?.({ pct: Number(d.progress) || 5, step: String(d.step || "Rendering slide previews") });
     }
   }
 
@@ -1038,7 +1044,8 @@ export default function AboutV2Page() {
       });
       const d = await safeJson(res);
       if (!res.ok) throw new Error((d.error as string) || "Could not read the presentation.");
-      const slides = await pollInspect(d.job_id as string);
+      setUploadProgress({ pct: 5, step: "Rendering slide previews" });
+      const slides = await pollInspect(d.job_id as string, setUploadProgress);
       setPicks(
         slides.map((s) => ({
           index: s.index,
@@ -1055,6 +1062,7 @@ export default function AboutV2Page() {
       void discardUploadedFile();
     } finally {
       setUploadBusy(false);
+      setUploadProgress(null);
     }
   }
 
@@ -1817,9 +1825,25 @@ export default function AboutV2Page() {
                 )}
                 {uploadError && <p className="mt-2 text-sm text-red-700">{uploadError}</p>}
                 {uploadBusy && (
-                  <p className="mt-3 text-sm text-zinc-500">
-                    Rendering slide previews — this can take up to half a minute for a big file…
-                  </p>
+                  <div className="mt-3">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="text-sm text-zinc-500">
+                        {uploadProgress ? uploadProgress.step : "Uploading the file…"}
+                      </p>
+                      {uploadProgress && (
+                        <span className="text-xs font-semibold text-[#06456B]">{uploadProgress.pct}%</span>
+                      )}
+                    </div>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[#EAF3F7]">
+                      <div
+                        className="h-full rounded-full bg-[#031B34] transition-all duration-700"
+                        style={{ width: `${uploadProgress?.pct ?? 3}%` }}
+                      />
+                    </div>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      A big file (many slides) renders for a few minutes on the server — leave this open.
+                    </p>
+                  </div>
                 )}
 
                 {picks && (

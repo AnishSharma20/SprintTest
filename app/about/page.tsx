@@ -4,7 +4,7 @@
 // a tabbed card (rules/design/slides/photos) instead of one long stacked scroll: a slim masthead,
 // with one section visible at a time behind a tab bar.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
@@ -1574,7 +1574,11 @@ export default function AboutV2Page() {
     if (photoFilter === "favourites") return p.enabled && p.preferred;
     return true; // all
   });
-  const shownBuiltinPhotos = (photoLibrary as BuiltinPhoto[]).filter((p) => {
+  const builtinPhotos: BuiltinPhoto[] = useMemo(
+    () => (photoLibrary as Record<string, BuiltinPhoto[]>)[product] ?? [],
+    [product]
+  );
+  const shownBuiltinPhotos = builtinPhotos.filter((p) => {
     if (builtinPhotoRemoved.has(p.id)) return false;
     if (photoFilter === "on") return !photoDisabled.has(p.id);
     if (photoFilter === "off") return photoDisabled.has(p.id);
@@ -1585,7 +1589,7 @@ export default function AboutV2Page() {
     photoDisabled.size + customPhotos.filter((p) => !p.removed && !p.enabled).length;
   const photoFavCount =
     photoPreferred.size + customPhotos.filter((p) => !p.removed && p.enabled && p.preferred).length;
-  const removedBuiltinPhotos = (photoLibrary as BuiltinPhoto[]).filter((p) => builtinPhotoRemoved.has(p.id));
+  const removedBuiltinPhotos = builtinPhotos.filter((p) => builtinPhotoRemoved.has(p.id));
   const removedCustomPhotos = customPhotos.filter((p) => p.removed);
   const deletedPhotosCount = removedBuiltinPhotos.length + removedCustomPhotos.length;
 
@@ -3169,7 +3173,7 @@ export default function AboutV2Page() {
                   <Strength kind="enforced" />
                 </div>
                 <span className="text-xs text-zinc-500">
-                  {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team ·{" "}
+                  {builtinPhotos.length} brand photos · {customPhotos.length} added by the team ·{" "}
                   {photoOffCount} turned off
                 </span>
               </div>
@@ -3371,7 +3375,7 @@ export default function AboutV2Page() {
                         <div key={p.id} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={`/photo-library/${p.id}.jpg`}
+                            src={`/photo-library/${product}/${p.id}.jpg`}
                             alt={p.description}
                             className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
                             loading="lazy"
@@ -3527,7 +3531,7 @@ export default function AboutV2Page() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/photo-library/${p.id}.jpg`}
+                        src={`/photo-library/${product}/${p.id}.jpg`}
                         alt={displayDesc}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"

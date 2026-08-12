@@ -1580,16 +1580,6 @@
       ],
       "path": "assets/generic_traceability.png",
       "description": "generic 'traceability' icon — fallback source"
-    },
-    {
-      "id": "bullet",
-      "kind": "bullet",
-      "selectable": false,
-      "path": "assets/bullet.png",
-      "tags": [
-        "chrome"
-      ],
-      "description": "picture-bullet glyph"
     }
   ]
 }

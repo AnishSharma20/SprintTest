@@ -253,17 +253,29 @@ def _set_lines(ph, lines: list[str], bullet_rid: str | None = None, size: float 
 _BULLET_MARL, _BULLET_INDENT, _BULLET_SZ = "342900", "-342900", "100000"
 
 
+# Returned instead of a relationship id when the brand has no bullet IMAGE of its own. Superba's
+# picture bullet is a Superba brand asset; lending it to another brand makes a deck confusing to
+# read as that brand's, so a brand without one gets PowerPoint's ordinary round bullet instead.
+_BULLET_CHAR = "char"
+
+
 def _bullet_rid(slide) -> str | None:
-    """Embed the brand bullet image in the slide part (idempotent) and return its relationship id."""
+    """The bullet style for this slide: the brand's picture-bullet relationship id, or
+    `_BULLET_CHAR` when the brand ships no bullet image. Never None — callers decide WHETHER to
+    bullet; this decides only WHAT the bullet looks like."""
     path = config.assets_dir(_BRAND) / "bullet.png"
     if not path.exists():
-        return None
+        return _BULLET_CHAR
     _, rid = slide.part.get_or_add_image_part(str(path))
     return rid
 
 
 def _apply_picture_bullet(p, rid: str) -> None:
-    """Set the brand picture bullet on one <a:p>, replacing any inherited buNone/buChar."""
+    """Set the bullet on one <a:p>, replacing any inherited buNone/buChar.
+
+    `rid` is either a picture relationship id or `_BULLET_CHAR` for a plain round bullet. The
+    character bullet deliberately sets no buClr, so it inherits the paragraph's own text colour —
+    which is what PowerPoint does by default and keeps it legible on any background."""
     pPr = p.find(qn("a:pPr"))
     if pPr is None:
         pPr = p.makeelement(qn("a:pPr"), {})
@@ -275,6 +287,11 @@ def _apply_picture_bullet(p, rid: str) -> None:
         for el in pPr.findall(qn(tag)):
             pPr.remove(el)
     # Order matters in the schema: bullet size (buSz*) before the bullet itself (bu*).
+    if rid == _BULLET_CHAR:
+        pPr.append(pPr.makeelement(qn("a:buFont"), {"typeface": "Arial", "pitchFamily": "34",
+                                                   "charset": "0"}))
+        pPr.append(pPr.makeelement(qn("a:buChar"), {"char": "•"}))
+        return
     buSz = pPr.makeelement(qn("a:buSzPct"), {"val": _BULLET_SZ})
     buBlip = pPr.makeelement(qn("a:buBlip"), {})
     blip = buBlip.makeelement(qn("a:blip"), {qn("r:embed"): rid})

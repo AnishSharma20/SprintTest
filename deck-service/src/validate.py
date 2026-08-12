@@ -9,6 +9,8 @@ fails loudly rather than rendering a broken deck.
 """
 from __future__ import annotations
 
+import sys
+
 import jsonschema
 
 from . import config
@@ -227,6 +229,40 @@ def _schema_with_extras(extra_layouts: list[str] | None,
     return s
 
 
+def prune_unknown(plan: dict, validator: jsonschema.protocols.Validator) -> list[str]:
+    """Delete fields the schema does not allow, IN PLACE, and say what went.
+
+    The model occasionally decorates a slide with a field nobody asked for — a real generation died
+    on `before_note` inside a `from_to` slide's `before` object. Every object in this schema is
+    `additionalProperties: false`, so one invented key is a hard error; worse, it is reported TWICE
+    (once against the generic slide schema, once against that layout's own conditional), and the
+    self-correction retry kept writing it back, which cost the user the whole deck.
+
+    Deleting it is lossless where it counts: the renderer only ever reads fields it knows, so a
+    field the schema has never heard of renders nothing either way. This is the same kind of
+    deterministic net as the dash strip and the notes backstop — repair what can be repaired
+    mechanically, and let the model's one retry spend itself on what actually needs rewriting.
+
+    Bounded loop because removing a key can reveal the next error underneath it.
+    """
+    removed: list[str] = []
+    for _ in range(4):
+        extras = [e for e in validator.iter_errors(plan)
+                  if e.validator == "additionalProperties" and isinstance(e.instance, dict)
+                  and isinstance(e.schema, dict) and "properties" in e.schema]
+        if not extras:
+            break
+        before = len(removed)
+        for e in extras:
+            where = "/".join(str(p) for p in e.absolute_path) or "(root)"
+            for key in [k for k in e.instance if k not in e.schema["properties"]]:
+                del e.instance[key]     # e.instance IS the dict inside `plan`
+                removed.append(f"{where}/{key}")
+        if len(removed) == before:
+            break                        # nothing left this pass could fix
+    return removed
+
+
 def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   extra_photo_ids: list[str] | None = None,
                   photo_level: str = "default",
@@ -236,6 +272,11 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors: list[str] = []
     validator = jsonschema.Draft202012Validator(
         _schema_with_extras(extra_layouts, extra_photo_ids, layout_overrides))
+    # Repair before reporting: a field the schema has never heard of is deleted rather than blamed,
+    # because no retry can be trusted to stop writing it and nothing renders it anyway.
+    for gone in prune_unknown(plan, validator):
+        print(f"[validate] dropped {gone}: not in the schema, so nothing would render it",
+              file=sys.stderr)
     for e in sorted(validator.iter_errors(plan), key=lambda e: list(e.absolute_path)):
         where = "/".join(str(p) for p in e.absolute_path) or "(root)"
         # Precise, actionable message for the planner's retry: exact length, limit, and how

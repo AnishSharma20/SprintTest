@@ -648,6 +648,26 @@ async def design_preview(payload: dict, x_deck_token: str | None = Header(defaul
         return JSONResponse({"feil": f"Preview failed: {e}"}, status_code=500)
 
 
+def _inspect_previews(data: bytes) -> list[dict]:
+    """Every slide of a .pptx as a JPEG preview (≤1280px wide, base64) — the shared core of the
+    sync and job-based inspect endpoints. Raises on failure; callers translate."""
+    from PIL import Image
+
+    from src import qa_gate
+    images = qa_gate.rasterize(data)
+    if not images:
+        raise RuntimeError("No slide renderer is available on the server.")
+    out = []
+    for i, png in enumerate(images):
+        im = Image.open(io.BytesIO(png)).convert("RGB")
+        if im.width > 1280:
+            im = im.resize((1280, round(im.height * 1280 / im.width)))
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=82)
+        out.append({"index": i, "preview_b64": base64.b64encode(buf.getvalue()).decode("ascii")})
+    return out
+
+
 @app.post("/slides/inspect")
 async def slides_inspect(
     file: UploadFile,
@@ -663,7 +683,11 @@ async def slides_inspect(
     every other endpoint here) — the browser never calls this directly. A large .pptx avoids
     Vercel's ~4.5 MB serverless body ceiling by living in Supabase Storage first: the route
     downloads it there and forwards it here, so what transits this endpoint's own caller (Vercel)
-    is a server-to-server hop, never subject to that browser-facing limit."""
+    is a server-to-server hop, never subject to that browser-facing limit.
+
+    SYNCHRONOUS — fine for a handful of slides, but a many-slide deck (e.g. the full 42-slide
+    template export re-uploaded after editing) renders longer than Vercel will hold the proxy
+    route open (60s), killing the request mid-render. Use /slides/inspect-job for those."""
     expected = os.environ.get("DECK_SERVICE_TOKEN")
     if expected and x_deck_token != expected:
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
@@ -671,24 +695,47 @@ async def slides_inspect(
     if not data:
         return JSONResponse({"feil": "Empty file."}, status_code=400)
     try:
-        from PIL import Image
-
-        from src import qa_gate
-        images = qa_gate.rasterize(data)
-        if not images:
-            return JSONResponse({"feil": "No slide renderer is available on the server."},
-                                status_code=503)
-        out = []
-        for i, png in enumerate(images):
-            im = Image.open(io.BytesIO(png)).convert("RGB")
-            if im.width > 1280:
-                im = im.resize((1280, round(im.height * 1280 / im.width)))
-            buf = io.BytesIO()
-            im.save(buf, "JPEG", quality=82)
-            out.append({"index": i, "preview_b64": base64.b64encode(buf.getvalue()).decode("ascii")})
-        return {"slides": out}
+        return {"slides": _inspect_previews(data)}
+    except RuntimeError as e:
+        return JSONResponse({"feil": str(e)}, status_code=503)
     except Exception as e:  # noqa: BLE001 — surface a clean error to the client
         return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
+
+
+@app.post("/slides/inspect-job")
+async def slides_inspect_job(
+    file: UploadFile,
+    x_deck_token: str | None = Header(default=None),
+):
+    """Job-based twin of /slides/inspect: returns {job_id} immediately and renders the previews
+    in the background — poll GET /jobs/{id}, then GET /jobs/{id}/result for the same
+    {slides: [{index, preview_b64}]} JSON. Exists because rasterising a many-slide upload (the
+    full template export is 42 slides) takes minutes on the deployed instance, far past the 60s
+    a Vercel proxy route can hold a synchronous request open (seen in production: the route died
+    with Vercel's plain-text timeout page while LibreOffice was still rendering)."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    data = await file.read()
+    if not data:
+        return JSONResponse({"feil": "Empty file."}, status_code=400)
+
+    _prune_jobs()
+    job_id = uuid.uuid4().hex
+    JOBS[job_id] = {"status": "running", "progress": 5, "step": "Rendering slide previews",
+                    "created": time.time()}
+
+    def run() -> None:
+        try:
+            slides = _inspect_previews(data)
+            JOBS[job_id].update(status="done", progress=100, step="Done",
+                                result=json.dumps({"slides": slides}).encode("utf-8"),
+                                media_type="application/json", filename="previews.json")
+        except Exception as e:  # noqa: BLE001 — record the failure for the client to read
+            JOBS[job_id].update(status="error", step="Failed", error=str(e))
+
+    threading.Thread(target=run, daemon=True).start()
+    return {"job_id": job_id}
 
 
 @app.post("/slides/inspect-slots")
@@ -757,9 +804,27 @@ async def slides_inspect_slots(
             from PIL import Image
 
             from src import qa_gate
-            images = qa_gate.rasterize(data)
-            if images and slide_index < len(images):
-                im = Image.open(io.BytesIO(images[slide_index])).convert("RGB")
+            # Rasterise a SINGLE-SLIDE copy, not the whole file: an override upload can be the
+            # full 42-slide template export with one slide edited, and rendering all of it takes
+            # minutes on the deployed instance (past what the Vercel proxy will wait). Trimming
+            # can fail on exotic files (e.g. the python-pptx video-resave quirk) — fall back to
+            # the target slide's index in a full render, and a missing preview never blocks.
+            raster_input, raster_index = data, slide_index
+            if len(slides) > 1:
+                try:
+                    trimmed = Presentation(io.BytesIO(data))
+                    for i in reversed(range(len(trimmed.slides))):
+                        if i != slide_index:
+                            _drop_slide(trimmed, i)
+                    tbuf = io.BytesIO()
+                    trimmed.save(tbuf)
+                    raster_input, raster_index = tbuf.getvalue(), 0
+                except Exception as e:  # noqa: BLE001
+                    print(f"[inspect-slots] single-slide trim failed ({e}); rendering the full file",
+                          file=sys.stderr)
+            images = qa_gate.rasterize(raster_input)
+            if images and raster_index < len(images):
+                im = Image.open(io.BytesIO(images[raster_index])).convert("RGB")
                 if im.width > 1280:
                     im = im.resize((1280, round(im.height * 1280 / im.width)))
                 buf = io.BytesIO()

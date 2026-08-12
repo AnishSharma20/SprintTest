@@ -16,7 +16,7 @@ import {
   type ApprovedClaim,
 } from "../claims-source";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
-import { PRODUCTS, type ProductId } from "../products";
+import { BRAND_FEATURES, PRODUCTS, type ProductId } from "../products";
 import { ProductLogo } from "../product-logo";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
@@ -345,7 +345,31 @@ export default function ContentGenerator() {
     });
   }, []);
 
-  const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && t.available);
+  // A type is available only if the tool supports it AND the chosen brand has it: Revervia has a
+  // deck template but no blog voice and no designed whitepaper, and those generators carry
+  // Superba-specific prompts, so offering them would produce Superba copy under a Revervia label.
+  const typeTilgjengelig = (t: ContentType) =>
+    CONTENT_TYPES.some((c) => c.id === t && c.available) && BRAND_FEATURES[produkt].contentTypes.includes(t);
+  const valgteTilgjengelige = CONTENT_TYPES.filter((t) => valgteTyper.has(t.id) && typeTilgjengelig(t.id));
+
+  // Switching brand: drop any content type the new brand cannot make, and clear science picks if
+  // it has no study library. Without this a user could tick Blog under Superba, switch to Revervia
+  // and press Generate with nothing runnable selected — or carry krill studies into a Revervia deck.
+  const forrigeProdukt = useRef(produkt);
+  useEffect(() => {
+    if (forrigeProdukt.current === produkt) return;
+    forrigeProdukt.current = produkt;
+    const tillatt = BRAND_FEATURES[produkt].contentTypes;
+    setValgteTyper((prev) => {
+      const neste = new Set([...prev].filter((t) => tillatt.includes(t)));
+      return neste.size ? neste : new Set<ContentType>(tillatt.includes("deck") ? ["deck"] : []);
+    });
+    if (!BRAND_FEATURES[produkt].science) {
+      setValgteStudier(new Set());
+      setValgteFunn(new Set());
+      setInkluderClaims(false);
+    }
+  }, [produkt]);
   const harValgt = valgteTilgjengelige.length > 0;
   const visDeckOpsjoner = valgteTyper.has("deck");
   const harKilder = filer.length > 0 || valgteStudier.size > 0 || valgteFunn.size > 0;
@@ -442,11 +466,15 @@ export default function ContentGenerator() {
       form.append("sprak", sprak.trim() || "English");
       form.append("instruksjoner", kontekst.trim());
       form.append("innholdstype", type);
+      form.append("brand", produkt);
       if (type === "deck") form.append("color_theme", fargeTema);
       if (type === "deck" && studyMeta.length) form.append("study_meta", JSON.stringify(studyMeta));
       // The About page's rules, design settings, layout switches and team slides govern deck
-      // planning/rendering only.
-      if (type === "deck") {
+      // planning/rendering only — AND they are still stored per install, not per brand. Sending
+      // them for another brand would apply Superba's writing rules and typography to it and, worse,
+      // splice Superba's uploaded team slides and photos into its deck. Skipped until those tables
+      // carry a brand column.
+      if (type === "deck" && BRAND_FEATURES[produkt].teamSettings) {
         appendDeckSettings(form, await deckGenerationSettings());
       }
 
@@ -622,21 +650,22 @@ export default function ContentGenerator() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {CONTENT_TYPES.map((t) => {
-                  const valgt = valgteTyper.has(t.id) && t.available;
+                  const tilgjengelig = typeTilgjengelig(t.id);
+                  const valgt = valgteTyper.has(t.id) && tilgjengelig;
                   return (
                     <button
                       key={t.id}
                       type="button"
                       onClick={() => toggleType(t.id)}
-                      disabled={!t.available}
+                      disabled={!tilgjengelig}
                       className={`relative flex items-center gap-3 rounded-2xl border p-4 text-left transition-colors ${
                         valgt ? "border-[#3FD0C9] bg-[#EEFAF9] shadow-[0_0_0_3px_rgba(63,208,201,0.14)]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
-                      } ${!t.available ? "cursor-not-allowed opacity-50" : ""}`}
+                      } ${!tilgjengelig ? "cursor-not-allowed opacity-50" : ""}`}
                     >
                       <ContentTypeIcon type={t.id} />
                       <span>
                         <span className="block text-sm font-bold text-[#052A4E]">{t.label}</span>
-                        <span className="block text-[11px] text-zinc-500">{t.available ? t.hint : "Soon"}</span>
+                        <span className="block text-[11px] text-zinc-500">{tilgjengelig ? t.hint : t.available ? "Not for this brand yet" : "Soon"}</span>
                       </span>
                       {valgt && <span className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A7A8A] text-[11px] font-bold text-white">✓</span>}
                     </button>
@@ -654,6 +683,14 @@ export default function ContentGenerator() {
               You&apos;re creating <strong className="text-[#052A4E]">{valgteTilgjengelige.map((t) => t.label.toLowerCase()).join(" + ") || "…"}</strong>. Now pick the material it should draw on — upload files, choose from the study library, or both.
             </p>
 
+            {!BRAND_FEATURES[produkt].science ? (
+              <div className="rounded-2xl border border-[#E4EDF0] bg-[#F7FBFC] p-5 text-sm text-[#3E5A66]">
+                The study and findings libraries hold Superba&apos;s reviewed science, so they are not
+                offered for {PRODUCTS.find((p) => p.id === produkt)?.label}. Upload this brand&apos;s own
+                source material above, and use Context &amp; instructions to steer the deck.
+              </div>
+            ) : (
+            <>
             <div className="rounded-2xl border border-[#E4EDF0] bg-white p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">Or pick from Scientific Studies</div>
@@ -793,6 +830,8 @@ export default function ContentGenerator() {
                 </p>
               )}
             </div>
+            </>
+            )}
 
             <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-[#B9D8E0] bg-white p-7 text-center transition-colors hover:border-[#3FD0C9] hover:bg-[#EEFAF9]">
               <input type="file" accept=".docx,.pptx,.txt,.md" multiple className="hidden" onChange={(e) => leggTilFiler(e.target.files)} />

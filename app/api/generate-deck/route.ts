@@ -65,6 +65,7 @@ export async function POST(req: Request) {
       "structure_rules",
       "managed_blocks",
       "color_theme",
+      "brand",
     ] as const) {
       const v = incoming.get(key);
       if (typeof v === "string" && v) forward.append(key, v);

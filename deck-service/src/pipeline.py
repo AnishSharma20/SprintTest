@@ -12,6 +12,7 @@ import sys
 
 import anthropic
 
+from . import brand as _brand
 from . import planner, qa_gate, qa_geometry, renderer, rules_gate, validate
 
 # Reader-facing text fields in a plan (the no-dash brand rule applies to these). Enum/id fields
@@ -418,7 +419,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
                  custom_photos=None, preferred_layouts=None, disabled_photos=None,
                  preferred_photos=None, layout_overrides=None, required_slides=None,
-                 benefits_slot="second_to_last", source_appendix=True, slide_map=None):
+                 benefits_slot="second_to_last", source_appendix=True, slide_map=None,
+                 brand=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). Never fails the deck — a gate error or a revision that
     breaks validation keeps the pre-gate deck.
@@ -460,13 +462,13 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                disabled_photos=disabled_photos,
                                                preferred_photos=preferred_photos,
                                                layout_overrides=layout_overrides,
-                                               required_slides=required_slides)
+                                               required_slides=required_slides, brand=brand)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate, extra_layouts=extra,
                                       extra_photo_ids=photo_ids, photo_level=photo_level,
                                       disabled_layouts=disabled_layouts,
-                                      layout_overrides=slot_layouts)
+                                      layout_overrides=slot_layouts, brand=brand)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -478,11 +480,11 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             disabled_photos=disabled_photos,
                                             preferred_photos=preferred_photos,
                                             layout_overrides=layout_overrides,
-                                            required_slides=required_slides)
+                                            required_slides=required_slides, brand=brand)
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts)
+                                          layout_overrides=slot_layouts, brand=brand)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -495,7 +497,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         candidate = _ensure_notes(candidate)
         candidate = _strip_dashes_plan(candidate)
         plan = candidate
-        pptx, slide_map = renderer.render_deck(candidate, study_meta=study_meta,
+        pptx, slide_map = renderer.render_deck(candidate, brand=brand, study_meta=study_meta,
                                                design=design, custom_slides=custom_slides,
                                                custom_photos=custom_photos,
                                                layout_overrides=layout_overrides,
@@ -519,7 +521,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              color_theme: str | None = None,
              layout_overrides: list[dict] | None = None,
              structure_rules: list[dict] | None = None,
-             managed_blocks: dict[str, str] | None = None) -> dict:
+             managed_blocks: dict[str, str] | None = None,
+             brand: str | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
@@ -559,7 +562,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     if asks:
         custom_rules = "\n".join([t for t in [(custom_rules or "").strip()] if t] + asks)
     layout_overrides = planner.sanitize_overrides(
-        layout_overrides, planner.sanitize_disabled(disabled_layouts, required))
+        layout_overrides, planner.sanitize_disabled(disabled_layouts, required, brand))
     override_keys = frozenset(o["layout"] for o in layout_overrides)
     slot_layouts = planner.slot_entries(layout_overrides, custom_slides)
 
@@ -570,11 +573,11 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              preferred_layouts=preferred_layouts, design=design,
                              disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                              layout_overrides=layout_overrides, required_slides=required,
-                             managed_blocks=managed_blocks)
+                             managed_blocks=managed_blocks, brand=brand)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                    layout_overrides=slot_layouts)
+                                    layout_overrides=slot_layouts, brand=brand)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -584,10 +587,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    preferred_layouts=preferred_layouts, design=design,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                    layout_overrides=layout_overrides, required_slides=required,
-                                   managed_blocks=managed_blocks)
+                                   managed_blocks=managed_blocks, brand=brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                        layout_overrides=slot_layouts)
+                                        layout_overrides=slot_layouts, brand=brand)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -627,10 +630,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                             preferred_photos=preferred_photos,
                                             layout_overrides=layout_overrides,
                                             required_slides=required,
-                                            managed_blocks=managed_blocks)
+                                            managed_blocks=managed_blocks, brand=brand)
             errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
                                           photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts)
+                                          layout_overrides=slot_layouts, brand=brand)
             hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
             if hard:
                 print("[rules-gate] the rule fix broke validation; keeping the pre-fix plan:\n- "
@@ -638,7 +641,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             else:
                 plan = candidate
 
-    _p(70, "Rendering slides on the Superba template")
+    _p(70, f"Rendering slides on the {_brand.theme(brand)['product']} template")
     plan = _ensure_title(plan, required)
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta, required)
     plan = _ensure_agenda(plan, required)
@@ -652,7 +655,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                           if r.get("slide") == "benefits_verbatim" and r["action"] == "position"),
                          "second_to_last" if structure_rules is None else None)
     source_appendix = _has_action(structure, "source_appendix")
-    pptx, slide_map = renderer.render_deck(plan, study_meta=study_meta, design=design,
+    pptx, slide_map = renderer.render_deck(plan, brand=brand, study_meta=study_meta, design=design,
                                            custom_slides=custom_slides, custom_photos=custom_photos,
                                            layout_overrides=layout_overrides,
                                            benefits_slot=benefits_slot,
@@ -663,6 +666,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
     if quality == "polished" or os.environ.get("DECK_QA_GATE"):
         pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
+                                  brand=brand,
                                   study_meta=study_meta, custom_rules=custom_rules,
                                   disabled_layouts=disabled_layouts, design=design,
                                   custom_slides=custom_slides, custom_photos=custom_photos,

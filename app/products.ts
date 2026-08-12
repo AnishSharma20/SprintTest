@@ -1,8 +1,12 @@
 // The AKBM product/brand list — shared by the Content Generator's product picker and the
-// About page's brand picker so the two never drift apart. Only Superba is wired to anything
-// today (its own studies, findings, rules, design settings, slide and photo library); the
-// other three are shown as real tiles marked "Soon" so the client can see the shape of what's
-// coming without us pretending they already work.
+// About page's brand picker so the two never drift apart.
+//
+// Superba and Revervia both generate real decks: each has its own PowerPoint template, palette,
+// typography, photo library and icons in deck-service/brands/. They are NOT equally complete.
+// Superba additionally owns the science layer (studies, approved findings) and the About page's
+// team settings (writing rules, design overrides, uploaded slides and photos); those tables are
+// still single-brand, so Revervia generates from uploaded sources and free-text context only —
+// see BRAND_FEATURES below. Lysoveta and PL+ have no brand pack at all and stay "Soon".
 
 export type ProductId = "superba" | "revervia" | "lysoveta" | "pl_plus";
 
@@ -31,9 +35,18 @@ export type Product = {
   available: boolean;
 };
 
+/** Which parts of the tool a brand actually has. Kept beside the list so a half-wired brand
+ *  cannot quietly inherit another brand's science or another brand's team settings. */
+export const BRAND_FEATURES: Record<ProductId, { science: boolean; teamSettings: boolean; contentTypes: string[] }> = {
+  superba:  { science: true,  teamSettings: true,  contentTypes: ["deck", "blog", "whitepaper_mix"] },
+  revervia: { science: false, teamSettings: false, contentTypes: ["deck"] },
+  lysoveta: { science: false, teamSettings: false, contentTypes: [] },
+  pl_plus:  { science: false, teamSettings: false, contentTypes: [] },
+};
+
 export const PRODUCTS: Product[] = [
   { id: "superba", label: "Superba", hint: "", logo: "/logos/superba.png", logoH: 15, available: true },
-  { id: "revervia", label: "Revervia", hint: "", logo: "/logos/revervia.svg", logoH: 22, logoNudge: -3, available: false },
+  { id: "revervia", label: "Revervia", hint: "", logo: "/logos/revervia.svg", logoH: 22, logoNudge: -3, available: true },
   { id: "lysoveta", label: "Lysoveta", hint: "", logo: "/logos/lysoveta.svg", logoH: 18, available: false },
   { id: "pl_plus", label: "PL+", hint: "", logo: "/logos/pl-plus.svg", logoH: 32, available: false },
 ];

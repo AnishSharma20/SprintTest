@@ -358,7 +358,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              color_theme: str = "",
              layout_overrides_meta: str = "",
              structure_rules: str = "",
-             managed_blocks: str = "") -> None:
+             managed_blocks: str = "",
+             brand: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -497,7 +498,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                              disabled_photos=parsed_disabled_photos,
                              preferred_photos=parsed_preferred_photos,
                              color_theme=color_theme.strip() or None,
-                             layout_overrides=parsed_overrides)
+                             layout_overrides=parsed_overrides,
+                             brand=brand or None)
 
         # Named after the deck's own generated deck_title (the topic), falling back to the
         # source file stem when the title yields no usable ASCII.
@@ -578,6 +580,7 @@ async def create_job(
     sprak: str = Form(default="English"),
     sider: str = Form(default=""),
     study_meta: str = Form(default=""),
+    brand: str = Form(default=""),
     custom_rules: str = Form(default=""),
     disabled_layouts: str = Form(default=""),
     design_settings: str = Form(default=""),
@@ -637,6 +640,16 @@ async def create_job(
     if not filer:
         return JSONResponse({"feil": "No files uploaded."}, status_code=400)
 
+    # Reject an unknown brand rather than falling back to the default. A silent fallback would
+    # hand the user a SUPERBA deck under a Revervia label — wrong logo, wrong colours, wrong
+    # product — which is far worse than a clear error. known_brands() is filesystem-derived, so
+    # this also catches a brand whose pack has not reached this deploy yet.
+    brand = (brand or "").strip().lower()
+    if brand and brand not in config.known_brands():
+        return JSONResponse(
+            {"feil": f"Unknown brand '{brand}'. This service can render: "
+                     f"{', '.join(config.known_brands())}."}, status_code=400)
+
     _prune_jobs()
     files = [((uf.filename or f"summary-{i}"), await uf.read()) for i, uf in enumerate(filer)]
     # Each team-slide upload is named <file_id>.pptx by the frontend; index the blobs by that id.
@@ -659,7 +672,8 @@ async def create_job(
                            design_settings, custom_slides_meta, custom_blobs,
                            custom_photos_meta, photo_blobs, preferred_layouts,
                            disabled_photos, preferred_photos, color_theme,
-                           layout_overrides_meta, structure_rules, managed_blocks),
+                           layout_overrides_meta, structure_rules, managed_blocks,
+                           brand),
                      daemon=True).start()
     return {"job_id": job_id}
 

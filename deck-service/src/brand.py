@@ -38,6 +38,15 @@ COLOR_ROLES = (
 _DEFAULTS: dict[str, dict] = {
     # ── Superba: verbatim from renderer.py's hardcoded constants ──────────────────────────
     "superba": {
+        # Identity — what the PLANNER is told it is writing about. Wrong here and the deck is a
+        # correctly-coloured deck about the wrong product.
+        "company": "Aker BioMarine",
+        "product": "Superba Krill",
+        "photo_library": "krill in the wild, Antarctic ocean/ice, product close-ups, lab and "
+                         "sourcing shots, the team",
+        "comparison_example": "krill oil vs fish oil",
+        "has_ingredient_slide": True,
+        "has_benefits_slide": True,
         "colors": {
             "accent": "E50A1A", "deep": "185968", "deep2": "2C7482", "panel": "E4F1F1",
             "ink": "163536", "tint": "A9DBD5", "on_deep": "ECF5F5", "table_line": "C9D9D9",
@@ -59,6 +68,19 @@ _DEFAULTS: dict[str, dict] = {
     # matrix on p14, which permits dark blue as a foreground on every pale background and
     # rules Neptune out as a background for anything but Ice Blue.
     "revervia": {
+        "company": "Aker BioMarine",
+        "product": "Revervia",
+        "photo_library": "algae microscopy, product capsules alone and in use, people taking the "
+                         "product, kitchen and daily-routine settings",
+        "comparison_example": "algal oil vs fish oil",
+        # No verbatim ingredient slide exists for this brand: Superba's is a real AKBM slide with
+        # its own mg values, and splicing it into a Revervia deck would state another product's
+        # composition as fact. The prompt block disappears entirely rather than inviting a layout
+        # the renderer would have to refuse.
+        "has_ingredient_slide": False,
+        # Nor the verbatim "Proven health benefits" overview: it is a Superba slide carrying
+        # Superba's own trial counts. Splicing it here used to abort the whole render.
+        "has_benefits_slide": False,
         "colors": {
             "accent": "8AC757",      # Algae Green — the guide's accent, "used sparingly"
             "deep": "0C4554",        # Deep Sea Green — primary dark

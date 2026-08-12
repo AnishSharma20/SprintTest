@@ -118,6 +118,7 @@ _ICONS_OFF: bool = False
 # _RENDER_LOCK serializes the whole of render_deck, so only one brand is ever in flight.
 _BRAND: str | None = None
 _LIGHT_ONLY: bool = False    # brand's template has no dark master; see apply_brand/_make_slide
+_HAS_BENEFITS_SLIDE: bool = True   # brand's template carries the verbatim benefits overview slide
 _CUSTOM_PHOTO_PATHS: dict[str, "Path"] = {}
 _CUSTOM_PHOTO_DIR = None
 
@@ -1130,6 +1131,7 @@ def apply_brand(brand: str | None = None) -> None:
     # code-built layout draws its panels with, so this is the whole change.
     g["_BOX"] = MSO_SHAPE.ROUNDED_RECTANGLE if t.get("rounded") else MSO_SHAPE.RECTANGLE
     g["_LIGHT_ONLY"] = bool(t.get("light_only"))
+    g["_HAS_BENEFITS_SLIDE"] = bool(t.get("has_benefits_slide"))
     brand_type = {
         "_HEAD": f["head"], "_BODY": f["body"], "_HEAD_TITLE": f["title"],
         "_SZ_TITLE": s["title"], "_SZ_BODY": s["body"], "_SZ_SMALL": s["small"],
@@ -3068,8 +3070,10 @@ def _render_deck_impl(plan: dict, study_meta: list[dict] | None,
             owners.extend([None] * (len(prs.slides._sldIdLst) - before))
 
     # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last
-    # slide of every deck (appended, then moved into place).
-    if benefits_slot:
+    # slide of every deck (appended, then moved into place). It is a SUPERBA slide carrying
+    # Superba's own trial counts, so a brand whose template has no equivalent skips it — without
+    # this the splice raises and takes the whole deck down.
+    if benefits_slot and _HAS_BENEFITS_SLIDE:
         _add_benefits_slide(prs, light)
         owners.append(None)
         sldIdLst = prs.slides._sldIdLst

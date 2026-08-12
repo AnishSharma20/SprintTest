@@ -14,6 +14,7 @@ import json
 
 import anthropic
 
+from . import brand as _brand
 from . import config
 
 # ---- domain rules ported from the previous pipeline (hard-won, brand-critical) ----
@@ -53,11 +54,11 @@ LAYOUT_USAGE = {
     "three_columns":      "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that fill the panel, not a single line.",
     "four_columns":       "FOUR parallel points; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty.",
     "ingredient":         "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck.",
-    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
+    "key_points":         "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard brand bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview.",
     "chart":              "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers.",
     "matrix":             "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`.",
     "exec_summary":       "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget.",
-    "comparison":         "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings.",
+    "comparison":         "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. {comparison_example}), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings.",
     "stat":               "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point.",
     "harvey_ball":        "A Harvey-ball rating grid for comparing 3 or more OPTIONS across several GENUINELY QUALITATIVE criteria by relative strength. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty, 4 = full). USE ONLY when EVERY criterion is a subjective/relative rating (e.g. evidence strength, risk of bias, breadth, sustainability). Do NOT use it for exact numbers (sample size, dose, duration, price) — those belong in a `comparison` table with the real values, since balls hide the actual figure. NEVER use a ball for a yes/no outcome (a partial fill misreads a binary). If any row is a hard number or a yes/no, choose `comparison` instead.",
     "funnel":             "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process.",
@@ -92,11 +93,11 @@ TONE_GUIDANCE = {
 }
 
 
-def _limits_from_schema() -> dict[str, str]:
+def _limits_from_schema(brand: str | None = None) -> dict[str, str]:
     """Compact per-layout field+limit summary, read from the schema's if/then blocks so
     the guide never drifts from what validation enforces."""
     out = {}
-    for cond in config.schema()["properties"]["slides"]["items"].get("allOf", []):
+    for cond in config.schema(brand)["properties"]["slides"]["items"].get("allOf", []):
         sem = cond["if"]["properties"]["layout"]["const"]
         props = cond["then"].get("properties", {})
         parts = []
@@ -121,20 +122,31 @@ def _limits_from_schema() -> dict[str, str]:
 _REQUIRED_LAYOUTS = {"title", "agenda"}
 
 
-def sanitize_disabled(disabled_layouts, required: set[str] | None = None) -> set[str]:
+def sanitize_disabled(disabled_layouts, required: set[str] | None = None, brand: str | None = None) -> set[str]:
     """The user-managed off switch from the About page, made safe: only real layout keys, and never
     a slide the team's own structure rules still require (switching one off while a rule pins it
     would leave the rule chasing a slide that can never appear).
 
     `required=None` means no structure rules reached us (an unmigrated database or an older
     frontend), and then the two slides that used to be hardcoded keep their old protection."""
-    known = set(config.catalog())
+    known = set(config.catalog(brand))
     protected = _REQUIRED_LAYOUTS if required is None else required
-    return {d for d in (disabled_layouts or ()) if d in known} - protected
+    off = {d for d in (disabled_layouts or ()) if d in known} - protected
+    # A verbatim slide is one brand's real, pre-approved slide with that brand's own facts on it.
+    # A brand that has none must not be offered the layout at all: it is enforced here rather than
+    # by the prompt alone, because this set also drives the tool-schema enum, so the model CANNOT
+    # emit it. Without this, a Revervia deck could splice Superba's ingredient slide, stating
+    # another product's composition as fact.
+    if not _brand.theme(brand)["has_ingredient_slide"]:
+        off.add("ingredient")
+    return off
 
 
-def _layout_guide(disabled: set[str], overridden: set[str] | None = None) -> str:
-    limits = _limits_from_schema()
+def _layout_guide(disabled: set[str], overridden: set[str] | None = None, brand: str | None = None) -> str:
+    limits = _limits_from_schema(brand)
+    # LAYOUT_USAGE is a module-level dict of plain strings, so its {placeholders} are substituted
+    # here rather than by an f-string — putting a value inside an f-string does not interpolate it.
+    example = _brand.theme(brand)["comparison_example"]
     overridden = overridden or set()
     lines = []
     for sem, usage in LAYOUT_USAGE.items():
@@ -144,20 +156,22 @@ def _layout_guide(disabled: set[str], overridden: set[str] | None = None) -> str
             # The normal [field limits] read from the pristine schema no longer apply to an
             # overridden layout (its conditional was swapped to slots) — printing them would
             # contradict the TEAM REDESIGNED LAYOUTS block.
+            usage = usage.replace("{comparison_example}", example)
             lines.append(f"- {sem} — {usage}  [TEAM REDESIGNED: emit slots, "
                          f"see TEAM REDESIGNED LAYOUTS]")
             continue
         lim = limits.get(sem, "")
+        usage = usage.replace("{comparison_example}", example)
         lines.append(f"- {sem} — {usage}" + (f"  [{lim}]" if lim else ""))
     return "\n".join(lines)
 
 
-def sanitize_overrides(layout_overrides, disabled: set[str] | None = None) -> list[dict]:
+def sanitize_overrides(layout_overrides, disabled: set[str] | None = None, brand: str | None = None) -> list[dict]:
     """The About page's layout design overrides, made safe: only real layout keys, never the
     fixed-role ones (their deterministic nets write normal fields), never a disabled layout
     (off wins over overridden), only entries that carry slots, first wins on a duplicate."""
     from .overrides import OVERRIDE_EXCLUDED
-    known = set(config.catalog())
+    known = set(config.catalog(brand))
     disabled = disabled or set()
     out, seen = [], set()
     for o in layout_overrides or []:
@@ -320,10 +334,10 @@ def _custom_slide_guide(custom_slides) -> str:
     return out
 
 
-def _asset_guide(custom_photos=None, disabled_photos: set[str] | None = None) -> str:
+def _asset_guide(custom_photos=None, disabled_photos: set[str] | None = None, brand: str | None = None) -> str:
     disabled_photos = disabled_photos or set()
     lines = []
-    for a in config.selectable_photos():
+    for a in config.selectable_photos(brand):
         if a["id"] in disabled_photos:
             continue
         lines.append(f"- {a['id']} ({a.get('bg_fit','')}) — {a['description']}")
@@ -338,9 +352,9 @@ def custom_photo_ids(custom_photos) -> list[str]:
     return [p["key"] for p in (custom_photos or []) if p.get("key")]
 
 
-def sanitize_disabled_photos(disabled_photos) -> set[str]:
+def sanitize_disabled_photos(disabled_photos, brand: str | None = None) -> set[str]:
     """The About page's photo off switches, made safe: only real built-in photo ids."""
-    known = {a["id"] for a in config.selectable_photos()}
+    known = {a["id"] for a in config.selectable_photos(brand)}
     return {d for d in (disabled_photos or ()) if d in known}
 
 
@@ -389,10 +403,10 @@ exceptions are verbatim slides (`ingredient` and team slides), which stay exactl
     ),
     "context_first": (
         "Set the scene before the evidence",
-        """CONTEXT BEFORE EVIDENCE (match AKBM's own decks): do not leap from the agenda straight into the first
+        """CONTEXT BEFORE EVIDENCE (match {company}'s own decks): do not leap from the agenda straight into the first
 specific data point. Spend the NEXT 1 to 2 slides setting the scene first — the underlying trend, need or
 problem this deck responds to (a market or consumer shift, a category challenge, why this matters now) —
-the way AKBM's own presentations open before turning to Superba specific proof. Good layouts for this beat:
+the way {company}'s own presentations open before turning to {product} specific proof. Good layouts for this beat:
 `serpentine`, `photo_stats`, `numbered_cards`, `stat`, `chart`, `implications`, `highlight`, or a `text`
 slide. Only after this scene setting should the deck turn to the first slide of product specific evidence.
 Keep full ACTION TITLE discipline even here — a real claim about the landscape (e.g. "Omega 3 deficiency
@@ -401,7 +415,7 @@ now affects most adults"), never a bare topic label ("Omega 3 status").""",
     "action_titles": (
         "Action titles, not topic labels",
         """ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
-claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
+claim (e.g. "{product} raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
 Index"). Titles render LARGE (32pt) — keep it to AT MOST 2 lines, roughly 50 characters, tight enough to
 usually fit on ONE line — a reader who skims only the titles should get the whole argument. Mirror this
 discipline across the deck.""",
@@ -412,7 +426,7 @@ discipline across the deck.""",
 its box — the [bracketed] limit printed next to each layout below is that budget, measured from the actual
 template geometry. Write to CLOSE TO that budget, not a small fraction of it: bring real supporting
 substance (a number, a mechanism, a comparison, a consequence), never a bare single clause when the box has
-room for three. AKBM's own decks read as dense and information rich; a slide whose text stops at a small
+room for three. {company}'s own decks read as dense and information rich; a slide whose text stops at a small
 fraction of its available room reads as thin next to them. This applies everywhere text has room to
 grow — column bodies, card bodies, item bodies — not only the `text` layout.""",
     ),
@@ -463,16 +477,20 @@ def build_system(length: str, tone: str, instructions: str = "", custom_rules: s
                  disabled_layouts=None, custom_slides=None, custom_photos=None,
                  preferred_layouts=None, design=None, disabled_photos=None,
                  preferred_photos=None, layout_overrides=None, required_slides=None,
-                 managed_blocks: dict[str, str] | None = None) -> str:
+                 managed_blocks: dict[str, str] | None = None, brand: str | None = None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
-    disabled = sanitize_disabled(disabled_layouts, required_slides)
+    bt = _brand.theme(brand)
+    company, product = bt["company"], bt["product"]
+    disabled = sanitize_disabled(disabled_layouts, required_slides, brand)
     # managed_blocks None = the app never told us (unmigrated database or an older frontend), so
     # every default applies exactly as before. A dict means the team owns these now: a key present
     # carries their text, a key absent means they switched that rule off.
     def _block(key: str) -> str:
-        if managed_blocks is None:
-            return BUILTIN_BLOCKS[key][1]
-        return managed_blocks.get(key, "")
+        # {product}/{company} are substituted, not f-stringed: these blocks quote literal JSON
+        # braces, and a team-edited block from the About page gets the same treatment so their
+        # own wording can name the brand without hardcoding one.
+        text = BUILTIN_BLOCKS[key][1] if managed_blocks is None else managed_blocks.get(key, "")
+        return text.replace("{product}", product).replace("{company}", company)
 
     b_speaker_notes = _block("speaker_notes")
     b_context_first = _block("context_first")
@@ -483,7 +501,7 @@ def build_system(length: str, tone: str, instructions: str = "", custom_rules: s
     b_citations = _block("citations")
     b_text_style = _block("text_style")
     overridden = {o["layout"] for o in (layout_overrides or []) if isinstance(o, dict) and o.get("layout")}
-    disabled_photos_set = sanitize_disabled_photos(disabled_photos)
+    disabled_photos_set = sanitize_disabled_photos(disabled_photos, brand)
     design = design or {}
     photo_level = design.get("photo_level", "default")
     icon_level = design.get("icon_level", "default")
@@ -491,8 +509,8 @@ def build_system(length: str, tone: str, instructions: str = "", custom_rules: s
     # the post-hoc check enforces — the retry should rarely need to fire over these two.
     synth_min = max(3, target // 2)
     photo_min = photo_minimum(target, photo_level)
-    benefits = ", ".join(config.manifest()["benefits"])
-    generic = ", ".join(config.manifest().get("generic_icons", []))
+    benefits = ", ".join(config.manifest(brand)["benefits"])
+    generic = ", ".join(config.manifest(brand).get("generic_icons", []))
     instr_block = ""
     if (instructions or "").strip():
         instr_block = (
@@ -516,7 +534,7 @@ def build_system(length: str, tone: str, instructions: str = "", custom_rules: s
     if disabled:
         disabled_note = ("\nDISABLED LAYOUTS: the team has turned OFF these layouts, so they are NOT "
                          "available in this deck: " + ", ".join(sorted(disabled)) + ".")
-    ingredient_block = "" if "ingredient" in disabled else f"""
+    ingredient_block = "" if ("ingredient" in disabled or not bt["has_ingredient_slide"]) else f"""
 INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
 nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,
 so just emit {{"layout":"ingredient"}} — do NOT write a title/eyebrow/callouts (anything you write is ignored).
@@ -536,7 +554,7 @@ sentences:
 - `key_finding`: the single most important result, with the actual endpoint and number (e.g.
   "WOMAC pain score fell 14% more than placebo at 6 months").
 - `supporting_findings`: one sentence covering the secondary results the deck also presents.
-- `relevance`: why this matters commercially for Superba Krill — the so what for sales/marketing.
+- `relevance`: why this matters commercially for {product} — the so what for sales/marketing.
 - `contents`: what the deck covers, one line (e.g. "12 slides: study design, primary and
   secondary endpoints, mechanism, positioning").
 RULES: full sentences, no orphan bullet fragments. Every claim here must already appear in the
@@ -546,6 +564,10 @@ fields TOGETHER under about 80 words total — if the true content does not fit 
 not a summary: cut to the essential number and sentence per row; the full detail still lives on
 the deck's own slides and in their speaker_notes.
 """
+    # Substituted rather than f-stringed: this block quotes literal JSON braces, so making the
+    # whole literal an f-string would need every one of them escaped.
+    exec_block = exec_block.replace("{product}", product)
+
     # "House favourite" stars from the About page: a soft preference among equally fitting
     # layouts — never a licence to force a shape onto content that doesn't have it.
     preferred = [p for p in (preferred_layouts or []) if p in LAYOUT_USAGE and p not in disabled]
@@ -556,7 +578,7 @@ the deck's own slides and in their speaker_notes.
             "fit a point EQUALLY well, pick a starred one first: " + ", ".join(preferred) + ". The shape "
             "of the content still wins: never force a favourite onto a point whose shape doesn't match.")
     # Same "house favourite" idea, applied to individual photos rather than layouts.
-    known_photo_ids = {a["id"] for a in config.selectable_photos()} | set(custom_photo_ids(custom_photos))
+    known_photo_ids = {a["id"] for a in config.selectable_photos(brand)} | set(custom_photo_ids(custom_photos))
     preferred_photos_valid = [p for p in (preferred_photos or [])
                               if p in known_photo_ids and p not in disabled_photos_set]
     preferred_photos_line = ""
@@ -572,12 +594,11 @@ but this deck should stay text and data led. Set `asset_id` only where an image 
 point (at least {photo_min} slide{'s' if photo_min != 1 else ''} across the deck, e.g. the cover or one breather beat); otherwise leave
 photos off. `text_with_picture` and `picture_full` require an asset_id by schema, so reach for those
 layouts only when you actually want their photo.
-{_asset_guide(custom_photos, disabled_photos_set)}"""
+{_asset_guide(custom_photos, disabled_photos_set, brand)}"""
     else:
         more_line = ("\nThe team asked for a PHOTO RICH deck: place photos generously, on every slide where "
                      "one fits." if photo_level == "more" else "")
-        photos_block = f"""PHOTOS (REQUIRED, not aspirational): we have a real, high-quality photo library (krill in the wild, Antarctic
-ocean/ice, product close-ups, lab and sourcing shots, the team) — USE IT. This {target}-slide deck MUST set
+        photos_block = f"""PHOTOS (REQUIRED, not aspirational): we have a real, high-quality photo library ({bt["photo_library"]}) — USE IT. This {target}-slide deck MUST set
 `asset_id` on AT LEAST {photo_min} slides total, not just the odd one: `text_with_picture` and `picture_full`
 (asset_id required by their schema) are built for it, and `exec_summary` / `photo_stats` also take an optional
 `asset_id` — set one there rather than leaving it off by default. A deck with zero or one photo is under-using
@@ -585,7 +606,7 @@ the library; a cover, a mid-deck breather, and a closing beat are all good spots
 `asset_id` whose subject fits the slide, and match its bg_fit to the slide `background` (a 'light' photo suits
 a light slide). Only skip a photo on a given slide when truly nothing in the library fits that specific
 point — the {photo_min}-slide minimum still applies across the rest of the deck.{more_line}
-{_asset_guide(custom_photos, disabled_photos_set)}"""
+{_asset_guide(custom_photos, disabled_photos_set, brand)}"""
     photos_block += preferred_photos_line
     if custom_photos:
         photos_block += ("\nTEAM PHOTOS: entries marked TEAM PHOTO above were uploaded by the team with that "
@@ -636,9 +657,9 @@ RULES (column layouts):
   statement → benefit:"skin"); the icon is placed automatically.
 - Nutrients / ingredients / composition → use the `ingredient` layout, never icons. If in doubt, leave off."""
 
-    return f"""You plan an on-brand PowerPoint deck for Aker BioMarine's Superba Krill from source material
+    return f"""You plan an on-brand PowerPoint deck for {company}'s {product} from source material
 (a science summary or free text). You emit ONLY a structured plan via the `emit_plan` tool — you never
-write styling, colours, fonts, or positions. All design is inherited from the fixed Superba template;
+write styling, colours, fonts, or positions. All design is inherited from the fixed {product} template;
 your job is the STORYLINE, the LAYOUT choice per slide, and the COPY.
 {instr_block}{rules_block}
 
@@ -688,7 +709,7 @@ dividers, highlight beats and closing) — repeating the same 2 to 3 favourites 
 not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
 when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
 [bracketed] limits.
-{_layout_guide(disabled, overridden)}{disabled_note}{preferred_block}{_custom_slide_guide(custom_slides)}{_override_guide(layout_overrides)}
+{_layout_guide(disabled, overridden, brand)}{disabled_note}{preferred_block}{_custom_slide_guide(custom_slides)}{_override_guide(layout_overrides)}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
 its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
@@ -722,8 +743,9 @@ Emit the plan now via emit_plan."""
 def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None,
                  extra_photo_ids: list[str] | None = None,
                  disabled_photo_ids: set[str] | None = None,
-                 layout_overrides: list[dict] | None = None) -> dict:
-    s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
+                 layout_overrides: list[dict] | None = None,
+                 brand: str | None = None) -> dict:
+    s = {k: v for k, v in config.schema(brand).items() if k not in ("$schema", "title")}
     if disabled or extra_layouts or extra_photo_ids or disabled_photo_ids or layout_overrides:
         # Hard enforcement of the About page's switches: a disabled layout is removed from the
         # forced-tool enum, so the model cannot emit it at all (the prompt only explains why);
@@ -787,7 +809,8 @@ def _extract_plan(msg) -> dict:
 def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None,
           extra_layouts: list[str] | None = None, extra_photo_ids: list[str] | None = None,
           disabled_photo_ids: set[str] | None = None,
-          layout_overrides: list[dict] | None = None):
+          layout_overrides: list[dict] | None = None,
+          brand: str | None = None):
     def once(budget):
         return client.messages.create(
             model=model or config.MODEL, max_tokens=budget, system=system,
@@ -811,11 +834,11 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
               disabled_layouts=None, custom_slides=None, custom_photos=None,
               preferred_layouts=None, design=None, disabled_photos=None,
               preferred_photos=None, layout_overrides=None, required_slides=None,
-              managed_blocks=None, model: str | None = None) -> dict:
+              managed_blocks=None, model: str | None = None, brand: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
-    disabled = sanitize_disabled(disabled_layouts, required_slides)
-    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
+    disabled = sanitize_disabled(disabled_layouts, required_slides, brand)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos, brand)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     photo_ids = custom_photo_ids(custom_photos)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\nProduce the deck plan now "
@@ -824,9 +847,9 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides, managed_blocks), user, model,
+                                                    required_slides, managed_blocks, brand), user, model,
                                max_tokens, disabled, extra, photo_ids, disabled_photo_ids,
-                               slot_entries(layout_overrides, custom_slides)))
+                               slot_entries(layout_overrides, custom_slides), brand))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
@@ -834,7 +857,8 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 custom_photos=None, preferred_layouts=None, design=None,
                 disabled_photos=None, preferred_photos=None, layout_overrides=None,
-                required_slides=None, managed_blocks=None, model: str | None = None) -> dict:
+                required_slides=None, managed_blocks=None, model: str | None = None,
+                brand: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     # Three different kinds of feedback need three different repair instructions. Schema errors name
@@ -928,16 +952,16 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       + "\n- ".join(rules_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    disabled = sanitize_disabled(disabled_layouts, required_slides)
-    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
+    disabled = sanitize_disabled(disabled_layouts, required_slides, brand)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos, brand)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides, managed_blocks), user, model,
+                                                    required_slides, managed_blocks, brand), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))
+                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides), brand))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
@@ -946,7 +970,7 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
                        custom_photos=None, preferred_layouts=None, design=None,
                        disabled_photos=None, preferred_photos=None, layout_overrides=None,
                        required_slides=None, managed_blocks=None,
-                       model: str | None = None) -> dict:
+                       model: str | None = None, brand: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
@@ -972,13 +996,13 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            "plan via emit_plan.\n\nVISUAL QA FINDINGS:\n- " + "\n- ".join(lines)
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    disabled = sanitize_disabled(disabled_layouts, required_slides)
-    disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
+    disabled = sanitize_disabled(disabled_layouts, required_slides, brand)
+    disabled_photo_ids = sanitize_disabled_photos(disabled_photos, brand)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides, managed_blocks), user, model,
+                                                    required_slides, managed_blocks, brand), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))
+                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides), brand))

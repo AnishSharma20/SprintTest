@@ -165,7 +165,7 @@ def _read_path(slide: dict, path: tuple) -> list[tuple[str, str]]:
     return [(cp, v) for cp, v in cur if isinstance(v, str) and v.strip()]
 
 
-def _text_density_warnings(plan: dict) -> list[str]:
+def _text_density_warnings(plan: dict, brand: str | None = None) -> list[str]:
     """Soft nudge (never blocks) toward AKBM's own house style of filling a box with real
     supporting substance rather than a short fragment. Compares each long-form text field's
     actual length to its schema maxLength — the true room its box has, already measured from the
@@ -177,7 +177,7 @@ def _text_density_warnings(plan: dict) -> list[str]:
         return []
 
     long_paths_by_layout: dict[str, list[tuple]] = {}
-    for cond in config.schema()["properties"]["slides"]["items"].get("allOf", []):
+    for cond in config.schema(brand)["properties"]["slides"]["items"].get("allOf", []):
         sem = cond["if"]["properties"]["layout"]["const"]
         long_paths_by_layout[sem] = _long_text_paths(cond["then"].get("properties", {}))
 
@@ -205,7 +205,8 @@ def _text_density_warnings(plan: dict) -> list[str]:
 
 def _schema_with_extras(extra_layouts: list[str] | None,
                         extra_photo_ids: list[str] | None = None,
-                        layout_overrides: list[dict] | None = None) -> dict:
+                        layout_overrides: list[dict] | None = None,
+                        brand: str | None = None) -> dict:
     """The slide schema, with the team's own slide keys (custom_<id>) added to the layout enum,
     the team's photo ids (team_photo_<id>) added to every asset_id enum, and every SLOT-FILLED
     key's conditional demanding per-slot text (planner.apply_slot_layouts — the same mutation
@@ -213,9 +214,9 @@ def _schema_with_extras(extra_layouts: list[str] | None,
     built-in layout and a team-uploaded design). Verbatim slides need no if/then conditional —
     they carry no other fields."""
     if not extra_layouts and not extra_photo_ids and not layout_overrides:
-        return config.schema()
+        return config.schema(brand)
     import copy
-    s = copy.deepcopy(config.schema())
+    s = copy.deepcopy(config.schema(brand))
     if extra_layouts:
         enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
         s["properties"]["slides"]["items"]["properties"]["layout"]["enum"] = enum + [
@@ -267,11 +268,12 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   extra_photo_ids: list[str] | None = None,
                   photo_level: str = "default",
                   disabled_layouts=None,
-                  layout_overrides: list[dict] | None = None) -> list[str]:
+                  layout_overrides: list[dict] | None = None,
+                  brand: str | None = None) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
     validator = jsonschema.Draft202012Validator(
-        _schema_with_extras(extra_layouts, extra_photo_ids, layout_overrides))
+        _schema_with_extras(extra_layouts, extra_photo_ids, layout_overrides, brand))
     # Repair before reporting: a field the schema has never heard of is deleted rather than blamed,
     # because no retry can be trusted to stop writing it and nothing renders it anyway.
     for gone in prune_unknown(plan, validator):
@@ -289,8 +291,8 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
 
     # Semantic checks beyond the JSON Schema (asset_id must be a real, selectable photo;
     # the enum already covers this, but a clear message helps the retry).
-    ids = {a["id"] for a in config.selectable_photos()} | set(extra_photo_ids or ())
-    catalog = config.catalog()
+    ids = {a["id"] for a in config.selectable_photos(brand)} | set(extra_photo_ids or ())
+    catalog = config.catalog(brand)
     for i, slide in enumerate(plan.get("slides", []), 1):
         aid = slide.get("asset_id")
         if aid and aid not in ids:
@@ -306,7 +308,7 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     # meant a plan with even one trivial residual overflow (which ships anyway) never got its
     # coverage checked at all, silently shipping under the photo/variety minimums.
     errors.extend(_coverage_warnings(plan, photo_level))
-    errors.extend(_text_density_warnings(plan))
+    errors.extend(_text_density_warnings(plan, brand))
     errors.extend(_notes_warnings(plan))
     errors.extend(_summary_warning(plan, disabled_layouts))
     errors.extend(_exec_summary_length_warning(plan))

@@ -2574,7 +2574,7 @@ export default function AboutV2Page() {
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-start justify-between gap-2">
+                          <div className="flex min-h-6 items-start justify-between gap-2">
                             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                               <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
                               {c.slots?.length ? (
@@ -2674,7 +2674,7 @@ export default function AboutV2Page() {
                         loading="lazy"
                       />
                       <div className="p-3">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex min-h-6 items-start justify-between gap-2">
                           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                             <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
                             {ov && (
@@ -3149,7 +3149,7 @@ export default function AboutV2Page() {
                           </div>
                         ) : (
                           <>
-                            <div className="flex items-start justify-between gap-2">
+                            <div className="flex min-h-6 items-start justify-between gap-2">
                               <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{p.name}</div>
                               <div className="flex shrink-0 items-center gap-4">
                                 <span className={STAR_SLOT}>
@@ -3262,7 +3262,7 @@ export default function AboutV2Page() {
                           </div>
                         ) : (
                           <>
-                            <div className="flex items-start justify-between gap-2">
+                            <div className="flex min-h-6 items-start justify-between gap-2">
                               <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{displayName}</div>
                               <div className="flex shrink-0 items-center gap-4">
                                 <span className={STAR_SLOT}>

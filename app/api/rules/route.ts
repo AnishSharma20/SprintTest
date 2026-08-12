@@ -1,14 +1,26 @@
 // /api/rules — the team's own deck generation rules (managed on the About page).
 //
-//   GET  /api/rules   { configured, rules: [{ id, text, enabled, ... }] }
-//   POST /api/rules   { text, author? }  → create (enabled by default)
+//   GET  /api/rules   { configured, rules: [{ id, text, enabled, slide_key, action, position }] }
+//   POST /api/rules   { text, slide_key?, action?, position?, author? }  → create (enabled)
 //
-// Every ENABLED rule is fetched by the generator pages at generation time and threaded to
-// the deck service, which injects them into the planner's system prompt. The table only
-// exists once migration 0004 has been run; until then GET reports `migrated: false` so the
-// About page can render read-only with a setup hint instead of erroring.
+// Two kinds of rule live in this one list, and the difference is whether the pipeline can ACT on
+// it (see migration 0013):
+//   - a WRITING rule (slide_key null) is prose injected into the planner's prompt, then verified
+//     against the finished deck by the deck service's rules_gate and repaired if broken;
+//   - a STRUCTURE rule (slide_key + action) is applied deterministically — 'position' moves that
+//     slide to an exact spot, 'always_include' guarantees it appears. These replace guarantees
+//     that used to be hardcoded, which is what makes the cover and agenda removable: delete the
+//     rule and the guarantee goes with it.
+//
+// Every ENABLED rule is fetched by the generator pages at generation time and threaded to the
+// deck service. The table only exists once migration 0004 has been run, and the structural
+// columns once 0013 has; until then GET reports migrated/structureMigrated false so the About
+// page can degrade instead of erroring.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+
+const ACTIONS = new Set(["position", "always_include"]);
+const POSITIONS = new Set(["first", "second", "third", "last", "second_to_last"]);
 
 export async function GET() {
   const sb = supabase();
@@ -21,7 +33,16 @@ export async function GET() {
     .order("id");
   if (res.error) return Response.json({ configured: true, migrated: false, rules: [] });
 
-  return Response.json({ configured: true, migrated: true, rules: res.data });
+  // Probe the column itself rather than inferring from a row: with an empty rules table there is
+  // no row to inspect, and guessing "migrated" there let the page offer a slide-rule builder that
+  // could only fail on save.
+  const probe = await sb.from("generation_rules").select("slide_key").limit(1);
+  return Response.json({
+    configured: true,
+    migrated: true,
+    structureMigrated: !probe.error,
+    rules: res.data,
+  });
 }
 
 export async function POST(req: Request) {
@@ -29,21 +50,48 @@ export async function POST(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { text, author } = (await req.json()) as { text?: string; author?: string };
+    const { text, slide_key, action, position, author } = (await req.json()) as {
+      text?: string;
+      slide_key?: string;
+      action?: string;
+      position?: string;
+      author?: string;
+    };
     const t = (text ?? "").trim();
     if (!t) return Response.json({ error: "The rule text is empty." }, { status: 400 });
     if (t.length > 500)
       return Response.json({ error: "Keep a rule under 500 characters." }, { status: 400 });
 
+    const key = (slide_key ?? "").trim();
+    if (key) {
+      if (!ACTIONS.has(action ?? ""))
+        return Response.json({ error: "A slide rule needs a known action." }, { status: 400 });
+      if (action === "position" && !POSITIONS.has(position ?? ""))
+        return Response.json({ error: "A position rule needs a known position." }, { status: 400 });
+    }
+
     const existing = await sb.from("generation_rules").select("sort_order");
     if (existing.error) return Response.json({ error: existing.error.message }, { status: 500 });
     const sortOrder = Math.max(0, ...existing.data.map((r) => r.sort_order ?? 0)) + 1;
 
-    const ins = await sb
-      .from("generation_rules")
-      .insert({ text: t, created_by: (author ?? "").trim() || null, sort_order: sortOrder })
-      .select("*")
-      .single();
+    const row: Record<string, unknown> = {
+      text: t,
+      created_by: (author ?? "").trim() || null,
+      sort_order: sortOrder,
+    };
+    if (key) {
+      row.slide_key = key;
+      row.action = action;
+      row.position = action === "position" ? position : null;
+    }
+
+    let ins = await sb.from("generation_rules").insert(row).select("*").single();
+    if (ins.error && key && `${ins.error.message}`.includes("slide_key")) {
+      return Response.json(
+        { error: "Run migration 0013_structure_rules_and_slide_stars.sql in the Supabase SQL editor first." },
+        { status: 400 }
+      );
+    }
     if (ins.error) return Response.json({ error: ins.error.message }, { status: 500 });
     return Response.json({ rule: ins.data });
   } catch (e) {

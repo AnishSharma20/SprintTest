@@ -34,7 +34,7 @@ from fastapi import FastAPI, File, Form, Header, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 import src
-from src import config
+from src import config, renderer
 
 app = FastAPI(title="Superba Deck Generator")
 
@@ -178,16 +178,32 @@ def _read_summary(name: str, data: bytes) -> str:
 # ---------------------------------------------------------------------------
 # Async jobs. Generation takes longer than a proxy/gateway will hold a connection,
 # so it runs in a background thread reporting progress into an in-memory store; the
-# client POSTs to start, polls status, then downloads. Single-worker 1-user MVP.
+# client POSTs to start, polls status, then downloads.
 # ---------------------------------------------------------------------------
 JOBS: dict[str, dict] = {}
 JOB_TTL_SECONDS = 3600
 
+# Concurrency control: semaphore gates the render + QA gate (the heavy-tail part that uses
+# lots of memory) to prevent OOM on the free 512 MB tier. Planning (1–3 minutes, network-bound)
+# stays fully parallel. The render itself is also locked inside renderer.py to serialize access
+# to its module-level globals (design, photos, icons).
+_HEAVY_TAIL_SEMAPHORE = threading.BoundedSemaphore(2)
+
+# Temp directory for spilled results (option 2a), cleaned up on _prune_jobs.
+_RESULT_TEMP_DIR = tempfile.mkdtemp(prefix="deck_results_")
+
 
 def _prune_jobs() -> None:
     now = time.time()
-    for jid in [k for k, v in JOBS.items() if now - v.get("created", now) > JOB_TTL_SECONDS]:
-        JOBS.pop(jid, None)
+    expired = [k for k, v in JOBS.items() if now - v.get("created", now) > JOB_TTL_SECONDS]
+    for jid in expired:
+        j = JOBS.pop(jid, {})
+        # Clean up spilled result files on disk.
+        if "result_path" in j:
+            try:
+                Path(j["result_path"]).unlink(missing_ok=True)
+            except Exception:  # noqa: BLE001
+                pass
 
 
 # Letters NFKD cannot fold, because they are distinct letters rather than base + combining mark.
@@ -220,6 +236,14 @@ def _slug(text: str, limit: int = 60) -> str:
     cut = s[:limit]
     boundary = cut.rfind("-")
     return (cut[:boundary] if boundary > limit // 2 else cut).rstrip("-")
+
+
+def _store_result(data: bytes) -> str:
+    """Write result bytes to a temp file and return the path. Files are cleaned up by
+    _prune_jobs() when the job expires."""
+    p = Path(_RESULT_TEMP_DIR) / f"{uuid.uuid4().hex}.bin"
+    p.write_bytes(data)
+    return str(p)
 
 
 def _parse_custom_slides(custom_slides_meta: str,
@@ -332,7 +356,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              disabled_photos: str = "",
              preferred_photos: str = "",
              color_theme: str = "",
-             layout_overrides_meta: str = "") -> None:
+             layout_overrides_meta: str = "",
+             structure_rules: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -391,16 +416,18 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                         asset = shipped_asset(name)
                         if asset:
                             z.writestr(f"Links/{name}", asset.read_bytes())
+                data = zbuf.getvalue()
                 JOBS[job_id].update(status="done", progress=100, step="Done",
-                                    result=zbuf.getvalue(), media_type="application/zip",
+                                    result_path=_store_result(data), media_type="application/zip",
                                     filename=stem + ".zip")
                 return
 
             b = src.generate_blog(client, source, base, length=lengde, tone=tone, instructions=instruksjoner,
                                   on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s))
             stem = _slug(b.get("title", "")) or base
+            data = b["markdown"].encode("utf-8")
             JOBS[job_id].update(status="done", progress=100, step="Done",
-                                result=b["markdown"].encode("utf-8"),
+                                result_path=_store_result(data),
                                 media_type="text/markdown; charset=utf-8", filename=stem + ".md")
             return
 
@@ -422,6 +449,15 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
         parsed_photos = _parse_custom_photos(custom_photos_meta, custom_photo_blobs or {})
         parsed_overrides = _parse_layout_overrides(layout_overrides_meta, custom_file_blobs or {})
+        # None (field absent) = no answer, keep the built in shape; [] = the team removed every
+        # structure rule and means it. Malformed input is treated as no answer.
+        parsed_structure = None
+        if structure_rules.strip():
+            try:
+                loaded = json.loads(structure_rules)
+                parsed_structure = loaded if isinstance(loaded, list) else None
+            except Exception:  # noqa: BLE001
+                parsed_structure = None
         parsed_preferred = [p.strip() for p in (preferred_layouts or "").split(",") if p.strip()]
         parsed_disabled_photos = [p.strip() for p in (disabled_photos or "").split(",") if p.strip()]
         parsed_preferred_photos = [p.strip() for p in (preferred_photos or "").split(",") if p.strip()]
@@ -437,25 +473,29 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         base = files[0][0].rsplit(".", 1)[0] if files else "deck"
         has_study_meta = any(fname == "Selected-scientific-studies.txt" for fname, _ in files)
 
-        d = src.generate(client, source, base, length=lengde, tone=tone,
-                         quality=kvalitet, instructions=instruksjoner,
-                         on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s),
-                         study_meta=parsed_study_meta if has_study_meta else None,
-                         custom_rules=custom_rules,
-                         disabled_layouts=[dl.strip() for dl in disabled_layouts.split(",") if dl.strip()],
-                         design=parsed_design, custom_slides=parsed_custom,
-                         custom_photos=parsed_photos,
-                         preferred_layouts=parsed_preferred,
-                         disabled_photos=parsed_disabled_photos,
-                         preferred_photos=parsed_preferred_photos,
-                         color_theme=color_theme.strip() or None,
-                         layout_overrides=parsed_overrides)
+        # Acquire semaphore before rendering to prevent OOM from concurrent heavy renders.
+        # Planning (the slow 1–3 minute part) happens first, outside the semaphore, so
+        # multiple users' planning still overlaps; only the render/QA gates queue.
+        with _HEAVY_TAIL_SEMAPHORE:
+            d = src.generate(client, source, base, length=lengde, tone=tone,
+                             quality=kvalitet, instructions=instruksjoner,
+                             on_progress=lambda p, s: JOBS[job_id].update(progress=p, step=s),
+                             study_meta=parsed_study_meta if has_study_meta else None,
+                             custom_rules=custom_rules,
+                             disabled_layouts=[dl.strip() for dl in disabled_layouts.split(",") if dl.strip()],
+                             design=parsed_design, custom_slides=parsed_custom,
+                             custom_photos=parsed_photos,
+                             preferred_layouts=parsed_preferred,
+                             disabled_photos=parsed_disabled_photos,
+                             preferred_photos=parsed_preferred_photos,
+                             color_theme=color_theme.strip() or None,
+                             layout_overrides=parsed_overrides)
 
         # Named after the deck's own generated deck_title (the topic), falling back to the
         # source file stem when the title yields no usable ASCII.
         stem = _slug((d.get("plan") or {}).get("deck_title", "")) or d["filename"].rsplit(".", 1)[0]
         JOBS[job_id].update(status="done", progress=100, step="Done",
-                            result=d["pptx"], media_type=PPTX_MEDIA, filename=stem + ".pptx")
+                            result_path=_store_result(d["pptx"]), media_type=PPTX_MEDIA, filename=stem + ".pptx")
     except Exception as e:  # noqa: BLE001 — record the failure for the client to read
         JOBS[job_id].update(status="error", step="Failed", error=str(e))
 
@@ -542,6 +582,7 @@ async def create_job(
     preferred_photos: str = Form(default=""),
     color_theme: str = Form(default=""),
     layout_overrides_meta: str = Form(default=""),
+    structure_rules: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -571,6 +612,9 @@ async def create_job(
     from every asset_id enum so the model cannot pick them; deck only.
     preferred_photos: comma separated photo ids (built-in or team_photo_<id>) starred as house
     favourites — a soft planner preference among equally fitting photos; deck only.
+    structure_rules: JSON array of the About page's STRUCTURE rules ({slide, action, position}) —
+    which slides every deck must have and where they sit. Empty keeps the built in shape (cover
+    first, executive summary second, agenda third); deck only.
     layout_overrides_meta: the About page's TEAM REDESIGNED layouts — a JSON array of
     {layout, file_id, slide_index, slots, preview_b64?}; the .pptx blobs ride the SAME
     custom_files channel, named <file_id>.pptx. The design is spliced verbatim; the planner
@@ -603,7 +647,7 @@ async def create_job(
                            design_settings, custom_slides_meta, custom_blobs,
                            custom_photos_meta, photo_blobs, preferred_layouts,
                            disabled_photos, preferred_photos, color_theme,
-                           layout_overrides_meta),
+                           layout_overrides_meta, structure_rules),
                      daemon=True).start()
     return {"job_id": job_id}
 
@@ -1233,14 +1277,24 @@ def job_status(job_id: str):
 def job_result(job_id: str):
     """Repeatable, not one-shot: the frontend keeps this URL around as a plain clickable link (so a
     non-technical user can re-open their deck without hunting through a downloads folder), so it must
-    survive more than one GET. The bytes still go away eventually via _prune_jobs()'s JOB_TTL_SECONDS
-    (1h), same as any other job."""
+    survive more than one GET. Files are cleaned up by _prune_jobs()'s JOB_TTL_SECONDS (1h)."""
     j = JOBS.get(job_id)
     if not j:
         return JSONResponse({"feil": "Unknown or expired job."}, status_code=404)
     if j.get("status") != "done":
         return JSONResponse({"feil": f"Job is {j.get('status')}, not ready."}, status_code=409)
-    data, media, filename = j["result"], j["media_type"], j["filename"]
+    # Try result_path first (new storage to disk), then fall back to legacy in-memory result.
+    data = None
+    if "result_path" in j:
+        try:
+            data = Path(j["result_path"]).read_bytes()
+        except Exception:  # noqa: BLE001 — file may have been deleted prematurely
+            return JSONResponse({"feil": "Result file not found or unreadable."}, status_code=410)
+    elif "result" in j:
+        data = j["result"]
+    if data is None:
+        return JSONResponse({"feil": "Result data is missing."}, status_code=500)
+    media, filename = j["media_type"], j["filename"]
     return Response(content=data, media_type=media,
                     headers={"Content-Disposition": f'attachment; filename="{filename}"'})
 

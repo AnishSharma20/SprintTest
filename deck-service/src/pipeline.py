@@ -35,11 +35,91 @@ def _strip_text(s: str) -> str:
     return re.sub(r"(?<=\w)-(?=\w)", " ", s)  # inter-word/number hyphen -> space (Omega-3 -> Omega 3)
 
 
-def _ensure_agenda(plan: dict) -> dict:
-    """Every deck must have an agenda slide (contents), on the picture-bearing 'agenda' layout with
-    branded bullets. The planner is instructed to write one; this is the safety net for when it
-    doesn't — it derives a contents list from the deck's section dividers (or slide titles)."""
+# ---------------------------------------------------------------------------
+# Structure rules — the deck's SHAPE, edited on the About page instead of hardcoded here.
+#
+# A rule is {slide, action, position}: action "position" pins a slide to an exact spot, action
+# "always_include" guarantees it appears at all. Only the three slides the code can COMPOSE from
+# the deck's own content (cover, executive summary, agenda) can be conjured when the model omits
+# one; for any other layout "always_include" is a strong instruction to the planner plus the rule
+# check, because a content slide's text has to be written, not invented here.
+#
+# Backwards compatible on purpose: passing no rules keeps exactly the old hardcoded behaviour
+# (cover first, summary second, agenda third), so an unmigrated database generates as before.
+# ---------------------------------------------------------------------------
+_POSITION_SLOTS = ("first", "second", "third", "last", "second_to_last")
+_COMPOSABLE = ("title", "exec_summary", "agenda")
+_DEFAULT_STRUCTURE = [
+    {"slide": "title", "action": "position", "position": "first"},
+    {"slide": "exec_summary", "action": "position", "position": "second"},
+    {"slide": "agenda", "action": "position", "position": "third"},
+]
+
+
+def sanitize_structure(structure_rules) -> list[dict]:
+    """Only well-formed rules, and never two rules fighting over one slide (first wins)."""
+    out, seen = [], set()
+    for r in structure_rules or []:
+        if not isinstance(r, dict):
+            continue
+        slide = str(r.get("slide") or "").strip()
+        action = str(r.get("action") or "").strip()
+        if not slide or slide in seen or action not in ("position", "always_include"):
+            continue
+        pos = str(r.get("position") or "").strip()
+        if action == "position" and pos not in _POSITION_SLOTS:
+            continue
+        seen.add(slide)
+        out.append({"slide": slide, "action": action, "position": pos or None})
+    return out
+
+
+def _required_slides(rules: list[dict]) -> set[str]:
+    """Slides a rule says every deck must have — a position rule implies the slide is wanted."""
+    return {r["slide"] for r in rules}
+
+
+def _place(slides: list[dict], index: int, slot: str) -> int:
+    """Target index for `slot`, given the slide currently at `index` is being moved out."""
+    rest = len(slides) - 1  # length once the slide is lifted out
+    if slot == "first":
+        return 0
+    if slot == "second":
+        return min(1, rest)
+    if slot == "third":
+        return min(2, rest)
+    if slot == "last":
+        return rest
+    return max(0, rest - 1)  # second_to_last
+
+
+def _apply_structure(plan: dict, rules: list[dict]) -> dict:
+    """Move every pinned slide to its slot, in the order the slots read left to right, so a deck
+    whose model output drifted still opens the way the team decided it should."""
+    if not rules:
+        return plan
+    order = {s: i for i, s in enumerate(_POSITION_SLOTS)}
+    pinned = sorted((r for r in rules if r["action"] == "position"),
+                    key=lambda r: order.get(r["position"], 99))
+    slides = list(plan.get("slides", []))
+    for r in pinned:
+        at = next((i for i, s in enumerate(slides) if s.get("layout") == r["slide"]), None)
+        if at is None:
+            continue
+        target = _place(slides, at, r["position"])
+        slide = slides.pop(at)
+        slides.insert(target, slide)
+    return {**plan, "slides": slides}
+
+
+def _ensure_agenda(plan: dict, required: set[str] | None = None) -> dict:
+    """Compose an agenda slide (contents) when the deck has none, from its own section dividers or
+    slide titles. Fires only when a structure rule asks for an agenda — delete that rule on the
+    About page and a deck without one is a legitimate deck. `required=None` means "no rules
+    supplied", which keeps the old unconditional behaviour."""
     slides = plan.get("slides", [])
+    if required is not None and "agenda" not in required:
+        return plan
     if any(s.get("layout") == "agenda" for s in slides):
         return plan
     titles = [s.get("title", "").strip() for s in slides
@@ -77,7 +157,8 @@ def _cap(text: str, n: int) -> str:
     return text if len(text) <= n else text[:n].rstrip()
 
 
-def _ensure_exec_summary(plan: dict, disabled_layouts=None, study_meta=None) -> dict:
+def _ensure_exec_summary(plan: dict, disabled_layouts=None, study_meta=None,
+                         required: set[str] | None = None) -> dict:
     """Every deck opens with an executive summary as slide 2, right after the cover and before
     the agenda. The planner is instructed to write one (the SUMMARY:/EXEC_LENGTH: nudges drive
     the retry); this is the deterministic net for when it still doesn't — composed ONLY from the
@@ -86,6 +167,8 @@ def _ensure_exec_summary(plan: dict, disabled_layouts=None, study_meta=None) -> 
     Skipped when the About page turned exec_summary off (the requirement travels with the layout)."""
     if "exec_summary" in (disabled_layouts or ()):
         return plan
+    if required is not None and "exec_summary" not in required:
+        return plan   # the team deleted the rule that asks for one
     slides = plan.get("slides", [])
     if len(slides) < 3 or any(s.get("layout") == "exec_summary" for s in slides):
         return plan
@@ -347,7 +430,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              disabled_photos: list[str] | None = None,
              preferred_photos: list[str] | None = None,
              color_theme: str | None = None,
-             layout_overrides: list[dict] | None = None) -> dict:
+             layout_overrides: list[dict] | None = None,
+             structure_rules: list[dict] | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
@@ -356,7 +440,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     color_theme: None/"auto" keeps the AI's own per-slide light/dark rhythm; "dark", "light" or
     "pastel" forces every slide deck-wide (Blue Ocean / White / Pastel Blue) — see _apply_color_theme.
     layout_overrides: TEAM REDESIGNED layouts ({layout, bytes, index, slots, png} each) — the
-    design is spliced verbatim while the planner writes fresh per-slot text on every use."""
+    design is spliced verbatim while the planner writes fresh per-slot text on every use.
+    structure_rules: the deck's SHAPE as the team set it on the About page ({slide, action,
+    position} each) — which slides every deck must have and where they sit. None/[] keeps the
+    old hardcoded shape (cover first, summary second, agenda third)."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -438,8 +525,17 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                 plan = candidate
 
     _p(70, "Rendering slides on the Superba template")
-    plan = _ensure_exec_summary(plan, disabled_layouts, study_meta)  # slide 2, before the agenda
-    plan = _ensure_agenda(plan)                             # guarantee a contents/agenda slide
+    # The team's structure rules decide the deck's shape: which of the composable slides must
+    # exist, and where every pinned slide sits. No rules (unmigrated database) = the old defaults.
+    # None means "the team's answer never reached us" (an unmigrated database, or an older
+    # frontend) and keeps the built in shape. An empty LIST is a real answer — the team deleted
+    # every structure rule — and must be honoured, not overridden by the defaults.
+    structure = (_DEFAULT_STRUCTURE if structure_rules is None
+                 else sanitize_structure(structure_rules))
+    required = _required_slides(structure)
+    plan = _ensure_exec_summary(plan, disabled_layouts, study_meta, required)
+    plan = _ensure_agenda(plan, required)
+    plan = _apply_structure(plan, structure)                # pin each slide to its slot
     plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
     plan = _apply_color_theme(plan, color_theme, override_keys)  # deck-wide theme override, if requested
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically

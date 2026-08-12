@@ -17,6 +17,11 @@ type Rule = {
   id: number;
   text: string;
   enabled: boolean;
+  /** Set = a STRUCTURE rule the pipeline applies (which slide, and what to guarantee about it);
+   * null = an ordinary writing rule that is checked against the finished deck instead. */
+  slide_key?: string | null;
+  action?: "position" | "always_include" | null;
+  position?: "first" | "second" | "third" | "last" | "second_to_last" | null;
   created_by: string | null;
   created_at: string;
   updated_by: string | null;
@@ -34,6 +39,7 @@ type CustomSlide = {
   mode: "auto" | "always" | "off";
   preview_b64: string | null;
   removed?: boolean;
+  preferred?: boolean;
   /** Present = the AI writes this design's text each deck; absent = inserted exactly as drawn. */
   slots?: unknown[] | null;
   created_by?: string | null;
@@ -132,12 +138,28 @@ function TabIcon({ id }: { id: TabKey }) {
   );
 }
 
-const LOCKED = new Set(["title", "agenda"]);
+// Which slides a deck is REQUIRED to have is no longer decided here — it is whatever the team's
+// structure rules say (migration 0013). Only the verbatim brand slide stays untouchable, because
+// the renderer splices it rather than the planner choosing it. Until 0013 is run, the two slides
+// that used to be hardcoded are still treated as required so nothing silently loses its guarantee.
+const LEGACY_LOCKED = new Set(["title", "agenda"]);
+const POSITION_LABEL: Record<string, string> = {
+  first: "always comes first",
+  second: "always comes second",
+  third: "always comes third",
+  last: "always comes last",
+  second_to_last: "always comes second to last",
+};
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
 // ONE card language for every slide and photo in the libraries: the same two actions in the same
 // place, at a size that is comfortable to hit, and no per-kind labelling. Everything else (the
 // design round trip, "in every deck", the AI-writes-text choice) lives inside Edit.
 const CARD_ACTIONS = "mt-3 flex items-center gap-2 border-t border-[#EEF4F7] pt-2.5";
+/** Every card reserves the same room for its description and its star, so the separator and the
+ * Edit/Remove row land on the same line on every card in the grid — a one-line description or a
+ * missing star used to pull those controls upwards and make the grid look ragged. */
+const CARD_DESC = "mt-1.5 line-clamp-2 min-h-[2.25rem] text-xs text-zinc-500";
+const STAR_SLOT = "flex h-6 w-6 items-center justify-center";
 const BTN_EDIT =
   "rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]";
 const BTN_REMOVE =
@@ -189,6 +211,11 @@ const MODE_LABEL: Record<CustomSlide["mode"], string> = {
   off: "Off",
 };
 
+/** A slide key as a person would name it, honouring any rename the team gave it. */
+function prettySlide(key: string): string {
+  return pretty(key);
+}
+
 function pretty(key: string): string {
   const s = key.replace(/_/g, " ");
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -208,6 +235,9 @@ export default function AboutV2Page() {
   // ----- rules -----
   const [rulesConfigured, setRulesConfigured] = useState(true);
   const [rulesMigrated, setRulesMigrated] = useState(true);
+  const [structureMigrated, setStructureMigrated] = useState(true); // migration 0013
+  const [newRuleSlide, setNewRuleSlide] = useState("");             // "" = a writing rule
+  const [newRulePosition, setNewRulePosition] = useState("first");
   const [rules, setRules] = useState<Rule[]>([]);
   const [newRule, setNewRule] = useState("");
   const [savingRule, setSavingRule] = useState(false);
@@ -300,6 +330,7 @@ export default function AboutV2Page() {
       const r = await (await fetch("/api/rules")).json();
       setRulesConfigured(r.configured !== false);
       setRulesMigrated(r.migrated !== false);
+      setStructureMigrated(r.migrated !== false && r.structureMigrated !== false);
       setRules(r.rules ?? []);
     } catch {
       setRulesConfigured(false);
@@ -381,7 +412,12 @@ export default function AboutV2Page() {
 
   // ---------- rules ----------
   async function addRule() {
-    const t = newRule.trim();
+    // A slide picked in the builder makes this a STRUCTURE rule the pipeline applies; otherwise
+    // it is a writing rule and the wording is all there is.
+    const structural = !!newRuleSlide;
+    const t = structural
+      ? `${prettySlide(newRuleSlide)} ${POSITION_LABEL[newRulePosition] ?? "is always included"}`
+      : newRule.trim();
     if (!t || savingRule) return;
     setSavingRule(true);
     setRuleError("");
@@ -389,12 +425,23 @@ export default function AboutV2Page() {
       const res = await fetch("/api/rules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: t, author: reviewer }),
+        body: JSON.stringify({
+          text: t,
+          author: reviewer,
+          ...(structural
+            ? {
+                slide_key: newRuleSlide,
+                action: newRulePosition === "anywhere" ? "always_include" : "position",
+                position: newRulePosition === "anywhere" ? undefined : newRulePosition,
+              }
+            : {}),
+        }),
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "Could not save the rule.");
       setRules((r) => [...r, d.rule]);
       setNewRule("");
+      setNewRuleSlide("");
     } catch (e) {
       setRuleError((e as Error).message);
     } finally {
@@ -947,7 +994,10 @@ export default function AboutV2Page() {
   }
 
   // ---------- custom slides ----------
-  async function patchSlide(id: string, patch: { name?: string; description?: string; mode?: string }) {
+  async function patchSlide(
+    id: string,
+    patch: { name?: string; description?: string; mode?: string; preferred?: boolean }
+  ) {
     setCustomError("");
     try {
       const res = await fetch(`/api/custom-slides/${id}`, {
@@ -1383,6 +1433,14 @@ export default function AboutV2Page() {
   });
   const offCount =
     disabled.size + customSlides.filter((c) => !c.removed && c.mode === "off").length;
+  // Slides a structure rule pins or requires: these keep their guarantee, so they cannot be
+  // switched off or removed while that rule stands. Delete the rule and the slide becomes ordinary.
+  const requiredByRules = new Set(
+    rules.filter((r) => r.enabled && r.slide_key && r.action).map((r) => r.slide_key as string)
+  );
+  const structureRules = rules.filter((r) => r.slide_key && r.action);
+  const requiredSlides = structureMigrated ? requiredByRules : LEGACY_LOCKED;
+
   const removedLayoutEntries = (gallery as GalleryEntry[]).filter((g) => layoutRemoved.has(g.key));
   const removedCustomSlides = customSlides.filter((c) => c.removed);
   const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
@@ -1609,8 +1667,15 @@ export default function AboutV2Page() {
                           </div>
                         ) : (
                           <div className="min-w-0 flex-1">
-                            <p className={`text-sm ${r.enabled ? "text-[#031B34]" : "text-zinc-400"}`}>{r.text}</p>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <p className={`text-sm ${r.enabled ? "text-[#031B34]" : "text-zinc-400"}`}>{r.text}</p>
+                              {/* A rule the pipeline applies is a guarantee; the rest are checked
+                                  against the finished deck. Saying which is which was the whole
+                                  point of this pass. */}
+                              <Strength kind={r.slide_key && r.action ? "enforced" : "checked"} />
+                            </div>
                             <p className="mt-1 text-[11px] text-zinc-400">
+                              {r.slide_key && r.action ? "Applied by the code · " : ""}
                               {r.updated_by || r.created_by
                                 ? `By ${r.updated_by || r.created_by} · ${new Date(r.updated_at || r.created_at).toLocaleDateString()}`
                                 : new Date(r.created_at).toLocaleDateString()}
@@ -1643,19 +1708,75 @@ export default function AboutV2Page() {
                     ))}
                   </ul>
 
-                  <div className="mt-4 flex items-start gap-2">
-                    <textarea
-                      value={newRule}
-                      onChange={(e) => setNewRule(e.target.value)}
-                      rows={2}
-                      placeholder='Add a rule, e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
-                      className="flex-1 rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                    />
+                  {/* Two kinds of rule, one list. Leaving the slide picker on "Any slide" writes an
+                      ordinary writing rule (checked against the finished deck); choosing a slide
+                      builds a rule the pipeline APPLIES, which is what makes the deck's shape
+                      editable here instead of hardcoded. */}
+                  <div className="mt-4 rounded-[4px] border border-[#E3EDF2] bg-[#FBFBFD] p-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold text-[#06456B]">This rule is about</span>
+                      <select
+                        value={newRuleSlide}
+                        disabled={!structureMigrated}
+                        onChange={(e) => setNewRuleSlide(e.target.value)}
+                        className="rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none disabled:opacity-50"
+                      >
+                        <option value="">how the deck is written (any slide)</option>
+                        {(gallery as GalleryEntry[])
+                          .filter((g) => g.kind !== "verbatim")
+                          .map((g) => (
+                            <option key={g.key} value={g.key}>
+                              the {(layoutNames[g.key]?.display_name || pretty(g.key)).toLowerCase()} slide
+                            </option>
+                          ))}
+                      </select>
+                      {newRuleSlide && (
+                        <>
+                          <span className="text-xs font-semibold text-[#06456B]">and it</span>
+                          <select
+                            value={newRulePosition}
+                            onChange={(e) => setNewRulePosition(e.target.value)}
+                            className="rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
+                          >
+                            <option value="first">always comes first</option>
+                            <option value="second">always comes second</option>
+                            <option value="third">always comes third</option>
+                            <option value="second_to_last">always comes second to last</option>
+                            <option value="last">always comes last</option>
+                            <option value="anywhere">is always included, anywhere</option>
+                          </select>
+                          <Strength kind="enforced" />
+                        </>
+                      )}
+                      {!structureMigrated && (
+                        <span className="text-[11px] text-zinc-500">
+                          Slide rules need migration 0013_structure_rules_and_slide_stars.sql.
+                        </span>
+                      )}
+                    </div>
+                    {newRuleSlide ? (
+                      <p className="mt-2 text-xs text-zinc-600">
+                        Will be saved as:{" "}
+                        <span className="font-semibold text-[#031B34]">
+                          {prettySlide(newRuleSlide)} {POSITION_LABEL[newRulePosition] ?? "is always included"}
+                        </span>
+                        . Applied by the code on every deck, so it cannot be missed — and while this rule
+                        exists that slide cannot be switched off or removed.
+                      </p>
+                    ) : (
+                      <textarea
+                        value={newRule}
+                        onChange={(e) => setNewRule(e.target.value)}
+                        rows={2}
+                        placeholder='e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
+                        className="mt-2 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={() => void addRule()}
-                      disabled={!newRule.trim() || savingRule}
-                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                      disabled={savingRule || (!newRuleSlide && !newRule.trim())}
+                      className="mt-2 rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                     >
                       {savingRule ? "Saving…" : "＋ Add rule"}
                     </button>
@@ -2475,6 +2596,24 @@ export default function AboutV2Page() {
                               )}
                             </div>
                             <div className="flex shrink-0 items-center gap-4">
+                              <span className={STAR_SLOT}>
+                                {c.mode !== "off" && starsMigrated && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void patchSlide(c.id, { preferred: !c.preferred })}
+                                    title={
+                                      c.preferred
+                                        ? "House favourite: the AI prefers this when several slides fit"
+                                        : "Star as a house favourite"
+                                    }
+                                    className={`${STAR_BTN} ${
+                                      c.preferred ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                    }`}
+                                  >
+                                    {c.preferred ? "★" : "☆"}
+                                  </button>
+                                )}
+                              </span>
                               <button
                                 type="button"
                                 role="switch"
@@ -2487,7 +2626,7 @@ export default function AboutV2Page() {
                               </button>
                             </div>
                           </div>
-                          {c.description && <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
+                          <p className={CARD_DESC}>{c.description}</p>
                           <div className={CARD_ACTIONS}>
                             <button
                               type="button"
@@ -2512,7 +2651,7 @@ export default function AboutV2Page() {
 
                 {entries.map((g) => {
                   const off = disabled.has(g.key);
-                  const locked = LOCKED.has(g.key) || g.kind === "verbatim";
+                  const locked = requiredSlides.has(g.key) || g.kind === "verbatim";
                   const ov = overrides[g.key];
                   const displayName = layoutNames[g.key]?.display_name || pretty(g.key);
                   const displayDesc = layoutNames[g.key]?.description || cleanUsage(g.usage);
@@ -2552,7 +2691,7 @@ export default function AboutV2Page() {
                                 title={
                                   g.kind === "verbatim"
                                     ? "A fixed brand slide — always included, never rewritten"
-                                    : "Required in every deck, so it cannot be turned off or removed"
+                                    : "A rule on the Rules tab requires this slide. Delete that rule to make it removable."
                                 }
                               >
                                 {g.kind === "verbatim" ? "Fixed" : "Always on"}
@@ -2561,6 +2700,7 @@ export default function AboutV2Page() {
                           </div>
                           {!locked && (
                             <div className="flex shrink-0 items-center gap-4">
+                              <span className={STAR_SLOT}>
                               {!off && starsMigrated && (
                                 <button
                                   type="button"
@@ -2577,6 +2717,7 @@ export default function AboutV2Page() {
                                   {preferred.has(g.key) ? "★" : "☆"}
                                 </button>
                               )}
+                              </span>
                               <button
                                 type="button"
                                 role="switch"
@@ -2667,7 +2808,9 @@ export default function AboutV2Page() {
                         ) : (
                           <>
                             <p
-                              className={`mt-2 cursor-pointer text-xs text-zinc-500 ${expanded === g.key ? "" : "line-clamp-2"}`}
+                              className={`mt-1.5 cursor-pointer text-xs text-zinc-500 ${
+                                expanded === g.key ? "" : "line-clamp-2 min-h-[2.25rem]"
+                              }`}
                               onClick={() => setExpanded(expanded === g.key ? null : g.key)}
                               title={expanded === g.key ? "Click to collapse" : "Click to read the full guidance"}
                             >
@@ -3009,6 +3152,7 @@ export default function AboutV2Page() {
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{p.name}</div>
                               <div className="flex shrink-0 items-center gap-4">
+                                <span className={STAR_SLOT}>
                                 {p.enabled && (
                                   <button
                                     type="button"
@@ -3025,6 +3169,7 @@ export default function AboutV2Page() {
                                     {p.preferred ? "★" : "☆"}
                                   </button>
                                 )}
+                                </span>
                                 <button
                                   type="button"
                                   role="switch"
@@ -3037,7 +3182,7 @@ export default function AboutV2Page() {
                                 </button>
                               </div>
                             </div>
-                            <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                            <p className={CARD_DESC}>{p.description}</p>
                             <div className={CARD_ACTIONS}>
                               <button
                                 type="button"
@@ -3120,6 +3265,7 @@ export default function AboutV2Page() {
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{displayName}</div>
                               <div className="flex shrink-0 items-center gap-4">
+                                <span className={STAR_SLOT}>
                                 {!off && photoSettingsMigrated && (
                                   <button
                                     type="button"
@@ -3136,6 +3282,7 @@ export default function AboutV2Page() {
                                     {photoPreferred.has(p.id) ? "★" : "☆"}
                                   </button>
                                 )}
+                                </span>
                                 <button
                                   type="button"
                                   role="switch"
@@ -3149,7 +3296,7 @@ export default function AboutV2Page() {
                                 </button>
                               </div>
                             </div>
-                            <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{displayDesc}</p>
+                            <p className={CARD_DESC}>{displayDesc}</p>
                             {photoMetaMigrated && (
                               <div className={CARD_ACTIONS}>
                                 <button

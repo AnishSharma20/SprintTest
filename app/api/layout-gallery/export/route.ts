@@ -8,6 +8,8 @@
 //
 //   POST { layout, background? ("dark" | "light" | "pastel") } → the .pptx file
 
+import { brandFromBody } from "../../../lib/brand";
+
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -21,7 +23,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { layout, background } = (await req.json()) as { layout?: string; background?: string };
+    const body = (await req.json()) as { layout?: string; background?: string; brand?: string };
+    const { layout, background } = body;
     if (!layout) return Response.json({ error: "Missing layout key." }, { status: 400 });
 
     const res = await fetch(`${base}/slides/export`, {
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
         ...(process.env.DECK_SERVICE_TOKEN ? { "X-Deck-Token": process.env.DECK_SERVICE_TOKEN } : {}),
       },
-      body: JSON.stringify({ layout, background: background ?? "dark" }),
+      body: JSON.stringify({ layout, background: background ?? "dark", brand: brandFromBody(req, body) }),
     });
 
     if (!res.ok) {

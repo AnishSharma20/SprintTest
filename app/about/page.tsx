@@ -2159,30 +2159,21 @@ export default function AboutV2Page() {
                   theme&quot; setting can also force every slide in a deck to just one of them.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-3">
-                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
-                    <span
-                      className="h-6 w-6 shrink-0 rounded-[4px]"
-                      style={{ background: "linear-gradient(135deg, #163536, #003462)" }}
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-[#031B34]">Blue Ocean</div>
-                      <div className="text-[10.5px] text-zinc-400">Dark theme &middot; deep-sea gradient</div>
+                  {BRAND_FEATURES[product].colorThemes.map((t) => (
+                    <div
+                      key={t.id}
+                      className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2"
+                    >
+                      <span
+                        className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]"
+                        style={{ background: t.swatch }}
+                      />
+                      <div>
+                        <div className="text-xs font-bold text-[#031B34]">{t.label}</div>
+                        <div className="text-[10.5px] text-zinc-400">{t.hint}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
-                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#FFFFFF" }} />
-                    <div>
-                      <div className="text-xs font-bold text-[#031B34]">White</div>
-                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; plain white</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
-                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#A9DBD5" }} />
-                    <div>
-                      <div className="text-xs font-bold text-[#031B34]">Pastel Blue</div>
-                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; solid mint</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
@@ -2205,7 +2196,7 @@ export default function AboutV2Page() {
                       <input
                         list="font-suggestions"
                         value={design.title_font ?? ""}
-                        placeholder="Exo 2 (brand)"
+                        placeholder={`${BRAND_FEATURES[product].designDefaults.titleFont} (brand)`}
                         onChange={(e) => setDesignField("title_font", e.target.value)}
                         className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
                       />
@@ -2215,14 +2206,14 @@ export default function AboutV2Page() {
                       <input
                         list="font-suggestions"
                         value={design.body_font ?? ""}
-                        placeholder="Manrope (brand)"
+                        placeholder={`${BRAND_FEATURES[product].designDefaults.bodyFont} (brand)`}
                         onChange={(e) => setDesignField("body_font", e.target.value)}
                         className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
                       />
                     </label>
-                    {numField("Title size", "size_title", "18", 14, 40, 1, "pt")}
-                    {numField("Body size", "size_body", "14", 9, 24, 1, "pt")}
-                    {numField("Small text size", "size_small", "12", 8, 18, 1, "pt")}
+                    {numField("Title size", "size_title", String(BRAND_FEATURES[product].designDefaults.title), 14, 40, 1, "pt")}
+                    {numField("Body size", "size_body", String(BRAND_FEATURES[product].designDefaults.body), 9, 24, 1, "pt")}
+                    {numField("Small text size", "size_small", String(BRAND_FEATURES[product].designDefaults.small), 8, 18, 1, "pt")}
                     {numField("Line spacing", "line_spacing", "1.06", 0.8, 2, 0.05)}
                     {numField("Page margin", "margin_in", "0.5", 0.2, 1.5, 0.05, "in")}
                     {numField("Box gutter", "gutter_in", "0.3", 0.1, 1, 0.05, "in")}

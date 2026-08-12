@@ -364,6 +364,8 @@ export default function ContentGenerator() {
       const neste = new Set([...prev].filter((t) => tillatt.includes(t)));
       return neste.size ? neste : new Set<ContentType>(tillatt.includes("deck") ? ["deck"] : []);
     });
+    const themes = BRAND_FEATURES[produkt].colorThemes.map((t) => t.id);
+    if (themes.length && !themes.includes(fargeTema)) setFargeTema(themes[0]);
     if (!BRAND_FEATURES[produkt].science) {
       setValgteStudier(new Set());
       setValgteFunn(new Set());
@@ -892,31 +894,36 @@ export default function ContentGenerator() {
                       ))}
                     </div>
                   </div>
-                  <div>
-                    <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Color theme</div>
-                    <div className="flex rounded-full border border-[#E4EDF0] p-1">
-                      {[
-                        ["dark", "Blue Ocean", "linear-gradient(135deg, #163536, #003462)", "text-white"],
-                        ["pastel", "Pastel Blue", "#A9DBD5", "text-[#052A4E]"],
-                        ["light", "White", "#FFFFFF", "text-[#052A4E] shadow-[inset_0_0_0_1px_#E3EDF2]"],
-                      ].map(([val, label, swatch, activeText]) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => setFargeTema(val)}
-                          style={fargeTema === val ? { background: swatch } : undefined}
-                          className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${
-                            fargeTema === val ? activeText : "text-[#5C7A85]"
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
+                  {/* Only the backgrounds THIS brand's template can render. A brand with a single
+                      master has nothing to choose between, so the whole control is hidden rather
+                      than offering it a theme it cannot draw. */}
+                  {BRAND_FEATURES[produkt].colorThemes.length > 1 && (
+                    <div>
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6D8894]">Color theme</div>
+                      <div className="flex rounded-full border border-[#E4EDF0] p-1">
+                        {BRAND_FEATURES[produkt].colorThemes.map((t) => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setFargeTema(t.id)}
+                            style={fargeTema === t.id ? { background: t.swatch } : undefined}
+                            className={`flex-1 rounded-full px-3 py-2 text-[13px] font-bold transition-colors ${
+                              fargeTema === t.id
+                                ? t.id === "dark"
+                                  ? "text-white"
+                                  : "text-[#052A4E] shadow-[inset_0_0_0_1px_#E3EDF2]"
+                                : "text-[#5C7A85]"
+                            }`}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-1.5 text-xs text-zinc-500">
+                        Forces every slide in the deck to this one background theme.
+                      </p>
                     </div>
-                    <p className="mt-1.5 text-xs text-zinc-500">
-                      Forces every slide in the deck to this one background theme.
-                    </p>
-                  </div>
+                  )}
                 </div>
               </div>
             )}

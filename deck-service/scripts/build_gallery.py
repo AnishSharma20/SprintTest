@@ -279,3 +279,52 @@ def main() -> None:
 # without rebuilding the review decks as an import side effect.
 if __name__ == "__main__":
     main()
+
+# The sample copy in build_gallery.py was written for Superba, and it is shared by every brand's
+# gallery because the previews exist to show a layout's SHAPE, not to state facts. Left alone it
+# put "Four reasons Superba performs" and "One Antarctic fishery" on Revervia's previews, which
+# reads as a mistake rather than as placeholder text. These substitutions rewrite the brand-specific
+# phrases per brand; anything not listed stays as written.
+#
+# This is a stopgap, not a substitute for real per-brand sample copy: it fixes the wording that
+# names another product, not every krill-flavoured turn of phrase.
+SAMPLE_SUBS = {
+    "revervia": [
+        ("Superba krill", "Revervia"), ("Superba", "Revervia"),
+        ("krill oil", "algal oil"), ("krill formulation", "algal formulation"),
+        ("One Antarctic fishery", "One production site"),
+        ("Antarctic fishery", "production site"),
+        # not "Fully traceable" — that phrase already appears in the same sample card
+        ("MSC-certified", "Third party audited"),
+        ("Cold-processed at sea", "Fermented in closed tanks"),
+        ("High phospholipid load", "High DHA concentration"),
+        ("phospholipids", "triglycerides"), ("phospholipid", "triglyceride"),
+    ],
+}
+
+
+def _localize(value, subs):
+    """Apply the brand's sample-copy substitutions through nested sample slide structures."""
+    if isinstance(value, str):
+        for a, b in subs:
+            value = value.replace(a, b)
+        return value
+    if isinstance(value, list):
+        return [_localize(v, subs) for v in value]
+    if isinstance(value, dict):
+        return {k: _localize(v, subs) for k, v in value.items()}
+    return value
+
+
+def localize_sample(slide: dict, brand: str | None = None) -> dict:
+    """One sample slide, with this brand's copy substitutions applied.
+
+    Shared by the static gallery export and the on-demand single-slide download, so a slide
+    downloaded to edit reads the same as its preview. `layout` is a key, never prose.
+    """
+    subs = SAMPLE_SUBS.get((brand or "").lower())
+    if not subs:
+        return dict(slide)
+    out = _localize({k: v for k, v in slide.items() if k != "layout"}, subs)
+    out["layout"] = slide["layout"]
+    return out

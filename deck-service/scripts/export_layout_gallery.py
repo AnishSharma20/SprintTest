@@ -43,7 +43,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from src import brand as brand_theme                      # noqa: E402
 from src import config, renderer                          # noqa: E402
 from src.planner import LAYOUT_USAGE                      # noqa: E402
-from build_gallery import SYNTH, TMPL, notes_for          # noqa: E402
+from build_gallery import SYNTH, TMPL, localize_sample, notes_for   # noqa: E402
 
 APP_ROOT = ROOT.parent                                    # min-forste-app/
 PNG_DIR = APP_ROOT / "public" / "layout-gallery"
@@ -106,41 +106,6 @@ def _render_pngs(pptx: Path, out_dir: Path) -> list[Path]:
     return pngs
 
 
-# The sample copy in build_gallery.py was written for Superba, and it is shared by every brand's
-# gallery because the previews exist to show a layout's SHAPE, not to state facts. Left alone it
-# put "Four reasons Superba performs" and "One Antarctic fishery" on Revervia's previews, which
-# reads as a mistake rather than as placeholder text. These substitutions rewrite the brand-specific
-# phrases per brand; anything not listed stays as written.
-#
-# This is a stopgap, not a substitute for real per-brand sample copy: it fixes the wording that
-# names another product, not every krill-flavoured turn of phrase.
-_SAMPLE_SUBS = {
-    "revervia": [
-        ("Superba krill", "Revervia"), ("Superba", "Revervia"),
-        ("krill oil", "algal oil"), ("krill formulation", "algal formulation"),
-        ("One Antarctic fishery", "One production site"),
-        ("Antarctic fishery", "production site"),
-        # not "Fully traceable" — that phrase already appears in the same sample card
-        ("MSC-certified", "Third party audited"),
-        ("Cold-processed at sea", "Fermented in closed tanks"),
-        ("High phospholipid load", "High DHA concentration"),
-        ("phospholipids", "triglycerides"), ("phospholipid", "triglyceride"),
-    ],
-}
-
-
-def _localize(value, subs):
-    """Apply the brand's sample-copy substitutions through nested sample slide structures."""
-    if isinstance(value, str):
-        for a, b in subs:
-            value = value.replace(a, b)
-        return value
-    if isinstance(value, list):
-        return [_localize(v, subs) for v in value]
-    if isinstance(value, dict):
-        return {k: _localize(v, subs) for k, v in value.items()}
-    return value
-
 
 def _export_set(slides: list[dict], keys: list[str], out_dir: Path, label: str,
                 brand: str | None = None) -> None:
@@ -188,11 +153,8 @@ def main(brand: str | None = None) -> None:
     if dropped:
         print(f"skipped (not in {bname}'s catalog): {', '.join(sorted(dropped))}")
 
-    subs = _SAMPLE_SUBS.get(bname)
-    if subs:
-        # `layout` is a key, never prose — localize everything else.
-        slides = [{**_localize({k: v for k, v in s.items() if k != "layout"}, subs),
-                   "layout": s["layout"]} for s in slides]
+    if bname != config.DEFAULT_BRAND:
+        slides = [localize_sample(s, bname) for s in slides]
 
     keys = [s["layout"] for s in slides]
     assert len(keys) == len(set(keys)), "a layout appears twice in the sample lists"

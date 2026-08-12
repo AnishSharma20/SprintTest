@@ -6,6 +6,8 @@
 //
 //   POST { background? ("dark" | "light" | "pastel") } → the .pptx file
 
+import { brandFromBody } from "../../../lib/brand";
+
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -19,7 +21,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { background } = (await req.json().catch(() => ({}))) as { background?: string };
+    const body = (await req.json().catch(() => ({}))) as { background?: string; brand?: string };
+    const { background } = body;
 
     const res = await fetch(`${base}/slides/export-all`, {
       method: "POST",
@@ -27,7 +30,7 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
         ...(process.env.DECK_SERVICE_TOKEN ? { "X-Deck-Token": process.env.DECK_SERVICE_TOKEN } : {}),
       },
-      body: JSON.stringify({ background: background ?? "dark" }),
+      body: JSON.stringify({ background: background ?? "dark", brand: brandFromBody(req, body) }),
     });
 
     if (!res.ok) {

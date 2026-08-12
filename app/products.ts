@@ -46,22 +46,34 @@ export const BRAND_FEATURES: Record<ProductId, {
   science: boolean;
   teamSettings: boolean;
   contentTypes: string[];
-  colorThemes: { id: string; label: string; hint: string }[];
+  colorThemes: { id: string; label: string; hint: string; swatch: string }[];
+  /** The brand defaults the Design tab shows in grey as placeholders — what the renderer uses
+   *  when a field is left empty. MIRRORS deck-service/src/brand.py's `fonts` and `sizes`; keep the
+   *  two in step, since showing "Exo 2" under Revervia is exactly the confusion this fixes. */
+  designDefaults: { titleFont: string; bodyFont: string; title: number; body: number; small: number };
 }> = {
   superba: {
     science: true, teamSettings: true, contentTypes: ["deck", "blog", "whitepaper_mix"],
     colorThemes: [
-      { id: "dark", label: "Blue Ocean", hint: "Dark theme · deep-sea gradient" },
-      { id: "light", label: "White", hint: "Light theme · plain white" },
-      { id: "pastel", label: "Pastel Blue", hint: "Light theme · solid mint" },
+      { id: "dark", label: "Blue Ocean", hint: "Dark theme · deep-sea gradient", swatch: "linear-gradient(135deg, #163536, #003462)" },
+      { id: "light", label: "White", hint: "Light theme · plain white", swatch: "#FFFFFF" },
+      { id: "pastel", label: "Pastel Blue", hint: "Light theme · solid mint", swatch: "#A9DBD5" },
     ],
+    designDefaults: { titleFont: "Exo 2", bodyFont: "Manrope", title: 32, body: 14, small: 12 },
   },
   revervia: {
     science: false, teamSettings: true, contentTypes: ["deck"],
-    colorThemes: [{ id: "dark", label: "Marine", hint: "Light theme · white to Alice Blue" }],
+    colorThemes: [{ id: "dark", label: "Marine", hint: "Light theme · white to Alice Blue", swatch: "linear-gradient(135deg, #FFFFFF, #F2F9FA)" }],
+    designDefaults: { titleFont: "Quicksand SemiBold", bodyFont: "Synonym", title: 28, body: 14, small: 12 },
   },
-  lysoveta: { science: false, teamSettings: false, contentTypes: [], colorThemes: [] },
-  pl_plus:  { science: false, teamSettings: false, contentTypes: [], colorThemes: [] },
+  lysoveta: {
+    science: false, teamSettings: false, contentTypes: [], colorThemes: [],
+    designDefaults: { titleFont: "", bodyFont: "", title: 32, body: 14, small: 12 },
+  },
+  pl_plus: {
+    science: false, teamSettings: false, contentTypes: [], colorThemes: [],
+    designDefaults: { titleFont: "", bodyFont: "", title: 32, body: 14, small: 12 },
+  },
 };
 
 export const PRODUCTS: Product[] = [

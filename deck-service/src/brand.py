@@ -100,7 +100,10 @@ _DEFAULTS: dict[str, dict] = {
         # cover title in a narrow left-hand column, so 60pt would cap a cover title at ~10
         # characters. Stat figures keep a real hero size of 54.
         "sizes": {"title": 28, "body": 14, "small": 12, "hero": 54, "cover": 36, "subtitle": 16},
-        "rounded": True,
+        # Square, exactly like Superba. The brand guide's own pages use large rounded cards, so an
+        # earlier version set this True — but the layouts are meant to be Superba's, with only
+        # colour and typography differing per brand. Shape is not a brand characteristic here.
+        "rounded": False,
         # Declared, not inferred: the template has exactly one master and it is LIGHT, so every
         # slide must take the renderer's light path. Without this, layouts default to the dark
         # path and draw WHITE text onto a near-white background — invisible. Deciding this by

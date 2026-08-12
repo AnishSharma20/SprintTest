@@ -34,6 +34,7 @@ from fastapi import FastAPI, File, Form, Header, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 import src
+from src import brand as brand_mod
 from src import config, renderer
 
 app = FastAPI(title="Superba Deck Generator")
@@ -1107,6 +1108,9 @@ async def slides_export(payload: dict, x_deck_token: str | None = Header(default
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
     layout = (payload or {}).get("layout")
     background = (payload or {}).get("background") or "dark"
+    brand = ((payload or {}).get("brand") or "").strip().lower() or None
+    if brand and brand not in config.known_brands():
+        return JSONResponse({"feil": f"Unknown brand '{brand}'."}, status_code=400)
     if not isinstance(layout, str) or not layout:
         return JSONResponse({"feil": "Missing layout key."}, status_code=400)
     if layout == "benefits_verbatim":
@@ -1121,15 +1125,18 @@ async def slides_export(payload: dict, x_deck_token: str | None = Header(default
         sample = _gallery_samples().get(layout)
         if sample is None:
             return JSONResponse({"feil": f'Unknown layout "{layout}".'}, status_code=404)
-        slide = dict(sample)
+        from build_gallery import localize_sample     # same substitutions as the preview gallery
+        slide = localize_sample(sample, brand)
         if background != "dark":
             slide["background"] = background
-        data = renderer.render_deck({"deck_title": "Sample", "language": "en", "slides": [slide]})
-        # A single-slide plan always renders as [that slide, AKBM's verbatim benefits overview]
-        # (render_deck splices the benefits slide onto every deck) — drop the trailing one so the
-        # download is exactly the one layout the user asked for.
+        data = renderer.render_deck({"deck_title": "Sample", "language": "en", "slides": [slide]},
+                                    brand=brand)
+        # A single-slide plan renders as [that slide, the verbatim benefits overview] for a brand
+        # whose template HAS that slide — drop the trailing one so the download is exactly the
+        # layout asked for. A brand without it gets one slide and nothing to drop.
         prs = Presentation(io.BytesIO(data))
-        _drop_slide(prs, len(prs.slides) - 1)
+        if len(prs.slides) > 1:
+            _drop_slide(prs, len(prs.slides) - 1)
         buf = io.BytesIO()
         prs.save(buf)
         return Response(
@@ -1155,30 +1162,42 @@ async def slides_export_all(payload: dict, x_deck_token: str | None = Header(def
     if expected and x_deck_token != expected:
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
     background = (payload or {}).get("background") or "dark"
+    brand = ((payload or {}).get("brand") or "").strip().lower() or None
+    if brand and brand not in config.known_brands():
+        return JSONResponse({"feil": f"Unknown brand '{brand}'."}, status_code=400)
     try:
         from pptx import Presentation
 
         from src import renderer
-        slides = [dict(s) for key, s in _gallery_samples().items() if key != "benefits_verbatim"]
+        # Only layouts THIS brand's catalog has: Revervia has no `ingredient`, and offering a
+        # layout its template cannot build would fail the whole export.
+        known = set(config.catalog(brand))
+        from build_gallery import localize_sample
+        slides = [localize_sample(s, brand) for key, s in _gallery_samples().items()
+                  if key != "benefits_verbatim" and key in known]
         if background != "dark":
             for s in slides:
                 s["background"] = background
         n = len(slides)
+        product = brand_mod.theme(brand)["product"]
         data = renderer.render_deck(
-            {"deck_title": "Superba slide templates", "language": "en", "slides": slides}
+            {"deck_title": f"{product} slide templates", "language": "en", "slides": slides},
+            brand=brand,
         )
         # Same benefits-splice quirk as /slides/export, generalised: render_deck always appends the
         # verbatim benefits overview then moves it to the SECOND-TO-LAST position (max(1, n - 1),
         # n = the number of content slides fed in) — drop exactly that index to get back all n (and
         # only those n) slides, in their original order.
         prs = Presentation(io.BytesIO(data))
-        _drop_slide(prs, max(1, n - 1))
+        if len(prs.slides) > n:            # only when the benefits slide was actually spliced
+            _drop_slide(prs, max(1, n - 1))
         buf = io.BytesIO()
         prs.save(buf)
+        fname = f"{(brand or config.DEFAULT_BRAND)}-slide-templates.pptx"
         return Response(
             content=buf.getvalue(),
             media_type=PPTX_MEDIA,
-            headers={"Content-Disposition": 'attachment; filename="superba-slide-templates.pptx"'},
+            headers={"Content-Disposition": f'attachment; filename="{fname}"'},
         )
     except Exception as e:  # noqa: BLE001 — surface a clean error to the client
         return JSONResponse({"feil": f"Could not export the slide templates: {e}"}, status_code=500)

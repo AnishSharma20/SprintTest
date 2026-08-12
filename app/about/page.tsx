@@ -152,6 +152,12 @@ const POSITION_LABEL: Record<string, string> = {
   last: "always comes last",
   second_to_last: "always comes second to last",
 };
+/** "Never use this slide" is a rule the team can state here, but it is NOT stored as a rule: it is
+ * the Slide library's own on/off switch, which already removes the slide from the AI's vocabulary.
+ * One fact, two views — listing it here is what makes the rules list the whole truth, and writing
+ * it here just flicks that switch. Storing it twice is the one thing that could make them
+ * disagree. */
+const NEVER_LABEL = "is never used";
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
 // ONE card language for every slide and photo in the libraries: the same two actions in the same
 // place, at a size that is comfortable to hit, and no per-kind labelling. Everything else (the
@@ -333,21 +339,28 @@ export default function AboutV2Page() {
       setRulesConfigured(r.configured !== false);
       setRulesMigrated(r.migrated !== false);
       setStructureMigrated(r.migrated !== false && r.structureMigrated !== false);
+      let ruleRows = r.rules ?? [];
       // One time import of the writing rules that used to be buried in the AI's instructions, so
       // they show up here as ordinary editable rules. Only ever creates missing rows.
+      //
+      // Never `return` from here: everything below this block — the on/off switches, the stars,
+      // Deleted items, the design settings and both libraries — is loaded by the rest of this
+      // function. An early return left all of it at its empty defaults, so the page reported every
+      // slide as on and the design settings as brand defaults no matter what the database said
+      // (and the route reports `seeded` on every call, not only the first, so it happened on every
+      // single visit).
       if (r.builtinManaged) {
         try {
           const seeded = await (await fetch("/api/rules/builtin")).json();
           if (seeded.seeded) {
             const again = await (await fetch("/api/rules")).json();
-            setRules(again.rules ?? r.rules ?? []);
-            return;
+            ruleRows = again.rules ?? ruleRows;
           }
         } catch {
           /* the defaults keep applying until the import succeeds */
         }
       }
-      setRules(r.rules ?? []);
+      setRules(ruleRows);
     } catch {
       setRulesConfigured(false);
     }
@@ -428,6 +441,20 @@ export default function AboutV2Page() {
 
   // ---------- rules ----------
   async function addRule() {
+    // "Never used" is not a row in the rules table — it IS the Slide library switch (see
+    // NEVER_LABEL), so writing it here flicks that switch and the rule appears in the list a
+    // moment later, derived. Storing it as well would give the same fact two homes.
+    if (newRuleSlide && newRulePosition === "never") {
+      setSavingRule(true);
+      setRuleError("");
+      const ok = await toggleLayout(newRuleSlide, false, setRuleError);
+      setSavingRule(false);
+      if (ok) {
+        setNewRuleSlide("");
+        setNewRulePosition("first");
+      }
+      return;
+    }
     // A slide picked in the builder makes this a STRUCTURE rule the pipeline applies; otherwise
     // it is a writing rule and the wording is all there is.
     const structural = !!newRuleSlide;
@@ -532,8 +559,16 @@ export default function AboutV2Page() {
   }
 
   // ---------- layouts ----------
-  async function toggleLayout(key: string, enable: boolean) {
-    setLayoutError("");
+  // `notify` because this switch is now operated from two tabs: a failure has to surface next to
+  // whichever control the user actually touched, not on the tab they are not looking at.
+  // Returns whether it stuck, so the rule composer can keep the user's selection when the server
+  // refuses (a slide a structure rule requires cannot be switched off).
+  async function toggleLayout(
+    key: string,
+    enable: boolean,
+    notify: (m: string) => void = setLayoutError
+  ): Promise<boolean> {
+    notify("");
     const before = new Set(disabled);
     const nextSet = new Set(disabled);
     if (enable) nextSet.delete(key);
@@ -549,9 +584,11 @@ export default function AboutV2Page() {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not save the layout setting.");
       }
+      return true;
     } catch (e) {
       setDisabled(before);
-      setLayoutError((e as Error).message);
+      notify((e as Error).message);
+      return false;
     }
   }
 
@@ -1012,9 +1049,11 @@ export default function AboutV2Page() {
   // ---------- custom slides ----------
   async function patchSlide(
     id: string,
-    patch: { name?: string; description?: string; mode?: string; preferred?: boolean }
+    patch: { name?: string; description?: string; mode?: string; preferred?: boolean },
+    // Same reason as toggleLayout's: a team slide can now be switched back on from the Rules tab.
+    notify: (m: string) => void = setCustomError
   ) {
-    setCustomError("");
+    notify("");
     try {
       const res = await fetch(`/api/custom-slides/${id}`, {
         method: "PATCH",
@@ -1025,7 +1064,7 @@ export default function AboutV2Page() {
       if (!res.ok) throw new Error(d.error || "Could not update the slide.");
       setCustomSlides((s) => s.map((x) => (x.id === id ? { ...x, ...d.slide } : x)));
     } catch (e) {
-      setCustomError((e as Error).message);
+      notify((e as Error).message);
     }
   }
 
@@ -1457,6 +1496,24 @@ export default function AboutV2Page() {
   const structureRules = rules.filter((r) => r.slide_key && r.action);
   const requiredSlides = structureMigrated ? requiredByRules : LEGACY_LOCKED;
 
+  // The other half of the deck's shape: which slides are never used. That was only ever the Slide
+  // library's switch, so the rules list read as complete while staying silent about it. These rows
+  // are DERIVED from that switch rather than stored, so the two can never disagree — and removing
+  // one here turns the slide back on, which is exactly what it should mean. A slide in Deleted
+  // items is excluded: that is a bin, not a standing rule about how decks are written.
+  const neverRules = [
+    ...(gallery as GalleryEntry[])
+      .filter((g) => disabled.has(g.key) && !layoutRemoved.has(g.key))
+      .map((g) => ({
+        key: g.key,
+        label: layoutNames[g.key]?.display_name || prettySlide(g.key),
+        team: false,
+      })),
+    ...customSlides
+      .filter((c) => c.mode === "off" && !c.removed)
+      .map((c) => ({ key: c.id, label: c.name, team: true })),
+  ];
+
   const removedLayoutEntries = (gallery as GalleryEntry[]).filter((g) => layoutRemoved.has(g.key));
   const removedCustomSlides = customSlides.filter((c) => c.removed);
   const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
@@ -1606,7 +1663,8 @@ export default function AboutV2Page() {
                   <Strength kind="checked" />
                 </div>
                 <span className="text-xs text-zinc-500">
-                  {rules.filter((r) => r.enabled).length} active · applied to every new PowerPoint deck
+                  {rules.filter((r) => r.enabled).length + neverRules.length} active · applied to every
+                  new PowerPoint deck
                 </span>
               </div>
               <p className="mt-2 max-w-3xl text-sm text-zinc-600">
@@ -1618,6 +1676,12 @@ export default function AboutV2Page() {
                 be fixed before you see it. For fonts, sizes and spacing use{" "}
                 <span className="font-semibold">Design</span> instead — those are written by the code and
                 the AI is never asked.
+              </p>
+              <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
+                Every rule the tool follows is in this one list, including which slides it never uses:
+                switching a slide off in the <span className="font-semibold">Slide library</span> shows
+                up here as a rule, and stating it here turns that switch off. It is one setting seen from
+                two sides, not two settings to keep in step.
               </p>
               <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
                 Rules marked <span className="font-semibold">Built in</span> are the tool&rsquo;s own,
@@ -1638,7 +1702,7 @@ export default function AboutV2Page() {
               ) : (
                 <>
                   <ul className="mt-4 space-y-2">
-                    {rules.length === 0 && (
+                    {rules.length === 0 && neverRules.length === 0 && (
                       <li className="rounded-[4px] border border-dashed border-[#C2D9E3] p-4 text-sm text-zinc-500">
                         No rules yet. The first one you add applies to the very next generation.
                       </li>
@@ -1738,6 +1802,58 @@ export default function AboutV2Page() {
                         )}
                       </li>
                     ))}
+
+                    {/* Slides the team has switched off, read back as the rules they are. No switch
+                        to flick and nothing to reword: the rule exists for exactly as long as the
+                        slide is off, so the only honest control is the one that turns it back on. */}
+                    {neverRules.map((n) => (
+                      <li
+                        key={`never:${n.team ? "team:" : ""}${n.key}`}
+                        className="flex items-start gap-3 rounded-[4px] border border-[#C2D9E3] bg-white p-3"
+                      >
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked
+                          disabled
+                          title="In force for as long as the slide is switched off in the Slide library"
+                          className={`mt-0.5 ${switchCls(true)}`}
+                        >
+                          <span className={knobCls(true)} />
+                        </button>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <p className="text-sm text-[#031B34]">
+                              {n.label} {NEVER_LABEL}
+                            </p>
+                            <Strength kind="enforced" />
+                            <span
+                              className={PILL_ASIS}
+                              title="The same fact as the switch on that slide's card, shown here so this list is the whole truth. It is not stored twice."
+                            >
+                              Slide library
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[11px] text-zinc-400">
+                            Applied by the code · the slide is switched off in the{" "}
+                            {n.team ? "Slide library (one of yours)" : "Slide library"}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              void (n.team
+                                ? patchSlide(n.key, { mode: "auto" }, setRuleError)
+                                : toggleLayout(n.key, true, setRuleError))
+                            }
+                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                          >
+                            Use it again
+                          </button>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
 
                   {/* Two kinds of rule, one list. Leaving the slide picker on "Any slide" writes an
@@ -1776,6 +1892,7 @@ export default function AboutV2Page() {
                             <option value="second_to_last">always comes second to last</option>
                             <option value="last">always comes last</option>
                             <option value="anywhere">is always included, anywhere</option>
+                            <option value="never">is never used</option>
                           </select>
                           <Strength kind="enforced" />
                         </>
@@ -1790,10 +1907,15 @@ export default function AboutV2Page() {
                       <p className="mt-2 text-xs text-zinc-600">
                         Will be saved as:{" "}
                         <span className="font-semibold text-[#031B34]">
-                          {prettySlide(newRuleSlide)} {POSITION_LABEL[newRulePosition] ?? "is always included"}
+                          {prettySlide(newRuleSlide)}{" "}
+                          {newRulePosition === "never"
+                            ? NEVER_LABEL
+                            : POSITION_LABEL[newRulePosition] ?? "is always included"}
                         </span>
-                        . Applied by the code on every deck, so it cannot be missed — and while this rule
-                        exists that slide cannot be switched off or removed.
+                        .{" "}
+                        {newRulePosition === "never"
+                          ? "Applied by the code on every deck: the slide leaves the AI's vocabulary entirely. This is the same switch as the one on its card in the Slide library, so it will show as turned off there too."
+                          : "Applied by the code on every deck, so it cannot be missed — and while this rule exists that slide cannot be switched off or removed."}
                       </p>
                     ) : (
                       <textarea
@@ -2094,7 +2216,8 @@ export default function AboutV2Page() {
                 Every slide the tool can put in a deck, with real example renders. Turn a slide type off
                 and the AI can no longer pick it; turn it back on any time. Add your own finished slides
                 from a PowerPoint file — they are inserted exactly as designed, either where the AI
-                judges they fit or in every deck. Cover and Agenda are required and stay on. Every slide
+                judges they fit or in every deck. A slide a rule on the Rules tab requires stays on until
+                that rule is deleted, which is why Cover and Agenda are normally locked. Every slide
                 works the same way: the switch turns it on or off, the star marks a house favourite, and{" "}
                 <span className="font-semibold">✎ Edit</span> holds everything else — its name, its
                 description, when to use it, and the slide design itself (download it, restyle it in
@@ -2104,8 +2227,11 @@ export default function AboutV2Page() {
               </p>
               <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
                 A slide switched off is removed from the AI&rsquo;s vocabulary outright, so it can never
-                appear. The <span className="font-semibold">star</span> is a preference rather than a
-                rule: it is what the AI reaches for first when several slides fit a point equally well.
+                appear. That is a rule about every deck, so it is also listed on the{" "}
+                <span className="font-semibold">Rules</span> tab as &ldquo;{NEVER_LABEL}&rdquo; — the same
+                switch, read from the other side. The <span className="font-semibold">star</span> is a
+                preference rather than a rule: it is what the AI reaches for first when several slides fit
+                a point equally well.
               </p>
 
               {!layoutsMigrated && (

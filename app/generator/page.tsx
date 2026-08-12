@@ -22,13 +22,57 @@ const REVIEWER_KEY = "claimsReviewerName:v1";
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 
-const CONTENT_TYPES: { id: ContentType; label: string; icon: string; hint: string; available: boolean }[] = [
-  { id: "deck", label: "PowerPoint deck", icon: "📊", hint: "Branded slides", available: true },
-  { id: "whitepaper_mix", label: "Whitepaper", icon: "📄", hint: "Designed, on brand", available: true },
-  { id: "blog", label: "Blog post", icon: "✍️", hint: "Grounded in science", available: true },
-  { id: "video", label: "Video", icon: "🎬", hint: "Script & storyboard", available: false },
-  { id: "podcast", label: "Podcast", icon: "🎙️", hint: "Episode audio", available: false },
+const CONTENT_TYPES: { id: ContentType; label: string; hint: string; available: boolean }[] = [
+  { id: "deck", label: "PowerPoint deck", hint: "Branded slides", available: true },
+  { id: "whitepaper_mix", label: "Whitepaper", hint: "Designed, on brand", available: true },
+  { id: "blog", label: "Blog post", hint: "Grounded in science", available: true },
+  { id: "video", label: "Video", hint: "Script & storyboard", available: false },
+  { id: "podcast", label: "Podcast", hint: "Episode audio", available: false },
 ];
+
+/** The product's brand mark, or nothing at all when we don't have the official asset yet — a
+ *  stand-in shape would misrepresent the brand, so the tile falls back to its name alone. */
+function ProductLogo({ product }: { product: (typeof PRODUCTS)[0] }) {
+  if (!product.logo) return null;
+  return <img src={product.logo} alt={product.label} className="h-8 w-8 object-contain" />;
+}
+
+function ContentTypeIcon({ type }: { type: ContentType }) {
+  const common = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8 } as const;
+  if (type === "deck")
+    return (
+      <svg {...common} className="h-5 w-5">
+        <rect x="3" y="5" width="18" height="12" rx="1.5" />
+        <path d="M8 21h8M3 8h18" />
+      </svg>
+    );
+  if (type === "whitepaper_mix")
+    return (
+      <svg {...common} className="h-5 w-5">
+        <rect x="4" y="2" width="16" height="20" rx="2" />
+        <path d="M8 6h8M8 10h8M8 14h6" />
+      </svg>
+    );
+  if (type === "blog")
+    return (
+      <svg {...common} className="h-5 w-5">
+        <path d="M4 6h16M4 10h16M4 14h12M4 18h10" />
+      </svg>
+    );
+  if (type === "video")
+    return (
+      <svg {...common} className="h-5 w-5">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <polygon points="9 8 9 16 16 12" fill="currentColor" />
+      </svg>
+    );
+  return (
+    <svg {...common} className="h-5 w-5">
+      <circle cx="12" cy="9" r="4" />
+      <path d="M4 19c0-3 2.7-6 8-6s8 3 8 6" />
+    </svg>
+  );
+}
 
 const TEXT_TYPES = new Set<ContentType>(["blog"]);
 
@@ -561,11 +605,16 @@ export default function ContentGenerator() {
                       type="button"
                       onClick={() => p.available && setProdukt(p.id)}
                       disabled={!p.available}
-                      className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                      className={`relative rounded-2xl border p-4 text-center transition-colors ${
                         valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
                       } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                     >
                       {!p.available && <span className="absolute right-2 top-2 rounded-md bg-[#F1F5F7] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#8FA5AE]">Soon</span>}
+                      {p.logo && (
+                        <div className="mb-2 flex justify-center">
+                          <ProductLogo product={p} />
+                        </div>
+                      )}
                       <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
                       {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
                     </button>
@@ -591,7 +640,7 @@ export default function ContentGenerator() {
                         valgt ? "border-[#3FD0C9] bg-[#EEFAF9] shadow-[0_0_0_3px_rgba(63,208,201,0.14)]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
                       } ${!t.available ? "cursor-not-allowed opacity-50" : ""}`}
                     >
-                      <span className="text-2xl">{t.icon}</span>
+                      <ContentTypeIcon type={t.id} />
                       <span>
                         <span className="block text-sm font-bold text-[#052A4E]">{t.label}</span>
                         <span className="block text-[11px] text-zinc-500">{t.available ? t.hint : "Soon"}</span>
@@ -872,7 +921,7 @@ export default function ContentGenerator() {
                   return (
                     <div key={k.type} className="rounded-2xl border border-[#E4EDF0] bg-white p-4">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-[#052A4E]">{meta.icon} {meta.label}</span>
+                        <span className="flex items-center gap-2 font-medium text-[#052A4E]"><ContentTypeIcon type={k.type} /> {meta.label}</span>
                         <span className="tabular-nums text-[#6D8894]">{k.status === "running" ? `${k.progress}%` : k.status === "done" ? "✅" : "⚠️"}</span>
                       </div>
                       {k.status === "running" && (

@@ -4,11 +4,15 @@
 // other three are shown as real tiles marked "Soon" so the client can see the shape of what's
 // coming without us pretending they already work.
 
-export type ProductId = "superba" | "lysoveta" | "revervia" | "pl_plus";
+export type ProductId = "superba" | "revervia" | "lysoveta" | "pl_plus";
 
-export const PRODUCTS: { id: ProductId; label: string; hint: string; available: boolean }[] = [
+// `logo` is the path to the product's REAL brand mark under public/logos/. Left unset until the
+// official asset is in hand — both pickers simply render no logo for a product without one, so a
+// missing file degrades to the previous text-only tile rather than a broken image or a stand-in
+// mark that would misrepresent the brand.
+export const PRODUCTS: { id: ProductId; label: string; hint: string; logo?: string; available: boolean }[] = [
   { id: "superba", label: "Superba", hint: "Krill oil", available: true },
-  { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
   { id: "revervia", label: "Revervia", hint: "", available: false },
+  { id: "lysoveta", label: "Lysoveta", hint: "", available: false },
   { id: "pl_plus", label: "PL+", hint: "", available: false },
 ];

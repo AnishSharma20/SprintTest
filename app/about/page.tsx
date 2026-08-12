@@ -1452,15 +1452,13 @@ export default function AboutV2Page() {
                       Soon
                     </span>
                   )}
-                  <div className="flex justify-center mb-2">
-                    {p.logo ? (
+                  {/* The real brand mark when we have it; nothing at all when we don't, rather than
+                      a stand-in shape that would misrepresent the brand. */}
+                  {p.logo && (
+                    <div className="mb-2 flex justify-center">
                       <img src={p.logo} alt={p.label} className="h-8 w-8 object-contain" />
-                    ) : (
-                      <div className="h-8 w-8 rounded bg-[#E4EDF0] flex items-center justify-center text-xs font-bold text-[#6D8894]">
-                        {p.label[0]}
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <div className="text-sm font-semibold text-[#1D1D1F]">{p.label}</div>
                   {p.hint && <div className="text-xs text-[#6E6E73]">{p.hint}</div>}
                 </button>
@@ -1469,7 +1467,7 @@ export default function AboutV2Page() {
           </div>
           <p className="mt-3 text-xs text-[#6E6E73]">
             Settings below are for <strong className="text-[#1D1D1F]">{selectedProduct.label}</strong>.
-            Lysoveta, Revervia and PL+ will get their own rules, design settings and slide library once
+            Revervia, Lysoveta and PL+ will get their own rules, design settings and slide library once
             they are onboarded — they will not inherit Superba&apos;s.
           </p>
         </section>

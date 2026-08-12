@@ -195,6 +195,13 @@ const PILL_ASIS = "shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font
  * switch, which sat close enough to mis-tap. */
 const STAR_BTN = "text-2xl leading-none transition-colors";
 
+/** One chip in a library's filter row. Deleted items is the SAME control, with a bin and its own
+ * selected state: to the person using it, "show me the deleted ones" is the same kind of choice as
+ * "show me the switched off ones", and it used to be a differently styled button off to the side. */
+const CHIP = (on: boolean) =>
+  `rounded-full px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed ` +
+  `disabled:opacity-40 ${on ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"}`;
+
 /** The three strengths a setting on this page can have. Naming them is the point: everything here
  * used to read as "asking the AI", when in truth some of it is written by the code and can never
  * come out wrong, some is verified and corrected after the fact, and only the rest is a request. */

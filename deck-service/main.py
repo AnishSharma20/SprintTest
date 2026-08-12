@@ -25,6 +25,7 @@ import tempfile
 import threading
 import time
 import unicodedata
+import traceback
 import uuid
 import zipfile
 from pathlib import Path
@@ -285,7 +286,8 @@ def _parse_custom_slides(custom_slides_meta: str,
 
 
 def _parse_layout_overrides(layout_overrides_meta: str,
-                            custom_file_blobs: dict[str, bytes]) -> list[dict]:
+                            custom_file_blobs: dict[str, bytes],
+                            brand: str | None = None) -> list[dict]:
     """The About page's TEAM REDESIGNED layouts (design overrides), matched to their uploaded
     .pptx blobs — the blobs ride the same custom_files channel as team slides, named
     <file_id>.pptx. Same never-fail contract as _parse_custom_slides: malformed or incomplete
@@ -296,7 +298,7 @@ def _parse_layout_overrides(layout_overrides_meta: str,
         return []
     from src.overrides import OVERRIDE_EXCLUDED
     try:
-        known = set(config.catalog())
+        known = set(config.catalog(brand))
     except Exception:  # noqa: BLE001
         known = set()
     out, seen = [], set()
@@ -451,7 +453,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
             parsed_design = None
         parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
         parsed_photos = _parse_custom_photos(custom_photos_meta, custom_photo_blobs or {})
-        parsed_overrides = _parse_layout_overrides(layout_overrides_meta, custom_file_blobs or {})
+        parsed_overrides = _parse_layout_overrides(layout_overrides_meta, custom_file_blobs or {}, brand or None)
         # None (field absent) = no answer, keep the built in shape; [] = the team removed every
         # structure rule and means it. Malformed input is treated as no answer.
         parsed_blocks = None
@@ -508,7 +510,13 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         JOBS[job_id].update(status="done", progress=100, step="Done",
                             result_path=_store_result(d["pptx"]), media_type=PPTX_MEDIA, filename=stem + ".pptx")
     except Exception as e:  # noqa: BLE001 — record the failure for the client to read
-        JOBS[job_id].update(status="error", step="Failed", error=str(e))
+        # Log the FULL traceback: the client only ever sees str(e), and a bare message like
+        # "'str' object has no attribute 'get'" says nothing about where it came from. The message
+        # keeps its exception type for the same reason — it costs nothing and names the shape of
+        # the failure.
+        traceback.print_exc()
+        JOBS[job_id].update(status="error", step="Failed",
+                            error=f"{type(e).__name__}: {e}")
 
 
 def _auth_or_error(x_deck_token):
@@ -523,7 +531,7 @@ def _auth_or_error(x_deck_token):
 @app.get("/health")
 def health():
     try:
-        layouts = len(config.catalog())
+        layouts = len(config.catalog())          # the default brand; see /brands
         template = config.template_path().exists()
     except Exception:  # noqa: BLE001
         layouts, template = 0, False
@@ -954,6 +962,7 @@ async def slides_inspect_slots(
     file: UploadFile,
     slide_index: int = Form(default=0),
     layout: str = Form(default=""),
+    brand: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Measure the AI-refillable TEXT SLOTS of one slide in an uploaded .pptx — the analysis
@@ -977,7 +986,7 @@ async def slides_inspect_slots(
     from src.overrides import MAX_SLOTS, OVERRIDE_EXCLUDED, extract_slots, slide_ineligible_reason
     if layout:
         try:
-            known = set(config.catalog())
+            known = set(config.catalog(brand or None))
         except Exception:  # noqa: BLE001
             known = set()
         if known and layout not in known:

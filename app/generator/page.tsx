@@ -477,7 +477,7 @@ export default function ContentGenerator() {
       // splice Superba's uploaded team slides and photos into its deck. Skipped until those tables
       // carry a brand column.
       if (type === "deck" && BRAND_FEATURES[produkt].teamSettings) {
-        appendDeckSettings(form, await deckGenerationSettings());
+        appendDeckSettings(form, await deckGenerationSettings(produkt));
       }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });

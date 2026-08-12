@@ -103,7 +103,9 @@ export function appendDeckSettings(form: FormData, s: DeckSettings): void {
   }
 }
 
-export async function deckGenerationSettings(): Promise<DeckSettings> {
+export async function deckGenerationSettings(brand: string): Promise<DeckSettings> {
+  // The brand rides the query string; every settings route resolves it from there.
+  const q = (url: string) => url + (url.includes("?") ? "&" : "?") + "brand=" + encodeURIComponent(brand);
   let customRules = "";
   let structureRules = "";
   let managedBlocks = "";
@@ -116,7 +118,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   const customPhotos: CustomPhotoPayload = { meta: [], files: {} };
   const layoutOverrides: LayoutOverridePayload = { meta: [], files: {} };
   try {
-    const r = await (await fetch("/api/rules")).json();
+    const r = await (await fetch(q("/api/rules"))).json();
     const active = (r.rules ?? []).filter((x: { enabled?: boolean }) => x.enabled);
     type RuleRow = {
       text: string;
@@ -149,27 +151,27 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     /* no settings — generate as before */
   }
   try {
-    const l = await (await fetch("/api/layout-settings")).json();
+    const l = await (await fetch(q("/api/layout-settings"))).json();
     disabledLayouts = (l.disabled ?? []).join(",");
     preferredLayouts = (l.preferred ?? []).join(",");
   } catch {
     /* no settings — generate as before */
   }
   try {
-    const ps = await (await fetch("/api/photo-settings")).json();
+    const ps = await (await fetch(q("/api/photo-settings"))).json();
     disabledPhotos = (ps.disabled ?? []).join(",");
     preferredPhotoIds.push(...((ps.preferred ?? []) as string[]));
   } catch {
     /* no settings — generate as before */
   }
   try {
-    const d = await (await fetch("/api/design-settings")).json();
+    const d = await (await fetch(q("/api/design-settings"))).json();
     if (d.settings && Object.keys(d.settings).length) designSettings = JSON.stringify(d.settings);
   } catch {
     /* no settings — generate as before */
   }
   try {
-    const c = await (await fetch("/api/custom-slides?blobs=1")).json();
+    const c = await (await fetch(q("/api/custom-slides?blobs=1"))).json();
     const files: Record<string, string> = c.files ?? {};
     let budget = MAX_CUSTOM_BYTES;
     const sentFiles: Record<string, string> = {};
@@ -205,7 +207,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     /* no settings — generate as before */
   }
   try {
-    const p = await (await fetch("/api/custom-photos?blobs=1")).json();
+    const p = await (await fetch(q("/api/custom-photos?blobs=1"))).json();
     let budget = MAX_CUSTOM_BYTES; // photos get their own budget; each is a few hundred KB
     for (const ph of (p.photos ?? []) as {
       id: string;
@@ -230,7 +232,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     /* no settings — generate as before */
   }
   try {
-    const o = await (await fetch("/api/layout-overrides?blobs=1")).json();
+    const o = await (await fetch(q("/api/layout-overrides?blobs=1"))).json();
     const files: Record<string, string> = o.files ?? {};
     const disabledSet = new Set(disabledLayouts.split(",").filter(Boolean));
     let budget = MAX_CUSTOM_BYTES; // own budget, same ceiling rationale as team slides

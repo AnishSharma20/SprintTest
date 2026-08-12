@@ -999,12 +999,28 @@ export default function AboutV2Page() {
     onProgress?: (p: { pct: number; step: string }) => void
   ): Promise<{ index: number; preview_b64: string }[]> {
     const deadline = Date.now() + 15 * 60 * 1000; // a 42-slide render on the small server is slow
+    let flaky = 0; // consecutive transient failures (the render server can be briefly restarting)
     for (;;) {
       if (Date.now() > deadline) throw new Error("Preview rendering timed out — try a smaller file.");
       await new Promise((r) => setTimeout(r, 3000));
-      const res = await fetch(`/api/custom-slides/inspect?job=${encodeURIComponent(jobId)}`);
+      let res: Response;
+      try {
+        res = await fetch(`/api/custom-slides/inspect?job=${encodeURIComponent(jobId)}`);
+      } catch {
+        if (++flaky > 10) throw new Error("Lost contact with the rendering server — please try again.");
+        continue;
+      }
+      // A restart loses the in-memory job; a redeploy or an overloaded instance answers 5xx for
+      // a while. Neither is worth throwing away a render that may still be running, so tolerate
+      // a run of them and only then report something the user can act on.
+      if (res.status === 404) throw new Error("The rendering server restarted, so this upload was lost — please try again.");
+      if (res.status >= 500) {
+        if (++flaky > 10) throw new Error("The rendering server is unavailable right now — please try again in a minute.");
+        continue;
+      }
       const d = await safeJson(res);
       if (!res.ok) throw new Error((d.error as string) || "Could not check the preview rendering.");
+      flaky = 0;
       if (d.status === "error") throw new Error((d.error as string) || "Preview rendering failed.");
       if (d.status === "done") return (d.slides as { index: number; preview_b64: string }[]) ?? [];
       onProgress?.({ pct: Number(d.progress) || 5, step: String(d.step || "Rendering slide previews") });

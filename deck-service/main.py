@@ -650,11 +650,16 @@ async def design_preview(payload: dict, x_deck_token: str | None = Header(defaul
 
 def _inspect_previews(data: bytes) -> list[dict]:
     """Every slide of a .pptx as a JPEG preview (≤1280px wide, base64) — the shared core of the
-    sync and job-based inspect endpoints. Raises on failure; callers translate."""
+    sync and job-based inspect endpoints. Raises on failure; callers translate.
+
+    Rasterises with the smaller PREVIEW_MAX_DIM image ceiling: the output is a 1280px JPEG, so
+    any embedded image above that is memory the deployed 512 MB instance cannot spare (the
+    team's own 42-slide template export holds ~122 MB of decoded bitmaps at the generation
+    default, ~67 MB here)."""
     from PIL import Image
 
     from src import qa_gate
-    images = qa_gate.rasterize(data)
+    images = qa_gate.rasterize(data, qa_gate.PREVIEW_MAX_DIM)
     if not images:
         raise RuntimeError("No slide renderer is available on the server.")
     out = []
@@ -760,6 +765,11 @@ def _inspect_previews_chunked(data: bytes, job_id: str) -> list[dict]:
         total = len(prs.slides)
         if total <= _INSPECT_CHUNK or qa_gate._has_video(prs):
             return _inspect_previews(data)
+
+        # Shrink the oversized embedded images ONCE, up front, and chunk from the result: the
+        # masters' media travel with every chunk (a trimmed copy still inherits them), so
+        # shrinking per chunk would redo the same work for each one.
+        data = qa_gate._shrink_pptx_images(data, qa_gate.PREVIEW_MAX_DIM)
 
         slides: list[dict] = []
         for start in range(0, total, _INSPECT_CHUNK):
@@ -872,7 +882,7 @@ async def slides_inspect_slots(
                 except Exception as e:  # noqa: BLE001
                     print(f"[inspect-slots] single-slide trim failed ({e}); rendering the full file",
                           file=sys.stderr)
-            images = qa_gate.rasterize(raster_input)
+            images = qa_gate.rasterize(raster_input, qa_gate.PREVIEW_MAX_DIM)
             if images and raster_index < len(images):
                 im = Image.open(io.BytesIO(images[raster_index])).convert("RGB")
                 if im.width > 1280:

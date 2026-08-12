@@ -88,12 +88,19 @@ def _render_pngs(pptx: Path, out_dir: Path) -> bool:
         for attempt in range(2):
             with tempfile.TemporaryDirectory() as tmp:
                 profile = Path(tmp) / "lo_profile"
-                result = subprocess.run(
-                    [soffice, "--headless", "--norestore",
-                     f"-env:UserInstallation=file://{profile.as_posix()}",
-                     "--convert-to", "pdf:impress_pdf_Export", "--outdir", tmp, str(pptx)],
-                    capture_output=True, text=True,
-                )
+                try:
+                    result = subprocess.run(
+                        [soffice, "--headless", "--norestore",
+                         f"-env:UserInstallation=file://{profile.as_posix()}",
+                         "--convert-to", "pdf:impress_pdf_Export", "--outdir", tmp, str(pptx)],
+                        capture_output=True, text=True, timeout=_SOFFICE_TIMEOUT_S,
+                    )
+                except subprocess.TimeoutExpired:
+                    # Without a timeout a wedged conversion holds this thread (and its memory)
+                    # for the life of the process; surface it as a retryable failure instead.
+                    last_error = f"LibreOffice timed out after {_SOFFICE_TIMEOUT_S}s"
+                    print(f"[qa-gate] {last_error} (attempt {attempt + 1})", file=sys.stderr)
+                    continue
                 pdfs = list(Path(tmp).glob("*.pdf"))
                 if not pdfs:
                     detail = result.stderr.strip() or result.stdout.strip() or "no output"
@@ -196,10 +203,20 @@ def _extract_image_previews(prs, target_w: int = 1280) -> list[bytes] | None:
     return pngs if any_image else None
 
 
-_SHRINK_MAX_DIM = 1920  # comfortably above any on-screen preview need
+_SHRINK_MAX_DIM = 1920  # generation/QA default: comfortably above any on-screen need
+
+# Threshold for the PREVIEW paths (the About page's slide pickers). A slide renders at dpi=110,
+# i.e. 1467x825 px, and the preview is then saved as a ≤1280px JPEG — so source images above
+# ~1500px cost memory for detail that is thrown away. Halving the decoded-bitmap footprint
+# matters: measured on the team's own 42-slide template export, 1920px leaves ~122 MB of RGBA
+# bitmaps for LibreOffice to hold on a 512 MB instance, 1280px leaves ~67 MB.
+PREVIEW_MAX_DIM = 1280
+
+# A conversion that hangs must not hold the job (and its memory) forever.
+_SOFFICE_TIMEOUT_S = 300
 
 
-def _shrink_pptx_images(data: bytes) -> bytes:
+def _shrink_pptx_images(data: bytes, max_dim: int = _SHRINK_MAX_DIM) -> bytes:
     """Downscale any oversized embedded image before handing the file to LibreOffice — what
     costs memory during PDF conversion is the DECODED bitmap (proportional to pixel count), not
     the compressed file size, and Render's free-tier 512 MB instance can run out of room holding
@@ -227,8 +244,8 @@ def _shrink_pptx_images(data: bytes) -> bytes:
                         try:
                             im = Image.open(io.BytesIO(content))
                             media_seen.append(f"{item.filename} {im.size[0]}x{im.size[1]} {len(content)}b")
-                            if max(im.size) > _SHRINK_MAX_DIM:
-                                ratio = _SHRINK_MAX_DIM / max(im.size)
+                            if max(im.size) > max_dim:
+                                ratio = max_dim / max(im.size)
                                 new_size = (max(1, round(im.width * ratio)), max(1, round(im.height * ratio)))
                                 fmt = "JPEG" if ext in ("jpg", "jpeg") else im.format or "PNG"
                                 if fmt == "JPEG" and im.mode not in ("RGB", "L"):
@@ -251,8 +268,12 @@ def _shrink_pptx_images(data: bytes) -> bytes:
         return data
 
 
-def rasterize(pptx_bytes: bytes) -> list[bytes] | None:
-    """Render a deck to one PNG per slide, in order. None if no rasteriser is available (gate off)."""
+def rasterize(pptx_bytes: bytes, max_image_px: int = _SHRINK_MAX_DIM) -> list[bytes] | None:
+    """Render a deck to one PNG per slide, in order. None if no rasteriser is available (gate off).
+
+    max_image_px: the embedded-image ceiling for the temporary copy handed to the rasteriser
+    (never the stored file). Preview callers pass the smaller PREVIEW_MAX_DIM, which roughly
+    halves what LibreOffice has to hold in memory on the deployed 512 MB instance."""
     try:
         from pptx import Presentation
 
@@ -266,7 +287,7 @@ def rasterize(pptx_bytes: bytes) -> list[bytes] | None:
             return _extract_image_previews(prs)
 
         orig_size = len(pptx_bytes)
-        pptx_bytes = _shrink_pptx_images(pptx_bytes)
+        pptx_bytes = _shrink_pptx_images(pptx_bytes, max_image_px)
         print(f"[qa-gate] pptx size before/after shrink: {orig_size}b / {len(pptx_bytes)}b", file=sys.stderr)
         with tempfile.TemporaryDirectory() as tmp:
             deck = Path(tmp) / "deck.pptx"

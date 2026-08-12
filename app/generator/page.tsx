@@ -593,15 +593,15 @@ export default function ContentGenerator() {
               <div className="grid grid-cols-4 gap-2">
                 {PRODUCTS.map((p) => {
                   const valgt = produkt === p.id && p.available;
-                  // pt-6 keeps a band clear for the "Soon" pill, which a full-width wordmark
-                  // would otherwise run underneath.
+                  // Symmetric py so the mark is centred in the tile, and deep enough (24px) that
+                  // the absolutely positioned "Soon" pill sits in clear space above it.
                   return (
                     <button
                       key={p.id}
                       type="button"
                       onClick={() => p.available && setProdukt(p.id)}
                       disabled={!p.available}
-                      className={`relative rounded-2xl border px-3 pb-4 pt-6 text-center transition-colors ${
+                      className={`relative rounded-2xl border px-3 py-6 text-center transition-colors ${
                         valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
                       } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                     >

@@ -1551,9 +1551,9 @@ export default function AboutV2Page() {
                   type="button"
                   onClick={() => p.available && setProduct(p.id)}
                   disabled={!p.available}
-                  /* pt-6 keeps a band clear for the "Soon" pill, which a full-width wordmark
-                     would otherwise run underneath. */
-                  className={`relative rounded-2xl border px-3 pb-4 pt-6 text-center transition-colors ${
+                  /* Symmetric py so the mark is centred in the tile, and deep enough (24px) that
+                     the absolutely positioned "Soon" pill sits in clear space above it. */
+                  className={`relative rounded-2xl border px-3 py-6 text-center transition-colors ${
                     valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E8E8ED] bg-white hover:border-[#D9D9DE]"
                   } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                 >

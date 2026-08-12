@@ -950,12 +950,14 @@ async def studies_extract_text(
     file: UploadFile,
     x_deck_token: str | None = Header(default=None),
 ):
-    """Extract full text from an uploaded study PDF and draft a plain language abstract from it —
-    the "Add study" flow on the Scientific Studies page, for a study the site otherwise has no
-    way to carry (no PMID, or AKBM never supplied it as part of the curated/full text library).
-    Pure text extraction (PyMuPDF) + one Claude call for the abstract; no plan/schema involved,
-    same server-to-server shape as /slides/inspect (the browser uploads to Storage first; this
-    route's only caller is Vercel). { file } -> {full_text, abstract, pages, chars}."""
+    """Extract full text from an uploaded study PDF, plus the paper's OWN abstract (copied
+    verbatim, not paraphrased), year and authors — the "Add study" flow on the Scientific
+    Studies page, for a study the site otherwise has no way to carry (no PMID, or AKBM never
+    supplied it as part of the curated/full text library). Pure text extraction (PyMuPDF) + one
+    Claude call to locate/transcribe those three fields; no plan/schema involved, same
+    server-to-server shape as /slides/inspect (the browser uploads to Storage first; this
+    route's only caller is Vercel).
+    { file } -> {full_text, abstract, abstract_verified, year, authors, pages, chars}."""
     expected = os.environ.get("DECK_SERVICE_TOKEN")
     if expected and x_deck_token != expected:
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
@@ -978,28 +980,55 @@ async def studies_extract_text(
             status_code=400,
         )
 
-    abstract = ""
+    abstract, year, authors, abstract_verified = "", "", "", False
     try:
         client = anthropic.Anthropic()
         msg = client.messages.create(
             model=config.MODEL,
-            max_tokens=600,
+            max_tokens=800,
             messages=[{
                 "role": "user",
                 "content": (
-                    "Write a plain language abstract (120 to 200 words) of the study below: what "
-                    "was tested, on whom, and the headline result. State only what the text "
-                    "supports; do not invent numbers or a conclusion it doesn't contain. No dash "
-                    "characters (\"-\", \"—\", \"–\"); reword instead.\n\n"
-                    f"<paper>\n{full_text[:60000]}\n</paper>\n\nReturn ONLY the abstract text, no heading."
+                    "From the study text below, extract three things:\n"
+                    "1. \"abstract\": the paper's OWN Abstract section, copied EXACTLY word for "
+                    "word, character for character, from the source text. Do not paraphrase, "
+                    "summarize, fix typos, or write one yourself. If there is no clearly labelled "
+                    "abstract in the text, return an empty string.\n"
+                    "2. \"year\": the 4 digit publication year, your best reading of the source. "
+                    "Empty string if you cannot find one.\n"
+                    "3. \"authors\": the author list as \"Surname Initial, Surname Initial, et "
+                    "al.\" (up to 3 named, then \"et al.\" if there are more). Empty string if "
+                    "you cannot find one.\n\n"
+                    f"<paper>\n{full_text[:60000]}\n</paper>\n\n"
+                    "Return ONLY a JSON object: "
+                    "{\"abstract\": \"...\", \"year\": \"...\", \"authors\": \"...\"}"
                 ),
             }],
         )
-        abstract = "".join(b.text for b in msg.content if b.type == "text").strip()
-    except Exception:  # noqa: BLE001 — extraction still succeeds without an AI abstract
-        abstract = ""
+        raw = "".join(b.text for b in msg.content if b.type == "text")
+        parsed = json.loads(raw[raw.index("{"):raw.rindex("}") + 1])
+        abstract = (parsed.get("abstract") or "").strip()
+        year = (parsed.get("year") or "").strip()
+        authors = (parsed.get("authors") or "").strip()
 
-    return {"full_text": full_text, "abstract": abstract, "pages": page_count, "chars": len(full_text)}
+        # Deterministic verbatim check (same normalized substring test the claims library uses
+        # for quotes) — if the model paraphrased anyway, don't pass it off as the paper's own
+        # words. The UI still shows it, flagged, so a reviewer can fix it up rather than losing it.
+        if abstract:
+            norm = lambda s: re.sub(r"\s+", " ", s).lower().strip()  # noqa: E731
+            abstract_verified = norm(abstract) in norm(full_text)
+    except Exception:  # noqa: BLE001 — text extraction still succeeds without these
+        pass
+
+    return {
+        "full_text": full_text,
+        "abstract": abstract,
+        "abstract_verified": abstract_verified,
+        "year": year,
+        "authors": authors,
+        "pages": page_count,
+        "chars": len(full_text),
+    }
 
 
 @app.get("/jobs/{job_id}")

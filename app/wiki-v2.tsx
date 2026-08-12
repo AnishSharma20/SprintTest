@@ -61,9 +61,9 @@ const QUALITY_DEF =
   "or negative result (e.g. KARAOKE/Laslett 2024). Shown for the verified key trials only.";
 
 const OUTCOME_DEF =
-  "Outcome = which way the study's own result pointed for krill oil: positive (a benefit shown), " +
-  "neutral (mixed or inconclusive) or negative (no significant effect, or unfavorable). Independent " +
-  "of research quality above — a well run trial can still come out negative.";
+  "Outcome = is this study positive, neutral or negative for marketing purposes. Independent of " +
+  "research quality above — a well run trial can still be neutral or negative for marketing, and " +
+  "a weaker one can still be positive.";
 
 type SortBy = "date" | "quality";
 
@@ -164,7 +164,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     const pmid = new URLSearchParams(window.location.search).get("pmid");
     if (pmid) setValgtPmid(pmid);
   }, []);
-
   useEffect(() => {
     let alive = true;
     loadOverrides().then((o) => {
@@ -985,7 +984,7 @@ function QualityEditor({
 
   async function lagre() {
     if (!reviewer.trim()) {
-      setFeil("Still confirming your sign in — try again in a moment.");
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
       return;
     }
     setBusy(true);
@@ -1022,7 +1021,7 @@ function QualityEditor({
 
   async function fjern() {
     if (!reviewer.trim()) {
-      setFeil("Still confirming your sign in — try again in a moment.");
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
       return;
     }
     setBusy(true);
@@ -1089,7 +1088,7 @@ function QualityEditor({
       </div>
 
       <div className="mt-3 text-[12.5px] font-semibold text-[#AEAEB2]">
-        Outcome · which way the study's own result pointed for krill oil (independent of quality above)
+        Outcome · is this study positive, neutral or negative for marketing purposes (independent of quality above)
       </div>
       <div className="mt-1.5 flex gap-2">
         {(["positive", "neutral", "negative"] as OutcomeDirection[]).map((v) => (
@@ -1163,7 +1162,7 @@ function AssessmentEditor({
 
   async function lagre() {
     if (!reviewer.trim()) {
-      setFeil("Still confirming your sign in — try again in a moment.");
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
       return;
     }
     if (!abstract.trim() && !keyFindingsAssessment.trim()) {
@@ -1242,7 +1241,7 @@ function RemoveStudyEditor({
 
   async function fjern() {
     if (!reviewer.trim()) {
-      setFeil("Still confirming your sign in — try again in a moment.");
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
       return;
     }
     setBusy(true);
@@ -1268,7 +1267,7 @@ function RemoveStudyEditor({
 
   async function gjenopprett() {
     if (!reviewer.trim()) {
-      setFeil("Still confirming your sign in — try again in a moment.");
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
       return;
     }
     setBusy(true);

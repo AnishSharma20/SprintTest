@@ -64,12 +64,16 @@ export async function POST(req: Request) {
 
     const reviewer = (created_by ?? "").trim();
     const cleanTitle = (title ?? "").trim();
+    const cleanAuthors = (authors ?? "").trim();
+    const cleanYear = year ? parseInt(String(year), 10) || null : null;
     const cleanPmid = (pmid ?? "").trim() || null;
     const path = (storage_path ?? "").trim();
 
     if (!reviewer)
       return Response.json({ error: "Could not identify your signed in account. Try signing in again." }, { status: 400 });
     if (!cleanTitle) return Response.json({ error: "Title is required." }, { status: 400 });
+    if (!cleanAuthors) return Response.json({ error: "Authors are required." }, { status: 400 });
+    if (!cleanYear) return Response.json({ error: "Year is required." }, { status: 400 });
     if (!path) return Response.json({ error: "Upload the PDF before saving." }, { status: 400 });
     if (!Array.isArray(category_ids) || category_ids.length === 0)
       return Response.json({ error: "Pick at least one benefit area." }, { status: 400 });
@@ -107,8 +111,8 @@ export async function POST(req: Request) {
         pmid: cleanPmid,
         doi: (doi ?? "").trim() || null,
         title: cleanTitle,
-        authors: (authors ?? "").trim() || null,
-        year: year ? parseInt(String(year), 10) || null : null,
+        authors: cleanAuthors,
+        year: cleanYear,
         journal: (journal ?? "").trim() || null,
         storage_path: path,
         pdf_filename: (pdf_filename ?? "").trim() || null,

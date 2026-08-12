@@ -1,20 +1,33 @@
 "use client";
 
 // "Add study" — upload a study PDF the Scientific Studies page otherwise has no way to carry
-// (no PMID, or AKBM never supplied it as part of the curated/full text library). Three steps:
-// upload the PDF straight to Storage, extract its text + a drafted abstract (deck-service +
-// Claude), then review/fill in the rest by hand — key findings assessment, research quality,
-// outcome, and benefit areas. Saves to custom_studies (migration 0011), merged into the page's
-// study list by app/studies.ts's hentStudier().
+// (no PMID, or AKBM never supplied it as part of the curated/full text library). Upload the PDF
+// straight to Storage, extract its text plus its own verbatim abstract/year/authors (deck-service
+// + Claude), then review/fill in the rest by hand — benefit areas, findings (same shape as the
+// Findings Library), research quality, and marketing outcome. Saves to custom_studies (migration
+// 0011) and, per finding entered, to claims (the same table the Findings Library reads).
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import type { Category } from "./lib/claims-types";
+import type { Category, ClaimSentiment } from "./lib/claims-types";
 import type { OutcomeDirection } from "./studies-data";
 import { OUTCOME_LABEL } from "./study-meta";
 import { useCurrentUser } from "./lib/use-current-user";
+import { benefitIcon } from "./v2/benefit-icons";
 
 type Step = "upload" | "extracting" | "details";
+
+const SENTIMENT_LABEL: Record<ClaimSentiment, string> = {
+  positive: "Positive",
+  neutral: "Neutral",
+  negative: "Negative",
+};
+
+type FindingDraft = { id: string; categoryId: string; text: string; sentiment: ClaimSentiment | "" };
+
+function newFinding(): FindingDraft {
+  return { id: crypto.randomUUID(), categoryId: "", text: "", sentiment: "" };
+}
 
 export default function AddStudyModal({
   categories,
@@ -37,16 +50,19 @@ export default function AddStudyModal({
 
   const [title, setTitle] = useState("");
   const [authors, setAuthors] = useState("");
+  const [authorsAuto, setAuthorsAuto] = useState(false);
   const [year, setYear] = useState("");
+  const [yearAuto, setYearAuto] = useState(false);
   const [journal, setJournal] = useState("");
   const [pmid, setPmid] = useState("");
   const [doi, setDoi] = useState("");
   const [abstract, setAbstract] = useState("");
-  const [keyFindings, setKeyFindings] = useState("");
+  const [abstractVerified, setAbstractVerified] = useState(false);
   const [qualityScore, setQualityScore] = useState("");
   const [qualityLabel, setQualityLabel] = useState<"High" | "Moderate" | "Low" | "">("");
   const [outcomeDirection, setOutcomeDirection] = useState<OutcomeDirection | "">("");
   const [categoryIds, setCategoryIds] = useState<Set<string>>(new Set());
+  const [findings, setFindings] = useState<FindingDraft[]>([newFinding()]);
 
   const scienceCategories = categories.filter((c) => c.parent === "science");
 
@@ -57,6 +73,13 @@ export default function AddStudyModal({
       else n.add(id);
       return n;
     });
+  }
+
+  function updateFinding(id: string, patch: Partial<FindingDraft>) {
+    setFindings((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
+  }
+  function removeFinding(id: string) {
+    setFindings((prev) => (prev.length > 1 ? prev.filter((f) => f.id !== id) : prev));
   }
 
   async function onPickFile(file: File) {
@@ -92,7 +115,16 @@ export default function AddStudyModal({
 
       setFullText(extractData.full_text || "");
       setAbstract(extractData.abstract || "");
+      setAbstractVerified(!!extractData.abstract_verified);
       setCharsExtracted(extractData.chars || 0);
+      if (extractData.year) {
+        setYear(extractData.year);
+        setYearAuto(true);
+      }
+      if (extractData.authors) {
+        setAuthors(extractData.authors);
+        setAuthorsAuto(true);
+      }
       setTitle((t) => t || file.name.replace(/\.pdf$/i, "").replace(/[_-]+/g, " "));
       setStep("details");
     } catch (e) {
@@ -103,17 +135,19 @@ export default function AddStudyModal({
     }
   }
 
-  const canSubmit = !!title.trim() && categoryIds.size > 0 && !!storagePath;
+  const canSubmit = !!title.trim() && !!year.trim() && !!authors.trim() && categoryIds.size > 0 && !!storagePath;
 
   async function submit() {
-    if (!title.trim()) {
-      setError("Title is required.");
-      return;
+    if (!title.trim()) return setError("Title is required.");
+    if (!year.trim()) return setError("Year is required.");
+    if (!authors.trim()) return setError("Authors are required.");
+    if (categoryIds.size === 0) return setError("Pick at least one benefit area.");
+    for (const f of findings) {
+      if (!f.text.trim()) continue; // an untouched row is skipped, not an error
+      if (!f.categoryId || !f.sentiment)
+        return setError("Every finding needs a category and a sentiment.");
     }
-    if (categoryIds.size === 0) {
-      setError("Pick at least one benefit area.");
-      return;
-    }
+
     setBusy(true);
     setError(null);
     try {
@@ -124,14 +158,13 @@ export default function AddStudyModal({
           pmid: pmid.trim() || null,
           doi: doi.trim() || null,
           title: title.trim(),
-          authors: authors.trim() || null,
-          year: year.trim() || null,
+          authors: authors.trim(),
+          year: year.trim(),
           journal: journal.trim() || null,
           storage_path: storagePath,
           pdf_filename: pdfFilename,
           full_text: fullText || null,
           abstract: abstract.trim() || null,
-          key_findings_assessment: keyFindings.trim() || null,
           quality_score: qualityScore.trim() ? Number(qualityScore) : null,
           quality_label: qualityLabel || null,
           outcome_direction: outcomeDirection || null,
@@ -142,6 +175,38 @@ export default function AddStudyModal({
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not save the study.");
+        return;
+      }
+
+      const studyRef = {
+        pmid: data.study.pmid || `custom-${data.study.id}`,
+        title: data.study.title,
+        authors: data.study.authors,
+        year: data.study.year,
+        journal: data.study.journal,
+        doi: data.study.doi,
+      };
+      const toCreate = findings.filter((f) => f.text.trim());
+      const results = await Promise.all(
+        toCreate.map((f) =>
+          fetch("/api/claims", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              scope: "paper",
+              claim_type: "marketing",
+              category_id: f.categoryId,
+              text: f.text.trim(),
+              sentiment: f.sentiment,
+              created_by: reviewer,
+              study: studyRef,
+            }),
+          }).then((r) => r.ok)
+        )
+      );
+      const failed = results.filter((ok) => !ok).length;
+      if (failed > 0) {
+        setError(`Study saved, but ${failed} of ${toCreate.length} finding(s) could not be added — add them from the study's card.`);
         return;
       }
       onCreated();
@@ -196,7 +261,7 @@ export default function AddStudyModal({
             <div className="rounded-[16px] border border-[#E8E8ED] bg-[#FBFBFD] p-10 text-center">
               <p className="text-[13.5px] font-semibold text-[#1D1D1F]">Reading {pdfFilename}…</p>
               <p className="mt-1 text-[12.5px] text-[#AEAEB2]">
-                Extracting the full text and drafting an abstract. This can take a moment for a long paper.
+                Extracting the full text, abstract, year and authors. This can take a moment for a long paper.
               </p>
             </div>
           )}
@@ -205,7 +270,6 @@ export default function AddStudyModal({
             <>
               <p className="mb-5 rounded-[12px] border border-[#D8E9EA] bg-[#F4FAFB] px-4 py-2.5 text-[12px] text-[#0A5A66]">
                 {pdfFilename} · {charsExtracted.toLocaleString()} characters extracted.
-                {!abstract && " No abstract could be drafted automatically — write one below."}
               </p>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -218,24 +282,30 @@ export default function AddStudyModal({
                   />
                 </label>
                 <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  Authors
+                  Authors {authorsAuto && "· extracted from the PDF"}
                   <input
                     value={authors}
-                    onChange={(e) => setAuthors(e.target.value)}
+                    onChange={(e) => {
+                      setAuthors(e.target.value);
+                      setAuthorsAuto(false);
+                    }}
                     placeholder="Smith J, Doe A, et al."
                     className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
                   />
                 </label>
                 <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  Year
+                  Year {yearAuto && "· extracted from the PDF"}
                   <input
                     value={year}
-                    onChange={(e) => setYear(e.target.value)}
+                    onChange={(e) => {
+                      setYear(e.target.value);
+                      setYearAuto(false);
+                    }}
                     className="mt-1 block w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] font-normal outline-none focus:border-[#C7C7CC]"
                   />
                 </label>
                 <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-                  Journal
+                  Journal, optional
                   <input
                     value={journal}
                     onChange={(e) => setJournal(e.target.value)}
@@ -261,28 +331,111 @@ export default function AddStudyModal({
                 </label>
               </div>
 
+              <div className="mb-1.5 mt-4 text-[12.5px] font-semibold text-[#6E6E73]">Benefit areas</div>
+              <div className="grid gap-1.5 sm:grid-cols-2">
+                {scienceCategories.map((c) => {
+                  const on = categoryIds.has(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => toggleCategory(c.id)}
+                      className={`flex items-center gap-2.5 rounded-[10px] border bg-white px-3 py-2 text-left text-[13px] transition-colors ${
+                        on ? "border-[#1D1D1F] font-semibold text-[#1D1D1F]" : "border-[#E8E8ED] text-[#6E6E73]"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={benefitIcon(c.name)} alt="" className="h-5 w-5 shrink-0" />
+                      <span className="flex-1">{c.name}</span>
+                      {on && <span className="font-bold">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
               <label className="mb-1 mt-4 block text-[11.5px] font-semibold text-[#6E6E73]">
-                Abstract {abstract && "· drafted from the PDF, edit as needed"}
+                Abstract
+                {abstract && (abstractVerified ? " · the paper's own text" : " · could not verify this is word for word from the PDF, check it")}
               </label>
               <textarea
                 value={abstract}
                 onChange={(e) => setAbstract(e.target.value)}
                 rows={4}
-                className="w-full rounded-[12px] border border-[#E8E8ED] p-3 text-[14px] outline-none focus:border-[#C7C7CC]"
-              />
-
-              <label className="mb-1 mt-4 block text-[11.5px] font-semibold text-[#6E6E73]">
-                Key findings assessment
-              </label>
-              <textarea
-                value={keyFindings}
-                onChange={(e) => setKeyFindings(e.target.value)}
-                rows={3}
-                placeholder="Your own evaluation of what this study found and how much it supports"
+                placeholder="Paste the paper's own abstract if it wasn't found automatically"
                 className="w-full rounded-[12px] border border-[#E8E8ED] p-3 text-[14px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
               />
 
-              <div className="mt-4 text-[12.5px] font-semibold text-[#AEAEB2]">
+              <div className="mb-1.5 mt-5 flex items-center justify-between">
+                <div className="text-[12.5px] font-semibold text-[#6E6E73]">
+                  Findings · same as the Findings Library
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFindings((prev) => [...prev, newFinding()])}
+                  className="text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+                >
+                  + Add finding
+                </button>
+              </div>
+              <div className="space-y-3">
+                {findings.map((f, i) => (
+                  <div key={f.id} className="rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-3.5">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[11.5px] font-semibold text-[#AEAEB2]">Finding {i + 1}</span>
+                      {findings.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeFinding(f.id)}
+                          className="text-[11.5px] font-semibold text-[#AEAEB2] hover:text-[#B3403A]"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <select
+                        value={f.categoryId}
+                        onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
+                        className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
+                      >
+                        <option value="">Category…</option>
+                        {scienceCategories.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
+                        <button
+                          key={v}
+                          type="button"
+                          onClick={() => updateFinding(f.id, { sentiment: v })}
+                          className={`rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
+                            f.sentiment === v
+                              ? v === "positive"
+                                ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
+                                : v === "negative"
+                                ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
+                                : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
+                              : "border-[#E8E8ED] text-[#6E6E73] hover:bg-white"
+                          }`}
+                        >
+                          {SENTIMENT_LABEL[v]}
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={f.text}
+                      onChange={(e) => updateFinding(f.id, { text: e.target.value })}
+                      rows={2}
+                      placeholder="Author Year: result on the primary or secondary endpoint (study design)"
+                      className="w-full rounded-[10px] border border-[#E8E8ED] bg-white p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 text-[12.5px] font-semibold text-[#AEAEB2]">
                 Research quality · how rigorously the study was designed and run
               </div>
               <div className="mt-1.5 flex flex-wrap items-end gap-3">
@@ -313,7 +466,7 @@ export default function AddStudyModal({
               </div>
 
               <div className="mt-4 text-[12.5px] font-semibold text-[#AEAEB2]">
-                Outcome · which way the study's own result pointed for krill oil
+                Outcome · is this study positive, neutral or negative for marketing purposes
               </div>
               <div className="mt-1.5 flex gap-2">
                 {(["positive", "neutral", "negative"] as OutcomeDirection[]).map((v) => (
@@ -334,26 +487,6 @@ export default function AddStudyModal({
                     {OUTCOME_LABEL[v]}
                   </button>
                 ))}
-              </div>
-
-              <div className="mb-1.5 mt-4 text-[12.5px] font-semibold text-[#6E6E73]">Benefit areas</div>
-              <div className="grid gap-1.5 sm:grid-cols-2">
-                {scienceCategories.map((c) => {
-                  const on = categoryIds.has(c.id);
-                  return (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => toggleCategory(c.id)}
-                      className={`flex items-center justify-between rounded-[10px] border bg-white px-3 py-2 text-left text-[13px] transition-colors ${
-                        on ? "border-[#1D1D1F] font-semibold text-[#1D1D1F]" : "border-[#E8E8ED] text-[#6E6E73]"
-                      }`}
-                    >
-                      {c.name}
-                      {on && <span className="font-bold">✓</span>}
-                    </button>
-                  );
-                })}
               </div>
             </>
           )}

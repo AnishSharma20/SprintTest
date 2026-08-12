@@ -126,8 +126,9 @@ const ARCHIVE_CATEGORIES: Record<string, string[]> = {
   "30261756": ["Liver Support"], // Bjorndal 2018, choline/homocysteine kinetics (same topic as Modinger 2019)
   "19854375": ["Wellness & Immune Support"], // Maki 2009, EPA/DHA bioavailability (Aker BioMarine co-authored)
   "36566465": ["Sports Performance Support"], // Yang 2022/2023, muscle injury recovery after resistance exercise
-  "36367773": ["Healthy Aging Support", "Brain & Dry Eye Support"], // SenGupta/Nilsen 2022, C. elegans + human
-  // cells - dopaminergic neuron aging; PRECLINICAL (not a human trial), unlike every other study here
+  // 36367773 (SenGupta/Nilsen 2022, C. elegans + human cell dopaminergic neuron aging study) was
+  // REMOVED 2026-08-12: preclinical, not a human trial, unlike every other study here. Removed from
+  // fulltext-studies.json, ai-summaries.json, study-figures.json and study-pdfs.json too.
 };
 
 // Fallback for a study not yet added to ARCHIVE_CATEGORIES (e.g. a brand new PDF AKBM sends before
@@ -156,6 +157,14 @@ export function kategorier(pmid: string, tittel: string): string[] {
   const archived = ARCHIVE_CATEGORIES[pmid];
   if (archived?.length) return archived;
   return fallbackCategories(tittel);
+}
+
+// The exact set of PMIDs the Scientific Studies page can ever show (AKBM-supplied full-text PDFs +
+// the curated key trials — see hentStudier() below; there is no other source). Findings/claims must
+// only ever be grounded in one of these, so this is exported for the claims API to validate against
+// (app/api/claims/route.ts) rather than letting a paper-level claim attach to an arbitrary study.
+export function canonicalStudyPmids(): Set<string> {
+  return new Set([...Object.keys(FULLTEXT_STUDIES), ...CURATED_STUDIES.map((c) => c.pmid)]);
 }
 
 function curatedToStudie(c: CuratedStudy): Studie {

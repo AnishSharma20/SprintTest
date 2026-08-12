@@ -11,6 +11,7 @@
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 import { getOrCreateStudy, logEvent, type StudyMeta } from "../../lib/claims-db";
+import { canonicalStudyPmids } from "../../studies";
 
 const CLAIM_SELECT =
   "*, claim_quotes(*), claim_comments(*), studies(pmid, title, authors, year, journal, doi)";
@@ -80,6 +81,15 @@ export async function POST(req: Request) {
     if (!category_id) return Response.json({ error: "Category is required." }, { status: 400 });
     if (scope === "paper" && !study?.pmid)
       return Response.json({ error: "Paper claims need a study (pmid)." }, { status: 400 });
+    // Findings must only ever be grounded in a study that is actually in the Scientific Studies
+    // library (AKBM-supplied full-text PDFs + the curated key trials) — never an arbitrary pmid,
+    // which is how ~45 legacy studies from a retired live PubMed search ended up backing findings
+    // that weren't traceable to anything on the Scientific Studies page.
+    if (scope === "paper" && study?.pmid && !canonicalStudyPmids().has(study.pmid))
+      return Response.json(
+        { error: "This study is not in the Scientific Studies library, so a finding can't be grounded in it." },
+        { status: 400 }
+      );
 
     const studyId = scope === "paper" && study ? await getOrCreateStudy(sb, study) : null;
 

@@ -3,14 +3,20 @@
 //   GET  /api/rules   { configured, rules: [{ id, text, enabled, slide_key, action, position }] }
 //   POST /api/rules   { text, slide_key?, action?, position?, author? }  → create (enabled)
 //
-// Two kinds of rule live in this one list, and the difference is whether the pipeline can ACT on
+// Three kinds of rule live in this one list, and the difference is whether the pipeline can ACT on
 // it (see migration 0013):
 //   - a WRITING rule (slide_key null) is prose injected into the planner's prompt, then verified
 //     against the finished deck by the deck service's rules_gate and repaired if broken;
 //   - a STRUCTURE rule (slide_key + action) is applied deterministically — 'position' moves that
 //     slide to an exact spot, 'always_include' guarantees it appears. These replace guarantees
 //     that used to be hardcoded, which is what makes the cover and agenda removable: delete the
-//     rule and the guarantee goes with it.
+//     rule and the guarantee goes with it. NOTE the guarantee is only total for the slides the code
+//     can compose or splice (cover, executive summary, agenda, the verbatim benefits slide); for a
+//     content slide the pipeline turns the rest into an ask plus a check, because a slide's text has
+//     to be written (deck-service `pipeline._structure_asks`);
+//   - a WRITING rule ABOUT ONE SLIDE (slide_key, action null) is the team saying something in their
+//     own words that no mechanism could apply. It travels as prose exactly like the first kind; the
+//     slide is recorded only so the rule can show which slide it concerns.
 //
 // Every ENABLED rule is fetched by the generator pages at generation time and threaded to the
 // deck service. The table only exists once migration 0004 has been run, and the structural
@@ -67,8 +73,13 @@ export async function POST(req: Request) {
       return Response.json({ error: "Keep a rule under 500 characters." }, { status: 400 });
 
     const key = (slide_key ?? "").trim();
-    if (key) {
-      if (!ACTIONS.has(action ?? ""))
+    // A slide_key with NO action is a third, deliberate shape: a writing rule the team wrote about
+    // one particular slide. It travels as prose and is checked like any other writing rule — the
+    // slide is recorded only so the rule can say which slide it concerns. It must stay action-less,
+    // because everything that applies rules mechanically (pipeline._apply_structure, and the
+    // protectedSlides guard in /api/layout-settings) keys off `action` being present.
+    if (key && action !== undefined && action !== null && `${action}`.trim() !== "") {
+      if (!ACTIONS.has(action))
         return Response.json({ error: "A slide rule needs a known action." }, { status: 400 });
       if (action === "position" && !POSITIONS.has(position ?? ""))
         return Response.json({ error: "A position rule needs a known position." }, { status: 400 });
@@ -85,7 +96,7 @@ export async function POST(req: Request) {
     };
     if (key) {
       row.slide_key = key;
-      row.action = action;
+      row.action = action || null;   // null = a writing rule about this slide, applied by nothing
       row.position = action === "position" ? position : null;
     }
 

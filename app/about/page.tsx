@@ -158,6 +158,21 @@ const POSITION_LABEL: Record<string, string> = {
  * it here just flicks that switch. Storing it twice is the one thing that could make them
  * disagree. */
 const NEVER_LABEL = "is never used";
+
+/** Slides whose structure rule the CODE really keeps, mirroring `pipeline._CODE_PLACED`: the three
+ * it can compose from the deck's own content, plus the verbatim benefits slide the renderer splices.
+ * For any OTHER slide the code can move one it finds but cannot make one exist (a content slide has
+ * to be written), so such a rule is asked of the AI and checked afterwards — not enforced. Saying
+ * so is the point: the badge used to claim Enforced for rules nothing could keep. */
+const CODE_PLACED = new Set(["title", "exec_summary", "agenda", "benefits_verbatim"]);
+
+/** Which of the three strengths a rule row actually has. */
+function ruleStrength(slideKey: string | null | undefined, action: string | null | undefined): "enforced" | "checked" {
+  if (!action) return "checked";              // a writing rule, in the team's own words
+  if (!slideKey) return "enforced";           // deck wide: notes, no dashes, source appendix
+  if (action === "never_used") return "enforced"; // the slide leaves the AI's vocabulary entirely
+  return CODE_PLACED.has(slideKey) ? "enforced" : "checked";
+}
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
 // ONE card language for every slide and photo in the libraries: the same two actions in the same
 // place, at a size that is comfortable to hit, and no per-kind labelling. Everything else (the
@@ -456,12 +471,16 @@ export default function AboutV2Page() {
       }
       return;
     }
-    // A slide picked in the builder makes this a STRUCTURE rule the pipeline applies; otherwise
-    // it is a writing rule and the wording is all there is.
-    const structural = !!newRuleSlide;
+    // A slide picked in the builder makes this a STRUCTURE rule the pipeline applies, UNLESS the
+    // team chose to say it in their own words — then it is a writing rule that happens to be about
+    // one slide (slide_key set, no action), which travels as prose and is checked like any other.
+    const structural = !!newRuleSlide && newRulePosition !== "own";
+    const aboutSlide = !!newRuleSlide && newRulePosition === "own";
     const t = structural
       ? `${prettySlide(newRuleSlide)} ${POSITION_LABEL[newRulePosition] ?? "is always included"}`
-      : newRule.trim();
+      : aboutSlide
+        ? `The ${(layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide: ${newRule.trim()}`
+        : newRule.trim();
     if (!t || savingRule) return;
     setSavingRule(true);
     setRuleError("");
@@ -478,7 +497,12 @@ export default function AboutV2Page() {
                 action: newRulePosition === "anywhere" ? "always_include" : "position",
                 position: newRulePosition === "anywhere" ? undefined : newRulePosition,
               }
-            : {}),
+            // A rule ABOUT a slide, in the team's words: the slide is recorded so the row can say
+            // which one it concerns, with no action, so nothing tries to apply it mechanically and
+            // the slide stays switchable.
+            : aboutSlide
+              ? { slide_key: newRuleSlide }
+              : {}),
         }),
       });
       const d = await res.json();
@@ -486,6 +510,7 @@ export default function AboutV2Page() {
       setRules((r) => [...r, d.rule]);
       setNewRule("");
       setNewRuleSlide("");
+      setNewRulePosition("first");
     } catch (e) {
       setRuleError((e as Error).message);
     } finally {
@@ -1509,6 +1534,12 @@ export default function AboutV2Page() {
   // are DERIVED from that switch rather than stored, so the two can never disagree — and removing
   // one here turns the slide back on, which is exactly what it should mean. A slide in Deleted
   // items is excluded: that is a bin, not a standing rule about how decks are written.
+  // What the composer is about to create, so the badge and the sentence under it tell the truth
+  // before the rule is saved rather than after.
+  const composerAction =
+    newRulePosition === "own" ? null : newRulePosition === "never" ? "never_used" : newRulePosition === "anywhere" ? "always_include" : "position";
+  const composerStrength = ruleStrength(newRuleSlide, composerAction);
+
   const neverRules = [
     ...(gallery as GalleryEntry[])
       .filter((g) => disabled.has(g.key) && !layoutRemoved.has(g.key))
@@ -1698,9 +1729,12 @@ export default function AboutV2Page() {
                 <span className="font-semibold">Checked</span> ones are asked of the AI and then verified
                 against the finished deck, and anything that breaks one is sent back to be rewritten.
                 Which of the two a rule gets is not a setting: it follows from what the rule asks for.
-                Where the slide sits, and whether it is used at all, are facts the code can act on;
-                &quot;bullets are one sentence each&quot; is a judgement about writing, so it is read back
-                instead. A few things
+                Whether a slide is used at all, and where it sits, are facts the code can act on;
+                whether a slide gets WRITTEN is not, because that needs content, so asking for a slide
+                the tool cannot compose by itself is an instruction plus a check rather than a
+                guarantee. The dropdown when you pick a slide is simply the list of things that can be
+                done without asking the AI — for anything else, say it in your own words and it is
+                read back against the finished deck. A few things
                 stay locked on purpose and are not listed: never stating a fact the source does not
                 support, the AI generated disclaimer, and each text box&rsquo;s measured character limit.
               </p>
@@ -1770,10 +1804,10 @@ export default function AboutV2Page() {
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-1.5">
                               <p className={`text-sm ${r.enabled ? "text-[#031B34]" : "text-zinc-400"}`}>{r.text}</p>
-                              {/* A rule the pipeline applies is a guarantee; the rest are checked
-                                  against the finished deck. Saying which is which was the whole
-                                  point of this pass. */}
-                              <Strength kind={r.action ? "enforced" : "checked"} />
+                              {/* A rule the pipeline can APPLY is a guarantee; everything else is
+                                  checked against the finished deck. Which one it is depends on the
+                                  slide as well as the action — see ruleStrength. */}
+                              <Strength kind={ruleStrength(r.slide_key, r.action)} />
                               {r.builtin_key && (
                                 <span
                                   className={PILL_ASIS}
@@ -1784,7 +1818,19 @@ export default function AboutV2Page() {
                               )}
                             </div>
                             <p className="mt-1 text-[11px] text-zinc-400">
-                              {r.slide_key && r.action ? "Applied by the code · " : ""}
+                              {/* Say exactly how this one is kept. A position rule on a slide the
+                                  code cannot compose is the honest awkward case: the ORDER is
+                                  guaranteed, the slide EXISTING is not. */}
+                              {r.slide_key && r.action
+                                ? ruleStrength(r.slide_key, r.action) === "enforced"
+                                  ? "Applied by the code · "
+                                  : r.action === "position"
+                                    ? "The code puts it there whenever the deck has one; that it appears at all is asked of the AI and checked · "
+                                    : "Asked of the AI and checked against the finished deck · "
+                                : ""}
+                              {r.slide_key && !r.action
+                                ? `About the ${(layoutNames[r.slide_key]?.display_name || pretty(r.slide_key)).toLowerCase()} slide · `
+                                : ""}
                               {r.updated_by || r.created_by
                                 ? `By ${r.updated_by || r.created_by} · ${new Date(r.updated_at || r.created_at).toLocaleDateString()}`
                                 : new Date(r.created_at).toLocaleDateString()}
@@ -1922,8 +1968,12 @@ export default function AboutV2Page() {
                             <option value="last">always comes last</option>
                             <option value="anywhere">is always included, anywhere</option>
                             <option value="never">is never used</option>
+                            <option value="own">…something else, in my own words</option>
                           </select>
-                          <Strength kind="enforced" />
+                          {/* The strength of THIS combination, before it is written: a slide the
+                              code can compose or splice is a guarantee, anything else is asked and
+                              checked, and "in my own words" is always a writing rule. */}
+                          <Strength kind={composerStrength} />
                         </>
                       )}
                       {!structureMigrated && (
@@ -1992,7 +2042,7 @@ export default function AboutV2Page() {
                       </div>
                     )}
 
-                    {newRuleSlide ? (
+                    {newRuleSlide && newRulePosition !== "own" ? (
                       <p className="mt-2 text-xs text-zinc-600">
                         Will be saved as:{" "}
                         <span className="font-semibold text-[#031B34]">
@@ -2004,21 +2054,44 @@ export default function AboutV2Page() {
                         .{" "}
                         {newRulePosition === "never"
                           ? "Applied by the code on every deck: the slide leaves the AI's vocabulary entirely. This is the same switch as the one on its card in the Slide library, so it will show as turned off there too."
-                          : "Applied by the code on every deck, so it cannot be missed — and while this rule exists that slide cannot be switched off or removed."}
+                          : composerStrength === "enforced"
+                            ? "Applied by the code on every deck, so it cannot be missed — and while this rule exists that slide cannot be switched off or removed."
+                            : newRulePosition === "anywhere"
+                              ? "This slide's text has to be written, so the code cannot conjure one: the AI is told every deck needs it and the finished deck is checked, then sent back if it is missing. While this rule exists the slide cannot be switched off or removed."
+                              : "The code moves this slide to that spot whenever the deck has one, but it cannot write a slide that is not there: that it appears at all is asked of the AI and checked afterwards. While this rule exists the slide cannot be switched off or removed."}
                       </p>
                     ) : (
-                      <textarea
-                        value={newRule}
-                        onChange={(e) => setNewRule(e.target.value)}
-                        rows={2}
-                        placeholder='e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
-                        className="mt-2 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                      />
+                      <>
+                        {newRuleSlide && (
+                          <p className="mt-2 text-xs text-zinc-600">
+                            In your own words, about the{" "}
+                            <span className="font-semibold text-[#031B34]">
+                              {(layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()}
+                            </span>{" "}
+                            slide. Anything the code cannot do by itself belongs here: the AI is told, and the
+                            finished deck is read back against it.
+                          </p>
+                        )}
+                        <textarea
+                          value={newRule}
+                          onChange={(e) => setNewRule(e.target.value)}
+                          rows={2}
+                          placeholder={
+                            newRuleSlide
+                              ? "e.g. \"only use it when the source describes a repeating process, never for a one off sequence\""
+                              : 'e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
+                          }
+                          className="mt-2 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                        />
+                      </>
                     )}
                     <button
                       type="button"
                       onClick={() => void addRule()}
-                      disabled={savingRule || (!newRuleSlide && !newRule.trim())}
+                      disabled={
+                        savingRule ||
+                        ((!newRuleSlide || newRulePosition === "own") && !newRule.trim())
+                      }
                       className="mt-2 rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                     >
                       {savingRule ? "Saving…" : "＋ Add rule"}

@@ -104,6 +104,39 @@ def _has_action(rules: list[dict] | None, action: str) -> bool:
     return any(r.get("action") == action for r in rules)
 
 
+# Slides whose structure rule the CODE really keeps: the three it can compose from the deck's own
+# content, plus the verbatim brand benefits slide, which the renderer splices at whatever slot the
+# rule names (`benefits_slot` below) and which the model never writes at all.
+_CODE_PLACED = frozenset(_COMPOSABLE) | {"benefits_verbatim"}
+_POSITION_PHRASE = {"first": "as the FIRST slide", "second": "as the SECOND slide",
+                    "third": "as the THIRD slide", "last": "as the LAST slide",
+                    "second_to_last": "second to last"}
+
+
+def _structure_asks(rules: list[dict]) -> list[str]:
+    """The half of a structure rule the code CANNOT keep, written out as an ordinary team rule.
+
+    `position` and `always_include` are only true guarantees for the slides in `_CODE_PLACED`. For
+    any other layout the code can move a slide it finds but cannot make one exist — a content
+    slide's text has to be WRITTEN. Those rules used to be applied by nobody: not by the code, not
+    named in the prompt, not seen by the rule check. So they land in the team's rules instead, which
+    means the model is asked for them and the finished deck is read back against them
+    (`rules_gate`) like any other rule.
+
+    Composed from slide + action rather than the row's own wording on purpose: the layout key is the
+    model's own vocabulary, while the team's text names the slide the way a person would.
+    """
+    out = []
+    for r in rules:
+        slide = r.get("slide")
+        if not slide or slide in _CODE_PLACED:
+            continue          # the deterministic nets and the renderer keep these ones for real
+        where = _POSITION_PHRASE.get(r.get("position") or "") if r["action"] == "position" else ""
+        out.append(f"Every deck includes a `{slide}` slide"
+                   + (f", {where}" if where else "") + ".")
+    return out
+
+
 def _required_slides(rules: list[dict]) -> set[str]:
     """Slides a rule says every deck must have — a position rule implies the slide is wanted.
     Deck-wide rules (speaker notes, no dashes, appendix) carry no slide and are skipped."""
@@ -518,6 +551,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     structure = (_DEFAULT_STRUCTURE if structure_rules is None
                  else sanitize_structure(structure_rules))
     required = _required_slides(structure)
+    # A structure rule the code cannot guarantee becomes an ordinary team rule here, ONCE, before
+    # any model call: from this point it rides `custom_rules` everywhere — into the prompt's TEAM
+    # RULES block, into every revision, and into the rule check below — so it is asked and verified
+    # instead of being silently inert. Rules the deterministic nets really keep are left out.
+    asks = _structure_asks(structure)
+    if asks:
+        custom_rules = "\n".join([t for t in [(custom_rules or "").strip()] if t] + asks)
     layout_overrides = planner.sanitize_overrides(
         layout_overrides, planner.sanitize_disabled(disabled_layouts, required))
     override_keys = frozenset(o["layout"] for o in layout_overrides)

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
-import { PRODUCTS, type ProductId } from "../products";
+import { BRAND_FEATURES, PRODUCTS, type ProductId } from "../products";
 import { ProductLogo } from "../product-logo";
 
 const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
@@ -1511,9 +1511,23 @@ export default function AboutV2Page() {
   const slideThumb = (key: string) =>
     overrides[key]?.preview_b64
       ? `data:image/jpeg;base64,${overrides[key].preview_b64}`
-      : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${key}.png`;
+      : `/layout-gallery${
+          galleryThemeDirs > 1 && galleryTheme !== "dark" ? `-${galleryTheme}` : ""
+        }/${product}/${key}.png`;
 
-  const entries = (gallery as GalleryEntry[]).filter((g) => {
+  // How many preview sets this brand has: >1 means the theme suffix folders exist.
+  const galleryThemeDirs = BRAND_FEATURES[product].colorThemes.length;
+  useEffect(() => {
+    const ids = BRAND_FEATURES[product].colorThemes.map((t) => t.id);
+    if (ids.length && !ids.includes(galleryTheme)) setGalleryTheme(ids[0] as "dark" | "light" | "pastel");
+  }, [product, galleryTheme]);
+
+  const brandGallery: GalleryEntry[] = useMemo(
+    () => (gallery as Record<string, GalleryEntry[]>)[product] ?? [],
+    [product]
+  );
+
+  const entries = brandGallery.filter((g) => {
     if (layoutRemoved.has(g.key)) return false; // removed slides live only in Deleted items
     if (filter === "off") return disabled.has(g.key);
     if (filter === "favourites") return preferred.has(g.key);
@@ -1549,7 +1563,7 @@ export default function AboutV2Page() {
   const composerStrength = ruleStrength(newRuleSlide, composerAction);
 
   const neverRules = [
-    ...(gallery as GalleryEntry[])
+    ...brandGallery
       .filter((g) => disabled.has(g.key) && !layoutRemoved.has(g.key))
       .map((g) => ({
         key: g.key,
@@ -1561,11 +1575,11 @@ export default function AboutV2Page() {
       .map((c) => ({ key: c.id, label: c.name, team: true })),
   ];
 
-  const removedLayoutEntries = (gallery as GalleryEntry[]).filter((g) => layoutRemoved.has(g.key));
+  const removedLayoutEntries = brandGallery.filter((g) => layoutRemoved.has(g.key));
   const removedCustomSlides = customSlides.filter((c) => c.removed);
   const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
   const slideCount =
-    (gallery as GalleryEntry[]).length - removedLayoutEntries.length + customSlides.length - removedCustomSlides.length;
+    brandGallery.length - removedLayoutEntries.length + customSlides.length - removedCustomSlides.length;
 
   const shownCustomPhotos = customPhotos.filter((p) => {
     if (p.removed) return false;
@@ -2015,7 +2029,7 @@ export default function AboutV2Page() {
                           </span>
                         </button>
                         <div className="mt-2 grid max-h-80 grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
-                          {(gallery as GalleryEntry[])
+                          {brandGallery
                             .filter((g) => g.kind !== "verbatim" && !layoutRemoved.has(g.key))
                             .map((g) => {
                               const picked = newRuleSlide === g.key;
@@ -2667,22 +2681,16 @@ export default function AboutV2Page() {
                   >
                     🗑 Deleted items ({deletedSlidesCount})
                   </button>
-                  {slidesView === "library" && (
+                  {slidesView === "library" && galleryThemeDirs > 1 && (
                     <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
-                      {(
-                        [
-                          ["dark", "Blue Ocean"],
-                          ["light", "White"],
-                          ["pastel", "Pastel Blue"],
-                        ] as const
-                      ).map(([k, label]) => (
+                      {BRAND_FEATURES[product].colorThemes.map(({ id, label }) => (
                         <button
-                          key={k}
+                          key={id}
                           type="button"
-                          onClick={() => setGalleryTheme(k)}
+                          onClick={() => setGalleryTheme(id as "dark" | "light" | "pastel")}
                           title={`Preview slides in the ${label} color theme`}
                           className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                            galleryTheme === k ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
+                            galleryTheme === id ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
                           }`}
                         >
                           {label}

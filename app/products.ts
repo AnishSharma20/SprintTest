@@ -37,11 +37,31 @@ export type Product = {
 
 /** Which parts of the tool a brand actually has. Kept beside the list so a half-wired brand
  *  cannot quietly inherit another brand's science or another brand's team settings. */
-export const BRAND_FEATURES: Record<ProductId, { science: boolean; teamSettings: boolean; contentTypes: string[] }> = {
-  superba:  { science: true,  teamSettings: true,  contentTypes: ["deck", "blog", "whitepaper_mix"] },
-  revervia: { science: false, teamSettings: false, contentTypes: ["deck"] },
-  lysoveta: { science: false, teamSettings: false, contentTypes: [] },
-  pl_plus:  { science: false, teamSettings: false, contentTypes: [] },
+/** colorThemes: the deck backgrounds this brand's template can actually render, in the order the
+ *  UI offers them. The FIRST is the brand's default and the one whose preview images live in the
+ *  unsuffixed public/layout-gallery/<brand>/ folder. Superba's template carries a dark master and
+ *  a light one, giving three themes; Revervia's has a single light master, so it has exactly one —
+ *  offering it a "White" or "Pastel Blue" choice would be offering a background it cannot draw. */
+export const BRAND_FEATURES: Record<ProductId, {
+  science: boolean;
+  teamSettings: boolean;
+  contentTypes: string[];
+  colorThemes: { id: string; label: string; hint: string }[];
+}> = {
+  superba: {
+    science: true, teamSettings: true, contentTypes: ["deck", "blog", "whitepaper_mix"],
+    colorThemes: [
+      { id: "dark", label: "Blue Ocean", hint: "Dark theme · deep-sea gradient" },
+      { id: "light", label: "White", hint: "Light theme · plain white" },
+      { id: "pastel", label: "Pastel Blue", hint: "Light theme · solid mint" },
+    ],
+  },
+  revervia: {
+    science: false, teamSettings: true, contentTypes: ["deck"],
+    colorThemes: [{ id: "dark", label: "Marine", hint: "Light theme · white to Alice Blue" }],
+  },
+  lysoveta: { science: false, teamSettings: false, contentTypes: [], colorThemes: [] },
+  pl_plus:  { science: false, teamSettings: false, contentTypes: [], colorThemes: [] },
 };
 
 export const PRODUCTS: Product[] = [

@@ -1,217 +1,411 @@
-[
-  {
-    "key": "title",
-    "kind": "template",
-    "usage": "Deck COVER — use once, as the first slide. `title` is a SHORT, punchy claim (one line — well within the limit); let `subtitle` carry the qualifier/detail."
-  },
-  {
-    "key": "exec_summary",
-    "kind": "synthetic",
-    "usage": "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget."
-  },
-  {
-    "key": "numbered_cards",
-    "kind": "synthetic",
-    "usage": "NUMBERED CARDS: 2 to 4 equal cards, each with a number badge, an optional icon, a bold `heading` and a `body`. Emit `title` and `items`: each a `heading` (a full short statement, e.g. 'Our portfolio is positioned to win'), a `body` of 1 to 2 sentences, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for an argument in N numbered parts — 'three reasons why', a closing case. Prefer `takeaways` for 5+ points or when the rows are one-liners, and `numbered_cards` when each point needs a paragraph."
-  },
-  {
-    "key": "key_points",
-    "kind": "synthetic",
-    "usage": "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview."
-  },
-  {
-    "key": "icon_grid",
-    "kind": "synthetic",
-    "usage": "A GRID of 3 to 6 icon tiles (3 across). Emit `title`, an optional one-line `banner`, and `items`: 3 to 6 objects each with a short `heading`, a one-line `body`, and an `icon` (health benefit) OR `icon_generic` (science/quality keyword). All items share ONE icon source or none. Use for a set of parallel points, benefits, capabilities or reasons; prefer over key_points when you have 5 to 6 items."
-  },
-  {
-    "key": "pillars",
-    "kind": "synthetic",
-    "usage": "PILLARS under a roof: 2 to 5 tall columns capped by an optional roof `banner` (the overarching statement they support). Emit `title`, optional `banner`, and `items`: each a short `heading`, a `body`, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for 'our approach rests on N pillars', a framework, or the components of a strategy."
-  },
-  {
-    "key": "serpentine",
-    "kind": "synthetic",
-    "usage": "SERPENTINE flow — the WAVY TIMELINE, and the REQUIRED layout (not just preferred) for a HISTORICAL/chronological sequence of 3 or 4 real dated events (calendar years or named past milestones, e.g. '2007', '2022'). Stages are threaded on an S-curve with numbered discs on the crests and each stage's text alternating above and below. Emit `title`, an optional `caption`, and `items`: 3 to 4 objects each with an optional `date` (e.g. '2007' or 'Q1 2026'), a short `heading`, a one-line `body`, and an `icon` OR `icon_generic`. When you give dates, the date replaces the icon chip (there is room for one), so a DATED sequence needs no icons. Do NOT reach for `roadmap` instead just because it could also hold the fields — a 3 to 4 item timeline of real events belongs here. Use `roadmap` only for a forward-looking plan or 5+ phases, and `from_to` for a single before/after."
-  },
-  {
-    "key": "implications",
-    "kind": "synthetic",
-    "usage": "IMPLICATIONS table: numbered trend rows, each with the detail and a chevron into the 'so what'. Emit `title`, optional `headers` (EXACTLY 3 column labels, e.g. ['Mega trend','Overview','Market implications']), and `items`: 2 to 5 rows each with a `heading` (the trend name, short), a `body` (the explanation, 1 to 3 sentences) and an `implication` (what it means for us / the market). Use for a trends-to-consequences analysis — the strongest way to show 'here is what we observe AND what it means'."
-  },
-  {
-    "key": "photo_stats",
-    "kind": "synthetic",
-    "usage": "PHOTO STAT CARDS: 2 or 3 cards, each a photo above a panel carrying a label, ONE hero figure and a supporting line. Emit `title`, optional `caption`, and `items`: each a short `value` (the figure, e.g. '8.5B', '77%'), a `label` (the theme, e.g. 'Growing, ageing world'), an optional `note` (the one-line explanation) and an optional `asset_id` photo. Use ONLY figures from the source. Use for a high-impact market/context opener — three structural facts with imagery. Prefer `stat` when you have no photos and `kpi_dashboard` for 4 or more figures."
-  },
-  {
-    "key": "stat",
-    "kind": "synthetic",
-    "usage": "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point."
-  },
-  {
-    "key": "kpi_dashboard",
-    "kind": "synthetic",
-    "usage": "A KPI DASHBOARD: a grid of 3 to 6 headline metric tiles. Emit `title`, optional `caption`, and `metrics`: each a short `value` (e.g. '65%', '2x', '50+'), a `label`, and an optional one-line `note`. Use ONLY real figures from the source. Great for a results scoreboard (more tiles than `stat`, which is 1 to 3 hero numbers)."
-  },
-  {
-    "key": "metric_bars",
-    "kind": "synthetic",
-    "usage": "METRIC BARS (bullet-chart rows): 2 to 6 rows, each a `label`, a `pct` (0 to 100, sets the bar length) and an optional `value` (the number to print, e.g. '-37%') and `note`. Emit `title`, optional `caption`. Use when several metrics share a comparable 0 to 100 scale (shares, completion, reduction) and the magnitude should be visible."
-  },
-  {
-    "key": "breakdown",
-    "kind": "synthetic",
-    "usage": "BREAKDOWN of a total into shares: a hub circle carrying the total, connectors fanning out to one bar per component. Emit `title`, `total` (the headline figure, e.g. '$137M'), an optional `caption` under the hub (what the total measures), and `items`: 2 to 6 components each with a `label` and a `pct` (its share of the total). Shares should sum to about 100. Use for 'what makes up this number' — revenue by product, studies by area. Prefer a `chart` doughnut only when the parts are a clean part-to-whole with no labels to spell out."
-  },
-  {
-    "key": "chart",
-    "kind": "synthetic",
-    "usage": "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers."
-  },
-  {
-    "key": "chart_bands",
-    "kind": "synthetic",
-    "usage": "COLUMN CHART WITH PHASE BANDS: bars over a time axis, with labelled narrative bands underneath grouping the periods into eras. Emit `title`, optional `caption` and `y_axis`, `categories` (3 to 16 axis labels, e.g. years), `values` (one number per category), and `bands`: 1 to 4 objects each with a `label` (the era name, e.g. 'Road to $100M'), a `start` and an `end` (1-based category indices the band spans). Use ONLY real figures from the source. Use when a trend has a STORY in phases; prefer plain `chart` when there is no phase narrative."
-  },
-  {
-    "key": "chart_takeaways",
-    "kind": "synthetic",
-    "usage": "BUBBLE CHART + KEY TAKEAWAYS: a two-dimensional bubble plot on the left, a bulleted 'so what' column on the right. Emit `title`, `x_axis` and `y_axis` (BOTH MANDATORY — name the dimension and its units, e.g. 'CAGR 2025 to 2030 (%)' and 'Expected revenue 2030 (USD bn)'), `bubbles` (3 to 12 objects each with a short `label`, an `x`, a `y`, and a `size` that sets the bubble area), `takeaways` (2 to 5 bullet sentences reading the chart), optional `headers` (EXACTLY 2 column labels, e.g. ['Market size (USD bn)','Key takeaways']) and an optional `bottom_note` for sources. Use ONLY figures from the source. Use when items compare on TWO axes AND a size — a market landscape, a portfolio scan. Prefer `matrix` for a qualitative 2x2 with no real numbers, and `chart` for a single-dimension comparison."
-  },
-  {
-    "key": "matrix",
-    "kind": "synthetic",
-    "usage": "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`."
-  },
-  {
-    "key": "coverage_matrix",
-    "kind": "synthetic",
-    "usage": "COVERAGE MATRIX: entities as rows, capabilities as columns, a tick where the entity covers that capability. Emit `title`, optional `caption`, `headers` (2 to 8 short column labels) and `items`: 2 to 5 rows each with a `label`, an optional one-line `body`, and `marks` (an array of true/false, ONE PER HEADER, in the same order). Use for BINARY yes/no coverage across several options — a portfolio-vs-need fit, feature coverage, which product serves which segment. ALWAYS prefer this over `harvey_ball` when the answer is yes/no rather than a degree, and over `comparison` when the cells would all just read 'Yes'/'No'."
-  },
-  {
-    "key": "harvey_ball",
-    "kind": "synthetic",
-    "usage": "A Harvey-ball rating grid for comparing 3 or more OPTIONS across several GENUINELY QUALITATIVE criteria by relative strength. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty, 4 = full). USE ONLY when EVERY criterion is a subjective/relative rating (e.g. evidence strength, risk of bias, breadth, sustainability). Do NOT use it for exact numbers (sample size, dose, duration, price) — those belong in a `comparison` table with the real values, since balls hide the actual figure. NEVER use a ball for a yes/no outcome (a partial fill misreads a binary). If any row is a hard number or a yes/no, choose `comparison` instead."
-  },
-  {
-    "key": "comparison",
-    "kind": "synthetic",
-    "usage": "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings."
-  },
-  {
-    "key": "cause_effect",
-    "kind": "synthetic",
-    "usage": "CAUSE and EFFECT rows: 2 to 4 rows, each a `heading` (the cause/driver) and a `body` (the resulting effect), shown as cause panel then arrow then effect. Use for 'X drives Y' mechanisms, driver trees, or why-so reasoning."
-  },
-  {
-    "key": "cycle",
-    "kind": "synthetic",
-    "usage": "CYCLE: 3 to 6 labelled nodes arranged in a ring around an optional hub (`center`). Emit `title`, optional `center`, and `items`: each a short `heading` (2 to 3 words). Use for a repeating loop, continuous-improvement cycle, or process with no fixed end. Prefer `roadmap` or `serpentine` for a linear sequence."
-  },
-  {
-    "key": "funnel",
-    "kind": "synthetic",
-    "usage": "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process."
-  },
-  {
-    "key": "from_to",
-    "kind": "synthetic",
-    "usage": "A FROM/TO transformation: two panels with an arrow between. Emit `title`, `before` (`heading` + optional `body`, the current state) and `after` (`heading` + optional `body`, the target state). Use for a shift, before/after, or 'from X to Y' ambition."
-  },
-  {
-    "key": "roadmap",
-    "kind": "synthetic",
-    "usage": "A ROADMAP of 2 to 5 sequential PHASES as interlocking chevrons. Emit `title` and `phases`: each with an optional `date` (a GENERIC forward planning period only, e.g. 'Q1' or '0 to 3 months' — never a calendar year or a specific past event date, that is `serpentine`'s job), a short `heading` (the phase name), and a `body` of the phase's activities. Use for a FORWARD-LOOKING plan/workstream (what happens next, in order), or for any sequence of 5 phases (past serpentine's 4-item cap). For 3 or 4 items that are a HISTORICAL/chronological narrative (real years or named past events, e.g. '2007', '2022'), that is `serpentine`, NOT roadmap, even though roadmap could technically hold the same fields — do not default to roadmap out of habit for a story that has an actual timeline shape."
-  },
-  {
-    "key": "gantt",
-    "kind": "synthetic",
-    "usage": "GANTT / project schedule: task bars against a time axis. Emit `title`, optional `caption`, `periods` (2 to 8 column labels along the time axis, e.g. ['Q1','Q2','Q3','Q4'] or ['Wk 1','Wk 2',...]), and `items`: 2 to 8 tasks each with a `label`, a `start` (1-based period index where the bar begins), an `end` (1-based period index where it ends; omit for a single-period task), an optional short `note` (printed on the bar), and an optional `milestone: true` (renders a diamond at `start` instead of a bar). Use for a project plan, study schedule, or delivery timeline where tasks have durations across periods. Prefer `roadmap` for a few sequential phases and `serpentine` for dated events without durations."
-  },
-  {
-    "key": "org_chart",
-    "kind": "synthetic",
-    "usage": "ORG CHART: a top box (`center`) connected down to 2 to 4 child boxes. Emit `title`, `center` (the top unit/role) and `items`: each a `heading` and optional `body`. Use for reporting lines, a governance structure, or a workstream breakdown."
-  },
-  {
-    "key": "decision_tree",
-    "kind": "synthetic",
-    "usage": "DECISION TREE: a root question (`center`) on the left branching to 2 to 4 outcome boxes on the right. Emit `title`, `center` (the decision/question) and `items`: each a `heading` (the branch/condition) and optional `body` (the outcome). Use for a decision logic, triage, or 'if X then Y' routing."
-  },
-  {
-    "key": "team",
-    "kind": "synthetic",
-    "usage": "TEAM cards: 2 to 4 people, each with a `name`, a `role` and a short `bio`. Emit `title` and `items`. Use for a team, authors, contributors or an expert panel. Do NOT invent real people; only use names present in the source."
-  },
-  {
-    "key": "takeaways",
-    "kind": "synthetic",
-    "usage": "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide."
-  },
-  {
-    "key": "ingredient",
-    "kind": "synthetic",
-    "usage": "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck."
-  },
-  {
-    "key": "closing",
-    "kind": "synthetic",
-    "usage": "The FINAL slide: a closing statement + contact. Emit `title` (a short closing line), optional `tagline`, and optional `contact` (email / website). Use once, as the last slide."
-  },
-  {
-    "key": "section",
-    "kind": "template",
-    "usage": "Section divider that chunks the deck into parts. Just a `title` (the section name, short). No body."
-  },
-  {
-    "key": "agenda",
-    "kind": "template",
-    "usage": "Agenda / contents. `title` should be the single word 'Agenda' (the box is very narrow); put the real content in `items` (one short line each)."
-  },
-  {
-    "key": "highlight",
-    "kind": "template",
-    "usage": "ONE big statement on an open slide (a 'breathing' beat). ONLY a `title`. Use for a pivotal claim or takeaway — never a list."
-  },
-  {
-    "key": "title_only",
-    "kind": "template",
-    "usage": "Just a title over the branded background. Use rarely (a transitional beat)."
-  },
-  {
-    "key": "text",
-    "kind": "template",
-    "usage": "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points."
-  },
-  {
-    "key": "two_columns",
-    "kind": "template",
-    "usage": "TWO parallel points side by side; each column = `heading` + a substantive `body` of 3 to 4 full sentences, written close to the [bracketed] body limit below (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas."
-  },
-  {
-    "key": "three_columns",
-    "kind": "template",
-    "usage": "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that fill the panel, not a single line."
-  },
-  {
-    "key": "four_columns",
-    "kind": "template",
-    "usage": "FOUR parallel points; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty."
-  },
-  {
-    "key": "text_with_picture",
-    "kind": "template",
-    "usage": "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`."
-  },
-  {
-    "key": "picture_full",
-    "kind": "template",
-    "usage": "A full-bleed photo with a compact title — a strong visual break. `asset_id` required."
-  },
-  {
-    "key": "benefits_verbatim",
-    "kind": "verbatim",
-    "usage": "AKBM's standard Proven Health Benefits overview, spliced in unchanged as the second to last slide of every generated deck. It is a fixed brand slide, not a layout the AI can pick or that can be turned off here."
-  }
-]
+{
+  "superba": [
+    {
+      "key": "title",
+      "kind": "template",
+      "usage": "Deck COVER — use once, as the first slide. `title` is a SHORT, punchy claim (one line — well within the limit); let `subtitle` carry the qualifier/detail."
+    },
+    {
+      "key": "exec_summary",
+      "kind": "synthetic",
+      "usage": "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget."
+    },
+    {
+      "key": "numbered_cards",
+      "kind": "synthetic",
+      "usage": "NUMBERED CARDS: 2 to 4 equal cards, each with a number badge, an optional icon, a bold `heading` and a `body`. Emit `title` and `items`: each a `heading` (a full short statement, e.g. 'Our portfolio is positioned to win'), a `body` of 1 to 2 sentences, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for an argument in N numbered parts — 'three reasons why', a closing case. Prefer `takeaways` for 5+ points or when the rows are one-liners, and `numbered_cards` when each point needs a paragraph."
+    },
+    {
+      "key": "key_points",
+      "kind": "synthetic",
+      "usage": "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview."
+    },
+    {
+      "key": "icon_grid",
+      "kind": "synthetic",
+      "usage": "A GRID of 3 to 6 icon tiles (3 across). Emit `title`, an optional one-line `banner`, and `items`: 3 to 6 objects each with a short `heading`, a one-line `body`, and an `icon` (health benefit) OR `icon_generic` (science/quality keyword). All items share ONE icon source or none. Use for a set of parallel points, benefits, capabilities or reasons; prefer over key_points when you have 5 to 6 items."
+    },
+    {
+      "key": "pillars",
+      "kind": "synthetic",
+      "usage": "PILLARS under a roof: 2 to 5 tall columns capped by an optional roof `banner` (the overarching statement they support). Emit `title`, optional `banner`, and `items`: each a short `heading`, a `body`, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for 'our approach rests on N pillars', a framework, or the components of a strategy."
+    },
+    {
+      "key": "serpentine",
+      "kind": "synthetic",
+      "usage": "SERPENTINE flow — the WAVY TIMELINE, and the REQUIRED layout (not just preferred) for a HISTORICAL/chronological sequence of 3 or 4 real dated events (calendar years or named past milestones, e.g. '2007', '2022'). Stages are threaded on an S-curve with numbered discs on the crests and each stage's text alternating above and below. Emit `title`, an optional `caption`, and `items`: 3 to 4 objects each with an optional `date` (e.g. '2007' or 'Q1 2026'), a short `heading`, a one-line `body`, and an `icon` OR `icon_generic`. When you give dates, the date replaces the icon chip (there is room for one), so a DATED sequence needs no icons. Do NOT reach for `roadmap` instead just because it could also hold the fields — a 3 to 4 item timeline of real events belongs here. Use `roadmap` only for a forward-looking plan or 5+ phases, and `from_to` for a single before/after."
+    },
+    {
+      "key": "implications",
+      "kind": "synthetic",
+      "usage": "IMPLICATIONS table: numbered trend rows, each with the detail and a chevron into the 'so what'. Emit `title`, optional `headers` (EXACTLY 3 column labels, e.g. ['Mega trend','Overview','Market implications']), and `items`: 2 to 5 rows each with a `heading` (the trend name, short), a `body` (the explanation, 1 to 3 sentences) and an `implication` (what it means for us / the market). Use for a trends-to-consequences analysis — the strongest way to show 'here is what we observe AND what it means'."
+    },
+    {
+      "key": "photo_stats",
+      "kind": "synthetic",
+      "usage": "PHOTO STAT CARDS: 2 or 3 cards, each a photo above a panel carrying a label, ONE hero figure and a supporting line. Emit `title`, optional `caption`, and `items`: each a short `value` (the figure, e.g. '8.5B', '77%'), a `label` (the theme, e.g. 'Growing, ageing world'), an optional `note` (the one-line explanation) and an optional `asset_id` photo. Use ONLY figures from the source. Use for a high-impact market/context opener — three structural facts with imagery. Prefer `stat` when you have no photos and `kpi_dashboard` for 4 or more figures."
+    },
+    {
+      "key": "stat",
+      "kind": "synthetic",
+      "usage": "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point."
+    },
+    {
+      "key": "kpi_dashboard",
+      "kind": "synthetic",
+      "usage": "A KPI DASHBOARD: a grid of 3 to 6 headline metric tiles. Emit `title`, optional `caption`, and `metrics`: each a short `value` (e.g. '65%', '2x', '50+'), a `label`, and an optional one-line `note`. Use ONLY real figures from the source. Great for a results scoreboard (more tiles than `stat`, which is 1 to 3 hero numbers)."
+    },
+    {
+      "key": "metric_bars",
+      "kind": "synthetic",
+      "usage": "METRIC BARS (bullet-chart rows): 2 to 6 rows, each a `label`, a `pct` (0 to 100, sets the bar length) and an optional `value` (the number to print, e.g. '-37%') and `note`. Emit `title`, optional `caption`. Use when several metrics share a comparable 0 to 100 scale (shares, completion, reduction) and the magnitude should be visible."
+    },
+    {
+      "key": "breakdown",
+      "kind": "synthetic",
+      "usage": "BREAKDOWN of a total into shares: a hub circle carrying the total, connectors fanning out to one bar per component. Emit `title`, `total` (the headline figure, e.g. '$137M'), an optional `caption` under the hub (what the total measures), and `items`: 2 to 6 components each with a `label` and a `pct` (its share of the total). Shares should sum to about 100. Use for 'what makes up this number' — revenue by product, studies by area. Prefer a `chart` doughnut only when the parts are a clean part-to-whole with no labels to spell out."
+    },
+    {
+      "key": "chart",
+      "kind": "synthetic",
+      "usage": "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers."
+    },
+    {
+      "key": "chart_bands",
+      "kind": "synthetic",
+      "usage": "COLUMN CHART WITH PHASE BANDS: bars over a time axis, with labelled narrative bands underneath grouping the periods into eras. Emit `title`, optional `caption` and `y_axis`, `categories` (3 to 16 axis labels, e.g. years), `values` (one number per category), and `bands`: 1 to 4 objects each with a `label` (the era name, e.g. 'Road to $100M'), a `start` and an `end` (1-based category indices the band spans). Use ONLY real figures from the source. Use when a trend has a STORY in phases; prefer plain `chart` when there is no phase narrative."
+    },
+    {
+      "key": "chart_takeaways",
+      "kind": "synthetic",
+      "usage": "BUBBLE CHART + KEY TAKEAWAYS: a two-dimensional bubble plot on the left, a bulleted 'so what' column on the right. Emit `title`, `x_axis` and `y_axis` (BOTH MANDATORY — name the dimension and its units, e.g. 'CAGR 2025 to 2030 (%)' and 'Expected revenue 2030 (USD bn)'), `bubbles` (3 to 12 objects each with a short `label`, an `x`, a `y`, and a `size` that sets the bubble area), `takeaways` (2 to 5 bullet sentences reading the chart), optional `headers` (EXACTLY 2 column labels, e.g. ['Market size (USD bn)','Key takeaways']) and an optional `bottom_note` for sources. Use ONLY figures from the source. Use when items compare on TWO axes AND a size — a market landscape, a portfolio scan. Prefer `matrix` for a qualitative 2x2 with no real numbers, and `chart` for a single-dimension comparison."
+    },
+    {
+      "key": "matrix",
+      "kind": "synthetic",
+      "usage": "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`."
+    },
+    {
+      "key": "coverage_matrix",
+      "kind": "synthetic",
+      "usage": "COVERAGE MATRIX: entities as rows, capabilities as columns, a tick where the entity covers that capability. Emit `title`, optional `caption`, `headers` (2 to 8 short column labels) and `items`: 2 to 5 rows each with a `label`, an optional one-line `body`, and `marks` (an array of true/false, ONE PER HEADER, in the same order). Use for BINARY yes/no coverage across several options — a portfolio-vs-need fit, feature coverage, which product serves which segment. ALWAYS prefer this over `harvey_ball` when the answer is yes/no rather than a degree, and over `comparison` when the cells would all just read 'Yes'/'No'."
+    },
+    {
+      "key": "harvey_ball",
+      "kind": "synthetic",
+      "usage": "A Harvey-ball rating grid for comparing 3 or more OPTIONS across several GENUINELY QUALITATIVE criteria by relative strength. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty, 4 = full). USE ONLY when EVERY criterion is a subjective/relative rating (e.g. evidence strength, risk of bias, breadth, sustainability). Do NOT use it for exact numbers (sample size, dose, duration, price) — those belong in a `comparison` table with the real values, since balls hide the actual figure. NEVER use a ball for a yes/no outcome (a partial fill misreads a binary). If any row is a hard number or a yes/no, choose `comparison` instead."
+    },
+    {
+      "key": "comparison",
+      "kind": "synthetic",
+      "usage": "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. krill oil vs fish oil), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings."
+    },
+    {
+      "key": "cause_effect",
+      "kind": "synthetic",
+      "usage": "CAUSE and EFFECT rows: 2 to 4 rows, each a `heading` (the cause/driver) and a `body` (the resulting effect), shown as cause panel then arrow then effect. Use for 'X drives Y' mechanisms, driver trees, or why-so reasoning."
+    },
+    {
+      "key": "cycle",
+      "kind": "synthetic",
+      "usage": "CYCLE: 3 to 6 labelled nodes arranged in a ring around an optional hub (`center`). Emit `title`, optional `center`, and `items`: each a short `heading` (2 to 3 words). Use for a repeating loop, continuous-improvement cycle, or process with no fixed end. Prefer `roadmap` or `serpentine` for a linear sequence."
+    },
+    {
+      "key": "funnel",
+      "kind": "synthetic",
+      "usage": "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process."
+    },
+    {
+      "key": "from_to",
+      "kind": "synthetic",
+      "usage": "A FROM/TO transformation: two panels with an arrow between. Emit `title`, `before` (`heading` + optional `body`, the current state) and `after` (`heading` + optional `body`, the target state). Use for a shift, before/after, or 'from X to Y' ambition."
+    },
+    {
+      "key": "roadmap",
+      "kind": "synthetic",
+      "usage": "A ROADMAP of 2 to 5 sequential PHASES as interlocking chevrons. Emit `title` and `phases`: each with an optional `date` (a GENERIC forward planning period only, e.g. 'Q1' or '0 to 3 months' — never a calendar year or a specific past event date, that is `serpentine`'s job), a short `heading` (the phase name), and a `body` of the phase's activities. Use for a FORWARD-LOOKING plan/workstream (what happens next, in order), or for any sequence of 5 phases (past serpentine's 4-item cap). For 3 or 4 items that are a HISTORICAL/chronological narrative (real years or named past events, e.g. '2007', '2022'), that is `serpentine`, NOT roadmap, even though roadmap could technically hold the same fields — do not default to roadmap out of habit for a story that has an actual timeline shape."
+    },
+    {
+      "key": "gantt",
+      "kind": "synthetic",
+      "usage": "GANTT / project schedule: task bars against a time axis. Emit `title`, optional `caption`, `periods` (2 to 8 column labels along the time axis, e.g. ['Q1','Q2','Q3','Q4'] or ['Wk 1','Wk 2',...]), and `items`: 2 to 8 tasks each with a `label`, a `start` (1-based period index where the bar begins), an `end` (1-based period index where it ends; omit for a single-period task), an optional short `note` (printed on the bar), and an optional `milestone: true` (renders a diamond at `start` instead of a bar). Use for a project plan, study schedule, or delivery timeline where tasks have durations across periods. Prefer `roadmap` for a few sequential phases and `serpentine` for dated events without durations."
+    },
+    {
+      "key": "org_chart",
+      "kind": "synthetic",
+      "usage": "ORG CHART: a top box (`center`) connected down to 2 to 4 child boxes. Emit `title`, `center` (the top unit/role) and `items`: each a `heading` and optional `body`. Use for reporting lines, a governance structure, or a workstream breakdown."
+    },
+    {
+      "key": "decision_tree",
+      "kind": "synthetic",
+      "usage": "DECISION TREE: a root question (`center`) on the left branching to 2 to 4 outcome boxes on the right. Emit `title`, `center` (the decision/question) and `items`: each a `heading` (the branch/condition) and optional `body` (the outcome). Use for a decision logic, triage, or 'if X then Y' routing."
+    },
+    {
+      "key": "team",
+      "kind": "synthetic",
+      "usage": "TEAM cards: 2 to 4 people, each with a `name`, a `role` and a short `bio`. Emit `title` and `items`. Use for a team, authors, contributors or an expert panel. Do NOT invent real people; only use names present in the source."
+    },
+    {
+      "key": "takeaways",
+      "kind": "synthetic",
+      "usage": "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide."
+    },
+    {
+      "key": "ingredient",
+      "kind": "synthetic",
+      "usage": "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck."
+    },
+    {
+      "key": "closing",
+      "kind": "synthetic",
+      "usage": "The FINAL slide: a closing statement + contact. Emit `title` (a short closing line), optional `tagline`, and optional `contact` (email / website). Use once, as the last slide."
+    },
+    {
+      "key": "section",
+      "kind": "template",
+      "usage": "Section divider that chunks the deck into parts. Just a `title` (the section name, short). No body."
+    },
+    {
+      "key": "agenda",
+      "kind": "template",
+      "usage": "Agenda / contents. `title` should be the single word 'Agenda' (the box is very narrow); put the real content in `items` (one short line each)."
+    },
+    {
+      "key": "highlight",
+      "kind": "template",
+      "usage": "ONE big statement on an open slide (a 'breathing' beat). ONLY a `title`. Use for a pivotal claim or takeaway — never a list."
+    },
+    {
+      "key": "title_only",
+      "kind": "template",
+      "usage": "Just a title over the branded background. Use rarely (a transitional beat)."
+    },
+    {
+      "key": "text",
+      "kind": "template",
+      "usage": "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points."
+    },
+    {
+      "key": "two_columns",
+      "kind": "template",
+      "usage": "TWO parallel points side by side; each column = `heading` + a substantive `body` of 3 to 4 full sentences, written close to the [bracketed] body limit below (the panels are tall — fill them, do not leave short fragments). Prefer for comparisons / paired ideas."
+    },
+    {
+      "key": "three_columns",
+      "kind": "template",
+      "usage": "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that fill the panel, not a single line."
+    },
+    {
+      "key": "four_columns",
+      "kind": "template",
+      "usage": "FOUR parallel points; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that explain the point and fill the tall panel — never a single terse line that leaves the card mostly empty."
+    },
+    {
+      "key": "text_with_picture",
+      "kind": "template",
+      "usage": "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`."
+    },
+    {
+      "key": "picture_full",
+      "kind": "template",
+      "usage": "A full-bleed photo with a compact title — a strong visual break. `asset_id` required."
+    },
+    {
+      "key": "benefits_verbatim",
+      "kind": "verbatim",
+      "usage": "AKBM's standard Proven Health Benefits overview, spliced in unchanged as the second to last slide of every generated deck. It is a fixed brand slide, not a layout the AI can pick or that can be turned off here."
+    }
+  ],
+  "revervia": [
+    {
+      "key": "title",
+      "kind": "template",
+      "usage": "Deck COVER — use once, as the first slide. `title` is a SHORT, punchy claim (one line — well within the limit); let `subtitle` carry the qualifier/detail."
+    },
+    {
+      "key": "exec_summary",
+      "kind": "synthetic",
+      "usage": "The executive summary — REQUIRED in every deck, as the SECOND slide, immediately after the cover. Fixed title ('Executive summary'), so do NOT emit `title` for it. Emit exactly 5 fields, one row each: `source`, `key_finding`, `supporting_findings`, `relevance`, `contents` — see the EXECUTIVE SUMMARY rule for what each holds and the word budget."
+    },
+    {
+      "key": "numbered_cards",
+      "kind": "synthetic",
+      "usage": "NUMBERED CARDS: 2 to 4 equal cards, each with a number badge, an optional icon, a bold `heading` and a `body`. Emit `title` and `items`: each a `heading` (a full short statement, e.g. 'Our portfolio is positioned to win'), a `body` of 1 to 2 sentences, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for an argument in N numbered parts — 'three reasons why', a closing case. Prefer `takeaways` for 5+ points or when the rows are one-liners, and `numbered_cards` when each point needs a paragraph."
+    },
+    {
+      "key": "key_points",
+      "kind": "synthetic",
+      "usage": "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard brand bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview."
+    },
+    {
+      "key": "icon_grid",
+      "kind": "synthetic",
+      "usage": "A GRID of 3 to 6 icon tiles (3 across). Emit `title`, an optional one-line `banner`, and `items`: 3 to 6 objects each with a short `heading`, a one-line `body`, and an `icon` (health benefit) OR `icon_generic` (science/quality keyword). All items share ONE icon source or none. Use for a set of parallel points, benefits, capabilities or reasons; prefer over key_points when you have 5 to 6 items."
+    },
+    {
+      "key": "pillars",
+      "kind": "synthetic",
+      "usage": "PILLARS under a roof: 2 to 5 tall columns capped by an optional roof `banner` (the overarching statement they support). Emit `title`, optional `banner`, and `items`: each a short `heading`, a `body`, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for 'our approach rests on N pillars', a framework, or the components of a strategy."
+    },
+    {
+      "key": "serpentine",
+      "kind": "synthetic",
+      "usage": "SERPENTINE flow — the WAVY TIMELINE, and the REQUIRED layout (not just preferred) for a HISTORICAL/chronological sequence of 3 or 4 real dated events (calendar years or named past milestones, e.g. '2007', '2022'). Stages are threaded on an S-curve with numbered discs on the crests and each stage's text alternating above and below. Emit `title`, an optional `caption`, and `items`: 3 to 4 objects each with an optional `date` (e.g. '2007' or 'Q1 2026'), a short `heading`, a one-line `body`, and an `icon` OR `icon_generic`. When you give dates, the date replaces the icon chip (there is room for one), so a DATED sequence needs no icons. Do NOT reach for `roadmap` instead just because it could also hold the fields — a 3 to 4 item timeline of real events belongs here. Use `roadmap` only for a forward-looking plan or 5+ phases, and `from_to` for a single before/after."
+    },
+    {
+      "key": "implications",
+      "kind": "synthetic",
+      "usage": "IMPLICATIONS table: numbered trend rows, each with the detail and a chevron into the 'so what'. Emit `title`, optional `headers` (EXACTLY 3 column labels, e.g. ['Mega trend','Overview','Market implications']), and `items`: 2 to 5 rows each with a `heading` (the trend name, short), a `body` (the explanation, 1 to 3 sentences) and an `implication` (what it means for us / the market). Use for a trends-to-consequences analysis — the strongest way to show 'here is what we observe AND what it means'."
+    },
+    {
+      "key": "photo_stats",
+      "kind": "synthetic",
+      "usage": "PHOTO STAT CARDS: 2 or 3 cards, each a photo above a panel carrying a label, ONE hero figure and a supporting line. Emit `title`, optional `caption`, and `items`: each a short `value` (the figure, e.g. '8.5B', '77%'), a `label` (the theme, e.g. 'Growing, ageing world'), an optional `note` (the one-line explanation) and an optional `asset_id` photo. Use ONLY figures from the source. Use for a high-impact market/context opener — three structural facts with imagery. Prefer `stat` when you have no photos and `kpi_dashboard` for 4 or more figures."
+    },
+    {
+      "key": "stat",
+      "kind": "synthetic",
+      "usage": "HERO stats: 1 to 3 big headline figures (like '50+' / '135+'). Emit `title`, optional `caption`, and `stats`: 1 to 3 objects each with a short `value` (e.g. '65%', '2x'), a `label`, and an optional one-line `note`. Use ONLY figures from the source. Great for a punchy proof point."
+    },
+    {
+      "key": "kpi_dashboard",
+      "kind": "synthetic",
+      "usage": "A KPI DASHBOARD: a grid of 3 to 6 headline metric tiles. Emit `title`, optional `caption`, and `metrics`: each a short `value` (e.g. '65%', '2x', '50+'), a `label`, and an optional one-line `note`. Use ONLY real figures from the source. Great for a results scoreboard (more tiles than `stat`, which is 1 to 3 hero numbers)."
+    },
+    {
+      "key": "metric_bars",
+      "kind": "synthetic",
+      "usage": "METRIC BARS (bullet-chart rows): 2 to 6 rows, each a `label`, a `pct` (0 to 100, sets the bar length) and an optional `value` (the number to print, e.g. '-37%') and `note`. Emit `title`, optional `caption`. Use when several metrics share a comparable 0 to 100 scale (shares, completion, reduction) and the magnitude should be visible."
+    },
+    {
+      "key": "breakdown",
+      "kind": "synthetic",
+      "usage": "BREAKDOWN of a total into shares: a hub circle carrying the total, connectors fanning out to one bar per component. Emit `title`, `total` (the headline figure, e.g. '$137M'), an optional `caption` under the hub (what the total measures), and `items`: 2 to 6 components each with a `label` and a `pct` (its share of the total). Shares should sum to about 100. Use for 'what makes up this number' — revenue by product, studies by area. Prefer a `chart` doughnut only when the parts are a clean part-to-whole with no labels to spell out."
+    },
+    {
+      "key": "chart",
+      "kind": "synthetic",
+      "usage": "A native, editable CHART of REAL numbers from the source (the strongest way to show a result). Emit `title` (an action title stating the ONE insight), an optional `caption` (a one-line reading of the result), `chart_type`, `categories` (2 to 8 axis labels) and `series` (1 to 4 objects with a `name` and `values` aligned to the categories). AXIS TITLES ARE MANDATORY: ALWAYS emit `x_axis` (the category dimension, e.g. 'Study group' or 'Week') AND `y_axis` (what is measured plus its units, e.g. 'CRP reduction (%)', 'Omega-3 index', 'IL-2 (pg/mL)'). Never leave an axis unlabeled. MATCH THE TYPE TO THE DATA: a TREND over time -> 'line'; comparing categories -> 'column' (or 'bar'); PART-TO-WHOLE shares of one total -> 'stacked_100' or 'doughnut'. Do NOT use a doughnut unless it is genuinely parts of one whole. Use ONLY figures explicitly stated in the source; never invent numbers."
+    },
+    {
+      "key": "chart_bands",
+      "kind": "synthetic",
+      "usage": "COLUMN CHART WITH PHASE BANDS: bars over a time axis, with labelled narrative bands underneath grouping the periods into eras. Emit `title`, optional `caption` and `y_axis`, `categories` (3 to 16 axis labels, e.g. years), `values` (one number per category), and `bands`: 1 to 4 objects each with a `label` (the era name, e.g. 'Road to $100M'), a `start` and an `end` (1-based category indices the band spans). Use ONLY real figures from the source. Use when a trend has a STORY in phases; prefer plain `chart` when there is no phase narrative."
+    },
+    {
+      "key": "chart_takeaways",
+      "kind": "synthetic",
+      "usage": "BUBBLE CHART + KEY TAKEAWAYS: a two-dimensional bubble plot on the left, a bulleted 'so what' column on the right. Emit `title`, `x_axis` and `y_axis` (BOTH MANDATORY — name the dimension and its units, e.g. 'CAGR 2025 to 2030 (%)' and 'Expected revenue 2030 (USD bn)'), `bubbles` (3 to 12 objects each with a short `label`, an `x`, a `y`, and a `size` that sets the bubble area), `takeaways` (2 to 5 bullet sentences reading the chart), optional `headers` (EXACTLY 2 column labels, e.g. ['Market size (USD bn)','Key takeaways']) and an optional `bottom_note` for sources. Use ONLY figures from the source. Use when items compare on TWO axes AND a size — a market landscape, a portfolio scan. Prefer `matrix` for a qualitative 2x2 with no real numbers, and `chart` for a single-dimension comparison."
+    },
+    {
+      "key": "matrix",
+      "kind": "synthetic",
+      "usage": "A 2x2 matrix for positioning / trade-offs — reach for it whenever the point has TWO clear dimensions (e.g. absorption vs multinutrient value, potency vs breadth). Emit `title`, `x_axis` and `y_axis` labels, and `quadrants`: EXACTLY 4 objects (order: top-left, top-right, bottom-left, bottom-right) each with a short `heading` and a one-line `body`."
+    },
+    {
+      "key": "coverage_matrix",
+      "kind": "synthetic",
+      "usage": "COVERAGE MATRIX: entities as rows, capabilities as columns, a tick where the entity covers that capability. Emit `title`, optional `caption`, `headers` (2 to 8 short column labels) and `items`: 2 to 5 rows each with a `label`, an optional one-line `body`, and `marks` (an array of true/false, ONE PER HEADER, in the same order). Use for BINARY yes/no coverage across several options — a portfolio-vs-need fit, feature coverage, which product serves which segment. ALWAYS prefer this over `harvey_ball` when the answer is yes/no rather than a degree, and over `comparison` when the cells would all just read 'Yes'/'No'."
+    },
+    {
+      "key": "harvey_ball",
+      "kind": "synthetic",
+      "usage": "A Harvey-ball rating grid for comparing 3 or more OPTIONS across several GENUINELY QUALITATIVE criteria by relative strength. Emit `title`, `options` (2 to 4 column headers) and `criteria`: 2 to 6 objects each with a `label` and `scores` (one integer 0 to 4 per option, 0 = empty, 4 = full). USE ONLY when EVERY criterion is a subjective/relative rating (e.g. evidence strength, risk of bias, breadth, sustainability). Do NOT use it for exact numbers (sample size, dose, duration, price) — those belong in a `comparison` table with the real values, since balls hide the actual figure. NEVER use a ball for a yes/no outcome (a partial fill misreads a binary). If any row is a hard number or a yes/no, choose `comparison` instead."
+    },
+    {
+      "key": "comparison",
+      "kind": "synthetic",
+      "usage": "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. {comparison_example}), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings."
+    },
+    {
+      "key": "cause_effect",
+      "kind": "synthetic",
+      "usage": "CAUSE and EFFECT rows: 2 to 4 rows, each a `heading` (the cause/driver) and a `body` (the resulting effect), shown as cause panel then arrow then effect. Use for 'X drives Y' mechanisms, driver trees, or why-so reasoning."
+    },
+    {
+      "key": "cycle",
+      "kind": "synthetic",
+      "usage": "CYCLE: 3 to 6 labelled nodes arranged in a ring around an optional hub (`center`). Emit `title`, optional `center`, and `items`: each a short `heading` (2 to 3 words). Use for a repeating loop, continuous-improvement cycle, or process with no fixed end. Prefer `roadmap` or `serpentine` for a linear sequence."
+    },
+    {
+      "key": "funnel",
+      "kind": "synthetic",
+      "usage": "A FUNNEL of 3 to 5 narrowing stages. Emit `title` and `stages`: each with a `heading` and an optional short `body`. Use for a conversion/selection funnel or a narrowing process."
+    },
+    {
+      "key": "from_to",
+      "kind": "synthetic",
+      "usage": "A FROM/TO transformation: two panels with an arrow between. Emit `title`, `before` (`heading` + optional `body`, the current state) and `after` (`heading` + optional `body`, the target state). Use for a shift, before/after, or 'from X to Y' ambition."
+    },
+    {
+      "key": "roadmap",
+      "kind": "synthetic",
+      "usage": "A ROADMAP of 2 to 5 sequential PHASES as interlocking chevrons. Emit `title` and `phases`: each with an optional `date` (a GENERIC forward planning period only, e.g. 'Q1' or '0 to 3 months' — never a calendar year or a specific past event date, that is `serpentine`'s job), a short `heading` (the phase name), and a `body` of the phase's activities. Use for a FORWARD-LOOKING plan/workstream (what happens next, in order), or for any sequence of 5 phases (past serpentine's 4-item cap). For 3 or 4 items that are a HISTORICAL/chronological narrative (real years or named past events, e.g. '2007', '2022'), that is `serpentine`, NOT roadmap, even though roadmap could technically hold the same fields — do not default to roadmap out of habit for a story that has an actual timeline shape."
+    },
+    {
+      "key": "gantt",
+      "kind": "synthetic",
+      "usage": "GANTT / project schedule: task bars against a time axis. Emit `title`, optional `caption`, `periods` (2 to 8 column labels along the time axis, e.g. ['Q1','Q2','Q3','Q4'] or ['Wk 1','Wk 2',...]), and `items`: 2 to 8 tasks each with a `label`, a `start` (1-based period index where the bar begins), an `end` (1-based period index where it ends; omit for a single-period task), an optional short `note` (printed on the bar), and an optional `milestone: true` (renders a diamond at `start` instead of a bar). Use for a project plan, study schedule, or delivery timeline where tasks have durations across periods. Prefer `roadmap` for a few sequential phases and `serpentine` for dated events without durations."
+    },
+    {
+      "key": "org_chart",
+      "kind": "synthetic",
+      "usage": "ORG CHART: a top box (`center`) connected down to 2 to 4 child boxes. Emit `title`, `center` (the top unit/role) and `items`: each a `heading` and optional `body`. Use for reporting lines, a governance structure, or a workstream breakdown."
+    },
+    {
+      "key": "decision_tree",
+      "kind": "synthetic",
+      "usage": "DECISION TREE: a root question (`center`) on the left branching to 2 to 4 outcome boxes on the right. Emit `title`, `center` (the decision/question) and `items`: each a `heading` (the branch/condition) and optional `body` (the outcome). Use for a decision logic, triage, or 'if X then Y' routing."
+    },
+    {
+      "key": "team",
+      "kind": "synthetic",
+      "usage": "TEAM cards: 2 to 4 people, each with a `name`, a `role` and a short `bio`. Emit `title` and `items`. Use for a team, authors, contributors or an expert panel. Do NOT invent real people; only use names present in the source."
+    },
+    {
+      "key": "takeaways",
+      "kind": "synthetic",
+      "usage": "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide."
+    },
+    {
+      "key": "closing",
+      "kind": "synthetic",
+      "usage": "The FINAL slide: a closing statement + contact. Emit `title` (a short closing line), optional `tagline`, and optional `contact` (email / website). Use once, as the last slide."
+    },
+    {
+      "key": "section",
+      "kind": "template",
+      "usage": "Section divider that chunks the deck into parts. Just a `title` (the section name, short). No body."
+    },
+    {
+      "key": "agenda",
+      "kind": "template",
+      "usage": "Agenda / contents. `title` should be the single word 'Agenda' (the box is very narrow); put the real content in `items` (one short line each)."
+    },
+    {
+      "key": "highlight",
+      "kind": "template",
+      "usage": "ONE big statement on an open slide (a 'breathing' beat). ONLY a `title`. Use for a pivotal claim or takeaway — never a list."
+    },
+    {
+      "key": "title_only",
+      "kind": "template",
+      "usage": "Just a title over the branded background. Use rarely (a transitional beat)."
+    },
+    {
+      "key": "text",
+      "kind": "template",
+      "usage": "Workhorse explanation slide: `title` + a `body` block. For a LIST of points, put each point on its OWN line in `body` (a newline between them) — 2 to 5 short lines auto-render as the branded bullet. For a single narrative point, use one short paragraph. Prefer a bulleted list when the slide makes several parallel points."
+    },
+    {
+      "key": "three_columns",
+      "kind": "template",
+      "usage": "THREE parallel points — a set of three benefits, steps, or pillars; each column `body` should be 3 to 4 full sentences, close to the [bracketed] limit, that fill the panel, not a single line."
+    },
+    {
+      "key": "text_with_picture",
+      "kind": "template",
+      "usage": "`title` + a `body` (a short paragraph or a few bullet lines) on the left, a supporting photo on the right. Do NOT emit a `heading` (the sub-header is not used). Set `asset_id`."
+    }
+  ]
+}

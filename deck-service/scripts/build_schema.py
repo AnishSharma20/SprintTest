@@ -291,15 +291,20 @@ def main(brand: str | None = None):
         conditionals.append(slide_conditional(sem, spec["kind"], limits, asset_ids, benefits, generic))
         summary.append((sem, spec["tpl"], cat["backgrounds"], limits))
 
-    # 'ingredient' — AKBM's real standard slide, spliced in VERBATIM by the renderer (fixed
-    # product-composition content, not generated). The planner only picks the layout; any copy it
-    # emits is ignored, so nothing is required or length-limited here.
-    catalog["ingredient"] = {"template_layout": "Blank", "kind": "ingredient",
-                             "backgrounds": ["dark"], "fields": {}, "limits": {},
-                             "picture_slots": [], "removable_idx": []}
-    conditionals.append({
-        "if": {"properties": {"layout": {"const": "ingredient"}}, "required": ["layout"]},
-        "then": {"required": ["layout"]}})
+    # 'ingredient' — the brand's real standard nutrient slide, spliced in VERBATIM by the renderer
+    # (fixed product-composition content, not generated). The planner only picks the layout; any
+    # copy it emits is ignored, so nothing is required or length-limited here.
+    #
+    # Omitted entirely for a brand whose template has no such slide. The catalog IS a brand's
+    # layout vocabulary — the planner, the validator and the gallery all derive from it — so
+    # leaving a layout in that the renderer must refuse puts the three out of step with each other.
+    if _brand.theme(brand).get("has_ingredient_slide"):
+        catalog["ingredient"] = {"template_layout": "Blank", "kind": "ingredient",
+                                 "backgrounds": ["dark"], "fields": {}, "limits": {},
+                                 "picture_slots": [], "removable_idx": []}
+        conditionals.append({
+            "if": {"properties": {"layout": {"const": "ingredient"}}, "required": ["layout"]},
+            "then": {"required": ["layout"]}})
     summary.append(("ingredient", "Blank (verbatim AKBM slide)", ["dark"], {"content": "fixed"}))
 
     # --- Synthetic, code-built layouts (mechanism B) -----------------------------------------

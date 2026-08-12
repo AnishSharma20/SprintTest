@@ -119,6 +119,7 @@ _ICONS_OFF: bool = False
 _BRAND: str | None = None
 _LIGHT_ONLY: bool = False    # brand's template has no dark master; see apply_brand/_make_slide
 _HAS_BENEFITS_SLIDE: bool = True   # brand's template carries the verbatim benefits overview slide
+_HAS_INGREDIENT_SLIDE: bool = True # ...and the verbatim nutrient/ingredient slide
 _CUSTOM_PHOTO_PATHS: dict[str, "Path"] = {}
 _CUSTOM_PHOTO_DIR = None
 
@@ -1132,6 +1133,7 @@ def apply_brand(brand: str | None = None) -> None:
     g["_BOX"] = MSO_SHAPE.ROUNDED_RECTANGLE if t.get("rounded") else MSO_SHAPE.RECTANGLE
     g["_LIGHT_ONLY"] = bool(t.get("light_only"))
     g["_HAS_BENEFITS_SLIDE"] = bool(t.get("has_benefits_slide"))
+    g["_HAS_INGREDIENT_SLIDE"] = bool(t.get("has_ingredient_slide"))
     brand_type = {
         "_HEAD": f["head"], "_BODY": f["body"], "_HEAD_TITLE": f["title"],
         "_SZ_TITLE": s["title"], "_SZ_BODY": s["body"], "_SZ_SMALL": s["small"],
@@ -2935,7 +2937,13 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
         _add_override_slide(prs, dark, ov, spec, unnumbered)
         return
     if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
-        _add_ingredient_slide(prs, dark)
+        # Only for a brand whose template actually carries it. The planner already cannot emit
+        # this layout for a brand without one (it is stripped from the tool schema), but the
+        # renderer is reachable from other callers — the gallery export, a stored plan, the design
+        # preview — and a missing splice used to raise and take the whole deck down. Skipping
+        # leaves a brand with no ingredient slide simply without one.
+        if _HAS_INGREDIENT_SLIDE:
+            _add_ingredient_slide(prs, dark)
         return
     if layout_name == "key_points":   # code-built 4-icon-card layout (mechanism B)
         _fill_key_points(prs, spec, light)

@@ -182,17 +182,6 @@
       21
     ]
   },
-  "ingredient": {
-    "template_layout": "Blank",
-    "kind": "ingredient",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": []
-  },
   "key_points": {
     "template_layout": "Blank",
     "kind": "key_points",

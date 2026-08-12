@@ -25,7 +25,14 @@ const BUCKET = "custom-slides";
 // mirrored server-side in the deck service (src/overrides.py OVERRIDE_EXCLUDED).
 const EXCLUDED = new Set(["title", "agenda", "exec_summary", "ingredient"]);
 
-const KNOWN = new Map((gallery as { key: string; kind: string }[]).map((g) => [g.key, g.kind]));
+// The gallery manifest is keyed by brand. This map is only used to answer "is this a real layout
+// key, and what kind is it" — a question whose answer is the same for any brand that HAS the key —
+// so every brand's entries are folded into one lookup rather than threading a brand through.
+const KNOWN = new Map(
+  Object.values(gallery as Record<string, { key: string; kind: string }[]>)
+    .flat()
+    .map((g) => [g.key, g.kind] as const)
+);
 
 async function gcFile(sb: NonNullable<ReturnType<typeof supabase>>, fileId: string | null | undefined) {
   if (!fileId) return;

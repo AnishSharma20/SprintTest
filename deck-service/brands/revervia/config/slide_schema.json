@@ -944,23 +944,6 @@
             "if": {
               "properties": {
                 "layout": {
-                  "const": "ingredient"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout"
-              ]
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
                   "const": "key_points"
                 }
               },

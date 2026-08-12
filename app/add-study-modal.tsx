@@ -13,6 +13,7 @@ import type { Category, ClaimSentiment } from "./lib/claims-types";
 import type { OutcomeDirection } from "./studies-data";
 import { OUTCOME_LABEL, suggestLabel } from "./study-meta";
 import { benefitIcon } from "./v2/benefit-icons";
+import CategorySelect from "./category-select";
 
 type Step = "upload" | "extracting" | "details";
 
@@ -362,25 +363,19 @@ export default function AddStudyModal({
                         </button>
                       )}
                     </div>
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <select
-                        value={f.categoryId}
-                        onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
-                        className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
-                      >
-                        <option value="">Category…</option>
-                        {scienceCategories.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
+                    <CategorySelect
+                      value={f.categoryId}
+                      onChange={(v) => updateFinding(f.id, { categoryId: v })}
+                      categories={scienceCategories}
+                      className="mb-2"
+                    />
+                    <div className="mb-2 flex gap-2">
                       {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
                         <button
                           key={v}
                           type="button"
                           onClick={() => updateFinding(f.id, { sentiment: v })}
-                          className={`rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
+                          className={`flex-1 rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
                             f.sentiment === v
                               ? v === "positive"
                                 ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
@@ -394,6 +389,7 @@ export default function AddStudyModal({
                         </button>
                       ))}
                     </div>
+                    <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">Key finding</label>
                     <textarea
                       value={f.text}
                       onChange={(e) => updateFinding(f.id, { text: e.target.value })}

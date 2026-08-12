@@ -34,7 +34,10 @@ export function V2Shell({
 }) {
   return (
     <div className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F]" style={{ fontFamily: FONT_STACK }}>
-      <div className="mx-auto flex w-full max-w-[1480px]">
+      {/* The centered 1480px reading width is for browsing; a docked panel drops it so its
+          sticky right edge lands at the true viewport edge instead of stopping short with a
+          gap before the scrollbar on wide screens. */}
+      <div className={`mx-auto flex w-full ${panel ? "" : "max-w-[1480px]"}`}>
         <aside
           className="hidden w-[280px] shrink-0 self-start px-8 lg:sticky lg:block lg:overflow-y-auto"
           style={{ top: NAV_H, height: `calc(100vh - ${NAV_H})` }}
@@ -49,7 +52,7 @@ export function V2Shell({
               className="fixed inset-0 z-[55] bg-[#1D1D1F]/30 backdrop-blur-sm xl:hidden"
               onClick={onClosePanel}
             />
-            <aside className="fixed bottom-0 right-0 top-0 z-[56] w-full max-w-[520px] overflow-y-auto border-l border-[#E8E8ED] bg-white shadow-xl xl:sticky xl:bottom-auto xl:top-[57px] xl:z-auto xl:h-[calc(100vh-57px)] xl:w-[480px] xl:max-w-none xl:shrink-0 xl:self-start xl:shadow-none">
+            <aside className="fixed bottom-0 right-0 top-0 z-[56] w-full max-w-[560px] overflow-y-auto border-l border-[#E8E8ED] bg-white shadow-xl xl:sticky xl:bottom-auto xl:top-[57px] xl:z-auto xl:h-[calc(100vh-57px)] xl:w-[560px] xl:max-w-none xl:shrink-0 xl:self-start xl:shadow-none">
             {panel}
             </aside>
           </>

@@ -18,6 +18,7 @@ import {
   REGULATORY_DISCLAIMER,
 } from "../lib/finding-format";
 import CategoryManager from "../category-manager";
+import CategorySelect from "../category-select";
 import type { Link, LibClaim } from "./page";
 import studyPdfsRaw from "../study-pdfs.json";
 
@@ -786,18 +787,6 @@ function NewFindingModal({
         </div>
 
         <div className="max-h-[76vh] overflow-y-auto px-7 py-6">
-          <div className="mb-5 rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] px-4 py-3 text-[12px] leading-relaxed text-[#6E6E73]">
-            A finding restates what a study itself measured, never a consumer benefit.
-            <br />
-            <span className="text-[#B3403A]">Not: </span>
-            "Your body handles X with ease", "reduces inflammation", "supports easy digestion"
-            <br />
-            <span className="text-[#2E7D4F]">Instead: </span>
-            "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
-            moderate knee osteoarthritis (6-month RCT, multicenter, double-blind,
-            placebo-controlled)"
-          </div>
-
           <div className="mb-1.5 flex items-center justify-between">
             <div className="text-[12.5px] font-semibold text-[#6E6E73]">Findings</div>
             <button
@@ -826,18 +815,11 @@ function NewFindingModal({
                     )}
                   </div>
                   <div className="mb-2 grid gap-2 sm:grid-cols-2">
-                    <select
+                    <CategorySelect
                       value={f.categoryId}
-                      onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
-                      className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
-                    >
-                      <option value="">Select a category…</option>
-                      {scienceCategories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(v) => updateFinding(f.id, { categoryId: v })}
+                      categories={scienceCategories}
+                    />
                     <select
                       value={f.studyId}
                       onChange={(e) => updateFinding(f.id, { studyId: e.target.value })}
@@ -877,6 +859,7 @@ function NewFindingModal({
                       </button>
                     ))}
                   </div>
+                  <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">Key finding</label>
                   <textarea
                     value={f.text}
                     onChange={(e) => updateFinding(f.id, { text: e.target.value })}

@@ -619,16 +619,18 @@ function StudyPanel({
   onSave: (summary: Summary) => void;
   onClose: () => void;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [editingStudy, setEditingStudy] = useState(false);
   const [diagramsOpen, setDiagramsOpen] = useState(false);
-  const [toolsOpen, setToolsOpen] = useState(false);
   const [addingFinding, setAddingFinding] = useState(false);
+  const [removingStudy, setRemovingStudy] = useState(false);
+  const [removeMessage, setRemoveMessage] = useState<string | null>(null);
 
   // Leaving a study closes any half-open edit state from the previous one.
   useEffect(() => {
-    setEditing(false);
-    setToolsOpen(false);
+    setEditingStudy(false);
     setAddingFinding(false);
+    setRemovingStudy(false);
+    setRemoveMessage(null);
   }, [s.pmid]);
 
   const edited = !!override;
@@ -656,7 +658,7 @@ function StudyPanel({
       <div className="px-7 py-6">
         {/* Shown regardless of whether an AI/curated summary exists below — a study added
             through "Add study" never has one, only this. */}
-        {(s.abstract || s.keyFindingsAssessment) && !editing && (
+        {(s.abstract || s.keyFindingsAssessment) && !editingStudy && !removingStudy && (
           <div className="mb-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#0A7A8A]">
               Science team assessment
@@ -668,17 +670,17 @@ function StudyPanel({
           </div>
         )}
 
-        {!summary ? (
+        {removingStudy ? null : !summary ? (
           <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
             No AI or curated summary is available for this study.
           </p>
-        ) : editing ? (
+        ) : editingStudy ? (
           <SummaryEditor
             initial={summary}
-            onCancel={() => setEditing(false)}
+            onCancel={() => setEditingStudy(false)}
             onSave={(next) => {
               onSave(next);
-              setEditing(false);
+              setEditingStudy(false);
             }}
           />
         ) : (
@@ -695,23 +697,15 @@ function StudyPanel({
           </>
         )}
 
-        {!editing && (
+        {!editingStudy && !removingStudy && (
           <div className="mt-7 flex flex-wrap gap-2.5">
             {summary && (
-              <>
-                <button
-                  onClick={() => setDiagramsOpen(true)}
-                  className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
-                >
-                  View diagrams
-                </button>
-                <button
-                  onClick={() => setEditing(true)}
-                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
-                >
-                  Edit summary
-                </button>
-              </>
+              <button
+                onClick={() => setDiagramsOpen(true)}
+                className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+              >
+                View diagrams
+              </button>
             )}
             {!s.removed && (
               <button
@@ -721,21 +715,40 @@ function StudyPanel({
                 Add finding
               </button>
             )}
-            {meta.editable && (
+            {(summary || meta.editable) && (
               <button
-                onClick={() => setToolsOpen((v) => !v)}
+                onClick={() => setEditingStudy(true)}
                 className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
               >
-                Categorize & score
+                Edit study
+              </button>
+            )}
+            {meta.editableV2 && (
+              <button
+                onClick={() => {
+                  setRemoveMessage(null);
+                  setRemovingStudy(true);
+                }}
+                className="rounded-[12px] bg-[#FBF3F3] px-5 py-2.5 text-[13.5px] font-semibold text-[#B3403A] transition-colors hover:bg-[#F5E3E1]"
+              >
+                {s.removed ? "Restore study" : "Remove study"}
               </button>
             )}
           </div>
         )}
 
-        {meta.editable && toolsOpen && !editing && (
+        {editingStudy && meta.editable && (
           <div className="mt-5 rounded-[16px] border border-[#E8E8ED] bg-[#FBFBFD] p-5">
-            <h3 className="text-[14.5px] font-bold text-[#1D1D1F]">Categorize & score</h3>
-            <p className="mt-0.5 text-[12px] text-[#AEAEB2]">
+            <div className="mb-0.5 flex items-center justify-between">
+              <h3 className="text-[14.5px] font-bold text-[#1D1D1F]">Categorize & score</h3>
+              <button
+                onClick={() => setEditingStudy(false)}
+                className="text-[12px] font-semibold text-[#6E6E73] hover:underline"
+              >
+                Done
+              </button>
+            </div>
+            <p className="text-[12px] text-[#AEAEB2]">
               Every change is recorded with your name and the date.
               {s.qualityReviewer && (
                 <> Quality rated by {s.qualityReviewer} on {formatDate(s.qualityReviewedAt)}.</>
@@ -744,6 +757,37 @@ function StudyPanel({
             <div className="mt-3">
               <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
             </div>
+          </div>
+        )}
+
+        {removingStudy && (
+          <div className="mt-5 rounded-[16px] border border-[#F2DCDA] bg-[#FBF3F3] p-5">
+            <div className="mb-0.5 flex items-center justify-between">
+              <h3 className="text-[14.5px] font-bold text-[#B3403A]">
+                {s.removed ? "Restore study" : "Remove study"}
+              </h3>
+              <button
+                onClick={() => setRemovingStudy(false)}
+                className="text-[12px] font-semibold text-[#6E6E73] hover:underline"
+              >
+                Close
+              </button>
+            </div>
+            {removeMessage ? (
+              <p className="mt-2 text-[12.5px] font-semibold text-[#2E7D4F]">{removeMessage}</p>
+            ) : (
+              <div className="mt-3">
+                <RemoveStudyEditor
+                  s={s}
+                  reviewer={reviewer}
+                  onCancel={() => setRemovingStudy(false)}
+                  onSaved={async (msg) => {
+                    setRemoveMessage(msg);
+                    await onMetaChanged();
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -786,16 +830,14 @@ function ReviewerTools({
   const [redigererKategorier, setRedigererKategorier] = useState(false);
   const [redigererKvalitet, setRedigererKvalitet] = useState(false);
   const [redigererAssessment, setRedigererAssessment] = useState(false);
-  const [fjerner, setFjerner] = useState(false);
   const [melding, setMelding] = useState<string | null>(null);
 
   if (!meta.editable) return null;
 
-  function closeAllBut(which: "categories" | "quality" | "assessment" | "remove" | null) {
+  function closeAllBut(which: "categories" | "quality" | "assessment" | null) {
     setRedigererKategorier(which === "categories");
     setRedigererKvalitet(which === "quality");
     setRedigererAssessment(which === "assessment");
-    setFjerner(which === "remove");
     setMelding(null);
   }
 
@@ -833,14 +875,6 @@ function ReviewerTools({
           {s.quality ? ` · ${s.quality.score}% ${s.quality.label}` : " · no quality score"}
           {s.outcomeDirection ? ` · ${OUTCOME_LABEL[s.outcomeDirection]} outcome` : ""}
         </span>
-        {meta.editableV2 && (
-          <button
-            onClick={() => closeAllBut(fjerner ? null : "remove")}
-            className="ml-auto text-[12px] font-semibold text-[#B3403A] hover:underline"
-          >
-            {s.removed ? "Restore study" : "Remove study…"}
-          </button>
-        )}
       </div>
 
       {melding && (
@@ -877,14 +911,6 @@ function ReviewerTools({
         />
       )}
 
-      {fjerner && (
-        <RemoveStudyEditor
-          s={s}
-          reviewer={reviewer}
-          onCancel={() => closeAllBut(null)}
-          onSaved={etterEndring}
-        />
-      )}
     </div>
   );
 }
@@ -963,11 +989,12 @@ function CategoryEditor({
             <button
               key={c.id}
               onClick={() => veksle(c.id)}
-              className={`flex items-center justify-between rounded-[10px] border bg-white px-3 py-2 text-left text-[13px] transition-colors ${
+              className={`flex items-center gap-2.5 rounded-[10px] border bg-white px-3 py-2 text-left text-[13px] transition-colors ${
                 on ? "border-[#1D1D1F] font-semibold text-[#1D1D1F]" : "border-[#E8E8ED] text-[#6E6E73]"
               }`}
             >
-              {c.name}
+              <img src={benefitIcon(c.name)} alt="" className="h-5 w-5 shrink-0" />
+              <span className="flex-1">{c.name}</span>
               {on && <span className="font-bold">✓</span>}
             </button>
           );

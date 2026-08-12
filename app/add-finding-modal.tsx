@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import type { Studie } from "./studies";
 import type { Category, ClaimSentiment } from "./lib/claims-types";
 import { useCurrentUser } from "./lib/use-current-user";
+import CategorySelect from "./category-select";
 
 const SENTIMENT_LABEL: Record<ClaimSentiment, string> = {
   positive: "Positive",
@@ -116,7 +117,7 @@ export default function AddFindingModal({
       onClick={onClose}
     >
       <div
-        className="my-6 w-full max-w-lg overflow-hidden rounded-[20px] bg-white shadow-2xl"
+        className="my-6 w-full max-w-2xl overflow-hidden rounded-[20px] bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-[#E8E8ED] px-7 py-5">
@@ -134,12 +135,6 @@ export default function AddFindingModal({
         </div>
 
         <div className="max-h-[76vh] overflow-y-auto px-7 py-6">
-          <div className="mb-5 rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] px-4 py-3 text-[12px] leading-relaxed text-[#6E6E73]">
-            A finding restates what this study itself measured, never a consumer benefit. e.g.
-            “Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
-            moderate knee osteoarthritis (6-month RCT, placebo-controlled)”.
-          </div>
-
           <div className="mb-1.5 flex items-center justify-between">
             <div className="text-[12.5px] font-semibold text-[#6E6E73]">Findings</div>
             <button
@@ -165,25 +160,19 @@ export default function AddFindingModal({
                     </button>
                   )}
                 </div>
-                <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <select
-                    value={f.categoryId}
-                    onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
-                    className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
-                  >
-                    <option value="">Category…</option>
-                    {scienceCategories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
+                <CategorySelect
+                  value={f.categoryId}
+                  onChange={(v) => updateFinding(f.id, { categoryId: v })}
+                  categories={scienceCategories}
+                  className="mb-2"
+                />
+                <div className="mb-2 flex gap-2">
                   {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
                     <button
                       key={v}
                       type="button"
                       onClick={() => updateFinding(f.id, { sentiment: v })}
-                      className={`rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
+                      className={`flex-1 rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
                         f.sentiment === v
                           ? v === "positive"
                             ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
@@ -197,6 +186,7 @@ export default function AddFindingModal({
                     </button>
                   ))}
                 </div>
+                <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">Key finding</label>
                 <textarea
                   value={f.text}
                   onChange={(e) => updateFinding(f.id, { text: e.target.value })}

@@ -112,6 +112,24 @@ def _apply_structure(plan: dict, rules: list[dict]) -> dict:
     return {**plan, "slides": slides}
 
 
+def _ensure_title(plan: dict, required: set[str] | None = None) -> dict:
+    """Compose a cover when the deck has none and a structure rule asks for one. Trivially
+    composable from the deck's own title, which is why "the cover slide always comes first" can be
+    a real guarantee rather than a request — without this, a rule could only REPOSITION a cover the
+    model happened to write."""
+    if required is not None and "title" not in required:
+        return plan
+    slides = plan.get("slides", [])
+    if any(s.get("layout") == "title" for s in slides):
+        return plan
+    deck_title = (plan.get("deck_title") or "").strip()
+    if not deck_title:
+        return plan   # nothing honest to put on it
+    cover = {"layout": "title", "title": _cap(deck_title, 60),
+             "speaker_notes": f"Welcome. {deck_title}."}
+    return {**plan, "slides": [cover] + slides}
+
+
 def _ensure_agenda(plan: dict, required: set[str] | None = None) -> dict:
     """Compose an agenda slide (contents) when the deck has none, from its own section dividers or
     slide titles. Fires only when a structure rule asks for an agenda — delete that rule on the
@@ -335,7 +353,8 @@ def _log_geometry_issues(issues: list[dict]) -> None:
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
                  custom_photos=None, preferred_layouts=None, disabled_photos=None,
-                 preferred_photos=None, layout_overrides=None, slide_map=None):
+                 preferred_photos=None, layout_overrides=None, required_slides=None,
+                 slide_map=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). Never fails the deck — a gate error or a revision that
     breaks validation keeps the pre-gate deck.
@@ -376,7 +395,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                preferred_layouts=preferred_layouts, design=design,
                                                disabled_photos=disabled_photos,
                                                preferred_photos=preferred_photos,
-                                               layout_overrides=layout_overrides)
+                                               layout_overrides=layout_overrides,
+                                               required_slides=required_slides)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate, extra_layouts=extra,
@@ -393,7 +413,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             preferred_layouts=preferred_layouts, design=design,
                                             disabled_photos=disabled_photos,
                                             preferred_photos=preferred_photos,
-                                            layout_overrides=layout_overrides)
+                                            layout_overrides=layout_overrides,
+                                            required_slides=required_slides)
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts,
@@ -456,8 +477,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     photo_level = (design or {}).get("photo_level", "default")
     # Sanitized ONCE (unknown/fixed-role/disabled keys dropped) and threaded everywhere —
     # planner prompt+schema, validation, and the renderer must all see the same set.
+    # Computed up front: it decides both what the planner may switch off and which slides the
+    # deterministic nets are allowed to compose.
+    structure = (_DEFAULT_STRUCTURE if structure_rules is None
+                 else sanitize_structure(structure_rules))
+    required = _required_slides(structure)
     layout_overrides = planner.sanitize_overrides(
-        layout_overrides, planner.sanitize_disabled(disabled_layouts))
+        layout_overrides, planner.sanitize_disabled(disabled_layouts, required))
     override_keys = frozenset(o["layout"] for o in layout_overrides)
     slot_layouts = planner.slot_entries(layout_overrides, custom_slides)
 
@@ -467,7 +493,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              custom_slides=custom_slides, custom_photos=custom_photos,
                              preferred_layouts=preferred_layouts, design=design,
                              disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                             layout_overrides=layout_overrides)
+                             layout_overrides=layout_overrides, required_slides=required)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
@@ -480,7 +506,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    custom_photos=custom_photos,
                                    preferred_layouts=preferred_layouts, design=design,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                                   layout_overrides=layout_overrides)
+                                   layout_overrides=layout_overrides, required_slides=required)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts)
@@ -513,7 +539,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                             preferred_layouts=preferred_layouts, design=design,
                                             disabled_photos=disabled_photos,
                                             preferred_photos=preferred_photos,
-                                            layout_overrides=layout_overrides)
+                                            layout_overrides=layout_overrides,
+                                            required_slides=required)
             errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
                                           photo_level=photo_level, disabled_layouts=disabled_layouts,
                                           layout_overrides=slot_layouts)
@@ -525,14 +552,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                 plan = candidate
 
     _p(70, "Rendering slides on the Superba template")
-    # The team's structure rules decide the deck's shape: which of the composable slides must
-    # exist, and where every pinned slide sits. No rules (unmigrated database) = the old defaults.
-    # None means "the team's answer never reached us" (an unmigrated database, or an older
-    # frontend) and keeps the built in shape. An empty LIST is a real answer — the team deleted
-    # every structure rule — and must be honoured, not overridden by the defaults.
-    structure = (_DEFAULT_STRUCTURE if structure_rules is None
-                 else sanitize_structure(structure_rules))
-    required = _required_slides(structure)
+    plan = _ensure_title(plan, required)
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta, required)
     plan = _ensure_agenda(plan, required)
     plan = _apply_structure(plan, structure)                # pin each slide to its slot
@@ -553,7 +573,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                   custom_slides=custom_slides, custom_photos=custom_photos,
                                   preferred_layouts=preferred_layouts,
                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                                  layout_overrides=layout_overrides, slide_map=slide_map)
+                                  layout_overrides=layout_overrides, required_slides=required,
+                                  slide_map=slide_map)
     else:
         # Fast mode never runs the vision gate (no LLM/rasteriser call), but the deterministic
         # margin/alignment/contrast/asset pass is nearly free — run it here too so every deck gets

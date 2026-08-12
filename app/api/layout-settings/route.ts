@@ -13,12 +13,28 @@
 // planner (it is folded into `disabled` below, so generation needs no extra wiring) but keeps
 // its enabled/preferred state for when it is restored from Deleted items. display_name/
 // description (null = built-in default) let the team retitle a built-in card from the UI.
-// `title` and `agenda` can never be disabled or removed: every deck opens with a cover and
-// the pipeline's safety net inserts an agenda slide.
+// A slide can only be refused here while an enabled STRUCTURE rule requires it (migration 0013,
+// and see protectedSlides below) — the cover and agenda are no longer special cases in code, so
+// deleting their rule on the Rules tab makes them removable like anything else.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 
-const LOCKED = new Set(["title", "agenda"]);
+// Which slides a deck must have is the team's decision now, expressed as structure rules
+// (migration 0013). Before 0013 the two that used to be hardcoded keep their protection, so an
+// unmigrated database cannot lose a guarantee it still relies on.
+const LEGACY_LOCKED = new Set(["title", "agenda"]);
+
+/** Slides an enabled structure rule still requires — these cannot be switched off or removed
+ * while that rule stands, because a rule pinning a slide that can never appear is incoherent. */
+async function protectedSlides(sb: NonNullable<ReturnType<typeof supabase>>): Promise<Set<string>> {
+  const res = await sb.from("generation_rules").select("slide_key, action, enabled");
+  if (res.error) return LEGACY_LOCKED; // pre-0013: the old pair stays protected
+  return new Set(
+    res.data
+      .filter((r) => r.enabled && r.slide_key && r.action)
+      .map((r) => r.slide_key as string)
+  );
+}
 
 type Row = {
   layout: string;
@@ -37,10 +53,7 @@ function payload(rows: Row[], flags: { starsMigrated: boolean; metaMigrated: boo
     ...flags,
     // Removed layouts fold into `disabled` so generation excludes them with no extra wiring
     // (generation-settings.ts reads only disabled/preferred); the UI un-folds via `removed`.
-    disabled: rows
-      .filter((r) => !r.enabled || r.removed)
-      .map((r) => r.layout)
-      .filter((l) => !LOCKED.has(l)),
+    disabled: rows.filter((r) => !r.enabled || r.removed).map((r) => r.layout),
     removed: [...removedSet],
     preferred: rows
       .filter((r) => r.enabled && r.preferred && !r.removed)
@@ -76,7 +89,7 @@ export async function GET() {
     migrated: true,
     starsMigrated: false,
     metaMigrated: false,
-    disabled: old.data.map((r) => r.layout).filter((l) => !LOCKED.has(l)),
+    disabled: old.data.map((r) => r.layout),
     removed: [],
     preferred: [],
     names: {},
@@ -101,16 +114,18 @@ export async function PUT(req: Request) {
     const hasMeta = removed !== undefined || display_name !== undefined || description !== undefined;
     if (!key || (enabled === undefined && preferred === undefined && !hasMeta))
       return Response.json({ error: "layout and at least one field to change are required." }, { status: 400 });
-    if (LOCKED.has(key) && enabled === false)
-      return Response.json(
-        { error: "The cover and agenda layouts are required by every deck and cannot be turned off." },
-        { status: 400 }
-      );
-    if (LOCKED.has(key) && removed === true)
-      return Response.json(
-        { error: "The cover and agenda layouts are required by every deck and cannot be removed." },
-        { status: 400 }
-      );
+    if (enabled === false || removed === true) {
+      const protectedKeys = await protectedSlides(sb);
+      if (protectedKeys.has(key))
+        return Response.json(
+          {
+            error:
+              `A rule on the Rules tab requires the ${key} slide, so it cannot be ` +
+              `${removed === true ? "removed" : "turned off"}. Delete that rule first.`,
+          },
+          { status: 400 }
+        );
+    }
 
     const existing = await sb.from("layout_settings").select("enabled, preferred").eq("layout", key).maybeSingle();
     if (existing.error && !`${existing.error.message}`.includes("preferred"))

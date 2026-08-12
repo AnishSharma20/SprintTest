@@ -121,11 +121,16 @@ def _limits_from_schema() -> dict[str, str]:
 _REQUIRED_LAYOUTS = {"title", "agenda"}
 
 
-def sanitize_disabled(disabled_layouts) -> set[str]:
-    """The user-managed off switch from the About page, made safe: only real layout keys,
-    never the structurally required ones."""
+def sanitize_disabled(disabled_layouts, required: set[str] | None = None) -> set[str]:
+    """The user-managed off switch from the About page, made safe: only real layout keys, and never
+    a slide the team's own structure rules still require (switching one off while a rule pins it
+    would leave the rule chasing a slide that can never appear).
+
+    `required=None` means no structure rules reached us (an unmigrated database or an older
+    frontend), and then the two slides that used to be hardcoded keep their old protection."""
     known = set(config.catalog())
-    return {d for d in (disabled_layouts or ()) if d in known} - _REQUIRED_LAYOUTS
+    protected = _REQUIRED_LAYOUTS if required is None else required
+    return {d for d in (disabled_layouts or ()) if d in known} - protected
 
 
 def _layout_guide(disabled: set[str], overridden: set[str] | None = None) -> str:
@@ -361,9 +366,9 @@ def photo_minimum(total: int, photo_level: str) -> int:
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
                  disabled_layouts=None, custom_slides=None, custom_photos=None,
                  preferred_layouts=None, design=None, disabled_photos=None,
-                 preferred_photos=None, layout_overrides=None) -> str:
+                 preferred_photos=None, layout_overrides=None, required_slides=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
-    disabled = sanitize_disabled(disabled_layouts)
+    disabled = sanitize_disabled(disabled_layouts, required_slides)
     overridden = {o["layout"] for o in (layout_overrides or []) if isinstance(o, dict) and o.get("layout")}
     disabled_photos_set = sanitize_disabled_photos(disabled_photos)
     design = design or {}
@@ -736,10 +741,11 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
               tone: str = "balansert", instructions: str = "", custom_rules: str = "",
               disabled_layouts=None, custom_slides=None, custom_photos=None,
               preferred_layouts=None, design=None, disabled_photos=None,
-              preferred_photos=None, layout_overrides=None, model: str | None = None) -> dict:
+              preferred_photos=None, layout_overrides=None, required_slides=None,
+              model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
-    disabled = sanitize_disabled(disabled_layouts)
+    disabled = sanitize_disabled(disabled_layouts, required_slides)
     disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     photo_ids = custom_photo_ids(custom_photos)
@@ -748,7 +754,8 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos, layout_overrides), user, model,
+                                                    preferred_photos, layout_overrides,
+                                                    required_slides), user, model,
                                max_tokens, disabled, extra, photo_ids, disabled_photo_ids,
                                slot_entries(layout_overrides, custom_slides)))
 
@@ -758,7 +765,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 custom_photos=None, preferred_layouts=None, design=None,
                 disabled_photos=None, preferred_photos=None, layout_overrides=None,
-                model: str | None = None) -> dict:
+                required_slides=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     # Three different kinds of feedback need three different repair instructions. Schema errors name
@@ -852,13 +859,14 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       + "\n- ".join(rules_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    disabled = sanitize_disabled(disabled_layouts)
+    disabled = sanitize_disabled(disabled_layouts, required_slides)
     disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos, layout_overrides), user, model,
+                                                    preferred_photos, layout_overrides,
+                                                    required_slides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
                                disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))
 
@@ -868,7 +876,7 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
                        custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                        custom_photos=None, preferred_layouts=None, design=None,
                        disabled_photos=None, preferred_photos=None, layout_overrides=None,
-                       model: str | None = None) -> dict:
+                       required_slides=None, model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
@@ -894,12 +902,13 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
            "plan via emit_plan.\n\nVISUAL QA FINDINGS:\n- " + "\n- ".join(lines)
            + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False))
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
-    disabled = sanitize_disabled(disabled_layouts)
+    disabled = sanitize_disabled(disabled_layouts, required_slides)
     disabled_photo_ids = sanitize_disabled_photos(disabled_photos)
     extra = [c["key"] for c in auto_custom_slides(custom_slides)]
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos, layout_overrides), user, model,
+                                                    preferred_photos, layout_overrides,
+                                                    required_slides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
                                disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))

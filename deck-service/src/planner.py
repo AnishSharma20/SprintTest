@@ -106,7 +106,12 @@ def _limits_from_schema(brand: str | None = None) -> dict[str, str]:
                 parts.append(f"{f}≤{props[f]['maxLength']}")
         if "items" in props:
             it = props["items"]
-            parts.append(f"items≤{it.get('maxItems','?')}×{it['items'].get('maxLength','?')} chars")
+            # Spelled out rather than "items≤7×26": the compact form reads as a dimension, and a
+            # 10-item agenda against a 7-item box is a HARD validation error, so the cap has to be
+            # unmistakable. maxItems is what the real placeholder physically fits.
+            n = it.get("maxItems", "?")
+            chars = it["items"].get("maxLength", "?") if isinstance(it.get("items"), dict) else "?"
+            parts.append(f"AT MOST {n} items" + (f", each ≤{chars} chars" if chars != "?" else ""))
         if "columns" in props:
             col = props["columns"]
             ci = col["items"]["properties"]

@@ -196,6 +196,46 @@ def _ensure_title(plan: dict, required: set[str] | None = None) -> dict:
     return {**plan, "slides": [cover] + slides}
 
 
+def _cap_list_fields(plan: dict, brand: str | None = None) -> dict:
+    """Trim over-long list fields to what their box can actually hold, in place.
+
+    A layout's `maxItems` is not a style preference: it is how many rows the real placeholder fits
+    at the enforced font size. An agenda box holds 7 lines, so a 10-item agenda cannot be rendered
+    however the plan asks. That is a HARD validation error, which means one over-eager list costs
+    the user the entire deck after a retry — for a slide whose extra rows would not have been
+    visible anyway.
+
+    Trimming keeps the first N, because a plan lists its sections in deck order and the earlier
+    ones are the ones the deck actually opens with. Logged, never silent: a dropped agenda line is
+    a real (if small) content loss, and it should be visible in the job output.
+    """
+    try:
+        conds = config.schema(brand)["properties"]["slides"]["items"].get("allOf", [])
+    except Exception:  # noqa: BLE001 — never fail a deck over the cap net itself
+        return plan
+    caps: dict[str, dict[str, int]] = {}
+    for cond in conds:
+        layout = cond.get("if", {}).get("properties", {}).get("layout", {}).get("const")
+        if not layout:
+            continue
+        for field, spec in (cond.get("then", {}).get("properties") or {}).items():
+            if isinstance(spec, dict) and spec.get("type") == "array" and spec.get("maxItems"):
+                caps.setdefault(layout, {})[field] = spec["maxItems"]
+    trimmed = []
+    for i, slide in enumerate(plan.get("slides") or []):
+        if not isinstance(slide, dict):
+            continue
+        for field, cap in caps.get(slide.get("layout"), {}).items():
+            val = slide.get(field)
+            if isinstance(val, list) and len(val) > cap:
+                trimmed.append(f"slide {i + 1} {slide['layout']}.{field} {len(val)}->{cap}")
+                slide[field] = val[:cap]
+    if trimmed:
+        print(f"[caps] trimmed {len(trimmed)} over-long list(s) to what the box holds: "
+              + ", ".join(trimmed))
+    return plan
+
+
 def _sanitize_icons(plan: dict, brand: str | None = None) -> dict:
     """Drop icon names this brand has no icon for, in place.
 
@@ -613,7 +653,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
-    plan = _sanitize_icons(plan, brand)
+    plan = _cap_list_fields(_sanitize_icons(plan, brand), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
                                     layout_overrides=slot_layouts, brand=brand)
@@ -627,7 +667,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                    layout_overrides=layout_overrides, required_slides=required,
                                    managed_blocks=managed_blocks, brand=brand)
-        plan = _sanitize_icons(plan, brand)
+        plan = _cap_list_fields(_sanitize_icons(plan, brand), brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts, brand=brand)

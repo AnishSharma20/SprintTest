@@ -2,6 +2,7 @@
 // (a reversible hide-from-page flag over a BUILT IN study), a custom study is wholly owned by
 // the team, so a mistaken add is deleted outright, PDF included.
 
+import { revalidatePath } from "next/cache";
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
 
 const BUCKET = "custom-studies";
@@ -20,5 +21,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
   if (row.data.storage_path) await sb.storage.from(BUCKET).remove([row.data.storage_path]);
 
+  revalidatePath("/");   // same ISR cache as the add path
   return Response.json({ ok: true });
 }

@@ -4,6 +4,7 @@
 //   GET  /api/custom-studies   { configured, migrated, studies: [...] }
 //   POST /api/custom-studies   create one, from the "Add study" flow's review step
 
+import { revalidatePath } from "next/cache";
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 import { canonicalStudyPmids } from "../../studies";
 
@@ -133,6 +134,15 @@ export async function POST(req: Request) {
         { status: 500 }
       );
 
+    // The Scientific Studies page is ISR-cached: app/studies.ts fetches PubMed with
+    // `next: { revalidate: 86400 }`, which makes the whole route cached for 24 hours. A new study
+    // therefore did not appear at all — router.refresh() on the client re-requests the route but
+    // still gets the cached render. Invalidating here is targeted: the page rebuilds on the next
+    // request while PubMed itself stays cached for a day, so this costs no extra PubMed traffic.
+    // Not force-dynamic on the page, which would set every fetch to no-store and hit PubMed on
+    // every single page load.
+    revalidatePath("/");
+    revalidatePath("/claims");
     return Response.json({ study: inserted.data });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });

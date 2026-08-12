@@ -9,6 +9,7 @@
 // base study list (PubMed + curated data) never changes; this is laid over it client side by
 // app/study-meta.ts so the removal is visible immediately, same as an edited quality score.
 
+import { revalidatePath } from "next/cache";
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 
 export async function GET() {
@@ -65,5 +66,6 @@ export async function DELETE(req: Request) {
 
   const del = await sb.from("study_removed").delete().eq("pmid", pmid);
   if (del.error) return Response.json({ error: del.error.message }, { status: 500 });
+  revalidatePath("/");   // same ISR cache as the add path
   return Response.json({ ok: true });
 }

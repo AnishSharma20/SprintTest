@@ -133,6 +133,22 @@ function TabIcon({ id }: { id: TabKey }) {
 
 const LOCKED = new Set(["title", "agenda"]);
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
+// ONE card language for every slide and photo in the libraries: the same two actions in the same
+// place, at a size that is comfortable to hit, and no per-kind labelling. Everything else (the
+// design round trip, "in every deck", the AI-writes-text choice) lives inside Edit.
+const CARD_ACTIONS = "mt-3 flex items-center gap-2 border-t border-[#EEF4F7] pt-2.5";
+const BTN_EDIT =
+  "rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]";
+const BTN_REMOVE =
+  "rounded-[4px] border border-transparent px-3 py-1.5 text-xs font-semibold text-red-700 hover:border-red-200 hover:bg-red-50";
+const BTN_SUBTLE = "rounded-[4px] px-3 py-1.5 text-xs font-semibold text-zinc-500 hover:bg-zinc-100";
+const PILL_AI =
+  "shrink-0 rounded-md bg-[#EEFAF9] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#0A7A8A]";
+const PILL_ASIS = "shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-500";
+/** Favourite star: deliberately larger than the old text-lg and kept well clear of the on/off
+ * switch, which sat close enough to mis-tap. */
+const STAR_BTN = "text-2xl leading-none transition-colors";
+
 const MODE_LABEL: Record<CustomSlide["mode"], string> = {
   auto: "AI decides when it fits",
   always: "In every deck",
@@ -1427,7 +1443,7 @@ export default function AboutV2Page() {
                   type="button"
                   onClick={() => p.available && setProduct(p.id)}
                   disabled={!p.available}
-                  className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
+                  className={`relative rounded-2xl border p-4 text-center transition-colors ${
                     valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E8E8ED] bg-white hover:border-[#D9D9DE]"
                   } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                 >
@@ -1436,6 +1452,15 @@ export default function AboutV2Page() {
                       Soon
                     </span>
                   )}
+                  <div className="flex justify-center mb-2">
+                    {p.logo ? (
+                      <img src={p.logo} alt={p.label} className="h-8 w-8 object-contain" />
+                    ) : (
+                      <div className="h-8 w-8 rounded bg-[#E4EDF0] flex items-center justify-center text-xs font-bold text-[#6D8894]">
+                        {p.label[0]}
+                      </div>
+                    )}
+                  </div>
                   <div className="text-sm font-semibold text-[#1D1D1F]">{p.label}</div>
                   {p.hint && <div className="text-xs text-[#6E6E73]">{p.hint}</div>}
                 </button>
@@ -1840,11 +1865,13 @@ export default function AboutV2Page() {
                 Every slide the tool can put in a deck, with real example renders. Turn a slide type off
                 and the AI can no longer pick it; turn it back on any time. Add your own finished slides
                 from a PowerPoint file — they are inserted exactly as designed, either where the AI
-                judges they fit or in every deck. Cover and Agenda are required and stay on. Use{" "}
-                <span className="font-semibold">✎ Edit</span> on any card to change its name, its
-                description, or the slide design itself (download it, restyle it in PowerPoint, upload it
-                back — the AI keeps writing the text). <span className="font-semibold">Remove</span> moves
-                a slide to Deleted items, where it can be restored.
+                judges they fit or in every deck. Cover and Agenda are required and stay on. Every slide
+                works the same way: the switch turns it on or off, the star marks a house favourite, and{" "}
+                <span className="font-semibold">✎ Edit</span> holds everything else — its name, its
+                description, when to use it, and the slide design itself (download it, restyle it in
+                PowerPoint, upload it back; the AI keeps writing the text).{" "}
+                <span className="font-semibold">Remove</span> moves a slide to Deleted items, where it can
+                be restored.
               </p>
 
               {!layoutsMigrated && (
@@ -2276,6 +2303,53 @@ export default function AboutV2Page() {
                             onChange={(e) => setSlideDesc(e.target.value)}
                             className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
                           />
+                          <label className="block text-[11px] font-semibold text-[#06456B]">
+                            When to use it
+                            <select
+                              value={c.mode}
+                              onChange={(e) => void patchSlide(c.id, { mode: e.target.value })}
+                              className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs font-normal outline-none"
+                            >
+                              <option value="auto">{MODE_LABEL.auto}</option>
+                              <option value="always">{MODE_LABEL.always}</option>
+                            </select>
+                          </label>
+                          {/* The design round trip lives here, next to the other edits, rather
+                              than as extra buttons on the card face. */}
+                          <div className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-2">
+                            <p className="text-[11px] text-zinc-500">
+                              Change how it looks: download the slide, restyle it in PowerPoint and
+                              upload it back.
+                            </p>
+                            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => void downloadCustomSlide(c.id, c.name)}
+                                disabled={exportingSlide === c.id}
+                                className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                              >
+                                {exportingSlide === c.id ? "Downloading…" : "⬇ Download to edit"}
+                              </button>
+                              <label
+                                className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
+                                  replacingSlide === c.id ? "opacity-40" : "cursor-pointer"
+                                }`}
+                              >
+                                {replacingSlide === c.id ? "Replacing…" : "↑ Upload edited design"}
+                                <input
+                                  type="file"
+                                  accept=".pptx"
+                                  className="hidden"
+                                  disabled={replacingSlide === c.id}
+                                  onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) void replaceCustomSlide(c.id, f);
+                                    e.target.value = "";
+                                  }}
+                                />
+                              </label>
+                            </div>
+                          </div>
                           <div className="flex gap-2">
                             <button
                               type="button"
@@ -2283,14 +2357,14 @@ export default function AboutV2Page() {
                                 void patchSlide(c.id, { name: slideName, description: slideDesc });
                                 setEditingSlide(null);
                               }}
-                              className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              className="rounded-[4px] bg-[#031B34] px-3 py-1.5 text-xs font-semibold text-white"
                             >
                               Save
                             </button>
                             <button
                               type="button"
                               onClick={() => setEditingSlide(null)}
-                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                              className="rounded-[4px] px-2 py-1.5 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
                             >
                               Cancel
                             </button>
@@ -2298,43 +2372,42 @@ export default function AboutV2Page() {
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="flex min-w-0 items-center gap-1.5">
-                                <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
-                                {c.slots?.length ? (
-                                  <span
-                                    className="shrink-0 rounded-md bg-[#EEFAF9] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#0A7A8A]"
-                                    title={`Your design, ${c.slots.length} text area(s) the AI writes for each deck`}
-                                  >
-                                    AI writes text
-                                  </span>
-                                ) : (
-                                  <span
-                                    className="shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-500"
-                                    title="Inserted exactly as drawn — the AI writes nothing on it"
-                                  >
-                                    As is
-                                  </span>
-                                )}
-                              </div>
-                              <div className="text-[11px] uppercase tracking-wide text-zinc-400">Standard slide</div>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                              <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                              {c.slots?.length ? (
+                                <span
+                                  className={PILL_AI}
+                                  title={`Your design, ${c.slots.length} text area(s) the AI writes for each deck`}
+                                >
+                                  AI writes text
+                                </span>
+                              ) : (
+                                <span className={PILL_ASIS} title="Inserted exactly as drawn — the AI writes nothing on it">
+                                  As is
+                                </span>
+                              )}
+                              {c.mode === "always" && (
+                                <span className={PILL_ASIS} title="Included in every deck">
+                                  Every deck
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex shrink-0 items-center gap-4">
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={c.mode !== "off"}
+                                title={c.mode === "off" ? "Off: not used in new decks" : "On: available to the AI"}
+                                onClick={() => void patchSlide(c.id, { mode: c.mode === "off" ? "auto" : "off" })}
+                                className={switchCls(c.mode !== "off")}
+                              >
+                                <span className={knobCls(c.mode !== "off")} />
+                              </button>
                             </div>
                           </div>
-                          {c.description && <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
-                          <div className="mt-2 flex items-center gap-1.5">
-                            <select
-                              value={c.mode}
-                              onChange={(e) => void patchSlide(c.id, { mode: e.target.value })}
-                              title="How this slide is used"
-                              className="min-w-0 flex-1 rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
-                            >
-                              {(Object.keys(MODE_LABEL) as CustomSlide["mode"][]).map((m) => (
-                                <option key={m} value={m}>
-                                  {MODE_LABEL[m]}
-                                </option>
-                              ))}
-                            </select>
+                          {c.description && <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
+                          <div className={CARD_ACTIONS}>
                             <button
                               type="button"
                               onClick={() => {
@@ -2342,47 +2415,13 @@ export default function AboutV2Page() {
                                 setSlideName(c.name);
                                 setSlideDesc(c.description);
                               }}
-                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                              className={BTN_EDIT}
                             >
                               ✎ Edit
                             </button>
-                            <button
-                              type="button"
-                              onClick={() => void deleteSlide(c.id)}
-                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                            >
+                            <button type="button" onClick={() => void deleteSlide(c.id)} className={BTN_REMOVE}>
                               Remove
                             </button>
-                          </div>
-                          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => void downloadCustomSlide(c.id, c.name)}
-                              disabled={exportingSlide === c.id}
-                              title="Download this slide as an editable PowerPoint file"
-                              className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-                            >
-                              {exportingSlide === c.id ? "Downloading…" : "⬇ Download to edit"}
-                            </button>
-                            <label
-                              title="Replace this slide with an edited PowerPoint file"
-                              className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
-                                replacingSlide === c.id ? "opacity-40" : "cursor-pointer"
-                              }`}
-                            >
-                              {replacingSlide === c.id ? "Replacing…" : "↻ Replace with edited file"}
-                              <input
-                                type="file"
-                                accept=".pptx"
-                                className="hidden"
-                                disabled={replacingSlide === c.id}
-                                onChange={(e) => {
-                                  const f = e.target.files?.[0];
-                                  if (f) void replaceCustomSlide(c.id, f);
-                                  e.target.value = "";
-                                }}
-                              />
-                            </label>
                           </div>
                         </>
                       )}
@@ -2415,29 +2454,32 @@ export default function AboutV2Page() {
                         loading="lazy"
                       />
                       <div className="p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="flex min-w-0 items-center gap-1.5">
-                              <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
-                              {ov && (
-                                <span
-                                  className="shrink-0 rounded-md bg-[#EEFAF9] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#0A7A8A]"
-                                  title="The team replaced this slide's design — the AI keeps writing its text"
-                                >
-                                  Custom design
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">
-                              {g.kind === "verbatim"
-                                ? "Fixed brand slide"
-                                : LOCKED.has(g.key)
-                                  ? "Always on"
-                                  : "Standard slide"}
-                            </div>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
+                            {ov && (
+                              <span
+                                className={PILL_AI}
+                                title="The team replaced this slide's design — the AI keeps writing its text"
+                              >
+                                Custom design
+                              </span>
+                            )}
+                            {locked && (
+                              <span
+                                className={PILL_ASIS}
+                                title={
+                                  g.kind === "verbatim"
+                                    ? "A fixed brand slide — always included, never rewritten"
+                                    : "Required in every deck, so it cannot be turned off or removed"
+                                }
+                              >
+                                {g.kind === "verbatim" ? "Fixed" : "Always on"}
+                              </span>
+                            )}
                           </div>
                           {!locked && (
-                            <div className="flex shrink-0 items-center gap-1.5">
+                            <div className="flex shrink-0 items-center gap-4">
                               {!off && starsMigrated && (
                                 <button
                                   type="button"
@@ -2447,7 +2489,7 @@ export default function AboutV2Page() {
                                       ? "House favourite: the AI prefers this when several layouts fit"
                                       : "Star as a house favourite"
                                   }
-                                  className={`text-lg leading-none ${
+                                  className={`${STAR_BTN} ${
                                     preferred.has(g.key) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
                                   }`}
                                 >
@@ -2516,21 +2558,27 @@ export default function AboutV2Page() {
                                     }}
                                   />
                                 </label>
+                                {ov && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void revertOverride(g.key, displayName)}
+                                    title="Delete the uploaded design and go back to the standard one"
+                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-zinc-500 hover:bg-zinc-100"
+                                  >
+                                    ↩ Revert to standard design
+                                  </button>
+                                )}
                               </div>
                             </div>
                             <div className="flex gap-2">
                               <button
                                 type="button"
                                 onClick={() => void saveLayoutMeta(g.key)}
-                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1.5 text-xs font-semibold text-white"
                               >
                                 Save
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => setEditingLayout(null)}
-                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
-                              >
+                              <button type="button" onClick={() => setEditingLayout(null)} className={BTN_SUBTLE}>
                                 Cancel
                               </button>
                             </div>
@@ -2544,46 +2592,25 @@ export default function AboutV2Page() {
                             >
                               {displayDesc}
                             </p>
-                            {g.kind !== "verbatim" && (
-                              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                            {g.kind !== "verbatim" && metaMigrated && (
+                              <div className={CARD_ACTIONS}>
                                 <button
                                   type="button"
-                                  onClick={() => void downloadStandardLayout(g.key)}
-                                  disabled={exportingLayout === g.key}
-                                  title="Download this slide as an editable PowerPoint file"
-                                  className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                                  onClick={() => {
+                                    setEditingLayout(g.key);
+                                    setLayoutNameDraft(layoutNames[g.key]?.display_name ?? "");
+                                    setLayoutDescDraft(layoutNames[g.key]?.description ?? "");
+                                  }}
+                                  title="Edit the name, the description, or the slide design itself"
+                                  className={BTN_EDIT}
                                 >
-                                  {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
+                                  ✎ Edit
                                 </button>
-                                {metaMigrated && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setEditingLayout(g.key);
-                                      setLayoutNameDraft(layoutNames[g.key]?.display_name ?? "");
-                                      setLayoutDescDraft(layoutNames[g.key]?.description ?? "");
-                                    }}
-                                    title="Edit the name, the description, or the slide design itself"
-                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                                  >
-                                    ✎ Edit
-                                  </button>
-                                )}
-                                {ov && (
-                                  <button
-                                    type="button"
-                                    onClick={() => void revertOverride(g.key, displayName)}
-                                    title="Delete the uploaded design and go back to the standard one"
-                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-zinc-500 hover:bg-zinc-100"
-                                  >
-                                    ↩ Revert to standard design
-                                  </button>
-                                )}
-                                {!locked && metaMigrated && (
+                                {!locked && (
                                   <button
                                     type="button"
                                     onClick={() => void removeLayout(g.key, displayName)}
-                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-red-700 hover:bg-red-50"
+                                    className={BTN_REMOVE}
                                   >
                                     Remove
                                   </button>
@@ -2895,12 +2922,9 @@ export default function AboutV2Page() {
                           </div>
                         ) : (
                           <>
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="min-w-0">
-                                <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
-                                <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
-                              </div>
-                              <div className="flex shrink-0 items-center gap-1.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{p.name}</div>
+                              <div className="flex shrink-0 items-center gap-4">
                                 {p.enabled && (
                                   <button
                                     type="button"
@@ -2910,7 +2934,7 @@ export default function AboutV2Page() {
                                         ? "House favourite: the AI prefers this when several photos fit"
                                         : "Star as a house favourite"
                                     }
-                                    className={`text-lg leading-none ${
+                                    className={`${STAR_BTN} ${
                                       p.preferred ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
                                     }`}
                                   >
@@ -2929,8 +2953,8 @@ export default function AboutV2Page() {
                                 </button>
                               </div>
                             </div>
-                            <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
-                            <div className="mt-2 flex gap-1">
+                            <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                            <div className={CARD_ACTIONS}>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2939,15 +2963,11 @@ export default function AboutV2Page() {
                                   setPhotoName(p.name);
                                   setPhotoDesc(p.description);
                                 }}
-                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                                className={BTN_EDIT}
                               >
                                 ✎ Edit
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => void deletePhoto(p.id)}
-                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                              >
+                              <button type="button" onClick={() => void deletePhoto(p.id)} className={BTN_REMOVE}>
                                 Remove
                               </button>
                             </div>
@@ -3013,12 +3033,9 @@ export default function AboutV2Page() {
                           </div>
                         ) : (
                           <>
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="min-w-0">
-                                <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
-                                <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
-                              </div>
-                              <div className="flex shrink-0 items-center gap-1.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 truncate text-sm font-bold text-[#031B34]">{displayName}</div>
+                              <div className="flex shrink-0 items-center gap-4">
                                 {!off && photoSettingsMigrated && (
                                   <button
                                     type="button"
@@ -3028,7 +3045,7 @@ export default function AboutV2Page() {
                                         ? "House favourite: the AI prefers this when several photos fit"
                                         : "Star as a house favourite"
                                     }
-                                    className={`text-lg leading-none ${
+                                    className={`${STAR_BTN} ${
                                       photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
                                     }`}
                                   >
@@ -3048,9 +3065,9 @@ export default function AboutV2Page() {
                                 </button>
                               </div>
                             </div>
-                            <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{displayDesc}</p>
+                            <p className="mt-1.5 line-clamp-2 text-xs text-zinc-500">{displayDesc}</p>
                             {photoMetaMigrated && (
-                              <div className="mt-2 flex gap-1">
+                              <div className={CARD_ACTIONS}>
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -3059,14 +3076,14 @@ export default function AboutV2Page() {
                                     setPhotoName(photoNames[p.id]?.display_name ?? "");
                                     setPhotoDesc(photoNames[p.id]?.description ?? "");
                                   }}
-                                  className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                                  className={BTN_EDIT}
                                 >
                                   ✎ Edit
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => void removeBuiltinPhoto(p.id, displayName)}
-                                  className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                                  className={BTN_REMOVE}
                                 >
                                   Remove
                                 </button>

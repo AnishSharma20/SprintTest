@@ -24,8 +24,12 @@ export async function GET(req: Request) {
   const base = process.env.DECK_SERVICE_URL?.replace(/\/$/, "");
   if (!base) return Response.json({ error: "Deck service is not configured." }, { status: 500 });
 
+  const brand = brandFromRequest(req);
+
   try {
-    const res = await fetch(`${base}/rules/builtin`, {
+    // The brand goes through: the built-in rule TEXT names the product, so seeding Revervia from
+    // Superba's copy would store "…for Superba Krill" as Revervia's own writing rule.
+    const res = await fetch(`${base}/rules/builtin?brand=${encodeURIComponent(brand)}`, {
       headers: process.env.DECK_SERVICE_TOKEN ? { "X-Deck-Token": process.env.DECK_SERVICE_TOKEN } : undefined,
     });
     const data = await res.json().catch(() => ({}));
@@ -35,7 +39,6 @@ export async function GET(req: Request) {
 
     // Which are already rows? A failure here means the builtin_key column is missing (pre-0014),
     // and then there is nothing to seed — the service keeps using its own defaults.
-    const brand = brandFromRequest(req);
     const existing = await sb
       .from("generation_rules")
       .select("builtin_key")

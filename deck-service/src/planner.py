@@ -468,9 +468,15 @@ NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `
 }
 
 
-def builtin_blocks() -> list[dict]:
-    """The editable writing rules, for the About page to seed and display."""
-    return [{"key": k, "label": lab, "text": t} for k, (lab, t) in BUILTIN_BLOCKS.items()]
+def builtin_blocks(brand: str | None = None) -> list[dict]:
+    """The editable writing rules, for the About page to seed and display.
+
+    Brand placeholders are resolved here, so the team reads "…for Revervia" rather than the raw
+    "{product}" token. The same substitution runs again in build_system's _block(), which is what
+    lets a team member reword one of these rules and still name the brand generically."""
+    t2 = _brand.theme(brand)
+    sub = lambda t: t.replace("{product}", t2["product"]).replace("{company}", t2["company"])  # noqa: E731
+    return [{"key": k, "label": lab, "text": sub(t)} for k, (lab, t) in BUILTIN_BLOCKS.items()]
 
 
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",

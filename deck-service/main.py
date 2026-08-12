@@ -758,7 +758,7 @@ def _inspect_previews(data: bytes) -> list[dict]:
 
 
 @app.get("/rules/builtin")
-def rules_builtin(x_deck_token: str | None = Header(default=None)):
+def rules_builtin(brand: str = "", x_deck_token: str | None = Header(default=None)):
     """The WRITING rules the team can see and edit, with the exact text the planner uses today.
     The About page seeds these as ordinary rule rows on first view, so what used to be buried in
     the prompt becomes something the team can reword or switch off. Read only: this endpoint never
@@ -767,7 +767,10 @@ def rules_builtin(x_deck_token: str | None = Header(default=None)):
     if expected and x_deck_token != expected:
         return JSONResponse({"feil": "Unauthorized."}, status_code=401)
     from src.planner import builtin_blocks
-    return {"blocks": builtin_blocks()}
+    b = (brand or "").strip().lower()
+    if b and b not in config.known_brands():
+        return JSONResponse({"feil": f"Unknown brand '{b}'."}, status_code=400)
+    return {"blocks": builtin_blocks(b or None)}
 
 
 @app.post("/slides/inspect")

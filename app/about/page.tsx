@@ -349,9 +349,17 @@ export default function AboutV2Page() {
   const [picks, setPicks] = useState<UploadPick[] | null>(null);
   const [savingPicks, setSavingPicks] = useState(false);
 
+  // Every settings API is brand scoped (migration 0016). The brand rides the QUERY STRING even on
+  // POST/PUT, because the route helpers fall back to it when a JSON body carries no `brand` — that
+  // way one rewrite here covers reads and writes, instead of editing thirty request bodies.
+  const withBrand = useCallback(
+    (url: string) => url + (url.includes("?") ? "&" : "?") + "brand=" + encodeURIComponent(product),
+    [product]
+  );
+
   const load = useCallback(async () => {
     try {
-      const r = await (await fetch("/api/rules")).json();
+      const r = await (await fetch(withBrand("/api/rules"))).json();
       setRulesConfigured(r.configured !== false);
       setRulesMigrated(r.migrated !== false);
       setStructureMigrated(r.migrated !== false && r.structureMigrated !== false);
@@ -367,9 +375,9 @@ export default function AboutV2Page() {
       // single visit).
       if (r.builtinManaged) {
         try {
-          const seeded = await (await fetch("/api/rules/builtin")).json();
+          const seeded = await (await fetch(withBrand("/api/rules/builtin"))).json();
           if (seeded.seeded) {
-            const again = await (await fetch("/api/rules")).json();
+            const again = await (await fetch(withBrand("/api/rules"))).json();
             ruleRows = again.rules ?? ruleRows;
           }
         } catch {
@@ -381,7 +389,7 @@ export default function AboutV2Page() {
       setRulesConfigured(false);
     }
     try {
-      const l = await (await fetch("/api/layout-settings")).json();
+      const l = await (await fetch(withBrand("/api/layout-settings"))).json();
       setLayoutsMigrated(l.configured !== false && l.migrated !== false);
       setStarsMigrated(l.starsMigrated !== false);
       setMetaMigrated(l.configured !== false && l.migrated !== false && l.metaMigrated !== false);
@@ -396,7 +404,7 @@ export default function AboutV2Page() {
       setLayoutsMigrated(false);
     }
     try {
-      const o = await (await fetch("/api/layout-overrides")).json();
+      const o = await (await fetch(withBrand("/api/layout-overrides"))).json();
       const map: Record<string, LayoutOverride> = {};
       for (const ov of (o.overrides ?? []) as LayoutOverride[]) map[ov.layout] = ov;
       setOverrides(map);
@@ -404,14 +412,14 @@ export default function AboutV2Page() {
       /* no overrides — the standard designs render as before */
     }
     try {
-      const p = await (await fetch("/api/custom-photos")).json();
+      const p = await (await fetch(withBrand("/api/custom-photos"))).json();
       setPhotosMigrated(p.configured !== false && p.migrated !== false);
       setCustomPhotos(p.photos ?? []);
     } catch {
       setPhotosMigrated(false);
     }
     try {
-      const ps = await (await fetch("/api/photo-settings")).json();
+      const ps = await (await fetch(withBrand("/api/photo-settings"))).json();
       setPhotoSettingsMigrated(ps.configured !== false && ps.migrated !== false);
       setPhotoMetaMigrated(ps.configured !== false && ps.migrated !== false && ps.metaMigrated !== false);
       const removed = new Set<string>(ps.removed ?? []);
@@ -423,7 +431,7 @@ export default function AboutV2Page() {
       setPhotoSettingsMigrated(false);
     }
     try {
-      const d = await (await fetch("/api/design-settings")).json();
+      const d = await (await fetch(withBrand("/api/design-settings"))).json();
       setDesignMigrated(d.configured !== false && d.migrated !== false);
       setDesign(d.settings ?? {});
       setDesignMeta({ by: d.updated_by ?? null, at: d.updated_at ?? null });
@@ -431,13 +439,13 @@ export default function AboutV2Page() {
       setDesignMigrated(false);
     }
     try {
-      const c = await (await fetch("/api/custom-slides")).json();
+      const c = await (await fetch(withBrand("/api/custom-slides"))).json();
       setSlidesMigrated(c.configured !== false && c.migrated !== false);
       setCustomSlides(c.slides ?? []);
     } catch {
       setSlidesMigrated(false);
     }
-  }, []);
+  }, [withBrand]);
 
   useEffect(() => {
     void load();
@@ -485,7 +493,7 @@ export default function AboutV2Page() {
     setSavingRule(true);
     setRuleError("");
     try {
-      const res = await fetch("/api/rules", {
+      const res = await fetch(withBrand("/api/rules"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -521,7 +529,7 @@ export default function AboutV2Page() {
   async function patchRule(id: number, patch: { text?: string; enabled?: boolean }) {
     setRuleError("");
     try {
-      const res = await fetch(`/api/rules/${id}`, {
+      const res = await fetch(withBrand(`/api/rules/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...patch, author: reviewer }),
@@ -538,7 +546,7 @@ export default function AboutV2Page() {
     if (!window.confirm("Delete this rule? It stops applying to every future generation.")) return;
     setRuleError("");
     try {
-      const res = await fetch(`/api/rules/${id}`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/rules/${id}`), { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not delete the rule.");
@@ -567,7 +575,7 @@ export default function AboutV2Page() {
         if (v === undefined || v === null || String(v).trim() === "") continue;
         out[k] = k === "title_font" || k === "body_font" ? String(v).trim() : Number(v);
       }
-      const res = await fetch("/api/design-settings", {
+      const res = await fetch(withBrand("/api/design-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ settings: out, author: reviewer }),
@@ -601,7 +609,7 @@ export default function AboutV2Page() {
     else nextSet.add(key);
     setDisabled(nextSet); // optimistic — a toggle should feel instant
     try {
-      const res = await fetch("/api/layout-settings", {
+      const res = await fetch(withBrand("/api/layout-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: key, enabled: enable, author: reviewer }),
@@ -626,7 +634,7 @@ export default function AboutV2Page() {
     else next.delete(key);
     setPreferred(next); // optimistic
     try {
-      const res = await fetch("/api/layout-settings", {
+      const res = await fetch(withBrand("/api/layout-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: key, preferred: star, author: reviewer }),
@@ -649,7 +657,7 @@ export default function AboutV2Page() {
     const before = new Set(layoutRemoved);
     setLayoutRemoved(new Set(layoutRemoved).add(key)); // optimistic
     try {
-      const res = await fetch("/api/layout-settings", {
+      const res = await fetch(withBrand("/api/layout-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: key, removed: true, author: reviewer }),
@@ -671,7 +679,7 @@ export default function AboutV2Page() {
     next.delete(key);
     setLayoutRemoved(next); // optimistic
     try {
-      const res = await fetch("/api/layout-settings", {
+      const res = await fetch(withBrand("/api/layout-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ layout: key, removed: false, author: reviewer }),
@@ -689,7 +697,7 @@ export default function AboutV2Page() {
   async function saveLayoutMeta(key: string) {
     setLayoutError("");
     try {
-      const res = await fetch("/api/layout-settings", {
+      const res = await fetch(withBrand("/api/layout-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -726,7 +734,7 @@ export default function AboutV2Page() {
     setOverridingLayout(key);
     let storagePath: string | null = null;
     try {
-      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const urlRes = await fetch(withBrand("/api/custom-slides/upload-url"), { method: "POST" });
       const uploadUrl = await urlRes.json();
       if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
       storagePath = uploadUrl.path;
@@ -737,7 +745,7 @@ export default function AboutV2Page() {
       if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
 
       // Measure the design's text slots (what the AI will keep writing into).
-      const inspectRes = await fetch("/api/custom-slides/inspect-slots", {
+      const inspectRes = await fetch(withBrand("/api/custom-slides/inspect-slots"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: storagePath, filename: file.name, slide_index: 0, layout: key }),
@@ -745,7 +753,7 @@ export default function AboutV2Page() {
       const inspected = await inspectRes.json();
       if (!inspectRes.ok) throw new Error(inspected.error || "Could not read the presentation.");
 
-      const res = await fetch("/api/layout-overrides", {
+      const res = await fetch(withBrand("/api/layout-overrides"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -770,7 +778,7 @@ export default function AboutV2Page() {
     } catch (e) {
       setLayoutError((e as Error).message);
       if (storagePath) {
-        void fetch("/api/custom-slides/discard-upload", {
+        void fetch(withBrand("/api/custom-slides/discard-upload"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storage_path: storagePath }),
@@ -786,7 +794,7 @@ export default function AboutV2Page() {
     setLayoutError("");
     setOverrideNotice("");
     try {
-      const res = await fetch(`/api/layout-overrides?layout=${encodeURIComponent(key)}`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/layout-overrides?layout=${encodeURIComponent(key)}`), { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not revert the design.");
@@ -809,7 +817,7 @@ export default function AboutV2Page() {
     const before = new Set(builtinPhotoRemoved);
     setBuiltinPhotoRemoved(new Set(builtinPhotoRemoved).add(id)); // optimistic
     try {
-      const res = await fetch("/api/photo-settings", {
+      const res = await fetch(withBrand("/api/photo-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photo: id, removed: true, author: reviewer }),
@@ -831,7 +839,7 @@ export default function AboutV2Page() {
     next.delete(id);
     setBuiltinPhotoRemoved(next); // optimistic
     try {
-      const res = await fetch("/api/photo-settings", {
+      const res = await fetch(withBrand("/api/photo-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photo: id, removed: false, author: reviewer }),
@@ -849,7 +857,7 @@ export default function AboutV2Page() {
   async function saveBuiltinPhotoMeta(id: string) {
     setPhotoError("");
     try {
-      const res = await fetch("/api/photo-settings", {
+      const res = await fetch(withBrand("/api/photo-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photo: id, display_name: photoName, description: photoDesc, author: reviewer }),
@@ -883,7 +891,7 @@ export default function AboutV2Page() {
               ? v
               : Number(v);
       }
-      const res = await fetch("/api/design-settings/preview", {
+      const res = await fetch(withBrand("/api/design-settings/preview"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ settings }),
@@ -938,7 +946,7 @@ export default function AboutV2Page() {
     setPhotoSaving(true);
     setPhotoError("");
     try {
-      const res = await fetch("/api/custom-photos", {
+      const res = await fetch(withBrand("/api/custom-photos"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -964,7 +972,7 @@ export default function AboutV2Page() {
   async function patchPhoto(id: string, patch: { name?: string; description?: string; enabled?: boolean; preferred?: boolean }) {
     setPhotoError("");
     try {
-      const res = await fetch(`/api/custom-photos/${id}`, {
+      const res = await fetch(withBrand(`/api/custom-photos/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...patch, author: reviewer }),
@@ -982,7 +990,7 @@ export default function AboutV2Page() {
       return;
     setPhotoError("");
     try {
-      const res = await fetch(`/api/custom-photos/${id}`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/custom-photos/${id}`), { method: "DELETE" });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(d.error || "Could not remove the photo.");
       // Soft removed (post-0009) → keep the row flagged for Deleted items; a pre-0009 database
@@ -998,7 +1006,7 @@ export default function AboutV2Page() {
   async function restorePhoto(id: string) {
     setPhotoError("");
     try {
-      const res = await fetch(`/api/custom-photos/${id}`, {
+      const res = await fetch(withBrand(`/api/custom-photos/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ removed: false, author: reviewer }),
@@ -1015,7 +1023,7 @@ export default function AboutV2Page() {
     if (!window.confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
     setPhotoError("");
     try {
-      const res = await fetch(`/api/custom-photos/${id}?purge=1`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/custom-photos/${id}?purge=1`), { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not delete the photo.");
@@ -1034,7 +1042,7 @@ export default function AboutV2Page() {
     else next.add(id);
     setPhotoDisabled(next); // optimistic — a toggle should feel instant
     try {
-      const res = await fetch("/api/photo-settings", {
+      const res = await fetch(withBrand("/api/photo-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photo: id, enabled: enable, author: reviewer }),
@@ -1057,7 +1065,7 @@ export default function AboutV2Page() {
     else next.delete(id);
     setPhotoPreferred(next); // optimistic
     try {
-      const res = await fetch("/api/photo-settings", {
+      const res = await fetch(withBrand("/api/photo-settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photo: id, preferred: star, author: reviewer }),
@@ -1081,7 +1089,7 @@ export default function AboutV2Page() {
   ) {
     notify("");
     try {
-      const res = await fetch(`/api/custom-slides/${id}`, {
+      const res = await fetch(withBrand(`/api/custom-slides/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...patch, author: reviewer }),
@@ -1099,7 +1107,7 @@ export default function AboutV2Page() {
       return;
     setCustomError("");
     try {
-      const res = await fetch(`/api/custom-slides/${id}`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/custom-slides/${id}`), { method: "DELETE" });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(d.error || "Could not remove the slide.");
       // Soft removed (post-0009) → keep it flagged for Deleted items; a pre-0009 database
@@ -1115,7 +1123,7 @@ export default function AboutV2Page() {
   async function restoreSlide(id: string) {
     setCustomError("");
     try {
-      const res = await fetch(`/api/custom-slides/${id}`, {
+      const res = await fetch(withBrand(`/api/custom-slides/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ removed: false, author: reviewer }),
@@ -1133,7 +1141,7 @@ export default function AboutV2Page() {
       return;
     setCustomError("");
     try {
-      const res = await fetch(`/api/custom-slides/${id}?purge=1`, { method: "DELETE" });
+      const res = await fetch(withBrand(`/api/custom-slides/${id}?purge=1`), { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not delete the slide.");
@@ -1159,7 +1167,7 @@ export default function AboutV2Page() {
     uploadPathRef.current = null;
     if (!path) return;
     try {
-      await fetch("/api/custom-slides/discard-upload", {
+      await fetch(withBrand("/api/custom-slides/discard-upload"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: path }),
@@ -1195,7 +1203,7 @@ export default function AboutV2Page() {
       await new Promise((r) => setTimeout(r, 3000));
       let res: Response;
       try {
-        res = await fetch(`/api/custom-slides/inspect?job=${encodeURIComponent(jobId)}`);
+        res = await fetch(withBrand(`/api/custom-slides/inspect?job=${encodeURIComponent(jobId)}`));
       } catch {
         if (++flaky > 10) throw new Error("Lost contact with the rendering server — please try again.");
         continue;
@@ -1228,7 +1236,7 @@ export default function AboutV2Page() {
       // Upload ONCE, straight to Storage (a signed URL, not the file, transits Vercel) — both the
       // preview below and the eventual save reuse this same stored path, so the file never rides
       // through Vercel's ~4.5 MB body ceiling, and never gets re-uploaded on save either.
-      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const urlRes = await fetch(withBrand("/api/custom-slides/upload-url"), { method: "POST" });
       const uploadUrl = await urlRes.json();
       if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
       const uploadForm = new FormData();
@@ -1243,7 +1251,7 @@ export default function AboutV2Page() {
       // a path string, so it's tiny regardless of how big the actual .pptx is. The rendering
       // itself runs as a background JOB we poll: a many-slide file (the full 42-slide template
       // export) renders for minutes, longer than any single request is allowed to last.
-      const res = await fetch("/api/custom-slides/inspect", {
+      const res = await fetch(withBrand("/api/custom-slides/inspect"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: uploadUrl.path, filename: file.name }),
@@ -1281,7 +1289,7 @@ export default function AboutV2Page() {
     if (!uploadPathRef.current || !uploadFile) return;
     setPicks((ps) => ps!.map((x) => (x.index === index ? { ...x, slotsBusy: true, slotsError: "" } : x)));
     try {
-      const res = await fetch("/api/custom-slides/inspect-slots", {
+      const res = await fetch(withBrand("/api/custom-slides/inspect-slots"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1326,7 +1334,7 @@ export default function AboutV2Page() {
     setSavingPicks(true);
     setUploadError("");
     try {
-      const res = await fetch("/api/custom-slides", {
+      const res = await fetch(withBrand("/api/custom-slides"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1350,7 +1358,7 @@ export default function AboutV2Page() {
       setPicks(null);
       setUploadFile(null);
       if (fileInput.current) fileInput.current.value = "";
-      const c = await (await fetch("/api/custom-slides")).json();
+      const c = await (await fetch(withBrand("/api/custom-slides"))).json();
       setCustomSlides(c.slides ?? []);
     } catch (e) {
       setUploadError((e as Error).message);
@@ -1380,8 +1388,8 @@ export default function AboutV2Page() {
       // An overridden layout downloads the team's CURRENT design, so the next edit iterates on
       // it; otherwise the pristine standard sample is rendered fresh by the deck service.
       const res = overrides[key]
-        ? await fetch(`/api/layout-overrides?layout=${encodeURIComponent(key)}&file=1`)
-        : await fetch("/api/layout-gallery/export", {
+        ? await fetch(withBrand(`/api/layout-overrides?layout=${encodeURIComponent(key)}&file=1`))
+        : await fetch(withBrand("/api/layout-gallery/export"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ layout: key, background: galleryTheme }),
@@ -1405,7 +1413,7 @@ export default function AboutV2Page() {
     setLayoutError("");
     setExportingAll(true);
     try {
-      const res = await fetch("/api/layout-gallery/export-all", {
+      const res = await fetch(withBrand("/api/layout-gallery/export-all"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ background: galleryTheme }),
@@ -1427,7 +1435,7 @@ export default function AboutV2Page() {
     setCustomError("");
     setExportingSlide(id);
     try {
-      const res = await fetch(`/api/custom-slides/${id}/export`);
+      const res = await fetch(withBrand(`/api/custom-slides/${id}/export`));
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not export the slide.");
@@ -1449,7 +1457,7 @@ export default function AboutV2Page() {
       // rasterised preview and the save — the same "upload once" flow the main upload above
       // uses, so a big edited file never rides through Vercel's body ceiling twice. If the
       // edited file has several slides, the first one is what gets saved.
-      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const urlRes = await fetch(withBrand("/api/custom-slides/upload-url"), { method: "POST" });
       const uploadUrl = await urlRes.json();
       if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
       storagePath = uploadUrl.path;
@@ -1459,7 +1467,7 @@ export default function AboutV2Page() {
       const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
       if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
 
-      const inspectRes = await fetch("/api/custom-slides/inspect", {
+      const inspectRes = await fetch(withBrand("/api/custom-slides/inspect"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storage_path: storagePath, filename: file.name }),
@@ -1469,7 +1477,7 @@ export default function AboutV2Page() {
       const slides = await pollInspect(inspected.job_id as string);
       const preview_b64: string | null = slides[0]?.preview_b64 ?? null;
 
-      const res = await fetch(`/api/custom-slides/${id}/replace`, {
+      const res = await fetch(withBrand(`/api/custom-slides/${id}/replace`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1486,7 +1494,7 @@ export default function AboutV2Page() {
     } catch (e) {
       setCustomError((e as Error).message);
       if (storagePath) {
-        void fetch("/api/custom-slides/discard-upload", {
+        void fetch(withBrand("/api/custom-slides/discard-upload"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ storage_path: storagePath }),

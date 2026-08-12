@@ -1,24 +1,11 @@
 "use client";
 
-// About — what the tool is, plus the levers the team can pull without a developer:
-//
-//   1. Generation rules: free text writing & design principles injected into the deck
-//      planner's prompt on every generation (bullet discipline, action title style, what to
-//      include or avoid). They steer the AI's writing; claim fidelity always wins.
-//   2. Design settings: deterministic overrides the RENDERER enforces in code — fonts, the
-//      three text sizes, line spacing, page margin and box gutter. A non-technical "use
-//      Arial, tighter titles" actually happens, on every slide, every deck.
-//   3. The slide library: every slide the tool can produce, in ONE combined menu (no
-//      code-built vs template distinction — that is an implementation detail), each with an
-//      on/off switch. Plus the team's OWN slides: upload a .pptx, pick slides from real
-//      previews, and they are spliced verbatim into generated decks — either wherever the AI
-//      judges they fit the storyline, or in every deck.
-//
-// Everything is stored in the shared database (migrations 0004 + 0005), so a rule, a design
-// setting or a slide added by one person applies to everyone's generations.
+// About — team generation rules, design settings, slide library and photo library, presented as
+// a tabbed card (rules/design/slides/photos) instead of one long stacked scroll: a slim masthead,
+// with one section visible at a time behind a tab bar.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import PageHero, { ReviewerField } from "../PageHero";
+import { ReviewerField } from "../PageHero";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
 import { PRODUCTS, type ProductId } from "../products";
@@ -86,6 +73,41 @@ type CustomPhoto = {
 
 type BuiltinPhoto = { id: string; description: string; bg_fit: string };
 
+type TabKey = "rules" | "design" | "slides" | "photos";
+const TABS: { id: TabKey; label: string }[] = [
+  { id: "rules", label: "Rules" },
+  { id: "design", label: "Design" },
+  { id: "slides", label: "Slide library" },
+  { id: "photos", label: "Photo library" },
+];
+
+/** Small line icons for the tab bar, matching the "About V2" mockup's sidebar concept. */
+function TabIcon({ id }: { id: TabKey }) {
+  const common = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8 } as const;
+  if (id === "rules") return <svg {...common} className="h-4 w-4"><path d="M4 6h16M4 12h16M4 18h10" /></svg>;
+  if (id === "design")
+    return (
+      <svg {...common} className="h-4 w-4">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+      </svg>
+    );
+  if (id === "slides")
+    return (
+      <svg {...common} className="h-4 w-4">
+        <rect x="3" y="5" width="18" height="12" rx="1.5" />
+        <path d="M8 21h8" />
+      </svg>
+    );
+  return (
+    <svg {...common} className="h-4 w-4">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="2" />
+      <path d="M21 16l-5.5-5.5L4 20" />
+    </svg>
+  );
+}
+
 const LOCKED = new Set(["title", "agenda"]);
 const FONT_SUGGESTIONS = ["Arial", "Calibri", "Georgia", "Montserrat", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
 const MODE_LABEL: Record<CustomSlide["mode"], string> = {
@@ -104,11 +126,11 @@ function cleanUsage(s: string): string {
   return s.replace(/`/g, "");
 }
 
-
-export default function AboutPage() {
+export default function AboutV2Page() {
   const [reviewer, setReviewer] = useState("");
   const [product, setProduct] = useState<ProductId>("superba");
   const selectedProduct = PRODUCTS.find((p) => p.id === product) ?? PRODUCTS[0];
+  const [activeTab, setActiveTab] = useState<TabKey>("rules");
 
   // ----- rules -----
   const [rulesConfigured, setRulesConfigured] = useState(true);
@@ -136,6 +158,8 @@ export default function AboutPage() {
   const [preferred, setPreferred] = useState<Set<string>>(new Set());
   const [layoutError, setLayoutError] = useState("");
   const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
+  const [galleryTheme, setGalleryTheme] = useState<"dark" | "light" | "pastel">("dark");
+  const GALLERY_THEME_LABEL = { dark: "Blue Ocean", light: "White", pastel: "Pastel Blue" } as const;
   const [expanded, setExpanded] = useState<string | null>(null);
 
   // ----- design preview -----
@@ -725,7 +749,7 @@ export default function AboutPage() {
       const res = await fetch("/api/layout-gallery/export", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ layout: key, background: "dark" }), // /about has no theme picker; always Blue Ocean
+        body: JSON.stringify({ layout: key, background: galleryTheme }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -749,7 +773,7 @@ export default function AboutPage() {
       const res = await fetch("/api/layout-gallery/export-all", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ background: "dark" }), // /about has no theme picker; always Blue Ocean
+        body: JSON.stringify({ background: galleryTheme }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -905,23 +929,25 @@ export default function AboutPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F2F7F9]">
-      <PageHero
-        eyebrow="About"
-        title="How the generator works, and your rules"
-        actions={
-          <ReviewerField value={reviewer} onChange={onReviewerChange} placeholder="Your name (recorded on changes)" />
-        }
-      >
-        Decks are planned by AI but drawn by code on the real Superba template. Here you write the
-        rules and design principles every deck follows, set the typography, and manage the slide
-        library — including slides you add yourself.
-      </PageHero>
+    <div className="min-h-screen bg-[#FBFBFD]">
+      <style>{`
+        @keyframes aboutV2Pop { 0% { opacity: 0; transform: scale(.97); } 100% { opacity: 1; transform: scale(1); } }
+        .aboutv2-pop { animation: aboutV2Pop .2s cubic-bezier(.16,1,.3,1); }
+      `}</style>
 
-      <main className="mx-auto max-w-5xl px-4 py-8">
-        {/* ----- brand ----- */}
-        <section className="mb-8">
-          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6D8894]">
+      <div className="mx-auto max-w-5xl px-4 pb-3 pt-10">
+        {/* ----- slim masthead — no descriptive paragraph, unlike /about ----- */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#0A7A8A]">About V2</div>
+            <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[#1D1D1F]">Generation settings</h1>
+          </div>
+          <ReviewerField value={reviewer} onChange={onReviewerChange} placeholder="Your name (recorded on changes)" />
+        </div>
+
+        {/* ----- brand — same picker as /about ----- */}
+        <section className="mt-7">
+          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6E6E73]">
             Which brand are these settings for?
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -934,1091 +960,1151 @@ export default function AboutPage() {
                   onClick={() => p.available && setProduct(p.id)}
                   disabled={!p.available}
                   className={`relative rounded-2xl border px-3 py-3 text-left transition-colors ${
-                    valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E4EDF0] bg-white hover:border-[#9FC9D9]"
+                    valgt ? "border-[#3FD0C9] bg-[#EEFAF9]" : "border-[#E8E8ED] bg-white hover:border-[#D9D9DE]"
                   } ${!p.available ? "cursor-not-allowed opacity-50" : ""}`}
                 >
                   {!p.available && (
-                    <span className="absolute right-2 top-2 rounded-md bg-[#F1F5F7] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#8FA5AE]">
+                    <span className="absolute right-2 top-2 rounded-md bg-[#F2F2F4] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#AEAEB2]">
                       Soon
                     </span>
                   )}
-                  <div className="text-sm font-semibold text-[#052A4E]">{p.label}</div>
-                  {p.hint && <div className="text-xs text-zinc-500">{p.hint}</div>}
+                  <div className="text-sm font-semibold text-[#1D1D1F]">{p.label}</div>
+                  {p.hint && <div className="text-xs text-[#6E6E73]">{p.hint}</div>}
                 </button>
               );
             })}
           </div>
-          <p className="mt-3 text-xs text-zinc-500">
-            Settings below are for <strong className="text-[#052A4E]">{selectedProduct.label}</strong>.
+          <p className="mt-3 text-xs text-[#6E6E73]">
+            Settings below are for <strong className="text-[#1D1D1F]">{selectedProduct.label}</strong>.
             Lysoveta, Revervia and PL+ will get their own rules, design settings and slide library once
             they are onboarded — they will not inherit Superba&apos;s.
           </p>
         </section>
 
-        {/* ----- what the tool is ----- */}
-        <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
-          <h2 className="text-lg font-bold text-[#031B34]">What this tool is</h2>
-          <div className="mt-3 grid gap-4 text-sm text-zinc-600 sm:grid-cols-3">
-            <div>
-              <div className="font-semibold text-[#06456B]">1 · The AI plans</div>
-              <p className="mt-1">
-                Claude reads your sources (studies, uploads, approved findings) and writes a slide
-                plan: the storyline, a slide type per point, and the copy. Your rules below steer
-                that writing.
-              </p>
-            </div>
-            <div>
-              <div className="font-semibold text-[#06456B]">2 · Code draws</div>
-              <p className="mt-1">
-                A rendering program fills the real Superba PowerPoint template with that plan. Your
-                design settings below are enforced here, in code — fonts, sizes and spacing are
-                never left to the AI.
-              </p>
-            </div>
-            <div>
-              <div className="font-semibold text-[#06456B]">3 · You review</div>
-              <p className="mt-1">
-                Every generated asset carries an AI disclaimer and is a draft for human review. Claim
-                fidelity rules are built in and always win over anything configured on this page.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* ----- tabs — one section visible at a time ----- */}
+        <div className="mt-7 flex gap-1 rounded-2xl bg-[#EFEFF1] p-1">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActiveTab(t.id)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+                activeTab === t.id ? "bg-[#1D1D1F] text-white shadow-sm" : "text-[#6E6E73] hover:text-[#1D1D1F]"
+              }`}
+            >
+              <TabIcon id={t.id} />
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* ----- generation rules ----- */}
-        <section className="mt-8 rounded-[4px] border border-[#C2D9E3] bg-white p-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-lg font-bold text-[#031B34]">Writing rules & principles</h2>
-            <span className="text-xs text-zinc-500">
-              {rules.filter((r) => r.enabled).length} active · applied to every new PowerPoint deck
-            </span>
-          </div>
-          <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-            Standing instructions the AI follows on every deck, for everyone using the tool. Write
-            them like you would brief a colleague — content rules (&quot;Always end with open
-            research questions&quot;) or writing principles (&quot;At most two sentences per bullet
-            point&quot;, &quot;Action titles must state the number, not just the direction&quot;).
-            For fonts, sizes and spacing, use the Design settings below instead — those are enforced
-            in code, not asked of the AI.
-          </p>
+      <main className="mx-auto max-w-5xl px-4 pb-16 pt-5">
+        <div key={activeTab} className="aboutv2-pop">
+          {/* ============================================================ RULES ============================================================ */}
+          {activeTab === "rules" && (
+            <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-lg font-bold text-[#031B34]">Writing rules & principles</h2>
+                <span className="text-xs text-zinc-500">
+                  {rules.filter((r) => r.enabled).length} active · applied to every new PowerPoint deck
+                </span>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm text-zinc-600">
+                Standing instructions the AI follows on every deck, for everyone using the tool. Write
+                them like you would brief a colleague — content rules (&quot;Always end with open
+                research questions&quot;) or writing principles (&quot;At most two sentences per bullet
+                point&quot;, &quot;Action titles must state the number, not just the direction&quot;).
+                For fonts, sizes and spacing, use the Design settings below instead — those are enforced
+                in code, not asked of the AI.
+              </p>
 
-          {!canEdit ? (
-            <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
-              Rules live in the shared database and it is not ready yet
-              {rulesConfigured
-                ? ": run migration 0004_generation_rules_and_layouts.sql in the Supabase SQL editor."
-                : " (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set)."}
-            </p>
-          ) : (
-            <>
-              <ul className="mt-4 space-y-2">
-                {rules.length === 0 && (
-                  <li className="rounded-[4px] border border-dashed border-[#C2D9E3] p-4 text-sm text-zinc-500">
-                    No rules yet. The first one you add applies to the very next generation.
-                  </li>
-                )}
-                {rules.map((r) => (
-                  <li
-                    key={r.id}
-                    className={`flex items-start gap-3 rounded-[4px] border p-3 ${
-                      r.enabled ? "border-[#C2D9E3] bg-white" : "border-[#E3EDF2] bg-[#F7FAFC]"
-                    }`}
-                  >
+              {!canEdit ? (
+                <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
+                  Rules live in the shared database and it is not ready yet
+                  {rulesConfigured
+                    ? ": run migration 0004_generation_rules_and_layouts.sql in the Supabase SQL editor."
+                    : " (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set)."}
+                </p>
+              ) : (
+                <>
+                  <ul className="mt-4 space-y-2">
+                    {rules.length === 0 && (
+                      <li className="rounded-[4px] border border-dashed border-[#C2D9E3] p-4 text-sm text-zinc-500">
+                        No rules yet. The first one you add applies to the very next generation.
+                      </li>
+                    )}
+                    {rules.map((r) => (
+                      <li
+                        key={r.id}
+                        className={`flex items-start gap-3 rounded-[4px] border p-3 ${
+                          r.enabled ? "border-[#C2D9E3] bg-white" : "border-[#E3EDF2] bg-[#F7FAFC]"
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={r.enabled}
+                          title={r.enabled ? "On: applied to every generation" : "Off: kept but not applied"}
+                          onClick={() => void patchRule(r.id, { enabled: !r.enabled })}
+                          className={`mt-0.5 ${switchCls(r.enabled)}`}
+                        >
+                          <span className={knobCls(r.enabled)} />
+                        </button>
+
+                        {editingId === r.id ? (
+                          <div className="min-w-0 flex-1">
+                            <textarea
+                              value={editText}
+                              onChange={(e) => setEditText(e.target.value)}
+                              rows={2}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                            />
+                            <div className="mt-1 flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  void patchRule(r.id, { text: editText });
+                                  setEditingId(null);
+                                }}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingId(null)}
+                                className="rounded-[4px] px-3 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="min-w-0 flex-1">
+                            <p className={`text-sm ${r.enabled ? "text-[#031B34]" : "text-zinc-400"}`}>{r.text}</p>
+                            <p className="mt-1 text-[11px] text-zinc-400">
+                              {r.updated_by || r.created_by
+                                ? `By ${r.updated_by || r.created_by} · ${new Date(r.updated_at || r.created_at).toLocaleDateString()}`
+                                : new Date(r.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        )}
+
+                        {editingId !== r.id && (
+                          <div className="flex shrink-0 gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingId(r.id);
+                                setEditText(r.text);
+                              }}
+                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                            >
+                              ✎ Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void deleteRule(r.id)}
+                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-4 flex items-start gap-2">
+                    <textarea
+                      value={newRule}
+                      onChange={(e) => setNewRule(e.target.value)}
+                      rows={2}
+                      placeholder='Add a rule, e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
+                      className="flex-1 rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                    />
                     <button
                       type="button"
-                      role="switch"
-                      aria-checked={r.enabled}
-                      title={r.enabled ? "On: applied to every generation" : "Off: kept but not applied"}
-                      onClick={() => void patchRule(r.id, { enabled: !r.enabled })}
-                      className={`mt-0.5 ${switchCls(r.enabled)}`}
+                      onClick={() => void addRule()}
+                      disabled={!newRule.trim() || savingRule}
+                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                     >
-                      <span className={knobCls(r.enabled)} />
+                      {savingRule ? "Saving…" : "＋ Add rule"}
                     </button>
-
-                    {editingId === r.id ? (
-                      <div className="min-w-0 flex-1">
-                        <textarea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          rows={2}
-                          className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                        />
-                        <div className="mt-1 flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              void patchRule(r.id, { text: editText });
-                              setEditingId(null);
-                            }}
-                            className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setEditingId(null)}
-                            className="rounded-[4px] px-3 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-sm ${r.enabled ? "text-[#031B34]" : "text-zinc-400"}`}>{r.text}</p>
-                        <p className="mt-1 text-[11px] text-zinc-400">
-                          {r.updated_by || r.created_by
-                            ? `By ${r.updated_by || r.created_by} · ${new Date(r.updated_at || r.created_at).toLocaleDateString()}`
-                            : new Date(r.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-
-                    {editingId !== r.id && (
-                      <div className="flex shrink-0 gap-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingId(r.id);
-                            setEditText(r.text);
-                          }}
-                          className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                        >
-                          ✎ Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void deleteRule(r.id)}
-                          className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-4 flex items-start gap-2">
-                <textarea
-                  value={newRule}
-                  onChange={(e) => setNewRule(e.target.value)}
-                  rows={2}
-                  placeholder='Add a rule, e.g. "Bullet points are one sentence each, never two" or "Always include a krill oil vs fish oil comparison when the source allows it"'
-                  className="flex-1 rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                />
-                <button
-                  type="button"
-                  onClick={() => void addRule()}
-                  disabled={!newRule.trim() || savingRule}
-                  className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-                >
-                  {savingRule ? "Saving…" : "＋ Add rule"}
-                </button>
-              </div>
-            </>
+                  </div>
+                </>
+              )}
+              {ruleError && <p className="mt-2 text-sm text-red-700">{ruleError}</p>}
+            </section>
           )}
-          {ruleError && <p className="mt-2 text-sm text-red-700">{ruleError}</p>}
-        </section>
 
-        {/* ----- design settings ----- */}
-        <section className="mt-8 rounded-[4px] border border-[#C2D9E3] bg-white p-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-lg font-bold text-[#031B34]">Design settings</h2>
-            <span className="text-xs text-zinc-500">enforced in code on every generated deck</span>
-          </div>
-          <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-            These override the brand template deterministically — no AI involved. Leave a field
-            empty to keep the brand default (shown in grey). Fonts must be installed on the machines
-            that open the decks; the page margin and box gutter apply to the code drawn slide types.
-          </p>
+          {/* ============================================================ DESIGN ============================================================ */}
+          {activeTab === "design" && (
+            <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-lg font-bold text-[#031B34]">Design settings</h2>
+                <span className="text-xs text-zinc-500">enforced in code on every generated deck</span>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm text-zinc-600">
+                These override the brand template deterministically — no AI involved. Leave a field
+                empty to keep the brand default (shown in grey). Fonts must be installed on the machines
+                that open the decks; the page margin and box gutter apply to the code drawn slide types.
+              </p>
 
-          {!designMigrated ? (
-            <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
-              Design settings live in the shared database and it is not ready yet: run migration
-              0005_design_settings_and_custom_slides.sql in the Supabase SQL editor. Until then decks
-              use the brand defaults.
-            </p>
-          ) : (
-            <>
-              <datalist id="font-suggestions">
-                {FONT_SUGGESTIONS.map((f) => (
-                  <option key={f} value={f} />
-                ))}
-              </datalist>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <label className="block text-xs font-semibold text-[#06456B]">
-                  Title font
-                  <input
-                    list="font-suggestions"
-                    value={design.title_font ?? ""}
-                    placeholder="Exo 2 (brand)"
-                    onChange={(e) => setDesignField("title_font", e.target.value)}
-                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
-                  />
-                </label>
-                <label className="block text-xs font-semibold text-[#06456B]">
-                  Body font
-                  <input
-                    list="font-suggestions"
-                    value={design.body_font ?? ""}
-                    placeholder="Manrope (brand)"
-                    onChange={(e) => setDesignField("body_font", e.target.value)}
-                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
-                  />
-                </label>
-                {numField("Title size", "size_title", "18", 14, 40, 1, "pt")}
-                {numField("Body size", "size_body", "14", 9, 24, 1, "pt")}
-                {numField("Small text size", "size_small", "12", 8, 18, 1, "pt")}
-                {numField("Line spacing", "line_spacing", "1.06", 0.8, 2, 0.05)}
-                {numField("Page margin", "margin_in", "0.5", 0.2, 1.5, 0.05, "in")}
-                {numField("Box gutter", "gutter_in", "0.3", 0.1, 1, 0.05, "in")}
+              {/* ----- color themes — informational only; the AI alternates between these per slide
+                  for rhythm by default, or the Content Generator's "Color theme" picker can force
+                  every slide in a deck to one of them ----- */}
+              <div className="mt-4 rounded-[4px] border border-[#E3EDF2] bg-[#FBFBFD] p-4">
+                <div className="text-xs font-bold uppercase tracking-[0.08em] text-[#6E6E73]">Color themes</div>
+                <p className="mt-1 max-w-2xl text-xs text-zinc-500">
+                  By default a deck alternates between these backgrounds, slide by slide, for visual
+                  rhythm — the AI picks which one fits each slide. The Content Generator's &quot;Color
+                  theme&quot; setting can also force every slide in a deck to just one of them.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span
+                      className="h-6 w-6 shrink-0 rounded-[4px]"
+                      style={{ background: "linear-gradient(135deg, #163536, #003462)" }}
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">Blue Ocean</div>
+                      <div className="text-[10.5px] text-zinc-400">Dark theme &middot; deep-sea gradient</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#FFFFFF" }} />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">White</div>
+                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; plain white</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-[4px] border border-[#E3EDF2] bg-white px-3 py-2">
+                    <span className="h-6 w-6 shrink-0 rounded-[4px] border border-[#E3EDF2]" style={{ background: "#A9DBD5" }} />
+                    <div>
+                      <div className="text-xs font-bold text-[#031B34]">Pastel Blue</div>
+                      <div className="text-[10.5px] text-zinc-400">Light theme &middot; solid mint</div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-4 grid gap-4 border-t border-[#E3EDF2] pt-4 sm:grid-cols-2 lg:grid-cols-4">
-                <label className="block text-xs font-semibold text-[#06456B]">
-                  Footer text (every slide)
-                  <input
-                    value={design.footer_text ?? ""}
-                    placeholder='e.g. "Confidential, for internal use"'
-                    onChange={(e) => setDesignField("footer_text", e.target.value)}
-                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
-                  />
-                </label>
-                <div className="text-xs font-semibold text-[#06456B]">
-                  Footer extras
-                  <label className="mt-2 flex items-center gap-2 font-normal text-zinc-600">
+              {!designMigrated ? (
+                <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
+                  Design settings live in the shared database and it is not ready yet: run migration
+                  0005_design_settings_and_custom_slides.sql in the Supabase SQL editor. Until then decks
+                  use the brand defaults.
+                </p>
+              ) : (
+                <>
+                  <datalist id="font-suggestions">
+                    {FONT_SUGGESTIONS.map((f) => (
+                      <option key={f} value={f} />
+                    ))}
+                  </datalist>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <label className="block text-xs font-semibold text-[#06456B]">
+                      Title font
+                      <input
+                        list="font-suggestions"
+                        value={design.title_font ?? ""}
+                        placeholder="Exo 2 (brand)"
+                        onChange={(e) => setDesignField("title_font", e.target.value)}
+                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
+                      />
+                    </label>
+                    <label className="block text-xs font-semibold text-[#06456B]">
+                      Body font
+                      <input
+                        list="font-suggestions"
+                        value={design.body_font ?? ""}
+                        placeholder="Manrope (brand)"
+                        onChange={(e) => setDesignField("body_font", e.target.value)}
+                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
+                      />
+                    </label>
+                    {numField("Title size", "size_title", "18", 14, 40, 1, "pt")}
+                    {numField("Body size", "size_body", "14", 9, 24, 1, "pt")}
+                    {numField("Small text size", "size_small", "12", 8, 18, 1, "pt")}
+                    {numField("Line spacing", "line_spacing", "1.06", 0.8, 2, 0.05)}
+                    {numField("Page margin", "margin_in", "0.5", 0.2, 1.5, 0.05, "in")}
+                    {numField("Box gutter", "gutter_in", "0.3", 0.1, 1, 0.05, "in")}
+                  </div>
+
+                  <div className="mt-4 grid gap-4 border-t border-[#E3EDF2] pt-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <label className="block text-xs font-semibold text-[#06456B]">
+                      Footer text (every slide)
+                      <input
+                        value={design.footer_text ?? ""}
+                        placeholder='e.g. "Confidential, for internal use"'
+                        onChange={(e) => setDesignField("footer_text", e.target.value)}
+                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none focus:border-[#3FD0C9]"
+                      />
+                    </label>
+                    <div className="text-xs font-semibold text-[#06456B]">
+                      Footer extras
+                      <label className="mt-2 flex items-center gap-2 font-normal text-zinc-600">
+                        <input
+                          type="checkbox"
+                          checked={design.page_numbers !== false}
+                          onChange={(e) => {
+                            setDesign((d) => ({ ...d, page_numbers: e.target.checked ? undefined : false }));
+                            setDesignDirty(true);
+                            setDesignSavedTick(false);
+                          }}
+                        />
+                        Page numbers
+                      </label>
+                      <label className="mt-1 flex items-center gap-2 font-normal text-zinc-600">
+                        <input
+                          type="checkbox"
+                          checked={design.date_stamp === true}
+                          onChange={(e) => {
+                            setDesign((d) => ({ ...d, date_stamp: e.target.checked ? true : undefined }));
+                            setDesignDirty(true);
+                            setDesignSavedTick(false);
+                          }}
+                        />
+                        Date of generation
+                      </label>
+                    </div>
+                    <label className="block text-xs font-semibold text-[#06456B]">
+                      Photos in decks
+                      <select
+                        value={design.photo_level || "default"}
+                        onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
+                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                      >
+                        <option value="less">Fewer photos</option>
+                        <option value="default">Standard</option>
+                        <option value="more">More photos</option>
+                      </select>
+                    </label>
+                    <label className="block text-xs font-semibold text-[#06456B]">
+                      Icons in decks
+                      <select
+                        value={design.icon_level || "default"}
+                        onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
+                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                      >
+                        <option value="none">No icons</option>
+                        <option value="less">Fewer icons</option>
+                        <option value="default">Standard</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void saveDesign()}
+                      disabled={!designDirty || designSaving}
+                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                    >
+                      {designSaving ? "Saving…" : "Save design settings"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void previewDesign()}
+                      disabled={previewBusy}
+                      className="rounded-[4px] border border-[#031B34] px-4 py-2 text-sm font-semibold text-[#031B34] disabled:opacity-40"
+                    >
+                      {previewBusy ? "Rendering preview…" : "Preview sample slides"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDesign({});
+                        void saveDesign({});
+                      }}
+                      disabled={designSaving}
+                      className="rounded-[4px] px-3 py-2 text-sm font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                    >
+                      Reset to brand defaults
+                    </button>
+                    {designSavedTick && !designDirty && (
+                      <span className="text-xs font-semibold text-emerald-700">Saved — applies to the next generation.</span>
+                    )}
+                    {designMeta.by && !designDirty && !designSavedTick && (
+                      <span className="text-[11px] text-zinc-400">
+                        Last changed by {designMeta.by}
+                        {designMeta.at ? ` · ${new Date(designMeta.at).toLocaleDateString()}` : ""}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+              {designError && <p className="mt-2 text-sm text-red-700">{designError}</p>}
+              {previewError && <p className="mt-2 text-sm text-red-700">{previewError}</p>}
+              {previewImgs && (
+                <div className="mt-4">
+                  <p className="text-xs text-zinc-500">
+                    Sample slides rendered with the settings above (fixed example content — your decks
+                    keep their own content):
+                  </p>
+                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                    {previewImgs.map((b64, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={i}
+                        src={`data:image/jpeg;base64,${b64}`}
+                        alt={`Design preview slide ${i + 1}`}
+                        className="w-full rounded-[4px] border border-[#C2D9E3]"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ============================================================ SLIDES ============================================================ */}
+          {activeTab === "slides" && (
+            <section>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-lg font-bold text-[#031B34]">Slide library</h2>
+                <span className="text-xs text-zinc-500">
+                  {(gallery as GalleryEntry[]).length + customSlides.length} slides · {offCount} turned off
+                </span>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm text-zinc-600">
+                Every slide the tool can put in a deck, with real example renders. Turn a slide type off
+                and the AI can no longer pick it; turn it back on any time. Add your own finished slides
+                from a PowerPoint file — they are inserted exactly as designed, either where the AI
+                judges they fit or in every deck. Cover and Agenda are required and stay on. Want to
+                change how one looks? Use <span className="font-semibold">⬇ Download to edit</span> on any
+                card to get a real, editable PowerPoint file — edit it, then upload it back through
+                &ldquo;Add your own slides&rdquo; below to save your own version.
+              </p>
+
+              {!layoutsMigrated && (
+                <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
+                  The on/off switches live in the shared database and it is not ready yet: run migration
+                  0004_generation_rules_and_layouts.sql in the Supabase SQL editor. Until then every
+                  slide type stays on.
+                </p>
+              )}
+              {layoutError && <p className="mt-2 text-sm text-red-700">{layoutError}</p>}
+              {customError && <p className="mt-2 text-sm text-red-700">{customError}</p>}
+
+              {/* upload flow */}
+              <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div className="text-sm font-bold text-[#031B34]">Add your own slides</div>
+                    <p className="text-xs text-zinc-500">
+                      Upload a .pptx, pick the slides you want, give each a name and a line
+                      on when to use it.
+                    </p>
+                  </div>
+                  <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
+                    {uploadBusy ? "Rendering previews…" : "＋ Upload PowerPoint"}
                     <input
-                      type="checkbox"
-                      checked={design.page_numbers !== false}
+                      ref={fileInput}
+                      type="file"
+                      accept=".pptx"
+                      className="hidden"
+                      disabled={uploadBusy || !slidesMigrated}
                       onChange={(e) => {
-                        setDesign((d) => ({ ...d, page_numbers: e.target.checked ? undefined : false }));
-                        setDesignDirty(true);
-                        setDesignSavedTick(false);
+                        const f = e.target.files?.[0];
+                        if (f) void inspectUpload(f);
                       }}
                     />
-                    Page numbers
-                  </label>
-                  <label className="mt-1 flex items-center gap-2 font-normal text-zinc-600">
-                    <input
-                      type="checkbox"
-                      checked={design.date_stamp === true}
-                      onChange={(e) => {
-                        setDesign((d) => ({ ...d, date_stamp: e.target.checked ? true : undefined }));
-                        setDesignDirty(true);
-                        setDesignSavedTick(false);
-                      }}
-                    />
-                    Date of generation
                   </label>
                 </div>
-                <label className="block text-xs font-semibold text-[#06456B]">
-                  Photos in decks
-                  <select
-                    value={design.photo_level || "default"}
-                    onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
-                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
-                  >
-                    <option value="less">Fewer photos</option>
-                    <option value="default">Standard</option>
-                    <option value="more">More photos</option>
-                  </select>
-                </label>
-                <label className="block text-xs font-semibold text-[#06456B]">
-                  Icons in decks
-                  <select
-                    value={design.icon_level || "default"}
-                    onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
-                    className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
-                  >
-                    <option value="none">No icons</option>
-                    <option value="less">Fewer icons</option>
-                    <option value="default">Standard</option>
-                  </select>
-                </label>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => void saveDesign()}
-                  disabled={!designDirty || designSaving}
-                  className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-                >
-                  {designSaving ? "Saving…" : "Save design settings"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void previewDesign()}
-                  disabled={previewBusy}
-                  className="rounded-[4px] border border-[#031B34] px-4 py-2 text-sm font-semibold text-[#031B34] disabled:opacity-40"
-                >
-                  {previewBusy ? "Rendering preview…" : "Preview sample slides"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDesign({});
-                    void saveDesign({});
-                  }}
-                  disabled={designSaving}
-                  className="rounded-[4px] px-3 py-2 text-sm font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                >
-                  Reset to brand defaults
-                </button>
-                {designSavedTick && !designDirty && (
-                  <span className="text-xs font-semibold text-emerald-700">Saved — applies to the next generation.</span>
+                {!slidesMigrated && (
+                  <p className="mt-3 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-3 text-xs text-zinc-500">
+                    Your slides live in the shared database and it is not ready yet: run migration
+                    0005_design_settings_and_custom_slides.sql in the Supabase SQL editor.
+                  </p>
                 )}
-                {designMeta.by && !designDirty && !designSavedTick && (
-                  <span className="text-[11px] text-zinc-400">
-                    Last changed by {designMeta.by}
-                    {designMeta.at ? ` · ${new Date(designMeta.at).toLocaleDateString()}` : ""}
-                  </span>
+                {uploadError && <p className="mt-2 text-sm text-red-700">{uploadError}</p>}
+                {uploadBusy && (
+                  <p className="mt-3 text-sm text-zinc-500">
+                    Rendering slide previews — this can take up to half a minute for a big file…
+                  </p>
                 )}
-              </div>
-            </>
-          )}
-          {designError && <p className="mt-2 text-sm text-red-700">{designError}</p>}
-          {previewError && <p className="mt-2 text-sm text-red-700">{previewError}</p>}
-          {previewImgs && (
-            <div className="mt-4">
-              <p className="text-xs text-zinc-500">
-                Sample slides rendered with the settings above (fixed example content — your decks
-                keep their own content):
-              </p>
-              <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                {previewImgs.map((b64, i) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={i}
-                    src={`data:image/jpeg;base64,${b64}`}
-                    alt={`Design preview slide ${i + 1}`}
-                    className="w-full rounded-[4px] border border-[#C2D9E3]"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
 
-        {/* ----- slide library ----- */}
-        <section className="mt-8">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-lg font-bold text-[#031B34]">Slide library</h2>
-            <span className="text-xs text-zinc-500">
-              {(gallery as GalleryEntry[]).length + customSlides.length} slides · {offCount} turned off
-            </span>
-          </div>
-          <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-            Every slide the tool can put in a deck, with real example renders. Turn a slide type off
-            and the AI can no longer pick it; turn it back on any time. Add your own finished slides
-            from a PowerPoint file — they are inserted exactly as designed, either where the AI
-            judges they fit or in every deck. Cover and Agenda are required and stay on. Want to
-            change how one looks? Use <span className="font-semibold">⬇ Download to edit</span> on any
-            card to get a real, editable PowerPoint file — edit it, then upload it back through
-            &ldquo;Add your own slides&rdquo; below to save your own version.
-          </p>
-
-          {!layoutsMigrated && (
-            <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
-              The on/off switches live in the shared database and it is not ready yet: run migration
-              0004_generation_rules_and_layouts.sql in the Supabase SQL editor. Until then every
-              slide type stays on.
-            </p>
-          )}
-          {layoutError && <p className="mt-2 text-sm text-red-700">{layoutError}</p>}
-          {customError && <p className="mt-2 text-sm text-red-700">{customError}</p>}
-
-          {/* upload flow */}
-          <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <div className="text-sm font-bold text-[#031B34]">Add your own slides</div>
-                <p className="text-xs text-zinc-500">
-                  Upload a .pptx, pick the slides you want, give each a name and a line
-                  on when to use it.
-                </p>
-              </div>
-              <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
-                {uploadBusy ? "Rendering previews…" : "＋ Upload PowerPoint"}
-                <input
-                  ref={fileInput}
-                  type="file"
-                  accept=".pptx"
-                  className="hidden"
-                  disabled={uploadBusy || !slidesMigrated}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) void inspectUpload(f);
-                  }}
-                />
-              </label>
-            </div>
-            {!slidesMigrated && (
-              <p className="mt-3 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-3 text-xs text-zinc-500">
-                Your slides live in the shared database and it is not ready yet: run migration
-                0005_design_settings_and_custom_slides.sql in the Supabase SQL editor.
-              </p>
-            )}
-            {uploadError && <p className="mt-2 text-sm text-red-700">{uploadError}</p>}
-            {uploadBusy && (
-              <p className="mt-3 text-sm text-zinc-500">
-                Rendering slide previews — this can take up to half a minute for a big file…
-              </p>
-            )}
-
-            {picks && (
-              <div className="mt-4">
-                <p className="text-xs text-zinc-500">
-                  Tick the slides to add from <span className="font-semibold">{uploadFile?.name}</span>:
-                </p>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {picks.map((p, i) => (
-                    <div
-                      key={p.index}
-                      className={`overflow-hidden rounded-[4px] border ${p.picked ? "border-[#3FD0C9]" : "border-[#E3EDF2]"}`}
-                    >
+                {picks && (
+                  <div className="mt-4">
+                    <p className="text-xs text-zinc-500">
+                      Tick the slides to add from <span className="font-semibold">{uploadFile?.name}</span>:
+                    </p>
+                    <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {picks.map((p, i) => (
+                        <div
+                          key={p.index}
+                          className={`overflow-hidden rounded-[4px] border ${p.picked ? "border-[#3FD0C9]" : "border-[#E3EDF2]"}`}
+                        >
+                          <button
+                            type="button"
+                            className="relative block w-full"
+                            onClick={() =>
+                              setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, picked: !x.picked } : x)))
+                            }
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={`data:image/jpeg;base64,${p.preview_b64}`}
+                              alt={`Slide ${p.index + 1}`}
+                              className="aspect-video w-full object-cover"
+                            />
+                            <span
+                              className={`absolute left-2 top-2 flex h-5 w-5 items-center justify-center rounded-[3px] border text-xs font-bold ${
+                                p.picked ? "border-[#3FD0C9] bg-[#3FD0C9] text-[#031B34]" : "border-zinc-300 bg-white text-transparent"
+                              }`}
+                            >
+                              ✓
+                            </span>
+                          </button>
+                          {p.picked && (
+                            <div className="space-y-2 border-t border-[#E3EDF2] p-2">
+                              <input
+                                value={p.name}
+                                placeholder="Short name (required)"
+                                onChange={(e) =>
+                                  setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))
+                                }
+                                className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                              />
+                              <input
+                                value={p.description}
+                                placeholder="When should the AI use it? e.g. 'Company overview for intros'"
+                                onChange={(e) =>
+                                  setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, description: e.target.value } : x)))
+                                }
+                                className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                              />
+                              <select
+                                value={p.mode}
+                                onChange={(e) =>
+                                  setPicks((ps) =>
+                                    ps!.map((x, j) => (j === i ? { ...x, mode: e.target.value as "auto" | "always" } : x))
+                                  )
+                                }
+                                className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
+                              >
+                                <option value="auto">AI decides when it fits</option>
+                                <option value="always">In every deck</option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex gap-2">
                       <button
                         type="button"
-                        className="relative block w-full"
-                        onClick={() =>
-                          setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, picked: !x.picked } : x)))
-                        }
+                        onClick={() => void savePicks()}
+                        disabled={savingPicks || !picks.some((p) => p.picked)}
+                        className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`data:image/jpeg;base64,${p.preview_b64}`}
-                          alt={`Slide ${p.index + 1}`}
-                          className="aspect-video w-full object-cover"
-                        />
-                        <span
-                          className={`absolute left-2 top-2 flex h-5 w-5 items-center justify-center rounded-[3px] border text-xs font-bold ${
-                            p.picked ? "border-[#3FD0C9] bg-[#3FD0C9] text-[#031B34]" : "border-zinc-300 bg-white text-transparent"
-                          }`}
-                        >
-                          ✓
-                        </span>
+                        {savingPicks
+                          ? "Adding…"
+                          : `Add ${picks.filter((p) => p.picked).length || ""} slide${picks.filter((p) => p.picked).length === 1 ? "" : "s"}`}
                       </button>
-                      {p.picked && (
-                        <div className="space-y-2 border-t border-[#E3EDF2] p-2">
-                          <input
-                            value={p.name}
-                            placeholder="Short name (required)"
-                            onChange={(e) =>
-                              setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))
-                            }
-                            className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
-                          />
-                          <input
-                            value={p.description}
-                            placeholder="When should the AI use it? e.g. 'Company overview for intros'"
-                            onChange={(e) =>
-                              setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, description: e.target.value } : x)))
-                            }
-                            className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
-                          />
-                          <select
-                            value={p.mode}
-                            onChange={(e) =>
-                              setPicks((ps) =>
-                                ps!.map((x, j) => (j === i ? { ...x, mode: e.target.value as "auto" | "always" } : x))
-                              )
-                            }
-                            className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
-                          >
-                            <option value="auto">AI decides when it fits</option>
-                            <option value="always">In every deck</option>
-                          </select>
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void discardUploadedFile();
+                          setPicks(null);
+                          setUploadFile(null);
+                          if (fileInput.current) fileInput.current.value = "";
+                        }}
+                        className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zinc-500 hover:bg-zinc-100"
+                      >
+                        Cancel
+                      </button>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-3 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void savePicks()}
-                    disabled={savingPicks || !picks.some((p) => p.picked)}
-                    className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-                  >
-                    {savingPicks
-                      ? "Adding…"
-                      : `Add ${picks.filter((p) => p.picked).length || ""} slide${picks.filter((p) => p.picked).length === 1 ? "" : "s"}`}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void discardUploadedFile();
-                      setPicks(null);
-                      setUploadFile(null);
-                      if (fileInput.current) fileInput.current.value = "";
-                    }}
-                    className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zinc-500 hover:bg-zinc-100"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* filters */}
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {(
-              [
-                ["all", "All"],
-                ["on", "In use"],
-                ["off", `Turned off (${offCount})`],
-                ["favourites", `Favourites (${preferred.size})`],
-                ["mine", `Your slides (${customSlides.length})`],
-              ] as const
-            ).map(([k, label]) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setFilter(k)}
-                className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                  filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-3 flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => void downloadAllStandardLayouts()}
-              disabled={exportingAll}
-              title="Download all 42 standard slides as one PowerPoint file to edit several at once"
-              className="rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-            >
-              {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
-            </button>
-          </div>
-
-          {/* the grid: custom slides first, then built-ins */}
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {shownCustom.map((c) => (
-              <div
-                key={c.id}
-                className={`overflow-hidden rounded-[4px] border bg-white ${
-                  c.mode === "off" ? "border-[#E3EDF2] opacity-60" : "border-[#3FD0C9]"
-                }`}
-              >
-                {c.preview_b64 ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={`data:image/jpeg;base64,${c.preview_b64}`}
-                    alt={c.name}
-                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex aspect-video w-full items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
-                    No preview
                   </div>
                 )}
-                <div className="p-3">
-                  {editingSlide === c.id ? (
-                    <div className="space-y-2">
-                      <input
-                        value={slideName}
-                        onChange={(e) => setSlideName(e.target.value)}
-                        className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+              </div>
+
+              {/* filters */}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {(
+                    [
+                      ["all", "All"],
+                      ["on", "In use"],
+                      ["off", `Turned off (${offCount})`],
+                      ["favourites", `Favourites (${preferred.size})`],
+                      ["mine", `Your slides (${customSlides.length})`],
+                    ] as const
+                  ).map(([k, label]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setFilter(k)}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
+                  {(
+                    [
+                      ["dark", "Blue Ocean"],
+                      ["light", "White"],
+                      ["pastel", "Pastel Blue"],
+                    ] as const
+                  ).map(([k, label]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setGalleryTheme(k)}
+                      title={`Preview slides in the ${label} color theme`}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                        galleryTheme === k ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => void downloadAllStandardLayouts()}
+                  disabled={exportingAll}
+                  title="Download all 42 standard slides as one PowerPoint file to edit several at once"
+                  className="rounded-[4px] border border-[#C2D9E3] bg-white px-3 py-1.5 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                >
+                  {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
+                </button>
+              </div>
+
+              {/* the grid: custom slides first, then built-ins */}
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {shownCustom.map((c) => (
+                  <div
+                    key={c.id}
+                    className={`overflow-hidden rounded-[4px] border bg-white ${
+                      c.mode === "off" ? "border-[#E3EDF2] opacity-60" : "border-[#3FD0C9]"
+                    }`}
+                  >
+                    {c.preview_b64 ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`data:image/jpeg;base64,${c.preview_b64}`}
+                        alt={c.name}
+                        className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                        loading="lazy"
                       />
+                    ) : (
+                      <div className="flex aspect-video w-full items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
+                        No preview
+                      </div>
+                    )}
+                    <div className="p-3">
+                      {editingSlide === c.id ? (
+                        <div className="space-y-2">
+                          <input
+                            value={slideName}
+                            onChange={(e) => setSlideName(e.target.value)}
+                            className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                          />
+                          <input
+                            value={slideDesc}
+                            placeholder="When should the AI use it?"
+                            onChange={(e) => setSlideDesc(e.target.value)}
+                            className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                void patchSlide(c.id, { name: slideName, description: slideDesc });
+                                setEditingSlide(null);
+                              }}
+                              className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingSlide(null)}
+                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                              <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your slide</div>
+                            </div>
+                          </div>
+                          {c.description && <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
+                          <div className="mt-2 flex items-center gap-1.5">
+                            <select
+                              value={c.mode}
+                              onChange={(e) => void patchSlide(c.id, { mode: e.target.value })}
+                              title="How this slide is used"
+                              className="min-w-0 flex-1 rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
+                            >
+                              {(Object.keys(MODE_LABEL) as CustomSlide["mode"][]).map((m) => (
+                                <option key={m} value={m}>
+                                  {MODE_LABEL[m]}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingSlide(c.id);
+                                setSlideName(c.name);
+                                setSlideDesc(c.description);
+                              }}
+                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                            >
+                              ✎
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void deleteSlide(c.id)}
+                              className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => void downloadCustomSlide(c.id, c.name)}
+                              disabled={exportingSlide === c.id}
+                              title="Download this slide as an editable PowerPoint file"
+                              className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                            >
+                              {exportingSlide === c.id ? "Downloading…" : "⬇ Download to edit"}
+                            </button>
+                            <label
+                              title="Replace this slide with an edited PowerPoint file"
+                              className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
+                                replacingSlide === c.id ? "opacity-40" : "cursor-pointer"
+                              }`}
+                            >
+                              {replacingSlide === c.id ? "Replacing…" : "↻ Replace with edited file"}
+                              <input
+                                type="file"
+                                accept=".pptx"
+                                className="hidden"
+                                disabled={replacingSlide === c.id}
+                                onChange={(e) => {
+                                  const f = e.target.files?.[0];
+                                  if (f) void replaceCustomSlide(c.id, f);
+                                  e.target.value = "";
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {entries.map((g) => {
+                  const off = disabled.has(g.key);
+                  const locked = LOCKED.has(g.key) || g.kind === "verbatim";
+                  return (
+                    <div
+                      key={g.key}
+                      className={`overflow-hidden rounded-[4px] border bg-white ${
+                        off ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`}
+                        alt={`Example of the ${pretty(g.key)} slide in ${GALLERY_THEME_LABEL[galleryTheme]}`}
+                        className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                        loading="lazy"
+                      />
+                      <div className="p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{pretty(g.key)}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">
+                              {g.kind === "verbatim"
+                                ? "Fixed brand slide"
+                                : LOCKED.has(g.key)
+                                  ? "Always on"
+                                  : "Standard slide"}
+                            </div>
+                          </div>
+                          {!locked && (
+                            <div className="flex shrink-0 items-center gap-1.5">
+                              {!off && starsMigrated && (
+                                <button
+                                  type="button"
+                                  onClick={() => void toggleStar(g.key, !preferred.has(g.key))}
+                                  title={
+                                    preferred.has(g.key)
+                                      ? "House favourite: the AI prefers this when several layouts fit"
+                                      : "Star as a house favourite"
+                                  }
+                                  className={`text-lg leading-none ${
+                                    preferred.has(g.key) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                  }`}
+                                >
+                                  {preferred.has(g.key) ? "★" : "☆"}
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={!off}
+                                disabled={!layoutsMigrated}
+                                title={off ? "Off: the AI cannot pick this slide type" : "On: available to the AI"}
+                                onClick={() => void toggleLayout(g.key, off)}
+                                className={switchCls(!off)}
+                              >
+                                <span className={knobCls(!off)} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <p
+                          className={`mt-2 cursor-pointer text-xs text-zinc-500 ${expanded === g.key ? "" : "line-clamp-2"}`}
+                          onClick={() => setExpanded(expanded === g.key ? null : g.key)}
+                          title={expanded === g.key ? "Click to collapse" : "Click to read the full guidance"}
+                        >
+                          {cleanUsage(g.usage)}
+                        </p>
+                        {g.kind !== "verbatim" && (
+                          <button
+                            type="button"
+                            onClick={() => void downloadStandardLayout(g.key)}
+                            disabled={exportingLayout === g.key}
+                            title="Download this slide as an editable PowerPoint file — edit it, then upload it above to save your own version"
+                            className="mt-2 rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                          >
+                            {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* ============================================================ PHOTOS ============================================================ */}
+          {activeTab === "photos" && (
+            <section>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
+                <span className="text-xs text-zinc-500">
+                  {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team ·{" "}
+                  {photoOffCount} turned off
+                </span>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm text-zinc-600">
+                The photos the AI can place on slides. Turn a photo off and the AI can no longer pick
+                it; star one as a house favourite and the AI prefers it when several photos fit
+                equally well. Add your own brand photos with a short description — the description is
+                how the AI decides when to use a photo, so write it like a caption (&quot;Athlete
+                stretching outdoors, for sports performance slides&quot;). Images are downscaled
+                automatically before saving.
+              </p>
+              {!photoSettingsMigrated && (
+                <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
+                  The built-in photo on/off switches and stars live in the shared database and it is
+                  not ready yet: run migration 0007_photo_settings.sql in the Supabase SQL editor.
+                  Until then every built-in photo stays on.
+                </p>
+              )}
+              {photoError && <p className="mt-2 text-sm text-red-700">{photoError}</p>}
+
+              <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div className="text-sm font-bold text-[#031B34]">Add a photo</div>
+                    <p className="text-xs text-zinc-500">JPG or PNG; name + description required.</p>
+                  </div>
+                  <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
+                    ＋ Upload photo
+                    <input
+                      ref={photoInput}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={!photosMigrated}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) void pickPhoto(f);
+                      }}
+                    />
+                  </label>
+                </div>
+                {!photosMigrated && (
+                  <p className="mt-3 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-3 text-xs text-zinc-500">
+                    Team photos live in the shared database and it is not ready yet: run migration
+                    0006_custom_photos_and_preferred_layouts.sql in the Supabase SQL editor.
+                  </p>
+                )}
+                {photoDraft && (
+                  <div className="mt-4 flex flex-wrap items-start gap-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`data:image/jpeg;base64,${photoDraft.thumb_b64}`}
+                      alt="New photo"
+                      className="w-56 rounded-[4px] border border-[#C2D9E3]"
+                    />
+                    <div className="min-w-64 flex-1 space-y-2">
                       <input
-                        value={slideDesc}
-                        placeholder="When should the AI use it?"
-                        onChange={(e) => setSlideDesc(e.target.value)}
-                        className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                        value={photoDraft.name}
+                        placeholder="Short name (required)"
+                        onChange={(e) => setPhotoDraft((d) => d && { ...d, name: e.target.value })}
+                        className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
+                      />
+                      <textarea
+                        value={photoDraft.description}
+                        rows={2}
+                        placeholder='When should the AI use it? e.g. "Runner at sunrise, for sports performance and recovery slides" (required)'
+                        onChange={(e) => setPhotoDraft((d) => d && { ...d, description: e.target.value })}
+                        className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
                       />
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          onClick={() => {
-                            void patchSlide(c.id, { name: slideName, description: slideDesc });
-                            setEditingSlide(null);
-                          }}
-                          className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                          onClick={() => void savePhoto()}
+                          disabled={photoSaving || !photoDraft.name.trim() || !photoDraft.description.trim()}
+                          className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
                         >
-                          Save
+                          {photoSaving ? "Saving…" : "Add photo"}
                         </button>
                         <button
                           type="button"
-                          onClick={() => setEditingSlide(null)}
-                          className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                          onClick={() => {
+                            setPhotoDraft(null);
+                            if (photoInput.current) photoInput.current.value = "";
+                          }}
+                          className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zinc-500 hover:bg-zinc-100"
                         >
                           Cancel
                         </button>
                       </div>
                     </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
-                          <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your slide</div>
-                        </div>
-                      </div>
-                      {c.description && <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
-                      <div className="mt-2 flex items-center gap-1.5">
-                        <select
-                          value={c.mode}
-                          onChange={(e) => void patchSlide(c.id, { mode: e.target.value })}
-                          title="How this slide is used"
-                          className="min-w-0 flex-1 rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
-                        >
-                          {(Object.keys(MODE_LABEL) as CustomSlide["mode"][]).map((m) => (
-                            <option key={m} value={m}>
-                              {MODE_LABEL[m]}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingSlide(c.id);
-                            setSlideName(c.name);
-                            setSlideDesc(c.description);
-                          }}
-                          className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                        >
-                          ✎
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void deleteSlide(c.id)}
-                          className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => void downloadCustomSlide(c.id, c.name)}
-                          disabled={exportingSlide === c.id}
-                          title="Download this slide as an editable PowerPoint file"
-                          className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-                        >
-                          {exportingSlide === c.id ? "Downloading…" : "⬇ Download to edit"}
-                        </button>
-                        <label
-                          title="Replace this slide with an edited PowerPoint file"
-                          className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
-                            replacingSlide === c.id ? "opacity-40" : "cursor-pointer"
-                          }`}
-                        >
-                          {replacingSlide === c.id ? "Replacing…" : "↻ Replace with edited file"}
-                          <input
-                            type="file"
-                            accept=".pptx"
-                            className="hidden"
-                            disabled={replacingSlide === c.id}
-                            onChange={(e) => {
-                              const f = e.target.files?.[0];
-                              if (f) void replaceCustomSlide(c.id, f);
-                              e.target.value = "";
-                            }}
-                          />
-                        </label>
-                      </div>
-                    </>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            ))}
 
-            {entries.map((g) => {
-              const off = disabled.has(g.key);
-              const locked = LOCKED.has(g.key) || g.kind === "verbatim";
-              return (
-                <div
-                  key={g.key}
-                  className={`overflow-hidden rounded-[4px] border bg-white ${
-                    off ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/layout-gallery/${g.key}.png`}
-                    alt={`Example of the ${pretty(g.key)} slide`}
-                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
-                    loading="lazy"
-                  />
-                  <div className="p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-bold text-[#031B34]">{pretty(g.key)}</div>
-                        <div className="text-[11px] uppercase tracking-wide text-zinc-400">
-                          {g.kind === "verbatim"
-                            ? "Fixed brand slide"
-                            : LOCKED.has(g.key)
-                              ? "Always on"
-                              : "Standard slide"}
-                        </div>
-                      </div>
-                      {!locked && (
-                        <div className="flex shrink-0 items-center gap-1.5">
-                          {!off && starsMigrated && (
-                            <button
-                              type="button"
-                              onClick={() => void toggleStar(g.key, !preferred.has(g.key))}
-                              title={
-                                preferred.has(g.key)
-                                  ? "House favourite: the AI prefers this when several layouts fit"
-                                  : "Star as a house favourite"
-                              }
-                              className={`text-lg leading-none ${
-                                preferred.has(g.key) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
-                              }`}
-                            >
-                              {preferred.has(g.key) ? "★" : "☆"}
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            role="switch"
-                            aria-checked={!off}
-                            disabled={!layoutsMigrated}
-                            title={off ? "Off: the AI cannot pick this slide type" : "On: available to the AI"}
-                            onClick={() => void toggleLayout(g.key, off)}
-                            className={switchCls(!off)}
-                          >
-                            <span className={knobCls(!off)} />
-                          </button>
+              {/* filters */}
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ["all", "All"],
+                    ["on", "In use"],
+                    ["off", `Turned off (${photoOffCount})`],
+                    ["favourites", `Favourites (${photoFavCount})`],
+                    ["mine", `Your photos (${customPhotos.length})`],
+                  ] as const
+                ).map(([k, label]) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => setPhotoFilter(k)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                      photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* team photos first, then the built-in library */}
+              <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {shownCustomPhotos.map((p) => (
+                    <div
+                      key={p.id}
+                      className={`overflow-hidden rounded-[4px] border bg-white ${
+                        p.enabled ? "border-[#3FD0C9]" : "border-[#E3EDF2] opacity-60"
+                      }`}
+                    >
+                      {p.thumb_b64 ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={`data:image/jpeg;base64,${p.thumb_b64}`}
+                          alt={p.name}
+                          className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex aspect-video items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
+                          No preview
                         </div>
                       )}
-                    </div>
-                    <p
-                      className={`mt-2 cursor-pointer text-xs text-zinc-500 ${expanded === g.key ? "" : "line-clamp-2"}`}
-                      onClick={() => setExpanded(expanded === g.key ? null : g.key)}
-                      title={expanded === g.key ? "Click to collapse" : "Click to read the full guidance"}
-                    >
-                      {cleanUsage(g.usage)}
-                    </p>
-                    {g.kind !== "verbatim" && (
-                      <button
-                        type="button"
-                        onClick={() => void downloadStandardLayout(g.key)}
-                        disabled={exportingLayout === g.key}
-                        title="Download this slide as an editable PowerPoint file — edit it, then upload it above to save your own version"
-                        className="mt-2 rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-                      >
-                        {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ----- photo library ----- */}
-        <section className="mt-8">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
-            <span className="text-xs text-zinc-500">
-              {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team ·{" "}
-              {photoOffCount} turned off
-            </span>
-          </div>
-          <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-            The photos the AI can place on slides. Turn a photo off and the AI can no longer pick
-            it; star one as a house favourite and the AI prefers it when several photos fit
-            equally well. Add your own brand photos with a short description — the description is
-            how the AI decides when to use a photo, so write it like a caption (&quot;Athlete
-            stretching outdoors, for sports performance slides&quot;). Images are downscaled
-            automatically before saving.
-          </p>
-          {!photoSettingsMigrated && (
-            <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
-              The built-in photo on/off switches and stars live in the shared database and it is
-              not ready yet: run migration 0007_photo_settings.sql in the Supabase SQL editor.
-              Until then every built-in photo stays on.
-            </p>
-          )}
-          {photoError && <p className="mt-2 text-sm text-red-700">{photoError}</p>}
-
-          <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <div className="text-sm font-bold text-[#031B34]">Add a photo</div>
-                <p className="text-xs text-zinc-500">JPG or PNG; name + description required.</p>
-              </div>
-              <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
-                ＋ Upload photo
-                <input
-                  ref={photoInput}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  disabled={!photosMigrated}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) void pickPhoto(f);
-                  }}
-                />
-              </label>
-            </div>
-            {!photosMigrated && (
-              <p className="mt-3 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-3 text-xs text-zinc-500">
-                Team photos live in the shared database and it is not ready yet: run migration
-                0006_custom_photos_and_preferred_layouts.sql in the Supabase SQL editor.
-              </p>
-            )}
-            {photoDraft && (
-              <div className="mt-4 flex flex-wrap items-start gap-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`data:image/jpeg;base64,${photoDraft.thumb_b64}`}
-                  alt="New photo"
-                  className="w-56 rounded-[4px] border border-[#C2D9E3]"
-                />
-                <div className="min-w-64 flex-1 space-y-2">
-                  <input
-                    value={photoDraft.name}
-                    placeholder="Short name (required)"
-                    onChange={(e) => setPhotoDraft((d) => d && { ...d, name: e.target.value })}
-                    className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                  />
-                  <textarea
-                    value={photoDraft.description}
-                    rows={2}
-                    placeholder='When should the AI use it? e.g. "Runner at sunrise, for sports performance and recovery slides" (required)'
-                    onChange={(e) => setPhotoDraft((d) => d && { ...d, description: e.target.value })}
-                    className="w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm outline-none focus:border-[#3FD0C9]"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => void savePhoto()}
-                      disabled={photoSaving || !photoDraft.name.trim() || !photoDraft.description.trim()}
-                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-                    >
-                      {photoSaving ? "Saving…" : "Add photo"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPhotoDraft(null);
-                        if (photoInput.current) photoInput.current.value = "";
-                      }}
-                      className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zinc-500 hover:bg-zinc-100"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* filters */}
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {(
-              [
-                ["all", "All"],
-                ["on", "In use"],
-                ["off", `Turned off (${photoOffCount})`],
-                ["favourites", `Favourites (${photoFavCount})`],
-                ["mine", `Your photos (${customPhotos.length})`],
-              ] as const
-            ).map(([k, label]) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setPhotoFilter(k)}
-                className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                  photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* team photos first, then the built-in library */}
-          <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {shownCustomPhotos.map((p) => (
-                <div
-                  key={p.id}
-                  className={`overflow-hidden rounded-[4px] border bg-white ${
-                    p.enabled ? "border-[#3FD0C9]" : "border-[#E3EDF2] opacity-60"
-                  }`}
-                >
-                  {p.thumb_b64 ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={`data:image/jpeg;base64,${p.thumb_b64}`}
-                      alt={p.name}
-                      className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex aspect-video items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
-                      No preview
-                    </div>
-                  )}
-                  <div className="p-3">
-                    {editingPhoto === p.id ? (
-                      <div className="space-y-2">
-                        <input
-                          value={photoName}
-                          onChange={(e) => setPhotoName(e.target.value)}
-                          className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
-                        />
-                        <textarea
-                          value={photoDesc}
-                          rows={2}
-                          onChange={(e) => setPhotoDesc(e.target.value)}
-                          className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              void patchPhoto(p.id, { name: photoName, description: photoDesc });
-                              setEditingPhoto(null);
-                            }}
-                            className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setEditingPhoto(null)}
-                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
-                            <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your photo</div>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-1.5">
-                            {p.enabled && (
+                      <div className="p-3">
+                        {editingPhoto === p.id ? (
+                          <div className="space-y-2">
+                            <input
+                              value={photoName}
+                              onChange={(e) => setPhotoName(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <textarea
+                              value={photoDesc}
+                              rows={2}
+                              onChange={(e) => setPhotoDesc(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <div className="flex gap-2">
                               <button
                                 type="button"
-                                onClick={() => void patchPhoto(p.id, { preferred: !p.preferred })}
+                                onClick={() => {
+                                  void patchPhoto(p.id, { name: photoName, description: photoDesc });
+                                  setEditingPhoto(null);
+                                }}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingPhoto(null)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="min-w-0">
+                                <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
+                                <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your photo</div>
+                              </div>
+                              <div className="flex shrink-0 items-center gap-1.5">
+                                {p.enabled && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void patchPhoto(p.id, { preferred: !p.preferred })}
+                                    title={
+                                      p.preferred
+                                        ? "House favourite: the AI prefers this when several photos fit"
+                                        : "Star as a house favourite"
+                                    }
+                                    className={`text-lg leading-none ${
+                                      p.preferred ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                    }`}
+                                  >
+                                    {p.preferred ? "★" : "☆"}
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  role="switch"
+                                  aria-checked={p.enabled}
+                                  title={p.enabled ? "On: the AI can use this photo" : "Off: kept but not offered"}
+                                  onClick={() => void patchPhoto(p.id, { enabled: !p.enabled })}
+                                  className={switchCls(p.enabled)}
+                                >
+                                  <span className={knobCls(p.enabled)} />
+                                </button>
+                              </div>
+                            </div>
+                            <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                            <div className="mt-2 flex gap-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingPhoto(p.id);
+                                  setPhotoName(p.name);
+                                  setPhotoDesc(p.description);
+                                }}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                              >
+                                ✎ Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void deletePhoto(p.id)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                ))}
+
+                {shownBuiltinPhotos.map((p) => {
+                  const off = photoDisabled.has(p.id);
+                  return (
+                    <div
+                      key={p.id}
+                      className={`overflow-hidden rounded-[4px] border bg-white ${
+                        off ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/photo-library/${p.id}.jpg`}
+                        alt={p.description}
+                        className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                        loading="lazy"
+                      />
+                      <div className="p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            {!off && photoSettingsMigrated && (
+                              <button
+                                type="button"
+                                onClick={() => void toggleBuiltinPhotoStar(p.id, !photoPreferred.has(p.id))}
                                 title={
-                                  p.preferred
+                                  photoPreferred.has(p.id)
                                     ? "House favourite: the AI prefers this when several photos fit"
                                     : "Star as a house favourite"
                                 }
                                 className={`text-lg leading-none ${
-                                  p.preferred ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                  photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
                                 }`}
                               >
-                                {p.preferred ? "★" : "☆"}
+                                {photoPreferred.has(p.id) ? "★" : "☆"}
                               </button>
                             )}
                             <button
                               type="button"
                               role="switch"
-                              aria-checked={p.enabled}
-                              title={p.enabled ? "On: the AI can use this photo" : "Off: kept but not offered"}
-                              onClick={() => void patchPhoto(p.id, { enabled: !p.enabled })}
-                              className={switchCls(p.enabled)}
+                              aria-checked={!off}
+                              disabled={!photoSettingsMigrated}
+                              title={off ? "Off: the AI cannot pick this photo" : "On: available to the AI"}
+                              onClick={() => void toggleBuiltinPhoto(p.id, off)}
+                              className={switchCls(!off)}
                             >
-                              <span className={knobCls(p.enabled)} />
+                              <span className={knobCls(!off)} />
                             </button>
                           </div>
                         </div>
                         <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
-                        <div className="mt-2 flex gap-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingPhoto(p.id);
-                              setPhotoName(p.name);
-                              setPhotoDesc(p.description);
-                            }}
-                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
-                          >
-                            ✎ Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => void deletePhoto(p.id)}
-                            className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-            ))}
-
-            {shownBuiltinPhotos.map((p) => {
-              const off = photoDisabled.has(p.id);
-              return (
-                <div
-                  key={p.id}
-                  className={`overflow-hidden rounded-[4px] border bg-white ${
-                    off ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/photo-library/${p.id}.jpg`}
-                    alt={p.description}
-                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
-                    loading="lazy"
-                  />
-                  <div className="p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
-                        <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-1.5">
-                        {!off && photoSettingsMigrated && (
-                          <button
-                            type="button"
-                            onClick={() => void toggleBuiltinPhotoStar(p.id, !photoPreferred.has(p.id))}
-                            title={
-                              photoPreferred.has(p.id)
-                                ? "House favourite: the AI prefers this when several photos fit"
-                                : "Star as a house favourite"
-                            }
-                            className={`text-lg leading-none ${
-                              photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
-                            }`}
-                          >
-                            {photoPreferred.has(p.id) ? "★" : "☆"}
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={!off}
-                          disabled={!photoSettingsMigrated}
-                          title={off ? "Off: the AI cannot pick this photo" : "On: available to the AI"}
-                          onClick={() => void toggleBuiltinPhoto(p.id, off)}
-                          className={switchCls(!off)}
-                        >
-                          <span className={knobCls(!off)} />
-                        </button>
                       </div>
                     </div>
-                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+        </div>
       </main>
     </div>
   );

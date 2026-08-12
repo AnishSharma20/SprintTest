@@ -6,7 +6,7 @@
 // /generator-v2 redirects here — see next.config.ts).
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Studie } from "../wiki";
+import type { Studie } from "../studies";
 import { loadOverrides, type Override } from "../summary-overrides";
 import { applyStudyMeta, loadStudyMeta } from "../study-meta";
 import {

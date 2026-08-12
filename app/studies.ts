@@ -3,11 +3,37 @@
 // (Aker BioMarine affiliation), attaches verified whitepaper summaries + AI summaries, and always
 // merges in the 4 curated key trials. Server-only (uses Next fetch caching).
 
-import { type Studie } from "./wiki";
-import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Summary } from "./studies-data";
+import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Quality, type Summary } from "./studies-data";
 import { canonicalIds } from "./lib/category-ids";
 import aiSummariesRaw from "./ai-summaries.json";
 import fulltextStudiesRaw from "./fulltext-studies.json";
+
+export type Studie = {
+  pmid: string;
+  tittel: string;
+  tidsskrift: string;
+  dato: string;
+  ar: string;
+  forfattere: string;
+  flereForfattere: boolean;
+  kategori: string[]; // a study can belong to more than one of AKBM's benefit categories
+  // The same categories as stable ids. Names can be renamed from the UI, so anything that has to
+  // survive a rename (filtering, moving a study, matching a study to its findings) uses these.
+  kategoriIds?: string[];
+  url: string;
+  doiUrl: string | null;
+  summary?: Summary | null;
+  verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
+  quality?: Quality | null;
+  // Who set the quality score and when, for a score a reviewer entered (curated scores have none).
+  qualityReviewer?: string | null;
+  qualityReviewedAt?: string | null;
+  qualityNote?: string | null;
+  akerNote?: string | null;
+  // true = AKBM supplied the paper as a PDF, so summaries/findings come from the FULL TEXT.
+  // false = we only have the PubMed abstract for it.
+  harFulltekst?: boolean;
+};
 
 const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
 // The papers AKBM supplied as PDFs — the study list is built from these.

@@ -13,7 +13,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Category } from "./lib/claims-types";
-import type { Studie } from "./wiki";
+import type { Studie } from "./studies";
 import { effectiveCategoryIds, type StudyMeta } from "./study-meta";
 
 type CategoryRow = Category & { claim_count: number; study_count: number };

@@ -7,12 +7,9 @@ import AkbmLogo from "./AkbmLogo";
 const TABS = [
   { href: "/data-warehouse", label: "Data Warehouse" },
   { href: "/", label: "Scientific Studies" },
-  { href: "/studies-v2", label: "Scientific Studies V2" },
   { href: "/claims", label: "Findings Library" },
-  { href: "/findings-v2", label: "Findings Library V2" },
   { href: "/generator", label: "Content Generator" },
   { href: "/about", label: "About" },
-  { href: "/about-v2", label: "About V2" },
 ];
 
 export default function TopNav() {
@@ -29,18 +26,18 @@ export default function TopNav() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#031B34]">
-      {/* max-w-7xl (not 5xl) and a scrollable, non wrapping tab row: six tabs since the V2
-          pages arrived. Wrapping instead would make the nav two rows tall, and the V2 pages'
-          sticky sidebar/panel offsets assume the nav keeps its one row height. */}
+      {/* max-w-7xl (not 5xl) and a scrollable, non wrapping tab row. Wrapping instead would make
+          the nav two rows tall, and these pages' sticky sidebar/panel offsets assume the nav
+          keeps its one row height. */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="shrink-0">
           <AkbmLogo className="h-5 w-auto text-white" />
         </Link>
         <div className="flex flex-nowrap items-center gap-1 overflow-x-auto">
           {TABS.map((t) => {
-            // Exact match or a path *segment* boundary ("/studies-v2/" not "/studies-v2x") -
-            // a bare startsWith on "/claims" would also light up while viewing a sibling route
-            // that merely shares the prefix.
+            // Exact match or a path *segment* boundary ("/claims/" not "/claimsx") - a bare
+            // startsWith on "/claims" would also light up while viewing a sibling route that
+            // merely shares the prefix.
             const aktiv =
               t.href === "/" ? pathname === "/" : pathname === t.href || pathname.startsWith(t.href + "/");
             return (

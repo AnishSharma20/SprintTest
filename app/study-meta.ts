@@ -9,7 +9,7 @@
 // Everything degrades to the built in values when the database is not configured or migration
 // 0003 has not been run yet.
 
-import type { Studie } from "./wiki";
+import type { Studie } from "./studies";
 import type { Category } from "./lib/claims-types";
 
 export type StudyQuality = {

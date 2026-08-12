@@ -1,19 +1,17 @@
 "use client";
 
-// Claims Library — the marketing claims we can make about the product. A claim is a benefit-facing
-// product statement; the science is the EVIDENCE behind it (shown per claim: verbatim quote + study
-// + section). The raw science extractions are not listed here as "claims" — they are only the
-// backing evidence a claim points to.
+// Findings Library — Concept B (evidence tracer): status + benefit filters in the left
+// sidebar, the finding statements in the middle, and the selected finding's evidence chain in
+// a reading panel on the right. Same three pane shell as Scientific Studies (app/v2/ui.tsx).
 
 import { useCallback, useEffect, useState } from "react";
 import type { Claim, Category } from "../lib/claims-types";
-import MarketingClaims from "../marketing-claims";
-import PageHero, { ReviewerField } from "../PageHero";
+import FindingsV2 from "./findings-v2";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 
-type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
-type LibClaim = Claim & {
+export type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
+export type LibClaim = Claim & {
   studies?: {
     pmid: string | null;
     title: string;
@@ -24,7 +22,7 @@ type LibClaim = Claim & {
   } | null;
 };
 
-export default function ClaimsLibrary() {
+export default function FindingsV2Page() {
   const [configured, setConfigured] = useState(true);
   const [loading, setLoading] = useState(true);
   const [claims, setClaims] = useState<LibClaim[]>([]);
@@ -60,40 +58,31 @@ export default function ClaimsLibrary() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#F2F7F9]">
-      <PageHero
-        eyebrow="Findings Library"
-        title="What we can say about the product"
-        actions={
-          <ReviewerField
-            value={reviewer}
-            onChange={onReviewerChange}
-            placeholder="Your name (recorded on actions)"
-          />
-        }
-      >
-        Findings in plain, benefit facing language. Each finding links to the evidence that
-        substantiates it, so you can see the exact quote, the study and the section it comes from.
-      </PageHero>
+  if (!configured) {
+    return (
+      <div className="min-h-screen bg-[#FBFBFD] px-4 py-20">
+        <p className="mx-auto max-w-xl text-center text-[14px] text-[#6E6E73]">
+          The findings library is not set up yet. Add the Supabase environment variables to enable it.
+        </p>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FBFBFD] px-4 py-20">
+        <p className="text-center text-[14px] text-[#AEAEB2]">Loading findings…</p>
+      </div>
+    );
+  }
 
-      <main className="mx-auto max-w-5xl px-4 py-8">
-        {!configured ? (
-          <p className="rounded-[4px] border border-dashed border-[#C2D9E3] p-8 text-center text-zinc-500">
-            The findings library is not set up yet. Add the Supabase environment variables to enable it.
-          </p>
-        ) : loading ? (
-          <p className="text-zinc-400">Loading findings…</p>
-        ) : (
-          <MarketingClaims
-            claims={claims}
-            links={links}
-            categories={categories}
-            reviewer={reviewer}
-            onChanged={load}
-          />
-        )}
-      </main>
-    </div>
+  return (
+    <FindingsV2
+      claims={claims}
+      links={links}
+      categories={categories}
+      reviewer={reviewer}
+      onReviewerChange={onReviewerChange}
+      onChanged={load}
+    />
   );
 }

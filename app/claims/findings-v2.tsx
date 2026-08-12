@@ -1,7 +1,7 @@
 "use client";
 
-// The Findings Library V2 body: list + evidence chain panel. See ./page.tsx for the why.
-// Restyled 2026-08-10 to the same "floating & focused" design as Scientific Studies V2
+// The Findings Library body: list + evidence chain panel. See ./page.tsx for the why.
+// Restyled 2026-08-10 to the same "floating & focused" design as Scientific Studies
 // (calm near-white page, text sidebar with brand icons, floating cards, status as words).
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -25,7 +25,7 @@ import studyPdfsRaw from "../study-pdfs.json";
 const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
 
 /** The real paper's PDF when AKBM supplied one, else its DOI page, else its PubMed record — same
- * fallback chain as Scientific Studies V2's "Open study in PDF" (app/studies-v2/wiki-v2.tsx). */
+ * fallback chain as Scientific Studies' "Open study in PDF" (app/wiki-v2.tsx). */
 function studySourceHref(s: { pmid: string | null; doi: string | null } | null | undefined): string | null {
   if (!s) return null;
   const local = s.pmid ? STUDY_PDFS[s.pmid] : undefined;

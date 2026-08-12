@@ -1,11 +1,10 @@
-// Scientific Studies tab — Aker BioMarine-affiliated krill-oil research from PubMed, with
-// verified (whitepaper) + AI-generated summaries. Data lives in ./studies (shared with the
-// content generator's study picker). Server component; data cached/updated daily.
+// Scientific Studies — the "floating & focused" research wiki (sidebar explorer + reading panel).
+// Data comes from app/studies.ts, shared with the content generator's study picker.
 
-import Wiki from "./wiki";
+import WikiV2 from "./wiki-v2";
 import { hentStudier } from "./studies";
 
-export default async function Home() {
+export default async function StudiesPage() {
   const studier = await hentStudier();
-  return <Wiki studier={studier} />;
+  return <WikiV2 studier={studier} />;
 }

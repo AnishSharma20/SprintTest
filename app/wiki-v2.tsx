@@ -1,24 +1,23 @@
 "use client";
 
-// Scientific Studies V2 — sidebar explorer for browsing, reading panel for the summary.
+// Scientific Studies — sidebar explorer for browsing, reading panel for the summary.
 // Restyled 2026-08-10 to the "floating & focused" design the client picked from three
 // mockups: calm near-white page, text-only sidebar with the red Superba benefit icons,
 // floating white cards, status as words instead of badge pills. See app/v2/ui.tsx.
 //
-// Diverges from app/wiki.tsx (untouched, V1 keeps working) on purpose, per 2026-08-10 feedback:
 // "View diagrams" opens ONLY the charts/tables extracted from the study's PDF (app/v2/diagrams-
-// modal.tsx), not V1's combined findings-review modal; "Open study in PDF" links straight to the
-// real paper (app/study-pdfs.json) when AKBM supplied one, falling back to its DOI/PubMed page;
-// quality filtering is granular (High/Moderate/Low/Unscored + an "All scores" master toggle); the
-// category/quality editor is labelled "Categorize & score", not "Reviewer tools".
+// modal.tsx); "Open study in PDF" links straight to the real paper (app/study-pdfs.json) when
+// AKBM supplied one, falling back to its DOI/PubMed page; quality filtering is granular
+// (High/Moderate/Low/Unscored + an "All scores" master toggle); the category/quality editor is
+// labelled "Categorize & score".
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Studie } from "../wiki";
-import type { Summary } from "../studies-data";
-import { loadOverrides, saveOverride, type Override } from "../summary-overrides";
-import CategoryManager from "../category-manager";
-import DiagramsModal from "../v2/diagrams-modal";
-import studyPdfsRaw from "../study-pdfs.json";
+import type { Studie } from "./studies";
+import type { Summary } from "./studies-data";
+import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
+import CategoryManager from "./category-manager";
+import DiagramsModal from "./v2/diagrams-modal";
+import studyPdfsRaw from "./study-pdfs.json";
 import {
   applyStudyMeta,
   formatDate,
@@ -26,7 +25,7 @@ import {
   suggestLabel,
   EMPTY_META,
   type StudyMeta,
-} from "../study-meta";
+} from "./study-meta";
 import {
   V2Shell,
   SideSection,
@@ -35,8 +34,8 @@ import {
   SearchBox,
   PanelHeader,
   SideReviewer,
-} from "../v2/ui";
-import { benefitIcon } from "../v2/benefit-icons";
+} from "./v2/ui";
+import { benefitIcon } from "./v2/benefit-icons";
 
 const REVIEWER_KEY = "claimsReviewerName:v1";
 const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
@@ -113,8 +112,8 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
   useEffect(() => {
     setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
-    // Deep link: /studies-v2?pmid=... opens that study's reading panel directly
-    // (the Findings Library V2 evidence chain links here).
+    // Deep link: /?pmid=... opens that study's reading panel directly
+    // (the Findings Library evidence chain links here).
     const pmid = new URLSearchParams(window.location.search).get("pmid");
     if (pmid) setValgtPmid(pmid);
   }, []);

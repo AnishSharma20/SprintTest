@@ -246,6 +246,7 @@ export default function AboutV2Page() {
   const [structureMigrated, setStructureMigrated] = useState(true); // migration 0013
   const [newRuleSlide, setNewRuleSlide] = useState("");             // "" = a writing rule
   const [newRulePosition, setNewRulePosition] = useState("first");
+  const [slidePicker, setSlidePicker] = useState(false);            // pick the slide by its picture
   const [rules, setRules] = useState<Rule[]>([]);
   const [newRule, setNewRule] = useState("");
   const [savingRule, setSavingRule] = useState(false);
@@ -1472,6 +1473,13 @@ export default function AboutV2Page() {
   }
 
   // ---------- derived ----------
+  /** The library's own picture of a slide: the team's redesign when there is one, otherwise the
+   * rendered example in whichever colour theme the library is currently showing. */
+  const slideThumb = (key: string) =>
+    overrides[key]?.preview_b64
+      ? `data:image/jpeg;base64,${overrides[key].preview_b64}`
+      : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${key}.png`;
+
   const entries = (gallery as GalleryEntry[]).filter((g) => {
     if (layoutRemoved.has(g.key)) return false; // removed slides live only in Deleted items
     if (filter === "off") return disabled.has(g.key);
@@ -1673,9 +1681,8 @@ export default function AboutV2Page() {
                 questions&quot;) or writing principles (&quot;Bullet points are one sentence each&quot;,
                 &quot;Action titles must state the number, not just the direction&quot;). After a deck is
                 drafted it is read back against these rules, and anything that breaks one is sent back to
-                be fixed before you see it. For fonts, sizes and spacing use{" "}
-                <span className="font-semibold">Design</span> instead — those are written by the code and
-                the AI is never asked.
+                be fixed before you see it. For fonts, sizes, spacing and how many photos and icons a
+                deck uses, go to <span className="font-semibold">Design</span> instead.
               </p>
               <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
                 Every rule the tool follows is in this one list, including which slides it never uses:
@@ -1687,7 +1694,13 @@ export default function AboutV2Page() {
                 Rules marked <span className="font-semibold">Built in</span> are the tool&rsquo;s own,
                 imported here so you can see them: reword one, switch it off, or delete it to drop that
                 instruction entirely. Rules marked <span className="font-semibold">Enforced</span> are
-                applied by the code rather than asked of the AI, so they cannot be missed. A few things
+                applied by the code rather than asked of the AI, so they cannot be missed;{" "}
+                <span className="font-semibold">Checked</span> ones are asked of the AI and then verified
+                against the finished deck, and anything that breaks one is sent back to be rewritten.
+                Which of the two a rule gets is not a setting: it follows from what the rule asks for.
+                Where the slide sits, and whether it is used at all, are facts the code can act on;
+                &quot;bullets are one sentence each&quot; is a judgement about writing, so it is read back
+                instead. A few things
                 stay locked on purpose and are not listed: never stating a fact the source does not
                 support, the AI generated disclaimer, and each text box&rsquo;s measured character limit.
               </p>
@@ -1863,21 +1876,37 @@ export default function AboutV2Page() {
                   <div className="mt-4 rounded-[4px] border border-[#E3EDF2] bg-[#FBFBFD] p-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs font-semibold text-[#06456B]">This rule is about</span>
-                      <select
-                        value={newRuleSlide}
+                      {/* Picked by its PICTURE, not its name: people know these slides by how they
+                          look, and "the serpentine slide" means nothing until you see it. Same
+                          renders as the Slide library, in whichever colour theme it is showing. */}
+                      <button
+                        type="button"
                         disabled={!structureMigrated}
-                        onChange={(e) => setNewRuleSlide(e.target.value)}
-                        className="rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none disabled:opacity-50"
+                        aria-expanded={slidePicker}
+                        onClick={() => setSlidePicker((o) => !o)}
+                        className="flex items-center gap-2 rounded-[4px] border border-[#C2D9E3] bg-white p-1 pr-2 text-xs text-[#031B34] outline-none hover:border-[#3FD0C9] disabled:opacity-50"
                       >
-                        <option value="">how the deck is written (any slide)</option>
-                        {(gallery as GalleryEntry[])
-                          .filter((g) => g.kind !== "verbatim")
-                          .map((g) => (
-                            <option key={g.key} value={g.key}>
-                              the {(layoutNames[g.key]?.display_name || pretty(g.key)).toLowerCase()} slide
-                            </option>
-                          ))}
-                      </select>
+                        {newRuleSlide && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={slideThumb(newRuleSlide)}
+                            alt=""
+                            className="h-7 w-12 shrink-0 rounded-[2px] border border-[#E3EDF2] object-cover"
+                          />
+                        )}
+                        <span>
+                          {newRuleSlide
+                            ? `the ${(layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide`
+                            : "how the deck is written (any slide)"}
+                        </span>
+                        <span aria-hidden className="text-[9px] text-zinc-400">
+                          ▼
+                        </span>
+                      </button>
+                      {/* Which strength this rule will have, before it is written rather than after:
+                          a rule about one slide is applied by the code, a rule about the writing is
+                          read back against the finished deck. It follows from the choice above. */}
+                      {!newRuleSlide && <Strength kind="checked" />}
                       {newRuleSlide && (
                         <>
                           <span className="text-xs font-semibold text-[#06456B]">and it</span>
@@ -1903,6 +1932,66 @@ export default function AboutV2Page() {
                         </span>
                       )}
                     </div>
+
+                    {slidePicker && (
+                      <div className="mt-2 rounded-[4px] border border-[#C2D9E3] bg-white p-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewRuleSlide("");
+                            setSlidePicker(false);
+                          }}
+                          className={`w-full rounded-[4px] border p-2 text-left text-xs ${
+                            newRuleSlide
+                              ? "border-[#E3EDF2] text-zinc-600 hover:border-[#3FD0C9]"
+                              : "border-[#3FD0C9] bg-[#EEFAF9] font-semibold text-[#06456B]"
+                          }`}
+                        >
+                          How the deck is written — any slide
+                          <span className="ml-1 font-normal text-zinc-400">
+                            (a writing rule, checked against the finished deck)
+                          </span>
+                        </button>
+                        <div className="mt-2 grid max-h-80 grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
+                          {(gallery as GalleryEntry[])
+                            .filter((g) => g.kind !== "verbatim" && !layoutRemoved.has(g.key))
+                            .map((g) => {
+                              const picked = newRuleSlide === g.key;
+                              return (
+                                <button
+                                  key={g.key}
+                                  type="button"
+                                  onClick={() => {
+                                    setNewRuleSlide(g.key);
+                                    setSlidePicker(false);
+                                  }}
+                                  title={cleanUsage(layoutNames[g.key]?.description || g.usage)}
+                                  className={`overflow-hidden rounded-[4px] border text-left ${
+                                    picked ? "border-[#3FD0C9] ring-1 ring-[#3FD0C9]" : "border-[#E3EDF2] hover:border-[#3FD0C9]"
+                                  }`}
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={slideThumb(g.key)}
+                                    alt={`Example of the ${layoutNames[g.key]?.display_name || pretty(g.key)} slide`}
+                                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                                    loading="lazy"
+                                  />
+                                  <span className="flex items-center justify-between gap-1 p-1.5">
+                                    <span className="truncate text-[11px] font-semibold text-[#031B34]">
+                                      {layoutNames[g.key]?.display_name || pretty(g.key)}
+                                    </span>
+                                    {disabled.has(g.key) && (
+                                      <span className="shrink-0 text-[9px] uppercase text-zinc-400">off</span>
+                                    )}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+
                     {newRuleSlide ? (
                       <p className="mt-2 text-xs text-zinc-600">
                         Will be saved as:{" "}
@@ -1938,64 +2027,6 @@ export default function AboutV2Page() {
                 </>
               )}
               {ruleError && <p className="mt-2 text-sm text-red-700">{ruleError}</p>}
-
-              {/* Photo and icon density: standing preferences, and NOT enforced (they used to sit
-                  in Design settings under an "enforced in code" heading, which was untrue —
-                  photo level is a prompt paragraph plus a soft coverage check, and only "No
-                  icons" is actually guaranteed by the renderer). Still saved into
-                  design_settings, so nothing about generation changed with the move. */}
-              <div className="mt-6 border-t border-[#EEF4F7] pt-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-bold text-[#031B34]">How many photos and icons</h3>
-                  <Strength kind="checked" />
-                </div>
-                <p className="mt-1 max-w-3xl text-xs text-zinc-600">
-                  How richly a deck uses the photo and icon libraries. These are preferences the AI
-                  works to, and the finished deck is checked against the photo target — with one
-                  exception that is a hard guarantee: <span className="font-semibold">No icons</span>{" "}
-                  is applied by the code, so no icon can slip through.
-                </p>
-                <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <label className="block text-xs font-semibold text-[#06456B]">
-                    Photos in decks
-                    <select
-                      value={design.photo_level || "default"}
-                      disabled={!designMigrated}
-                      onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
-                      className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none disabled:opacity-50"
-                    >
-                      <option value="less">Fewer photos</option>
-                      <option value="default">Standard</option>
-                      <option value="more">More photos</option>
-                    </select>
-                  </label>
-                  <label className="block text-xs font-semibold text-[#06456B]">
-                    Icons in decks
-                    <select
-                      value={design.icon_level || "default"}
-                      disabled={!designMigrated}
-                      onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
-                      className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none disabled:opacity-50"
-                    >
-                      <option value="none">No icons</option>
-                      <option value="less">Fewer icons</option>
-                      <option value="default">Standard</option>
-                    </select>
-                  </label>
-                  <div className="flex items-end sm:col-span-2">
-                    <button
-                      type="button"
-                      onClick={() => void saveDesign()}
-                      disabled={!designDirty || designSaving}
-                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
-                    >
-                      {designSaving ? "Saving…" : "Save"}
-                    </button>
-                    {designSavedTick && <span className="ml-2 self-center text-xs text-[#0A7A8A]">Saved.</span>}
-                  </div>
-                </div>
-                {designError && <p className="mt-2 text-sm text-red-700">{designError}</p>}
-              </div>
             </section>
           )}
 
@@ -2013,8 +2044,9 @@ export default function AboutV2Page() {
                 These override the brand template deterministically — no AI involved, so they cannot come
                 out wrong. Leave a field empty to keep the brand default (shown in grey). Fonts must be
                 installed on the machines that open the decks; the page margin and box gutter apply to the
-                code drawn slide types. How many photos and icons a deck uses is a judgement call rather
-                than a measurement, so those two live under <span className="font-semibold">Rules</span>.
+                code drawn slide types. One group at the bottom is the exception and says so on its own
+                badge: how many photos and icons a deck uses is a judgement call rather than a
+                measurement, so the AI is asked and the result is checked.
               </p>
 
               {/* ----- color themes — informational only; the AI alternates between these per slide
@@ -2132,6 +2164,51 @@ export default function AboutV2Page() {
                           }}
                         />
                         Date of generation
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Photo and icon density lives here with the rest of the look of a deck, which is
+                      where people go looking for it — but it carries its OWN badge, because unlike
+                      everything above it this is a preference the AI works to (with one exception:
+                      "No icons" is refused by the renderer, so nothing can slip through). Saved into
+                      design_settings like the rest, so the tab's own Save covers it. */}
+                  <div className="mt-4 border-t border-[#E3EDF2] pt-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-sm font-bold text-[#031B34]">How many photos and icons</h3>
+                      <Strength kind="checked" />
+                    </div>
+                    <p className="mt-1 max-w-3xl text-xs text-zinc-600">
+                      How richly a deck uses the photo and icon libraries. These two are preferences the
+                      AI works to rather than measurements, and the finished deck is checked against the
+                      photo target — with one exception that is a hard guarantee:{" "}
+                      <span className="font-semibold">No icons</span> is applied by the code, so no icon
+                      can slip through.
+                    </p>
+                    <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <label className="block text-xs font-semibold text-[#06456B]">
+                        Photos in decks
+                        <select
+                          value={design.photo_level || "default"}
+                          onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
+                          className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                        >
+                          <option value="less">Fewer photos</option>
+                          <option value="default">Standard</option>
+                          <option value="more">More photos</option>
+                        </select>
+                      </label>
+                      <label className="block text-xs font-semibold text-[#06456B]">
+                        Icons in decks
+                        <select
+                          value={design.icon_level || "default"}
+                          onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
+                          className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
+                        >
+                          <option value="none">No icons</option>
+                          <option value="less">Fewer icons</option>
+                          <option value="default">Standard</option>
+                        </select>
                       </label>
                     </div>
                   </div>
@@ -2595,11 +2672,7 @@ export default function AboutV2Page() {
                         <div key={g.key} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={
-                              overrides[g.key]?.preview_b64
-                                ? `data:image/jpeg;base64,${overrides[g.key].preview_b64}`
-                                : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`
-                            }
+                            src={slideThumb(g.key)}
                             alt={`Example of the ${pretty(g.key)} slide`}
                             className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
                             loading="lazy"
@@ -2822,11 +2895,7 @@ export default function AboutV2Page() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={
-                          ov?.preview_b64
-                            ? `data:image/jpeg;base64,${ov.preview_b64}`
-                            : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`
-                        }
+                        src={slideThumb(g.key)}
                         alt={`Example of the ${displayName} slide${ov ? "" : ` in ${GALLERY_THEME_LABEL[galleryTheme]}`}`}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"

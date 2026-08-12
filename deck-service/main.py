@@ -19,12 +19,15 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
+import tempfile
 import threading
 import time
 import unicodedata
 import uuid
 import zipfile
+from pathlib import Path
 
 import anthropic
 from fastapi import FastAPI, File, Form, Header, UploadFile
@@ -746,49 +749,99 @@ async def slides_inspect_job(
 _INSPECT_CHUNK = 8  # slides per LibreOffice conversion — small enough for real progress steps,
                     # large enough that the per-invocation startup overhead stays a minor cost
 
+# Relationship types python-pptx resolves to MSO_SHAPE_TYPE.MEDIA — a deck carrying one must
+# never be trimmed/resaved (see qa_gate._extract_image_previews for that investigation).
+_VIDEO_REL_MARKERS = ("relationships/video", "relationships/media", "relationships/audio")
+_VIDEO_MEDIA_EXT = (".mp4", ".mov", ".avi", ".wmv", ".m4v", ".mpg", ".mpeg", ".mkv", ".webm")
+
+
+def _deck_shape(data: bytes) -> tuple[int, bool]:
+    """(slide count, carries video/audio) read straight from the .pptx zip — deliberately NOT via
+    python-pptx: parsing a 42-slide package costs tens of MB that lxml does not hand back, and on
+    a 512 MB instance this function runs right before LibreOffice needs all the room it can get.
+    Falls back to the python-pptx parse if anything about the zip is unexpected."""
+    try:
+        z = zipfile.ZipFile(io.BytesIO(data))
+        names = z.namelist()
+        total = sum(1 for n in names if re.fullmatch(r"ppt/slides/slide\d+\.xml", n))
+        if not total:
+            raise ValueError("no slide parts found")
+        has_media = any(n.lower().endswith(_VIDEO_MEDIA_EXT) for n in names)
+        if not has_media:
+            for n in names:
+                if n.startswith("ppt/slides/_rels/") and n.endswith(".rels"):
+                    rels = z.read(n).decode("utf-8", "ignore")
+                    if any(m in rels for m in _VIDEO_REL_MARKERS):
+                        has_media = True
+                        break
+        return total, has_media
+    except Exception as e:  # noqa: BLE001
+        print(f"[inspect-job] zip inspection failed ({e}); using python-pptx", file=sys.stderr)
+        from pptx import Presentation
+
+        from src import qa_gate
+        prs = Presentation(io.BytesIO(data))
+        return len(prs.slides), qa_gate._has_video(prs)
+
 
 def _inspect_previews_chunked(data: bytes, job_id: str) -> list[dict]:
-    """_inspect_previews with REAL progress for big decks: convert in chunks of a few slides and
-    update the job's progress/step after each, so the About page can show "12 of 42" instead of
-    a silent minutes-long wait (LibreOffice's PDF conversion is one monolithic call per file —
+    """_inspect_previews with REAL progress for big decks: convert a few slides at a time and
+    update the job's progress/step after each run, so the About page can show "12 of 42" instead
+    of a silent minutes-long wait (LibreOffice's PDF conversion is one monolithic call per file —
     the only way to get progress out of it is to hand it smaller files).
+
+    Each run happens in a CHILD PROCESS (src/preview_chunk.py). Doing it in-process leaked: the
+    per-chunk python-pptx parse, PIL bitmaps and PNG buffers are not returned to the OS between
+    chunks, so this function peaked at 337 MB and stayed at 324 MB afterwards — on a 512 MB
+    instance that leaves nothing for LibreOffice and the container gets killed mid-render (seen
+    live). A child process hands all of it back on exit, so peak stays flat per chunk.
 
     Chunking needs a python-pptx resave of a trimmed copy, so it is skipped for decks with
     embedded video (rasterize() routes those to a read-only image-extraction fallback that never
     resaves — see the qa_gate saga) and for small decks where one conversion is quick anyway.
     Any chunking failure falls back to the plain whole-file render."""
-    from pptx import Presentation
-
     from src import qa_gate
     try:
-        prs = Presentation(io.BytesIO(data))
-        total = len(prs.slides)
-        if total <= _INSPECT_CHUNK or qa_gate._has_video(prs):
+        total, has_video = _deck_shape(data)
+        if total <= _INSPECT_CHUNK or has_video:
             return _inspect_previews(data)
 
         # Shrink the oversized embedded images ONCE, up front, and chunk from the result: the
         # masters' media travel with every chunk (a trimmed copy still inherits them), so
         # shrinking per chunk would redo the same work for each one.
-        data = qa_gate._shrink_pptx_images(data, qa_gate.PREVIEW_MAX_DIM)
+        shrunk = qa_gate._shrink_pptx_images(data, qa_gate.PREVIEW_MAX_DIM)
 
+        root = Path(__file__).resolve().parent
         slides: list[dict] = []
-        for start in range(0, total, _INSPECT_CHUNK):
-            end = min(start + _INSPECT_CHUNK, total)
-            trimmed = Presentation(io.BytesIO(data))
-            for i in reversed(range(total)):
-                if not start <= i < end:
-                    _drop_slide(trimmed, i)
-            buf = io.BytesIO()
-            trimmed.save(buf)
-            chunk = _inspect_previews(buf.getvalue())
-            if len(chunk) != end - start:
-                # ValueError, not RuntimeError: the latter is reserved for "no rasteriser at
-                # all", which must propagate — this one should fall back to a whole-file pass.
-                raise ValueError(f"chunk rendered {len(chunk)} of {end - start} slides")
-            for j, s in enumerate(chunk):
-                slides.append({"index": start + j, "preview_b64": s["preview_b64"]})
-            JOBS[job_id].update(progress=5 + round(90 * end / total),
-                                step=f"Rendering slide previews ({end} of {total})")
+        with tempfile.TemporaryDirectory() as tmp:
+            deck = Path(tmp) / "deck.pptx"
+            deck.write_bytes(shrunk)
+            del shrunk  # the child reads it from disk from here on
+            for start in range(0, total, _INSPECT_CHUNK):
+                end = min(start + _INSPECT_CHUNK, total)
+                out_dir = Path(tmp) / f"chunk{start}"
+                run = subprocess.run(
+                    [sys.executable, "-m", "src.preview_chunk", str(deck), str(start), str(end),
+                     str(out_dir)],
+                    cwd=str(root), capture_output=True, text=True,
+                    timeout=qa_gate._SOFFICE_TIMEOUT_S + 120,
+                )
+                if run.returncode != 0:
+                    detail = (run.stderr or run.stdout or "no output").strip().splitlines()[-1]
+                    if "No slide renderer" in detail:
+                        raise RuntimeError("No slide renderer is available on the server.")
+                    raise ValueError(f"chunk {start}-{end} failed: {detail}")
+                jpgs = sorted(out_dir.glob("slide*.jpg"))
+                if len(jpgs) != end - start:
+                    # ValueError, not RuntimeError: the latter is reserved for "no rasteriser at
+                    # all", which must propagate — this one should fall back to a whole-file pass.
+                    raise ValueError(f"chunk rendered {len(jpgs)} of {end - start} slides")
+                for j, p in enumerate(jpgs):
+                    slides.append({"index": start + j,
+                                   "preview_b64": base64.b64encode(p.read_bytes()).decode("ascii")})
+                    p.unlink(missing_ok=True)
+                JOBS[job_id].update(progress=5 + round(90 * end / total),
+                                    step=f"Rendering slide previews ({end} of {total})")
         return slides
     except RuntimeError:
         raise  # "no rasteriser available" — chunking again won't help

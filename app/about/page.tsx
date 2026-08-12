@@ -149,6 +149,39 @@ const PILL_ASIS = "shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font
  * switch, which sat close enough to mis-tap. */
 const STAR_BTN = "text-2xl leading-none transition-colors";
 
+/** The three strengths a setting on this page can have. Naming them is the point: everything here
+ * used to read as "asking the AI", when in truth some of it is written by the code and can never
+ * come out wrong, some is verified and corrected after the fact, and only the rest is a request. */
+const STRENGTHS = {
+  enforced: {
+    label: "Enforced",
+    hint: "Written by the code on every deck. The AI is not involved and cannot get this wrong.",
+    cls: "bg-[#E7F2EC] text-[#1B6B4A]",
+  },
+  checked: {
+    label: "Checked",
+    hint: "The AI does this, then the finished deck is inspected and anything that breaks it is sent back to be fixed.",
+    cls: "bg-[#EEFAF9] text-[#0A7A8A]",
+  },
+  asked: {
+    label: "Asked",
+    hint: "The AI is told to do this. It usually does, but nothing verifies it afterwards.",
+    cls: "bg-amber-50 text-amber-700",
+  },
+} as const;
+
+function Strength({ kind }: { kind: keyof typeof STRENGTHS }) {
+  const s = STRENGTHS[kind];
+  return (
+    <span
+      title={s.hint}
+      className={`shrink-0 cursor-help rounded-md px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${s.cls}`}
+    >
+      {s.label}
+    </span>
+  );
+}
+
 const MODE_LABEL: Record<CustomSlide["mode"], string> = {
   auto: "AI decides when it fits",
   always: "In every deck",
@@ -1496,18 +1529,23 @@ export default function AboutV2Page() {
           {activeTab === "rules" && (
             <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-lg font-bold text-[#031B34]">Writing rules & principles</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-[#031B34]">Writing rules & principles</h2>
+                  <Strength kind="checked" />
+                </div>
                 <span className="text-xs text-zinc-500">
                   {rules.filter((r) => r.enabled).length} active · applied to every new PowerPoint deck
                 </span>
               </div>
               <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-                Standing instructions the AI follows on every deck, for everyone using the tool. Write
-                them like you would brief a colleague — content rules (&quot;Always end with open
-                research questions&quot;) or writing principles (&quot;At most two sentences per bullet
-                point&quot;, &quot;Action titles must state the number, not just the direction&quot;).
-                For fonts, sizes and spacing, use the Design settings below instead — those are enforced
-                in code, not asked of the AI.
+                Standing instructions for every deck, for everyone using the tool. Write them like you
+                would brief a colleague — content rules (&quot;Always end with open research
+                questions&quot;) or writing principles (&quot;Bullet points are one sentence each&quot;,
+                &quot;Action titles must state the number, not just the direction&quot;). After a deck is
+                drafted it is read back against these rules, and anything that breaks one is sent back to
+                be fixed before you see it. For fonts, sizes and spacing use{" "}
+                <span className="font-semibold">Design</span> instead — those are written by the code and
+                the AI is never asked.
               </p>
 
               {!canEdit ? (
@@ -1627,6 +1665,64 @@ export default function AboutV2Page() {
                 </>
               )}
               {ruleError && <p className="mt-2 text-sm text-red-700">{ruleError}</p>}
+
+              {/* Photo and icon density: standing preferences, and NOT enforced (they used to sit
+                  in Design settings under an "enforced in code" heading, which was untrue —
+                  photo level is a prompt paragraph plus a soft coverage check, and only "No
+                  icons" is actually guaranteed by the renderer). Still saved into
+                  design_settings, so nothing about generation changed with the move. */}
+              <div className="mt-6 border-t border-[#EEF4F7] pt-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#031B34]">How many photos and icons</h3>
+                  <Strength kind="checked" />
+                </div>
+                <p className="mt-1 max-w-3xl text-xs text-zinc-600">
+                  How richly a deck uses the photo and icon libraries. These are preferences the AI
+                  works to, and the finished deck is checked against the photo target — with one
+                  exception that is a hard guarantee: <span className="font-semibold">No icons</span>{" "}
+                  is applied by the code, so no icon can slip through.
+                </p>
+                <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <label className="block text-xs font-semibold text-[#06456B]">
+                    Photos in decks
+                    <select
+                      value={design.photo_level || "default"}
+                      disabled={!designMigrated}
+                      onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
+                      className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none disabled:opacity-50"
+                    >
+                      <option value="less">Fewer photos</option>
+                      <option value="default">Standard</option>
+                      <option value="more">More photos</option>
+                    </select>
+                  </label>
+                  <label className="block text-xs font-semibold text-[#06456B]">
+                    Icons in decks
+                    <select
+                      value={design.icon_level || "default"}
+                      disabled={!designMigrated}
+                      onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
+                      className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none disabled:opacity-50"
+                    >
+                      <option value="none">No icons</option>
+                      <option value="less">Fewer icons</option>
+                      <option value="default">Standard</option>
+                    </select>
+                  </label>
+                  <div className="flex items-end sm:col-span-2">
+                    <button
+                      type="button"
+                      onClick={() => void saveDesign()}
+                      disabled={!designDirty || designSaving}
+                      className="rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                    >
+                      {designSaving ? "Saving…" : "Save"}
+                    </button>
+                    {designSavedTick && <span className="ml-2 self-center text-xs text-[#0A7A8A]">Saved.</span>}
+                  </div>
+                </div>
+                {designError && <p className="mt-2 text-sm text-red-700">{designError}</p>}
+              </div>
             </section>
           )}
 
@@ -1634,13 +1730,18 @@ export default function AboutV2Page() {
           {activeTab === "design" && (
             <section className="rounded-[4px] border border-[#C2D9E3] bg-white p-6">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-lg font-bold text-[#031B34]">Design settings</h2>
-                <span className="text-xs text-zinc-500">enforced in code on every generated deck</span>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-[#031B34]">Design settings</h2>
+                  <Strength kind="enforced" />
+                </div>
+                <span className="text-xs text-zinc-500">written by the code on every generated deck</span>
               </div>
               <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-                These override the brand template deterministically — no AI involved. Leave a field
-                empty to keep the brand default (shown in grey). Fonts must be installed on the machines
-                that open the decks; the page margin and box gutter apply to the code drawn slide types.
+                These override the brand template deterministically — no AI involved, so they cannot come
+                out wrong. Leave a field empty to keep the brand default (shown in grey). Fonts must be
+                installed on the machines that open the decks; the page margin and box gutter apply to the
+                code drawn slide types. How many photos and icons a deck uses is a judgement call rather
+                than a measurement, so those two live under <span className="font-semibold">Rules</span>.
               </p>
 
               {/* ----- color themes — informational only; the AI alternates between these per slide
@@ -1760,30 +1861,6 @@ export default function AboutV2Page() {
                         Date of generation
                       </label>
                     </div>
-                    <label className="block text-xs font-semibold text-[#06456B]">
-                      Photos in decks
-                      <select
-                        value={design.photo_level || "default"}
-                        onChange={(e) => setDesignField("photo_level", e.target.value === "default" ? "" : e.target.value)}
-                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
-                      >
-                        <option value="less">Fewer photos</option>
-                        <option value="default">Standard</option>
-                        <option value="more">More photos</option>
-                      </select>
-                    </label>
-                    <label className="block text-xs font-semibold text-[#06456B]">
-                      Icons in decks
-                      <select
-                        value={design.icon_level || "default"}
-                        onChange={(e) => setDesignField("icon_level", e.target.value === "default" ? "" : e.target.value)}
-                        className="mt-1 w-full rounded-[4px] border border-[#C2D9E3] p-2 text-sm font-normal outline-none"
-                      >
-                        <option value="none">No icons</option>
-                        <option value="less">Fewer icons</option>
-                        <option value="default">Standard</option>
-                      </select>
-                    </label>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -1854,7 +1931,10 @@ export default function AboutV2Page() {
           {activeTab === "slides" && (
             <section>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-lg font-bold text-[#031B34]">Slide library</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-[#031B34]">Slide library</h2>
+                  <Strength kind="enforced" />
+                </div>
                 <span className="text-xs text-zinc-500">
                   {slideCount} slides · {offCount} turned off
                 </span>
@@ -1870,6 +1950,11 @@ export default function AboutV2Page() {
                 PowerPoint, upload it back; the AI keeps writing the text).{" "}
                 <span className="font-semibold">Remove</span> moves a slide to Deleted items, where it can
                 be restored.
+              </p>
+              <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
+                A slide switched off is removed from the AI&rsquo;s vocabulary outright, so it can never
+                appear. The <span className="font-semibold">star</span> is a preference rather than a
+                rule: it is what the AI reaches for first when several slides fit a point equally well.
               </p>
 
               {!layoutsMigrated && (
@@ -2630,7 +2715,10 @@ export default function AboutV2Page() {
           {activeTab === "photos" && (
             <section>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-[#031B34]">Photo library</h2>
+                  <Strength kind="enforced" />
+                </div>
                 <span className="text-xs text-zinc-500">
                   {(photoLibrary as BuiltinPhoto[]).length} brand photos · {customPhotos.length} added by the team ·{" "}
                   {photoOffCount} turned off

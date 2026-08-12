@@ -780,13 +780,14 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                          if "is a required property" in e or "is too short" in e]
     other_schema_errors = [e for e in errors
                            if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                                                "EXEC_LENGTH:"))
+                                                "EXEC_LENGTH:", "RULES:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
     notes_errors = [e for e in errors if e.startswith("NOTES:")]
     summary_errors = [e for e in errors if e.startswith("SUMMARY:")]
     exec_length_errors = [e for e in errors if e.startswith("EXEC_LENGTH:")]
+    rules_errors = [e for e in errors if e.startswith("RULES:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -841,6 +842,14 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "row, cut everything else (the full detail already lives on the deck's own slides "
                       "and in speaker_notes). Keep every other slide byte-for-byte "
                       "identical:\n- " + "\n- ".join(exec_length_errors))
+    if rules_errors:
+        parts.append("TEAM RULE BREACHES — the team's own standing rules for their decks (the TEAM RULES "
+                      "block above) are not met on the slides named below. Fix exactly those slides so "
+                      "they comply, keeping each slide's layout, its core claim and every other slide "
+                      "byte-for-byte identical. Change the WORDING to satisfy the rule; never invent a "
+                      "fact to satisfy one, and if a rule genuinely cannot be met from the source "
+                      "material, leave that slide as it is rather than inventing content:\n- "
+                      + "\n- ".join(rules_errors))
     fix = "\n\n".join(parts) + "\n\nPREVIOUS PLAN:\n" + json.dumps(prior, ensure_ascii=False)
     user = [{"role": "user", "content": f"SOURCE MATERIAL:\n{summary}\n\n{fix}"}]
     disabled = sanitize_disabled(disabled_layouts)

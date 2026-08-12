@@ -12,7 +12,7 @@ import sys
 
 import anthropic
 
-from . import planner, qa_gate, qa_geometry, renderer, validate
+from . import planner, qa_gate, qa_geometry, renderer, rules_gate, validate
 
 # Reader-facing text fields in a plan (the no-dash brand rule applies to these). Enum/id fields
 # (layout, benefit, icon, icon_generic, asset_id, background, language) and `source_citations`
@@ -21,6 +21,13 @@ _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "captio
                    "speaker_notes", "heading", "banner", "quote", "author", "x_axis", "y_axis",
                    "label", "note", "date", "value",
                    "study", "design", "result", "takeaway", "tagline", "contact"}
+
+
+# Findings that must never fail a deck: residual length overages the placeholders absorb, the
+# coverage/notes/summary nudges, and team-rule breaches the one repair pass could not resolve. ONE
+# definition — the two inline copies this replaces had already drifted apart once.
+_SOFT_ERRORS = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
+                "EXEC_LENGTH:", "RULES:")
 
 
 def _strip_text(s: str) -> str:
@@ -312,8 +319,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
         # fine deck would get discarded here for a nudge it was never asked to address.
-        soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:", "EXEC_LENGTH:")
-        hard = [e for e in errs if not any(s in e for s in soft)]
+        hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
         if hard:
             print("[qa-gate] revision still invalid after repair; keeping pre-gate deck:\n- "
                   + "\n- ".join(hard), file=sys.stderr)
@@ -397,12 +403,39 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             # auto-fit, so a few chars over is cosmetically absorbed at render, and a deck that
             # still under-uses layouts/photos after one revision is still a valid deck — don't
             # deny a non-technical user their deck over either.
-            soft = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:", "EXEC_LENGTH:")
-            hard = [e for e in errors if not any(s in e for s in soft)]
+            hard = [e for e in errors if not any(s in e for s in _SOFT_ERRORS)]
             if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))
             print("[warn] minor overflows/coverage nudges remain after retry; shipping anyway:\n- "
                   + "\n- ".join(errors), file=sys.stderr)
+
+    # The team's own standing rules are the one kind of instruction that can be neither enforced in
+    # code nor caught by the schema, so they used to be a request nobody verified. Read the finished
+    # plan against them and give the model one chance to fix what it missed — the same
+    # ask-then-check-then-repair shape the coverage/notes nudges already use. Never fatal: no rules,
+    # no findings, or any failure in the check and the deck ships exactly as planned.
+    if (custom_rules or "").strip():
+        _p(62, "Checking the deck against your rules")
+        breaches = rules_gate.review(client, plan, custom_rules)
+        if breaches:
+            candidate = planner.revise_plan(client, summary_text, plan, breaches, length=length,
+                                            tone=tone, instructions=instructions,
+                                            custom_rules=custom_rules,
+                                            disabled_layouts=disabled_layouts,
+                                            custom_slides=custom_slides, custom_photos=custom_photos,
+                                            preferred_layouts=preferred_layouts, design=design,
+                                            disabled_photos=disabled_photos,
+                                            preferred_photos=preferred_photos,
+                                            layout_overrides=layout_overrides)
+            errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
+                                          photo_level=photo_level, disabled_layouts=disabled_layouts,
+                                          layout_overrides=slot_layouts)
+            hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
+            if hard:
+                print("[rules-gate] the rule fix broke validation; keeping the pre-fix plan:\n- "
+                      + "\n- ".join(hard), file=sys.stderr)
+            else:
+                plan = candidate
 
     _p(70, "Rendering slides on the Superba template")
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta)  # slide 2, before the agenda

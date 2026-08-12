@@ -25,7 +25,14 @@ from . import config
 # Role -> hex. Every brand must define all of these; the renderer has no fallbacks, because a
 # silently-missing colour would show up as a wrong-coloured shape rather than an error.
 COLOR_ROLES = (
-    "accent",      # data, icons and the logo. NEVER decorative (the anti-AI-look rule).
+    "accent",      # icons, chart marks, drawn rules. NEVER decorative (the anti-AI-look rule).
+    # `accent` is a FILL colour; these two are the text colours that go with it, and they cannot be
+    # derived from it. Superba's accent is a dark red, so it doubles as emphasis text on a pale
+    # surface and takes white text on top. Revervia's is a light green: as text it fails on white
+    # (2.0:1) and on its own Light Teal chips (1.5:1), and white on top of it fails too — all three
+    # combinations its brand guide's contrast matrix explicitly crosses out.
+    "data",        # hero figures, KPI values, numbered badges: accent-coloured TEXT on a pale bg
+    "on_accent",   # text sitting ON an accent-filled shape (the chart delta chip)
     "deep",        # primary dark panel/heading colour
     "deep2",       # secondary panel colour
     "panel",       # light panel fill
@@ -50,6 +57,8 @@ _DEFAULTS: dict[str, dict] = {
         "colors": {
             "accent": "E50A1A", "deep": "185968", "deep2": "2C7482", "panel": "E4F1F1",
             "ink": "163536", "tint": "A9DBD5", "on_deep": "ECF5F5", "table_line": "C9D9D9",
+            # Superba's own long-standing values: the red doubles as data text, white sits on it.
+            "data": "E50A1A", "on_accent": "FFFFFF",
         },
         # 4th chart colour has no named role — it exists only to extend the series palette.
         "chart_colors": ["E50A1A", "2C7482", "A9DBD5", "60A09B"],
@@ -90,6 +99,10 @@ _DEFAULTS: dict[str, dict] = {
             "tint": "C4E3E8",        # Light Teal
             "on_deep": "F2F9FA",     # Alice Blue — text on a deep panel
             "table_line": "C4E3E8",  # Light Teal
+            # Marine Blue for figures: the guide's matrix passes dark blue on white AND on Light
+            # Teal, which is where hero numbers and numbered badges actually sit.
+            "data": "19698A",
+            "on_accent": "0C4554",   # Deep Sea Green on Algae Green (white on it is 2.0:1)
         },
         # Pale Yellow is the second accent; it earns a chart slot but not the `accent` role,
         # since yellow on a pale background fails the guide's own contrast matrix.

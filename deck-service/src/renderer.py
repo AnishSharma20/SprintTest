@@ -1041,7 +1041,9 @@ def _add_override_slide(prs, master_index: int, ov: dict, spec: dict,
 # Blank layout (inheriting the master's background + logos) and fills it from the plan: text into
 # slots, AI-picked brand icons into circles, or a native chart. Brand palette / fonts below.
 # ---------------------------------------------------------------------------
-_RED = RGBColor(0xE5, 0x0A, 0x1A)
+_RED = RGBColor(0xE5, 0x0A, 0x1A)        # accent FILL: icons, chart marks, drawn rules
+_DATA = RGBColor(0xE5, 0x0A, 0x1A)       # accent as TEXT (hero figures, badges) — see brand.py
+_ON_ACCENT = RGBColor(0xFF, 0xFF, 0xFF)  # text ON an accent-filled shape
 _TEAL = RGBColor(0x18, 0x59, 0x68)
 _TEAL2 = RGBColor(0x2C, 0x74, 0x82)   # secondary panel teal
 _PANEL = RGBColor(0xE4, 0xF1, 0xF1)
@@ -1119,6 +1121,8 @@ def apply_brand(brand: str | None = None) -> None:
     g = globals()
     g["_BRAND"] = brand
     g["_RED"] = _hex(c["accent"])
+    g["_DATA"] = _hex(c["data"])
+    g["_ON_ACCENT"] = _hex(c["on_accent"])
     g["_TEAL"] = _hex(c["deep"])
     g["_TEAL2"] = _hex(c["deep2"])
     g["_PANEL"] = _hex(c["panel"])
@@ -1332,7 +1336,7 @@ def _icon_disc(slide, cx, cy, d, icon_path=None, number=None, light=False, paste
         tf = disc.text_frame; tf.word_wrap = False; tf.vertical_anchor = MSO_ANCHOR.MIDDLE
         tf.text = str(number)
         rr = tf.paragraphs[0].runs[0]
-        rr.font.size = Pt(_SZ_BODY); rr.font.bold = True; rr.font.color.rgb = _RED; rr.font.name = _HEAD
+        rr.font.size = Pt(_SZ_BODY); rr.font.bold = True; rr.font.color.rgb = _DATA; rr.font.name = _HEAD
         tf.paragraphs[0].alignment = PP_ALIGN.CENTER
     return disc
 
@@ -1567,7 +1571,7 @@ def _fill_chart(prs, spec: dict, dark_index: int, light_index: int | None = None
             ctf.margin_top = ctf.margin_bottom = Emu(0)
             cp = ctf.paragraphs[0]; cp.alignment = PP_ALIGN.CENTER
             cr = cp.add_run(); cr.text = f"{arrow} {label}"; cr.font.size = Pt(_SZ_BODY); cr.font.bold = True
-            cr.font.name = _HEAD; cr.font.color.rgb = _WHITE
+            cr.font.name = _HEAD; cr.font.color.rgb = _ON_ACCENT
 
 
 def _fill_matrix(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
@@ -1691,7 +1695,7 @@ def _fill_stat(prs, spec: dict, dark_index: int, light_index: int | None = None)
     vy = _BODY_TOP + 0.8
     for i, st in enumerate(stats):
         x = _MARGIN + i * (cw + _GUTTER)
-        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_HERO, _RED, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, x, vy, cw, 1.0, st.get("value", ""), _SZ_HERO, _DATA, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         _place_text(slide, x, vy + 1.05, cw, 0.5, st.get("label", ""), _SZ_BODY, _ink(light), bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
         if st.get("note"):
             _place_text(slide, x + 0.2, vy + 1.6, cw - 0.4, 1.4, st["note"], _SZ_SMALL, _muted(light), align=PP_ALIGN.CENTER)
@@ -1849,7 +1853,7 @@ def _fill_kpi_dashboard(prs, spec: dict, dark_index: int, light_index: int | Non
         y = _BODY_TOP + rr * (th + _GUTTER)
         tile = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(tw), Inches(th))
         tile.fill.solid(); tile.fill.fore_color.rgb = _chip_bg(light, pastel); tile.line.fill.background(); tile.shadow.inherit = False
-        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _RED,
+        _place_text(slide, x + _PAD, y, tw - 2 * _PAD, th * 0.5, m.get("value", ""), _SZ_HERO, _DATA,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.BOTTOM)
         _place_text(slide, x + _PAD, y + th * 0.52, tw - 2 * _PAD, 0.5, m.get("label", ""), _SZ_BODY, _INKC,
                     bold=True, font=_HEAD, align=PP_ALIGN.CENTER)

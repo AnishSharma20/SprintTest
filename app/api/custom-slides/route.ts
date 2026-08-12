@@ -23,6 +23,7 @@
 // for old rows saved before that migration; MAX_PPTX_B64 only applies to that legacy path.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 const MAX_PPTX_B64 = 6_000_000; // legacy inline path only — comfortably under Vercel's ~4.5 MB
                                 // serverless body ceiling; storage_path has no such limit
@@ -45,8 +46,9 @@ export async function GET(req: Request) {
     let softDeleteMigrated = true;
     let slotsMigrated = true;
     let data: unknown;
+    const brand = brandFromRequest(req);
     const attempt = (cols: string) =>
-      sb.from("custom_slides").select(cols).order("sort_order").order("created_at");
+      sb.from("custom_slides").select(cols).eq("brand", brand).order("sort_order").order("created_at");
     const r1 = await attempt(`${BASE}, removed, slots, ${TAIL}`);
     if (!r1.error) data = r1.data;
     else {
@@ -104,13 +106,16 @@ export async function POST(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { filename, pptx_b64, storage_path, slides, author } = (await req.json()) as {
+    const body = (await req.json()) as {
+      brand?: string;
       filename?: string;
       pptx_b64?: string;
       storage_path?: string;
       slides?: { slide_index?: number; name?: string; description?: string; mode?: string; preview_b64?: string; slots?: unknown[] }[];
       author?: string;
     };
+    const { filename, pptx_b64, storage_path, slides, author } = body;
+    const brand = brandFromBody(req, body);
     if (!storage_path && (!pptx_b64 || typeof pptx_b64 !== "string"))
       return Response.json({ error: "The PowerPoint file is missing." }, { status: 400 });
     if (pptx_b64 && pptx_b64.length > MAX_PPTX_B64)
@@ -130,6 +135,7 @@ export async function POST(req: Request) {
     const fileId = crypto.randomUUID().replaceAll("-", "").slice(0, 16);
     const file = await sb.from("custom_slide_files").insert({
       id: fileId,
+      brand,
       filename: (filename ?? "slides.pptx").slice(0, 120),
       pptx_b64: pptx_b64 ?? null,
       storage_path: storage_path ?? null,
@@ -139,6 +145,7 @@ export async function POST(req: Request) {
 
     const rows = slides.map((s, i) => ({
       id: crypto.randomUUID().replaceAll("-", "").slice(0, 16),
+      brand,
       file_id: fileId,
       slide_index: s.slide_index as number,
       name: (s.name as string).trim().slice(0, 80),

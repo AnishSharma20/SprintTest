@@ -24,17 +24,20 @@
 // page can degrade instead of erroring.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 const ACTIONS = new Set(["position", "always_include"]);
 const POSITIONS = new Set(["first", "second", "third", "last", "second_to_last"]);
 
-export async function GET() {
+export async function GET(req: Request) {
   const sb = supabase();
   if (!sb) return Response.json({ configured: false, migrated: false, rules: [] });
 
+  const brand = brandFromRequest(req);
   const res = await sb
     .from("generation_rules")
     .select("*")
+    .eq("brand", brand)
     .order("sort_order")
     .order("id");
   if (res.error) return Response.json({ configured: true, migrated: false, rules: [] });
@@ -60,13 +63,15 @@ export async function POST(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { text, slide_key, action, position, author } = (await req.json()) as {
+    const body = (await req.json()) as {
       text?: string;
       slide_key?: string;
       action?: string;
       position?: string;
       author?: string;
+      brand?: string;
     };
+    const { text, slide_key, action, position, author } = body;
     const t = (text ?? "").trim();
     if (!t) return Response.json({ error: "The rule text is empty." }, { status: 400 });
     if (t.length > 500)
@@ -85,11 +90,13 @@ export async function POST(req: Request) {
         return Response.json({ error: "A position rule needs a known position." }, { status: 400 });
     }
 
-    const existing = await sb.from("generation_rules").select("sort_order");
+    const brand = brandFromBody(req, body);
+    const existing = await sb.from("generation_rules").select("sort_order").eq("brand", brand);
     if (existing.error) return Response.json({ error: existing.error.message }, { status: 500 });
     const sortOrder = Math.max(0, ...existing.data.map((r) => r.sort_order ?? 0)) + 1;
 
     const row: Record<string, unknown> = {
+      brand,
       text: t,
       created_by: (author ?? "").trim() || null,
       sort_order: sortOrder,

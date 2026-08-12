@@ -15,6 +15,7 @@
 // its state for a restore from Deleted items. Disabling a photo clears its star.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 type Row = {
   photo_id: string;
@@ -41,18 +42,20 @@ function payload(rows: Row[], metaMigrated: boolean) {
   };
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const sb = supabase();
   if (!sb)
     return Response.json({ configured: false, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
 
+  const brand = brandFromRequest(req);
   const res = await sb
     .from("photo_settings")
-    .select("photo_id, enabled, preferred, removed, display_name, description");
+    .select("photo_id, enabled, preferred, removed, display_name, description")
+    .eq("brand", brand);
   if (!res.error) return Response.json(payload(res.data, true));
 
   // Pre-0009 databases have no removed/display_name/description columns.
-  const pre9 = await sb.from("photo_settings").select("photo_id, enabled, preferred");
+  const pre9 = await sb.from("photo_settings").select("photo_id, enabled, preferred").eq("brand", brand);
   if (pre9.error)
     return Response.json({ configured: true, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
   return Response.json(payload(pre9.data, false));
@@ -63,7 +66,9 @@ export async function PUT(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { photo, enabled, preferred, removed, display_name, description, author } = (await req.json()) as {
+    // One read only: a Request body is a stream.
+    const body = (await req.json()) as {
+      brand?: string;
       photo?: string;
       enabled?: boolean;
       preferred?: boolean;
@@ -72,12 +77,14 @@ export async function PUT(req: Request) {
       description?: string;
       author?: string;
     };
+    const { photo, enabled, preferred, removed, display_name, description, author } = body;
+    const brand = brandFromBody(req, body);
     const key = (photo ?? "").trim();
     const hasMeta = removed !== undefined || display_name !== undefined || description !== undefined;
     if (!key || (enabled === undefined && preferred === undefined && !hasMeta))
       return Response.json({ error: "photo and at least one field to change are required." }, { status: 400 });
 
-    const existing = await sb.from("photo_settings").select("enabled, preferred").eq("photo_id", key).maybeSingle();
+    const existing = await sb.from("photo_settings").select("enabled, preferred").eq("brand", brand).eq("photo_id", key).maybeSingle();
     if (existing.error) return Response.json({ error: existing.error.message }, { status: 500 });
 
     const nextEnabled = enabled ?? existing.data?.enabled ?? true;
@@ -87,6 +94,7 @@ export async function PUT(req: Request) {
       return Response.json({ error: "Turn the photo on before starring it." }, { status: 400 });
 
     const row: Record<string, unknown> = {
+      brand,
       photo_id: key,
       enabled: nextEnabled,
       preferred: nextPreferred,

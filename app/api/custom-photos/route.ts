@@ -9,6 +9,7 @@
 // is a few hundred KB — well inside request limits and the generation payload budget.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 const MAX_IMAGE_B64 = 1_500_000; // ~1.1 MB image after downscaling — plenty for a slide photo
 const MAX_THUMB_B64 = 200_000;
@@ -25,12 +26,18 @@ export async function GET(req: Request) {
   // runtime rows are plain objects, so route them through unknown.
   let softDeleteMigrated = true;
   let data: unknown;
-  const r1 = await sb.from("custom_photos").select(`${base}, removed`).order("sort_order").order("created_at");
+  const brand = brandFromRequest(req);
+  const r1 = await sb
+    .from("custom_photos")
+    .select(`${base}, removed`)
+    .eq("brand", brand)
+    .order("sort_order")
+    .order("created_at");
   if (!r1.error) data = r1.data;
   else {
     // Pre-0009 databases have no `removed` column; every photo is implicitly not removed.
     softDeleteMigrated = false;
-    const r2 = await sb.from("custom_photos").select(base).order("sort_order").order("created_at");
+    const r2 = await sb.from("custom_photos").select(base).eq("brand", brand).order("sort_order").order("created_at");
     if (r2.error) return Response.json({ configured: true, migrated: false, photos: [] });
     data = r2.data;
   }
@@ -45,13 +52,16 @@ export async function POST(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { name, description, image_b64, thumb_b64, author } = (await req.json()) as {
+    const body = (await req.json()) as {
+      brand?: string;
       name?: string;
       description?: string;
       image_b64?: string;
       thumb_b64?: string;
       author?: string;
     };
+    const { name, description, image_b64, thumb_b64, author } = body;
+    const brand = brandFromBody(req, body);
     const n = (name ?? "").trim();
     if (!n) return Response.json({ error: "Give the photo a short name." }, { status: 400 });
     if (!(description ?? "").trim())
@@ -65,7 +75,7 @@ export async function POST(req: Request) {
     if (thumb_b64 && thumb_b64.length > MAX_THUMB_B64)
       return Response.json({ error: "The thumbnail is unexpectedly large." }, { status: 400 });
 
-    const existing = await sb.from("custom_photos").select("sort_order");
+    const existing = await sb.from("custom_photos").select("sort_order").eq("brand", brand);
     if (existing.error) return Response.json({ error: existing.error.message }, { status: 500 });
     const sortOrder = Math.max(0, ...existing.data.map((p) => p.sort_order ?? 0)) + 1;
 
@@ -73,6 +83,7 @@ export async function POST(req: Request) {
       .from("custom_photos")
       .insert({
         id: crypto.randomUUID().replaceAll("-", "").slice(0, 16),
+        brand,
         name: n.slice(0, 80),
         description: (description ?? "").trim().slice(0, 400),
         image_b64,

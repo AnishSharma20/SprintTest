@@ -17,6 +17,7 @@
 // custom_slides row), so both GC paths stay correct.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 import gallery from "../../layout-gallery.json";
 
 const BUCKET = "custom-slides";
@@ -46,13 +47,14 @@ export async function GET(req: Request) {
   if (!sb) return Response.json({ configured: false, migrated: false, overrides: [], files: {} });
 
   const params = new URL(req.url).searchParams;
+  const brand = brandFromRequest(req);
 
   // ?layout=key&file=1 — stream one override's stored .pptx (the "Download to edit" of an
   // overridden card, so the next edit iterates on the team's current design).
   if (params.get("file") === "1") {
     const key = (params.get("layout") ?? "").trim();
     if (!key) return Response.json({ error: "layout is required." }, { status: 400 });
-    const row = await sb.from("layout_overrides").select("file_id").eq("layout", key).maybeSingle();
+    const row = await sb.from("layout_overrides").select("file_id").eq("brand", brand).eq("layout", key).maybeSingle();
     if (row.error) return Response.json({ error: row.error.message }, { status: 500 });
     if (!row.data) return Response.json({ error: "No design override exists for this layout." }, { status: 404 });
     const f = await sb.from("custom_slide_files").select("pptx_b64, storage_path").eq("id", row.data.file_id).maybeSingle();
@@ -79,7 +81,8 @@ export async function GET(req: Request) {
       withBlobs
         ? "layout, file_id, slide_index, slots, preview_b64, enabled, updated_by, updated_at"
         : "layout, file_id, slide_index, preview_b64, enabled, updated_by, updated_at"
-    );
+    )
+    .eq("brand", brand);
   if (res.error) return Response.json({ configured: true, migrated: false, overrides: [], files: {} });
 
   const rows = res.data as unknown as { layout: string; file_id: string; enabled: boolean }[];
@@ -121,8 +124,8 @@ export async function PUT(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { layout, storage_path, filename, slide_index, slots, preview_b64, enabled, author } =
-      (await req.json()) as {
+    const body = (await req.json()) as {
+        brand?: string;
         layout?: string;
         storage_path?: string;
         filename?: string;
@@ -132,6 +135,8 @@ export async function PUT(req: Request) {
         enabled?: boolean;
         author?: string;
       };
+    const { layout, storage_path, filename, slide_index, slots, preview_b64, enabled, author } = body;
+    const brand = brandFromBody(req, body);
     const key = (layout ?? "").trim();
     if (!key) return Response.json({ error: "layout is required." }, { status: 400 });
     if (!KNOWN.has(key)) return Response.json({ error: `Unknown layout "${key}".` }, { status: 400 });
@@ -142,7 +147,7 @@ export async function PUT(req: Request) {
       );
 
     const by = (author ?? "").trim() || null;
-    const existing = await sb.from("layout_overrides").select("layout, file_id, enabled").eq("layout", key).maybeSingle();
+    const existing = await sb.from("layout_overrides").select("layout, file_id, enabled").eq("brand", brand).eq("layout", key).maybeSingle();
     if (existing.error) {
       const msg = `${existing.error.message}`;
       if (msg.includes("layout_overrides"))
@@ -188,6 +193,7 @@ export async function PUT(req: Request) {
     const up = await sb
       .from("layout_overrides")
       .upsert({
+        brand,
         layout: key,
         file_id: fileId,
         slide_index: Number.isInteger(slide_index) ? slide_index : 0,
@@ -219,13 +225,14 @@ export async function DELETE(req: Request) {
   if (!sb) return dbNotConfigured();
 
   const key = (new URL(req.url).searchParams.get("layout") ?? "").trim();
+  const brand = brandFromRequest(req);
   if (!key) return Response.json({ error: "layout is required." }, { status: 400 });
 
-  const existing = await sb.from("layout_overrides").select("layout, file_id").eq("layout", key).maybeSingle();
+  const existing = await sb.from("layout_overrides").select("layout, file_id").eq("brand", brand).eq("layout", key).maybeSingle();
   if (existing.error) return Response.json({ error: existing.error.message }, { status: 500 });
   if (!existing.data) return Response.json({ error: "No design override exists for this layout." }, { status: 404 });
 
-  const del = await sb.from("layout_overrides").delete().eq("layout", key);
+  const del = await sb.from("layout_overrides").delete().eq("brand", brand).eq("layout", key);
   if (del.error) return Response.json({ error: del.error.message }, { status: 500 });
   await gcFile(sb, existing.data.file_id);
   return Response.json({ ok: true });

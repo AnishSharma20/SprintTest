@@ -13,10 +13,11 @@
 // AI entirely — so `seeded` tells the page whether the one-time import has happened.
 
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
+import { brandFromRequest } from "../../../lib/brand";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(req: Request) {
   const sb = supabase();
   if (!sb) return dbNotConfigured();
 
@@ -34,16 +35,22 @@ export async function GET() {
 
     // Which are already rows? A failure here means the builtin_key column is missing (pre-0014),
     // and then there is nothing to seed — the service keeps using its own defaults.
-    const existing = await sb.from("generation_rules").select("builtin_key").not("builtin_key", "is", null);
+    const brand = brandFromRequest(req);
+    const existing = await sb
+      .from("generation_rules")
+      .select("builtin_key")
+      .eq("brand", brand)
+      .not("builtin_key", "is", null);
     if (existing.error) return Response.json({ blocks, seeded: false });
 
     const have = new Set(existing.data.map((r) => r.builtin_key as string));
     const missing = blocks.filter((b) => !have.has(b.key));
     if (missing.length) {
-      const order = await sb.from("generation_rules").select("sort_order");
+      const order = await sb.from("generation_rules").select("sort_order").eq("brand", brand);
       let next = Math.max(0, ...(order.data ?? []).map((r) => r.sort_order ?? 0)) + 1;
       const ins = await sb.from("generation_rules").insert(
         missing.map((b) => ({
+          brand,
           text: b.text,
           builtin_key: b.key,
           sort_order: next++,

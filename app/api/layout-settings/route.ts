@@ -18,6 +18,7 @@
 // deleting their rule on the Rules tab makes them removable like anything else.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 // Which slides a deck must have is the team's decision now, expressed as structure rules
 // (migration 0013). Before 0013 the two that used to be hardcoded keep their protection, so an
@@ -26,8 +27,8 @@ const LEGACY_LOCKED = new Set(["title", "agenda"]);
 
 /** Slides an enabled structure rule still requires — these cannot be switched off or removed
  * while that rule stands, because a rule pinning a slide that can never appear is incoherent. */
-async function protectedSlides(sb: NonNullable<ReturnType<typeof supabase>>): Promise<Set<string>> {
-  const res = await sb.from("generation_rules").select("slide_key, action, enabled");
+async function protectedSlides(sb: NonNullable<ReturnType<typeof supabase>>, brand: string): Promise<Set<string>> {
+  const res = await sb.from("generation_rules").select("slide_key, action, enabled").eq("brand", brand);
   if (res.error) return LEGACY_LOCKED; // pre-0013: the old pair stays protected
   return new Set(
     res.data
@@ -66,22 +67,24 @@ function payload(rows: Row[], flags: { starsMigrated: boolean; metaMigrated: boo
   };
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const sb = supabase();
   if (!sb)
     return Response.json({ configured: false, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
 
+  const brand = brandFromRequest(req);
   const res = await sb
     .from("layout_settings")
-    .select("layout, enabled, preferred, removed, display_name, description");
+    .select("layout, enabled, preferred, removed, display_name, description")
+    .eq("brand", brand);
   if (!res.error) return Response.json(payload(res.data, { starsMigrated: true, metaMigrated: true }));
 
   // Pre-0009 databases have no removed/display_name/description columns.
-  const pre9 = await sb.from("layout_settings").select("layout, enabled, preferred");
+  const pre9 = await sb.from("layout_settings").select("layout, enabled, preferred").eq("brand", brand);
   if (!pre9.error) return Response.json(payload(pre9.data, { starsMigrated: true, metaMigrated: false }));
 
   // Pre-0006 databases have no `preferred` column either; keep the on/off switches working.
-  const old = await sb.from("layout_settings").select("layout, enabled").eq("enabled", false);
+  const old = await sb.from("layout_settings").select("layout, enabled").eq("brand", brand).eq("enabled", false);
   if (old.error)
     return Response.json({ configured: true, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
   return Response.json({
@@ -101,7 +104,8 @@ export async function PUT(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { layout, enabled, preferred, removed, display_name, description, author } = (await req.json()) as {
+    // Read the body ONCE: a Request body is a stream, so a second req.json() throws.
+    const body = (await req.json()) as {
       layout?: string;
       enabled?: boolean;
       preferred?: boolean;
@@ -109,13 +113,16 @@ export async function PUT(req: Request) {
       display_name?: string;
       description?: string;
       author?: string;
+      brand?: string;
     };
+    const brand = brandFromBody(req, body);
+    const { layout, enabled, preferred, removed, display_name, description, author } = body;
     const key = (layout ?? "").trim();
     const hasMeta = removed !== undefined || display_name !== undefined || description !== undefined;
     if (!key || (enabled === undefined && preferred === undefined && !hasMeta))
       return Response.json({ error: "layout and at least one field to change are required." }, { status: 400 });
     if (enabled === false || removed === true) {
-      const protectedKeys = await protectedSlides(sb);
+      const protectedKeys = await protectedSlides(sb, brand);
       if (protectedKeys.has(key))
         return Response.json(
           {
@@ -127,7 +134,7 @@ export async function PUT(req: Request) {
         );
     }
 
-    const existing = await sb.from("layout_settings").select("enabled, preferred").eq("layout", key).maybeSingle();
+    const existing = await sb.from("layout_settings").select("enabled, preferred").eq("brand", brand).eq("layout", key).maybeSingle();
     if (existing.error && !`${existing.error.message}`.includes("preferred"))
       return Response.json({ error: existing.error.message }, { status: 500 });
 
@@ -138,6 +145,7 @@ export async function PUT(req: Request) {
       return Response.json({ error: "Turn the layout on before starring it." }, { status: 400 });
 
     const row: Record<string, unknown> = {
+      brand,
       layout: key,
       enabled: nextEnabled,
       preferred: nextPreferred,

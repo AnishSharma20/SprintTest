@@ -18,22 +18,26 @@ export async function GET(req: Request) {
   if (!sb) return Response.json({ configured: false, migrated: false, photos: [] });
 
   const withBlobs = new URL(req.url).searchParams.get("blobs") === "1";
-  const res = await sb
-    .from("custom_photos")
-    .select(
-      withBlobs
-        ? "id, name, description, enabled, preferred, thumb_b64, image_b64, created_by, created_at, updated_by, updated_at"
-        : "id, name, description, enabled, preferred, thumb_b64, created_by, created_at, updated_by, updated_at"
-    )
-    .order("sort_order")
-    .order("created_at");
-  if (res.error) return Response.json({ configured: true, migrated: false, photos: [] });
-
-  // supabase-js's type-level column parser can't resolve a UNION of two select strings; the
+  const base = withBlobs
+    ? "id, name, description, enabled, preferred, thumb_b64, image_b64, created_by, created_at, updated_by, updated_at"
+    : "id, name, description, enabled, preferred, thumb_b64, created_by, created_at, updated_by, updated_at";
+  // supabase-js's type-level column parser can't resolve a UNION of select strings; the
   // runtime rows are plain objects, so route them through unknown.
-  const rows = res.data as unknown as { enabled: boolean }[];
-  const photos = withBlobs ? rows.filter((p) => p.enabled) : rows;
-  return Response.json({ configured: true, migrated: true, photos });
+  let softDeleteMigrated = true;
+  let data: unknown;
+  const r1 = await sb.from("custom_photos").select(`${base}, removed`).order("sort_order").order("created_at");
+  if (!r1.error) data = r1.data;
+  else {
+    // Pre-0009 databases have no `removed` column; every photo is implicitly not removed.
+    softDeleteMigrated = false;
+    const r2 = await sb.from("custom_photos").select(base).order("sort_order").order("created_at");
+    if (r2.error) return Response.json({ configured: true, migrated: false, photos: [] });
+    data = r2.data;
+  }
+
+  const rows = data as { enabled: boolean; removed?: boolean }[];
+  const photos = withBlobs ? rows.filter((p) => p.enabled && !p.removed) : rows;
+  return Response.json({ configured: true, migrated: true, softDeleteMigrated, photos });
 }
 
 export async function POST(req: Request) {

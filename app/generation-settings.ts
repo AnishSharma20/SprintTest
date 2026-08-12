@@ -24,6 +24,18 @@ export type CustomPhotoPayload = {
   files: Record<string, string>;
 };
 
+export type LayoutOverridePayload = {
+  meta: {
+    layout: string;
+    file_id: string;
+    slide_index: number;
+    slots: unknown[];
+    preview_b64?: string;
+  }[];
+  /** file_id → base64 .pptx (one dedicated file per overridden layout). */
+  files: Record<string, string>;
+};
+
 export type DeckSettings = {
   customRules: string;
   disabledLayouts: string;
@@ -34,6 +46,7 @@ export type DeckSettings = {
   designSettings: string;
   customSlides: CustomSlidePayload;
   customPhotos: CustomPhotoPayload;
+  layoutOverrides: LayoutOverridePayload;
 };
 
 // The Vercel proxy in front of the deck service caps request bodies around 4.5 MB, and the job
@@ -69,6 +82,15 @@ export function appendDeckSettings(form: FormData, s: DeckSettings): void {
       form.append("custom_photo_files", b64ToBlob(b64), `${photoId}.jpg`);
     }
   }
+  if (s.layoutOverrides.meta.length) {
+    form.append("layout_overrides_meta", JSON.stringify(s.layoutOverrides.meta));
+    // Override .pptx blobs ride the SAME custom_files channel as team slides (the service
+    // indexes both by <file_id>.pptx). Override files are dedicated rows, so a collision with
+    // a team-slide file id can't happen — the guard is just one cheap line.
+    for (const [fileId, b64] of Object.entries(s.layoutOverrides.files)) {
+      if (!(fileId in s.customSlides.files)) form.append("custom_files", b64ToBlob(b64), `${fileId}.pptx`);
+    }
+  }
 }
 
 export async function deckGenerationSettings(): Promise<DeckSettings> {
@@ -80,6 +102,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   let designSettings = "";
   const customSlides: CustomSlidePayload = { meta: [], files: {} };
   const customPhotos: CustomPhotoPayload = { meta: [], files: {} };
+  const layoutOverrides: LayoutOverridePayload = { meta: [], files: {} };
   try {
     const r = await (await fetch("/api/rules")).json();
     const active = (r.rules ?? []).filter((x: { enabled?: boolean }) => x.enabled);
@@ -117,7 +140,9 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     const sentFiles: Record<string, string> = {};
     const slides = (c.slides ?? []) as (CustomSlidePayload["meta"][number] & { preview_b64: string | null })[];
     for (const s of slides) {
-      if (s.mode === "off") continue;
+      // Removed slides ship no blob from the server anyway (?blobs=1 excludes them); the
+      // explicit check makes the intent auditable here too.
+      if (s.mode === "off" || (s as { removed?: boolean }).removed) continue;
       const blob = files[s.file_id];
       if (!blob) continue;
       const preview = s.preview_b64 ?? "";
@@ -168,6 +193,38 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   } catch {
     /* no settings — generate as before */
   }
+  try {
+    const o = await (await fetch("/api/layout-overrides?blobs=1")).json();
+    const files: Record<string, string> = o.files ?? {};
+    const disabledSet = new Set(disabledLayouts.split(",").filter(Boolean));
+    let budget = MAX_CUSTOM_BYTES; // own budget, same ceiling rationale as team slides
+    for (const ov of (o.overrides ?? []) as (LayoutOverridePayload["meta"][number] & {
+      enabled?: boolean;
+      preview_b64?: string | null;
+    })[]) {
+      // A disabled/removed layout can't be planned — its bytes would be dead weight.
+      if (disabledSet.has(ov.layout)) continue;
+      const blob = files[ov.file_id];
+      if (!blob) continue;
+      const preview = ov.preview_b64 ?? "";
+      const cost = Math.ceil(blob.length * 0.75) + preview.length;
+      if (cost > budget) {
+        console.warn(`Skipping the "${ov.layout}" design override — the job payload would get too large.`);
+        continue;
+      }
+      budget -= cost;
+      layoutOverrides.files[ov.file_id] = blob;
+      layoutOverrides.meta.push({
+        layout: ov.layout,
+        file_id: ov.file_id,
+        slide_index: ov.slide_index,
+        slots: ov.slots ?? [],
+        preview_b64: preview || undefined,
+      });
+    }
+  } catch {
+    /* no settings — generate as before */
+  }
   return {
     customRules,
     disabledLayouts,
@@ -177,5 +234,6 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
     designSettings,
     customSlides,
     customPhotos,
+    layoutOverrides,
   };
 }

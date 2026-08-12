@@ -365,7 +365,8 @@ def _check_assets(slide, spec: dict):
 
 
 def review_and_fix(pptx_bytes: bytes, plan: dict,
-                    slide_map: list[int | None] | None = None) -> tuple[bytes, list[dict]]:
+                    slide_map: list[int | None] | None = None,
+                    verbatim_layouts: frozenset | set = frozenset()) -> tuple[bytes, list[dict]]:
     """Run every deterministic check over the rendered deck, auto-fixing what's unambiguous.
     Returns the (possibly modified) pptx bytes and the full issue list — fixed and unfixed,
     slide-numbered (1-based) — for the caller to log or hand to the vision gate. Never raises:
@@ -378,7 +379,12 @@ def review_and_fix(pptx_bytes: bytes, plan: dict,
     from that point on in every real deck — pass this whenever you have it. Without it, the asset
     check falls back to naive 1:1 indexing (only correct for a plan rendered with no such
     splices, e.g. an ad hoc single-layout test); margin/alignment/contrast are unaffected either
-    way since they never look at the plan."""
+    way since they never look at the plan.
+
+    verbatim_layouts: layout keys whose slides are VERBATIM splices of a user-authored design
+    (TEAM REDESIGNED overrides) — the margin/alignment/contrast fixers are skipped for those
+    (a deliberate off-canvas bleed element must not be dragged back onto the slide), as they
+    are for custom_*/ingredient splices."""
     prs = Presentation(io.BytesIO(pptx_bytes))
     sw_in, sh_in = prs.slide_width / EMU_PER_IN, prs.slide_height / EMU_PER_IN
     margin_in = renderer._MARGIN
@@ -393,6 +399,9 @@ def review_and_fix(pptx_bytes: bytes, plan: dict,
             spec = slides_spec[plan_idx] if plan_idx is not None and plan_idx < len(slides_spec) else {}
         else:
             spec = slides_spec[i] if i < len(slides_spec) else {}
+        layout = spec.get("layout") or ""
+        if layout in verbatim_layouts or layout.startswith("custom_") or layout == "ingredient":
+            continue   # a verbatim user/brand design is never "fixed" by our geometry rules
         m_issues, m_changed = _check_margins(slide, sw_in, sh_in, margin_in)
         a_issues, a_changed = _check_alignment(slide)
         c_issues, c_changed = _check_contrast(slide, ink_rgb, white_rgb)

@@ -3,7 +3,14 @@
 // (Aker BioMarine affiliation), attaches verified whitepaper summaries + AI summaries, and always
 // merges in the 4 curated key trials. Server-only (uses Next fetch caching).
 
-import { CURATED_STUDIES, EXCLUDED_TITLE_HINTS, type CuratedStudy, type Quality, type Summary } from "./studies-data";
+import {
+  CURATED_STUDIES,
+  EXCLUDED_TITLE_HINTS,
+  type CuratedStudy,
+  type Quality,
+  type OutcomeDirection,
+  type Summary,
+} from "./studies-data";
 import { canonicalIds } from "./lib/category-ids";
 import aiSummariesRaw from "./ai-summaries.json";
 import fulltextStudiesRaw from "./fulltext-studies.json";
@@ -29,10 +36,25 @@ export type Studie = {
   qualityReviewer?: string | null;
   qualityReviewedAt?: string | null;
   qualityNote?: string | null;
+  // Which way the study's OWN result pointed — independent of quality above (a rigorous trial
+  // can still land on a null/negative result, and vice versa). Curated studies carry one built
+  // in; everything else is unset until a reviewer records one.
+  outcomeDirection?: OutcomeDirection | null;
   akerNote?: string | null;
   // true = AKBM supplied the paper as a PDF, so summaries/findings come from the FULL TEXT.
   // false = we only have the PubMed abstract for it.
   harFulltekst?: boolean;
+  // Science team's own write up (migration 0010's study_assessment table) — distinct from the
+  // Background/Design/Findings/Limitations summary above, which is AI written or curated.
+  abstract?: string | null;
+  keyFindingsAssessment?: string | null;
+  // Set once a reviewer removes the study from this page (migration 0010's study_removed table).
+  // The base list from PubMed/curated data never marks anything removed itself — this is always
+  // laid over the list client side by app/study-meta.ts, same as quality/categories.
+  removed?: boolean;
+  removedReason?: string | null;
+  removedBy?: string | null;
+  removedAt?: string | null;
 };
 
 const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
@@ -174,7 +196,8 @@ function curatedToStudie(c: CuratedStudy): Studie {
     forfattere: c.authors, flereForfattere: false, kategori: kat, kategoriIds: canonicalIds(kat),
     url: `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`,
     doiUrl: c.doi ? `https://doi.org/${c.doi}` : null,
-    summary: c.summary, verified: true, quality: c.quality, akerNote: c.akerNote,
+    summary: c.summary, verified: true, quality: c.quality, outcomeDirection: c.outcomeDirection,
+    akerNote: c.akerNote,
   };
 }
 

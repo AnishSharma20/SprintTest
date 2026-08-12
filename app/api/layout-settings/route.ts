@@ -1,42 +1,85 @@
-// /api/layout-settings — per layout on/off overrides + "house favourite" stars.
+// /api/layout-settings — per layout on/off overrides, "house favourite" stars, the stronger
+// "removed" state (Deleted items) and editable display name/description for BUILT-IN layouts.
 //
-//   GET  /api/layout-settings   { configured, migrated, disabled: [...], preferred: [...] }
-//   PUT  /api/layout-settings   { layout, enabled?, preferred?, author? }   upsert one row
+//   GET  /api/layout-settings   { configured, migrated, starsMigrated, metaMigrated,
+//                                 disabled: [...], removed: [...], preferred: [...],
+//                                 names: { layout: { display_name, description } } }
+//   PUT  /api/layout-settings   { layout, enabled?, preferred?, removed?, display_name?,
+//                                 description?, author? }   upsert one row
 //
-// Absence of a row means "enabled, not preferred" (the built in default). A disabled layout
-// is removed from the planner's vocabulary entirely; a PREFERRED layout is named to the
-// planner as a house favourite to pick when several layouts fit equally well. Disabling a
-// layout clears its star. `title` and `agenda` can never be disabled: every deck opens with
-// a cover and the pipeline's safety net inserts an agenda slide.
+// Absence of a row means "enabled, not preferred, not removed" (the built-in default). A
+// disabled layout is removed from the planner's vocabulary entirely; a PREFERRED layout is
+// named to the planner as a house favourite; a REMOVED layout leaves the library grid AND the
+// planner (it is folded into `disabled` below, so generation needs no extra wiring) but keeps
+// its enabled/preferred state for when it is restored from Deleted items. display_name/
+// description (null = built-in default) let the team retitle a built-in card from the UI.
+// `title` and `agenda` can never be disabled or removed: every deck opens with a cover and
+// the pipeline's safety net inserts an agenda slide.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 
 const LOCKED = new Set(["title", "agenda"]);
 
+type Row = {
+  layout: string;
+  enabled: boolean;
+  preferred?: boolean;
+  removed?: boolean;
+  display_name?: string | null;
+  description?: string | null;
+};
+
+function payload(rows: Row[], flags: { starsMigrated: boolean; metaMigrated: boolean }) {
+  const removedSet = new Set(rows.filter((r) => r.removed).map((r) => r.layout));
+  return {
+    configured: true,
+    migrated: true,
+    ...flags,
+    // Removed layouts fold into `disabled` so generation excludes them with no extra wiring
+    // (generation-settings.ts reads only disabled/preferred); the UI un-folds via `removed`.
+    disabled: rows
+      .filter((r) => !r.enabled || r.removed)
+      .map((r) => r.layout)
+      .filter((l) => !LOCKED.has(l)),
+    removed: [...removedSet],
+    preferred: rows
+      .filter((r) => r.enabled && r.preferred && !r.removed)
+      .map((r) => r.layout),
+    names: Object.fromEntries(
+      rows
+        .filter((r) => r.display_name || r.description)
+        .map((r) => [r.layout, { display_name: r.display_name ?? null, description: r.description ?? null }])
+    ),
+  };
+}
+
 export async function GET() {
   const sb = supabase();
-  if (!sb) return Response.json({ configured: false, migrated: false, disabled: [], preferred: [] });
+  if (!sb)
+    return Response.json({ configured: false, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
 
-  const res = await sb.from("layout_settings").select("layout, enabled, preferred");
-  if (res.error) {
-    // Pre-0006 databases have no `preferred` column; keep the on/off switches working there.
-    const old = await sb.from("layout_settings").select("layout, enabled").eq("enabled", false);
-    if (old.error) return Response.json({ configured: true, migrated: false, disabled: [], preferred: [] });
-    return Response.json({
-      configured: true,
-      migrated: true,
-      starsMigrated: false,
-      disabled: old.data.map((r) => r.layout).filter((l) => !LOCKED.has(l)),
-      preferred: [],
-    });
-  }
+  const res = await sb
+    .from("layout_settings")
+    .select("layout, enabled, preferred, removed, display_name, description");
+  if (!res.error) return Response.json(payload(res.data, { starsMigrated: true, metaMigrated: true }));
 
+  // Pre-0009 databases have no removed/display_name/description columns.
+  const pre9 = await sb.from("layout_settings").select("layout, enabled, preferred");
+  if (!pre9.error) return Response.json(payload(pre9.data, { starsMigrated: true, metaMigrated: false }));
+
+  // Pre-0006 databases have no `preferred` column either; keep the on/off switches working.
+  const old = await sb.from("layout_settings").select("layout, enabled").eq("enabled", false);
+  if (old.error)
+    return Response.json({ configured: true, migrated: false, disabled: [], removed: [], preferred: [], names: {} });
   return Response.json({
     configured: true,
     migrated: true,
-    starsMigrated: true,
-    disabled: res.data.filter((r) => !r.enabled).map((r) => r.layout).filter((l) => !LOCKED.has(l)),
-    preferred: res.data.filter((r) => r.enabled && r.preferred).map((r) => r.layout),
+    starsMigrated: false,
+    metaMigrated: false,
+    disabled: old.data.map((r) => r.layout).filter((l) => !LOCKED.has(l)),
+    removed: [],
+    preferred: [],
+    names: {},
   });
 }
 
@@ -45,18 +88,27 @@ export async function PUT(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { layout, enabled, preferred, author } = (await req.json()) as {
+    const { layout, enabled, preferred, removed, display_name, description, author } = (await req.json()) as {
       layout?: string;
       enabled?: boolean;
       preferred?: boolean;
+      removed?: boolean;
+      display_name?: string;
+      description?: string;
       author?: string;
     };
     const key = (layout ?? "").trim();
-    if (!key || (enabled === undefined && preferred === undefined))
-      return Response.json({ error: "layout and enabled and/or preferred are required." }, { status: 400 });
+    const hasMeta = removed !== undefined || display_name !== undefined || description !== undefined;
+    if (!key || (enabled === undefined && preferred === undefined && !hasMeta))
+      return Response.json({ error: "layout and at least one field to change are required." }, { status: 400 });
     if (LOCKED.has(key) && enabled === false)
       return Response.json(
         { error: "The cover and agenda layouts are required by every deck and cannot be turned off." },
+        { status: 400 }
+      );
+    if (LOCKED.has(key) && removed === true)
+      return Response.json(
+        { error: "The cover and agenda layouts are required by every deck and cannot be removed." },
         { status: 400 }
       );
 
@@ -70,18 +122,28 @@ export async function PUT(req: Request) {
     if (preferred && !nextEnabled)
       return Response.json({ error: "Turn the layout on before starring it." }, { status: 400 });
 
-    const up = await sb
-      .from("layout_settings")
-      .upsert({
-        layout: key,
-        enabled: nextEnabled,
-        preferred: nextPreferred,
-        updated_by: (author ?? "").trim() || null,
-        updated_at: new Date().toISOString(),
-      })
-      .select("*")
-      .single();
-    if (up.error) return Response.json({ error: up.error.message }, { status: 500 });
+    const row: Record<string, unknown> = {
+      layout: key,
+      enabled: nextEnabled,
+      preferred: nextPreferred,
+      updated_by: (author ?? "").trim() || null,
+      updated_at: new Date().toISOString(),
+    };
+    // Only carry the 0009 columns when the request actually uses them, so a pre-0009 database
+    // still handles plain enable/star PUTs exactly as before.
+    if (removed !== undefined) row.removed = removed;
+    if (display_name !== undefined) row.display_name = display_name.trim().slice(0, 80) || null;
+    if (description !== undefined) row.description = description.trim().slice(0, 400) || null;
+
+    const up = await sb.from("layout_settings").upsert(row).select("*").single();
+    if (up.error) {
+      if (hasMeta)
+        return Response.json(
+          { error: "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor first." },
+          { status: 400 }
+        );
+      return Response.json({ error: up.error.message }, { status: 500 });
+    }
     return Response.json({ setting: up.data });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });

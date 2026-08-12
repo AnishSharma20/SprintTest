@@ -17,8 +17,7 @@ import {
 } from "../claims-source";
 import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
 import { PRODUCTS, type ProductId } from "../products";
-
-const REVIEWER_KEY = "claimsReviewerName:v1";
+import { useCurrentUser } from "../lib/use-current-user";
 
 type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 
@@ -167,6 +166,7 @@ type Kjoring = {
 };
 
 export default function ContentGenerator() {
+  const { name: reviewerName } = useCurrentUser();
   const [wizardStep, setWizardStep] = useState(1);
 
   const [produkt, setProdukt] = useState<ProductId>("superba");
@@ -294,7 +294,11 @@ export default function ContentGenerator() {
       loadStudyMeta(),
     ])
       .then(([d, meta]) =>
-        setStudier(applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : [], meta))
+        setStudier(
+          applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : [], meta).filter(
+            (s) => !s.removed
+          )
+        )
       )
       .catch(() => setStudier([]));
     void loadApprovedClaims().then((res) => {
@@ -438,8 +442,7 @@ export default function ContentGenerator() {
       }
 
       if (claimIds.length && (type === "deck" || type === "blog" || type === "whitepaper_mix")) {
-        const reviewer = typeof window !== "undefined" ? window.localStorage.getItem(REVIEWER_KEY) || undefined : undefined;
-        void recordAssetClaims(type, claimIds, { title: `${type} · ${new Date().toISOString().slice(0, 10)}`, createdBy: reviewer });
+        void recordAssetClaims(type, claimIds, { title: `${type} · ${new Date().toISOString().slice(0, 10)}`, createdBy: reviewerName || undefined });
       }
     } catch (e) {
       oppdaterKjoring(type, { status: "error", step: "Failed", error: (e as Error).message });

@@ -1,7 +1,8 @@
-// /api/custom-photos/[id] — edit, toggle, star or remove one of the team's photos.
+// /api/custom-photos/[id] — edit, toggle, star, remove (soft) or purge one of the team's photos.
 //
-//   PATCH  { name?, description?, enabled?, preferred?, author? }
-//   DELETE
+//   PATCH  { name?, description?, enabled?, preferred?, removed?, author? }   removed:false = restore
+//   DELETE            soft: marks the photo removed (Deleted items, restorable)
+//   DELETE ?purge=1   permanent (pre-0009 databases fall through to this, matching old behaviour)
 
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
 
@@ -11,11 +12,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
 
   try {
-    const { name, description, enabled, preferred, author } = (await req.json()) as {
+    const { name, description, enabled, preferred, removed, author } = (await req.json()) as {
       name?: string;
       description?: string;
       enabled?: boolean;
       preferred?: boolean;
+      removed?: boolean;
       author?: string;
     };
     const patch: Record<string, unknown> = {
@@ -50,6 +52,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       }
       patch.preferred = preferred;
     }
+    if (removed !== undefined) patch.removed = removed;
 
     const upd = await sb
       .from("custom_photos")
@@ -57,17 +60,34 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       .eq("id", id)
       .select("id, name, description, enabled, preferred, thumb_b64, updated_by, updated_at")
       .single();
-    if (upd.error) return Response.json({ error: upd.error.message }, { status: 500 });
+    if (upd.error) {
+      if (removed !== undefined)
+        return Response.json(
+          { error: "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor first." },
+          { status: 400 }
+        );
+      return Response.json({ error: upd.error.message }, { status: 500 });
+    }
     return Response.json({ photo: upd.data });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const sb = supabase();
   if (!sb) return dbNotConfigured();
   const { id } = await params;
+  const purge = new URL(req.url).searchParams.get("purge") === "1";
+
+  if (!purge) {
+    const soft = await sb
+      .from("custom_photos")
+      .update({ removed: true, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (!soft.error) return Response.json({ ok: true, removed: true });
+    // Pre-0009 (no removed column): fall through to the old hard delete below.
+  }
 
   const del = await sb.from("custom_photos").delete().eq("id", id);
   if (del.error) return Response.json({ error: del.error.message }, { status: 500 });

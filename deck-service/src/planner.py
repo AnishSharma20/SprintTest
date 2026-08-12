@@ -128,15 +128,104 @@ def sanitize_disabled(disabled_layouts) -> set[str]:
     return {d for d in (disabled_layouts or ()) if d in known} - _REQUIRED_LAYOUTS
 
 
-def _layout_guide(disabled: set[str]) -> str:
+def _layout_guide(disabled: set[str], overridden: set[str] | None = None) -> str:
     limits = _limits_from_schema()
+    overridden = overridden or set()
     lines = []
     for sem, usage in LAYOUT_USAGE.items():
         if sem in disabled:
             continue
+        if sem in overridden:
+            # The normal [field limits] read from the pristine schema no longer apply to an
+            # overridden layout (its conditional was swapped to slots) — printing them would
+            # contradict the TEAM REDESIGNED LAYOUTS block.
+            lines.append(f"- {sem} — {usage}  [TEAM REDESIGNED: emit slots, "
+                         f"see TEAM REDESIGNED LAYOUTS]")
+            continue
         lim = limits.get(sem, "")
         lines.append(f"- {sem} — {usage}" + (f"  [{lim}]" if lim else ""))
     return "\n".join(lines)
+
+
+def sanitize_overrides(layout_overrides, disabled: set[str] | None = None) -> list[dict]:
+    """The About page's layout design overrides, made safe: only real layout keys, never the
+    fixed-role ones (their deterministic nets write normal fields), never a disabled layout
+    (off wins over overridden), only entries that carry slots, first wins on a duplicate."""
+    from .overrides import OVERRIDE_EXCLUDED
+    known = set(config.catalog())
+    disabled = disabled or set()
+    out, seen = [], set()
+    for o in layout_overrides or []:
+        key = o.get("layout") if isinstance(o, dict) else None
+        if (not key or key not in known or key in OVERRIDE_EXCLUDED
+                or key in disabled or key in seen or not o.get("slots")):
+            continue
+        seen.add(key)
+        out.append(o)
+    return out
+
+
+def apply_layout_overrides(schema: dict, layout_overrides: list[dict]) -> None:
+    """Swap each overridden layout's schema conditional from its normal fields to the
+    override's measured text slots — the model then MUST emit {"layout", "slots": {...}} for
+    that key (a normal-field plan fails validation and lands in the structural repair bucket).
+    Mutates in place; callers deep-copy first (config.schema() is cached). Shared by
+    _tool_schema and validate._schema_with_extras so guidance and enforcement can't drift."""
+    if not layout_overrides:
+        return
+    by_key = {o["layout"]: o for o in layout_overrides}
+    items = schema["properties"]["slides"]["items"]
+    # The slide object is additionalProperties:false — without a top-level `slots` property
+    # every slot plan is rejected outright, whatever the conditionals say.
+    items["properties"]["slots"] = {
+        "type": "object",
+        "description": "Per-slot text for a TEAM REDESIGNED layout (see the system prompt)."}
+    for cond in items.get("allOf", []):
+        key = cond.get("if", {}).get("properties", {}).get("layout", {}).get("const")
+        ov = by_key.get(key)
+        if not ov:
+            continue
+        slot_props = {}
+        for s in ov.get("slots") or []:
+            sid = s.get("slot_id")
+            if not sid:
+                continue
+            hint = str(s.get("original_text") or "").replace("\n", " / ")[:80]
+            slot_props[sid] = {
+                "type": "string", "maxLength": int(s.get("char_budget") or 200),
+                "description": (f'Fresh text for the box that currently says "{hint}" '
+                                f'(~{s.get("lines_estimate") or 1} line(s)); play the same '
+                                f"role with this deck's content.")}
+        cond["then"] = {"required": ["layout", "slots"],
+                        "properties": {"slots": {
+                            "type": "object", "additionalProperties": False,
+                            "required": sorted(slot_props),
+                            "properties": slot_props}}}
+
+
+def _override_guide(layout_overrides) -> str:
+    """Prompt block for TEAM REDESIGNED layouts — the design is spliced verbatim, the model
+    writes fresh text per slot. Original text is echoed (truncated) as the role hint."""
+    if not layout_overrides:
+        return ""
+    lines = []
+    for ov in layout_overrides:
+        slots = ov.get("slots") or []
+        lines.append(f"- {ov['layout']} — {len(slots)} text slot(s):")
+        for s in slots:
+            hint = str(s.get("original_text") or "").replace("\n", " / ")[:80]
+            lines.append(f'  · {s.get("slot_id")} [<={s.get("char_budget")} chars, '
+                         f'~{s.get("lines_estimate") or 1} line(s)] currently: "{hint}"')
+    return (
+        "\n\nTEAM REDESIGNED LAYOUTS: the team replaced the DESIGN of these layouts with their "
+        "own finished slide, which is spliced in verbatim — YOU write fresh text for its text "
+        'boxes. When you pick one of these keys, emit ONLY {"layout": "<key>", "slots": '
+        '{"<slot_id>": "..."}, "speaker_notes": "..."} — the layout\'s normal fields (title/'
+        "body/items/columns...) are IGNORED for these keys. For each slot, write text that "
+        "plays the same ROLE as its current text (a one word label stays a short label, a "
+        "headline stays a headline), using THIS deck's own content, within the [bracketed] "
+        "budget. These layouts still count toward variety and can be reused like any other "
+        "layout.\n" + "\n".join(lines))
 
 
 def auto_custom_slides(custom_slides) -> list[dict]:
@@ -209,9 +298,10 @@ def photo_minimum(total: int, photo_level: str) -> int:
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
                  disabled_layouts=None, custom_slides=None, custom_photos=None,
                  preferred_layouts=None, design=None, disabled_photos=None,
-                 preferred_photos=None) -> str:
+                 preferred_photos=None, layout_overrides=None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     disabled = sanitize_disabled(disabled_layouts)
+    overridden = {o["layout"] for o in (layout_overrides or []) if isinstance(o, dict) and o.get("layout")}
     disabled_photos_set = sanitize_disabled_photos(disabled_photos)
     design = design or {}
     photo_level = design.get("photo_level", "default")
@@ -452,7 +542,7 @@ dividers, highlight beats and closing) — repeating the same 2 to 3 favourites 
 not a stylistic choice. NEVER force a layout: use one only when the content genuinely has that shape, but
 when several fit equally well, prefer whichever one you have used LESS so far in this deck. Respect the
 [bracketed] limits.
-{_layout_guide(disabled)}{disabled_note}{preferred_block}{_custom_slide_guide(custom_slides)}
+{_layout_guide(disabled, overridden)}{disabled_note}{preferred_block}{_custom_slide_guide(custom_slides)}{_override_guide(layout_overrides)}
 
 COLUMN BODIES can be EITHER a short sentence (prose) OR a few very short bullet points — put each point on
 its own line (a newline between them) and 2+ lines auto-render as branded bullets. Choose per column by
@@ -494,15 +584,17 @@ Emit the plan now via emit_plan."""
 
 def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | None = None,
                  extra_photo_ids: list[str] | None = None,
-                 disabled_photo_ids: set[str] | None = None) -> dict:
+                 disabled_photo_ids: set[str] | None = None,
+                 layout_overrides: list[dict] | None = None) -> dict:
     s = {k: v for k, v in config.schema().items() if k not in ("$schema", "title")}
-    if disabled or extra_layouts or extra_photo_ids or disabled_photo_ids:
+    if disabled or extra_layouts or extra_photo_ids or disabled_photo_ids or layout_overrides:
         # Hard enforcement of the About page's switches: a disabled layout is removed from the
         # forced-tool enum, so the model cannot emit it at all (the prompt only explains why);
         # the team's own 'auto' slides are added as pickable verbatim layout keys; the team's
-        # photos join every asset_id enum; and a disabled BUILT-IN photo is removed from every
-        # asset_id enum the same way a disabled layout is removed from the layout enum. Deep
-        # copy first — config.schema() is cached.
+        # photos join every asset_id enum; a disabled BUILT-IN photo is removed from every
+        # asset_id enum the same way a disabled layout is removed from the layout enum; and an
+        # overridden layout's conditional is swapped to its text slots. Deep copy first —
+        # config.schema() is cached.
         import copy
         s = copy.deepcopy(s)
         enum = s["properties"]["slides"]["items"]["properties"]["layout"]["enum"]
@@ -513,6 +605,8 @@ def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | No
             extend_asset_enums(s, extra_photo_ids)
         if disabled_photo_ids:
             remove_from_asset_enums(s, disabled_photo_ids)
+        if layout_overrides:
+            apply_layout_overrides(s, layout_overrides)
     return s
 
 
@@ -555,13 +649,14 @@ def _extract_plan(msg) -> dict:
 
 def _call(client, system, user, model, max_tokens, disabled: set[str] | None = None,
           extra_layouts: list[str] | None = None, extra_photo_ids: list[str] | None = None,
-          disabled_photo_ids: set[str] | None = None):
+          disabled_photo_ids: set[str] | None = None,
+          layout_overrides: list[dict] | None = None):
     def once(budget):
         return client.messages.create(
             model=model or config.MODEL, max_tokens=budget, system=system,
             tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
                     "input_schema": _tool_schema(disabled, extra_layouts, extra_photo_ids,
-                                                 disabled_photo_ids)}],
+                                                 disabled_photo_ids, layout_overrides)}],
             tool_choice={"type": "tool", "name": "emit_plan"},
             messages=user,
         )
@@ -578,7 +673,7 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
               tone: str = "balansert", instructions: str = "", custom_rules: str = "",
               disabled_layouts=None, custom_slides=None, custom_photos=None,
               preferred_layouts=None, design=None, disabled_photos=None,
-              preferred_photos=None, model: str | None = None) -> dict:
+              preferred_photos=None, layout_overrides=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     disabled = sanitize_disabled(disabled_layouts)
@@ -590,15 +685,16 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos), user, model,
-                               max_tokens, disabled, extra, photo_ids, disabled_photo_ids))
+                                                    preferred_photos, layout_overrides), user, model,
+                               max_tokens, disabled, extra, photo_ids, disabled_photo_ids,
+                               layout_overrides))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
                 length: str = "standard", tone: str = "balansert", instructions: str = "",
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 custom_photos=None, preferred_layouts=None, design=None,
-                disabled_photos=None, preferred_photos=None,
+                disabled_photos=None, preferred_photos=None, layout_overrides=None,
                 model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
@@ -690,16 +786,16 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos), user, model,
+                                                    preferred_photos, layout_overrides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids))
+                               disabled_photo_ids, layout_overrides))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
                        length: str = "standard", tone: str = "balansert", instructions: str = "",
                        custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                        custom_photos=None, preferred_layouts=None, design=None,
-                       disabled_photos=None, preferred_photos=None,
+                       disabled_photos=None, preferred_photos=None, layout_overrides=None,
                        model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
@@ -732,6 +828,6 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
     return _extract_plan(_call(client, build_system(length, tone, instructions, custom_rules,
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
-                                                    preferred_photos), user, model,
+                                                    preferred_photos, layout_overrides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids))
+                               disabled_photo_ids, layout_overrides))

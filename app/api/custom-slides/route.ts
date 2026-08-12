@@ -1,9 +1,12 @@
 // /api/custom-slides — the team's own verbatim slides for generated decks.
 //
-//   GET  /api/custom-slides            { configured, migrated, slides: [...] }  (no pptx blobs)
+//   GET  /api/custom-slides            { configured, migrated, softDeleteMigrated, slides }
+//                                      slides include removed (Deleted items) rows, flagged,
+//                                      so the About page renders grid + Deleted items from
+//                                      one fetch (no pptx blobs).
 //   GET  /api/custom-slides?blobs=1    adds pptx_b64 per unique file — used by the generator
 //                                      pages at generation time to ship the slides to the
-//                                      deck service as job files.
+//                                      deck service as job files. Removed slides ship none.
 //   POST /api/custom-slides            { filename, storage_path | pptx_b64, slides: [{
 //                                        slide_index, name, description, mode, preview_b64 }],
 //                                        author? } → stores the file once + one row per slide.
@@ -30,16 +33,33 @@ export async function GET(req: Request) {
   const withBlobs = new URL(req.url).searchParams.get("blobs") === "1";
 
   try {
-    const res = await sb
+    // supabase-js's type-level column parser can't resolve a UNION of select strings; the
+    // runtime rows are plain objects, so route them through unknown.
+    type SlideRow = { id: string; file_id: string; mode: string; removed?: boolean };
+    let softDeleteMigrated = true;
+    let data: unknown;
+    const r1 = await sb
       .from("custom_slides")
-      .select("id, file_id, slide_index, name, description, mode, preview_b64, created_by, created_at, updated_by, updated_at")
+      .select("id, file_id, slide_index, name, description, mode, preview_b64, removed, created_by, created_at, updated_by, updated_at")
       .order("sort_order")
       .order("created_at");
-    if (res.error) return Response.json({ configured: true, migrated: false, slides: [] });
+    if (!r1.error) data = r1.data;
+    else {
+      // Pre-0009 databases have no `removed` column; every slide is implicitly not removed.
+      softDeleteMigrated = false;
+      const r2 = await sb
+        .from("custom_slides")
+        .select("id, file_id, slide_index, name, description, mode, preview_b64, created_by, created_at, updated_by, updated_at")
+        .order("sort_order")
+        .order("created_at");
+      if (r2.error) return Response.json({ configured: true, migrated: false, slides: [] });
+      data = r2.data;
+    }
+    const slides = data as SlideRow[];
 
     let files: Record<string, string> = {};
-    if (withBlobs && res.data.length) {
-      const active = res.data.filter((s) => s.mode !== "off");
+    if (withBlobs && slides.length) {
+      const active = slides.filter((s) => s.mode !== "off" && !s.removed);
       const ids = [...new Set(active.map((s) => s.file_id))];
       if (ids.length) {
         const f = await sb.from("custom_slide_files").select("id, pptx_b64, storage_path").in("id", ids);
@@ -68,7 +88,7 @@ export async function GET(req: Request) {
       }
     }
 
-    return Response.json({ configured: true, migrated: true, slides: res.data, files });
+    return Response.json({ configured: true, migrated: true, softDeleteMigrated, slides, files });
   } catch (e) {
     return Response.json({ error: "Could not load slides: " + (e as Error).message }, { status: 500 });
   }

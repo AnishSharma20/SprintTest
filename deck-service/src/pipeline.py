@@ -158,6 +158,8 @@ def _ensure_notes(plan: dict) -> dict:
             slides.append(s)
             continue
         lines = _note_lines(s.get("title")) + [ln for f in _NOTE_FIELDS for ln in _note_lines(s.get(f))]
+        if isinstance(s.get("slots"), dict):   # a TEAM REDESIGNED layout's per-slot text
+            lines.extend(str(v).strip() for v in s["slots"].values() if str(v or "").strip())
         if s.get("source_citations"):
             lines.append("; ".join(s["source_citations"]))
         note = "\n".join(lines).strip()[:1400]
@@ -175,6 +177,9 @@ def _strip_dashes_plan(plan: dict) -> dict:
                 return [_strip_text(x) if isinstance(x, str) else walk(x) for x in obj]
             return [walk(x) for x in obj]
         if isinstance(obj, dict):
+            if key == "slots":   # a TEAM REDESIGNED layout: every value is reader-facing text
+                return {k: _strip_text(v) if isinstance(v, str) else walk(v, k)
+                        for k, v in obj.items()}
             return {k: walk(v, k) for k, v in obj.items()}
         return obj
     return walk(plan)
@@ -188,14 +193,18 @@ def _strip_dashes_plan(plan: dict) -> dict:
 _COLOR_THEMES = {"dark", "light", "pastel"}
 
 
-def _apply_color_theme(plan: dict, color_theme: str | None) -> dict:
+def _apply_color_theme(plan: dict, color_theme: str | None,
+                       override_keys: frozenset | set = frozenset()) -> dict:
     """Force every slide's `background` to the chosen theme, deck-wide. Verbatim slides (ingredient,
-    custom_*) and the benefits/appendix splices have no `background` concept and are untouched —
-    this only ever sets a field the renderer already reads."""
+    custom_*, TEAM REDESIGNED layout overrides — they carry their own design) and the benefits/
+    appendix splices have no `background` concept and are untouched — this only ever sets a field
+    the renderer already reads."""
     if color_theme not in _COLOR_THEMES:
         return plan
-    slides = [{**s, "background": color_theme} if not (s.get("layout") or "").startswith("custom_")
-              and s.get("layout") != "ingredient" else s
+    def keeps_own(s):
+        layout = s.get("layout") or ""
+        return layout.startswith("custom_") or layout == "ingredient" or layout in override_keys
+    slides = [s if keeps_own(s) else {**s, "background": color_theme}
               for s in plan.get("slides", [])]
     return {**plan, "slides": slides}
 
@@ -236,7 +245,7 @@ def _log_geometry_issues(issues: list[dict]) -> None:
 def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions="", study_meta=None,
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
                  custom_photos=None, preferred_layouts=None, disabled_photos=None,
-                 preferred_photos=None, slide_map=None):
+                 preferred_photos=None, layout_overrides=None, slide_map=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). Never fails the deck — a gate error or a revision that
     breaks validation keeps the pre-gate deck.
@@ -249,9 +258,11 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
     photo_ids = planner.custom_photo_ids(custom_photos)
     photo_level = (design or {}).get("photo_level", "default")
+    override_keys = frozenset(o["layout"] for o in (layout_overrides or []))
     rounds = max(1, int(os.environ.get("DECK_QA_ROUNDS", "1")))
     for _ in range(rounds):
-        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map)
+        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map,
+                                                      verbatim_layouts=override_keys)
         _log_geometry_issues(geo_issues)
         asset_flags = [{"slide": i["slide"], "issues": [i["category"]], "fix": i["detail"]}
                        for i in geo_issues if not i["fixed"] and i["category"] == "asset"]
@@ -273,12 +284,14 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                custom_photos=custom_photos,
                                                preferred_layouts=preferred_layouts, design=design,
                                                disabled_photos=disabled_photos,
-                                               preferred_photos=preferred_photos)
+                                               preferred_photos=preferred_photos,
+                                               layout_overrides=layout_overrides)
         # A visual fix can slip on a detail (e.g. an invalid icon enum); give it one schema-repair
         # pass rather than discarding all the good fixes over a single slip.
         errs = validate.validate_plan(candidate, extra_layouts=extra,
                                       extra_photo_ids=photo_ids, photo_level=photo_level,
-                                      disabled_layouts=disabled_layouts)
+                                      disabled_layouts=disabled_layouts,
+                                      layout_overrides=layout_overrides)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -288,10 +301,12 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                             custom_photos=custom_photos,
                                             preferred_layouts=preferred_layouts, design=design,
                                             disabled_photos=disabled_photos,
-                                            preferred_photos=preferred_photos)
+                                            preferred_photos=preferred_photos,
+                                            layout_overrides=layout_overrides)
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
-                                          disabled_layouts=disabled_layouts)
+                                          disabled_layouts=disabled_layouts,
+                                          layout_overrides=layout_overrides)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -307,7 +322,9 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         plan = candidate
         pptx, slide_map = renderer.render_deck(candidate, study_meta=study_meta,
                                                design=design, custom_slides=custom_slides,
-                                               custom_photos=custom_photos, return_slide_map=True)
+                                               custom_photos=custom_photos,
+                                               layout_overrides=layout_overrides,
+                                               return_slide_map=True)
     return pptx, plan
 
 
@@ -322,14 +339,17 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              preferred_layouts: list[str] | None = None,
              disabled_photos: list[str] | None = None,
              preferred_photos: list[str] | None = None,
-             color_theme: str | None = None) -> dict:
+             color_theme: str | None = None,
+             layout_overrides: list[dict] | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
     and the starred house-favourite layouts — see renderer/planner. disabled_photos/
     preferred_photos: the same on/off + star switches, but for individual BUILT-IN photos.
     color_theme: None/"auto" keeps the AI's own per-slide light/dark rhythm; "dark", "light" or
-    "pastel" forces every slide deck-wide (Blue Ocean / White / Pastel Blue) — see _apply_color_theme."""
+    "pastel" forces every slide deck-wide (Blue Ocean / White / Pastel Blue) — see _apply_color_theme.
+    layout_overrides: TEAM REDESIGNED layouts ({layout, bytes, index, slots, png} each) — the
+    design is spliced verbatim while the planner writes fresh per-slot text on every use."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -340,16 +360,23 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
     photo_ids = planner.custom_photo_ids(custom_photos)
     photo_level = (design or {}).get("photo_level", "default")
+    # Sanitized ONCE (unknown/fixed-role/disabled keys dropped) and threaded everywhere —
+    # planner prompt+schema, validation, and the renderer must all see the same set.
+    layout_overrides = planner.sanitize_overrides(
+        layout_overrides, planner.sanitize_disabled(disabled_layouts))
+    override_keys = frozenset(o["layout"] for o in layout_overrides)
 
     _p(5, "Planning the deck")
     plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
                              custom_rules=custom_rules, disabled_layouts=disabled_layouts,
                              custom_slides=custom_slides, custom_photos=custom_photos,
                              preferred_layouts=preferred_layouts, design=design,
-                             disabled_photos=disabled_photos, preferred_photos=preferred_photos)
+                             disabled_photos=disabled_photos, preferred_photos=preferred_photos,
+                             layout_overrides=layout_overrides)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
-                                    photo_level=photo_level, disabled_layouts=disabled_layouts)
+                                    photo_level=photo_level, disabled_layouts=disabled_layouts,
+                                    layout_overrides=layout_overrides)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -357,9 +384,11 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    disabled_layouts=disabled_layouts, custom_slides=custom_slides,
                                    custom_photos=custom_photos,
                                    preferred_layouts=preferred_layouts, design=design,
-                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos)
+                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos,
+                                   layout_overrides=layout_overrides)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
-                                        photo_level=photo_level, disabled_layouts=disabled_layouts)
+                                        photo_level=photo_level, disabled_layouts=disabled_layouts,
+                                        layout_overrides=layout_overrides)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -377,10 +406,11 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta)  # slide 2, before the agenda
     plan = _ensure_agenda(plan)                             # guarantee a contents/agenda slide
     plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
-    plan = _apply_color_theme(plan, color_theme)            # deck-wide theme override, if requested
+    plan = _apply_color_theme(plan, color_theme, override_keys)  # deck-wide theme override, if requested
     plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
     pptx, slide_map = renderer.render_deck(plan, study_meta=study_meta, design=design,
                                            custom_slides=custom_slides, custom_photos=custom_photos,
+                                           layout_overrides=layout_overrides,
                                            return_slide_map=True)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
@@ -392,12 +422,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                   custom_slides=custom_slides, custom_photos=custom_photos,
                                   preferred_layouts=preferred_layouts,
                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                                  slide_map=slide_map)
+                                  layout_overrides=layout_overrides, slide_map=slide_map)
     else:
         # Fast mode never runs the vision gate (no LLM/rasteriser call), but the deterministic
         # margin/alignment/contrast/asset pass is nearly free — run it here too so every deck gets
         # it, not just polished ones. Polished mode already ran this inside _visual_gate.
-        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map)
+        pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map,
+                                                      verbatim_layouts=override_keys)
         _log_geometry_issues(geo_issues)
 
     _p(99, "Finalizing")

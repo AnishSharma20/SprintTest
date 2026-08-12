@@ -13,7 +13,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "./studies";
-import type { Summary } from "./studies-data";
+import type { Summary, OutcomeDirection } from "./studies-data";
+import type { Category } from "./lib/claims-types";
 import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
 import CategoryManager from "./category-manager";
 import DiagramsModal from "./v2/diagrams-modal";
@@ -24,6 +25,7 @@ import {
   loadStudyMeta,
   suggestLabel,
   EMPTY_META,
+  OUTCOME_LABEL,
   type StudyMeta,
 } from "./study-meta";
 import {
@@ -34,10 +36,12 @@ import {
   SearchBox,
   PanelHeader,
   SideReviewer,
+  Pill,
 } from "./v2/ui";
 import { benefitIcon } from "./v2/benefit-icons";
+import AddFindingModal from "./add-finding-modal";
+import { useCurrentUser } from "./lib/use-current-user";
 
-const REVIEWER_KEY = "claimsReviewerName:v1";
 const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
 
 /** The real paper's PDF when AKBM supplied it, else its DOI page, else its PubMed record. */
@@ -47,14 +51,20 @@ function studyPdfHref(s: Studie): string {
 }
 
 const QUALITY_DEF =
-  "Scientific quality = how rigorously the study was designed and run. A methodological score across 8 criteria " +
-  "(randomization, blinding, allocation concealment, intention to treat analysis, dropout reporting, " +
-  "etc.), rated High / Moderate / Low. It reflects how much to trust the study's methods, NOT whether the " +
-  "result was positive. Shown for the verified key trials only.";
+  "Research quality = how rigorously the study was designed and run. A methodological score across 8 " +
+  "criteria (randomization, blinding, allocation concealment, intention to treat analysis, dropout " +
+  "reporting, etc.), rated High / Moderate / Low. It reflects how much to trust the study's METHODS, " +
+  "not which way its result pointed — see Outcome for that. A rigorous trial can still land on a null " +
+  "or negative result (e.g. KARAOKE/Laslett 2024). Shown for the verified key trials only.";
+
+const OUTCOME_DEF =
+  "Outcome = which way the study's own result pointed for krill oil: positive (a benefit shown), " +
+  "neutral (mixed or inconclusive) or negative (no significant effect, or unfavorable). Independent " +
+  "of research quality above — a well run trial can still come out negative.";
 
 type SortBy = "date" | "quality";
 
-/** The quality label as a calm colored word (no bars, no badges). */
+/** The research quality label as a calm colored word (no bars, no badges). */
 function QualityWord({ s }: { s: Studie }) {
   const q = s.quality;
   if (!q) return <span className="font-semibold text-[#B4884A]">Not yet scored</span>;
@@ -67,10 +77,23 @@ function QualityWord({ s }: { s: Studie }) {
     : s.qualityNote ?? undefined;
   return (
     <span className="text-[#AEAEB2]" title={title}>
-      Quality{" "}
+      Research quality{" "}
       <b className={`font-semibold ${color}`}>
         {q.score}% {q.label}
       </b>
+    </span>
+  );
+}
+
+/** Which way the study's own result pointed — deliberately separate from QualityWord above so
+ * the two are never read as one thing (see QUALITY_DEF/OUTCOME_DEF). */
+function OutcomeWord({ s }: { s: Studie }) {
+  const o = s.outcomeDirection;
+  if (!o) return <span className="font-semibold text-[#AEAEB2]">Outcome not set</span>;
+  const color = o === "positive" ? "text-[#2E7D4F]" : o === "negative" ? "text-[#B3403A]" : "text-[#B4884A]";
+  return (
+    <span className="text-[#AEAEB2]">
+      Outcome <b className={`font-semibold ${color}`}>{OUTCOME_LABEL[o]}</b>
     </span>
   );
 }
@@ -97,8 +120,20 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     setVerVerified(v);
     setVerUnverified(v);
   };
+  const [outPositive, setOutPositive] = useState(true);
+  const [outNeutral, setOutNeutral] = useState(true);
+  const [outNegative, setOutNegative] = useState(true);
+  const [outUnset, setOutUnset] = useState(true);
+  const outAll = outPositive && outNeutral && outNegative && outUnset;
+  const setOutAll = (v: boolean) => {
+    setOutPositive(v);
+    setOutNeutral(v);
+    setOutNegative(v);
+    setOutUnset(v);
+  };
+  const [showRemoved, setShowRemoved] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
-  const [reviewer, setReviewer] = useState("");
+  const { name: reviewer } = useCurrentUser();
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
   const [administrerer, setAdministrerer] = useState(false);
   const [valgtPmid, setValgtPmid] = useState<string | null>(null);
@@ -109,22 +144,21 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   }, [lastMeta]);
 
   const studier = useMemo(() => applyStudyMeta(grunnStudier, meta), [grunnStudier, meta]);
+  const removedCount = useMemo(() => studier.filter((s) => s.removed).length, [studier]);
+  // Removed studies stay reachable (so a reviewer can restore one) but are excluded from the
+  // default view, category counts and search — same treatment as "Turned off" layouts/photos
+  // elsewhere in the app.
+  const zichtbareStudier = useMemo(
+    () => (showRemoved ? studier : studier.filter((s) => !s.removed)),
+    [studier, showRemoved]
+  );
 
   useEffect(() => {
-    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
     // Deep link: /?pmid=... opens that study's reading panel directly
     // (the Findings Library evidence chain links here).
     const pmid = new URLSearchParams(window.location.search).get("pmid");
     if (pmid) setValgtPmid(pmid);
   }, []);
-  const onReviewerChange = (v: string) => {
-    setReviewer(v);
-    try {
-      window.localStorage.setItem(REVIEWER_KEY, v);
-    } catch {
-      /* ignore */
-    }
-  };
 
   useEffect(() => {
     let alive = true;
@@ -140,7 +174,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   const kategorier = useMemo(() => {
     const navn = new Map(meta.categories.map((c) => [c.id, c.name]));
     const m = new Map<string, { navn: string; antall: number }>();
-    studier.forEach((s) =>
+    zichtbareStudier.forEach((s) =>
       (s.kategoriIds ?? []).forEach((id, i) => {
         const e = m.get(id) ?? { navn: navn.get(id) ?? s.kategori[i] ?? id, antall: 0 };
         e.antall += 1;
@@ -150,7 +184,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     return [...m.entries()]
       .map(([id, v]) => ({ id, ...v }))
       .sort((a, b) => b.antall - a.antall || a.navn.localeCompare(b.navn));
-  }, [studier, meta.categories]);
+  }, [zichtbareStudier, meta.categories]);
 
   // Same default-view rule as V1: the biggest category, until the user picks one themselves;
   // a category that disappears hands the selection back.
@@ -170,7 +204,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
   const filtrert = useMemo(() => {
     const q = sok.toLowerCase().trim();
-    const list = studier.filter((s) => {
+    const list = zichtbareStudier.filter((s) => {
       const treffSok =
         !q ||
         s.tittel.toLowerCase().includes(q) ||
@@ -182,7 +216,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : lbl === "Low" ? qualLow : qualUnscored;
       const erVerifisert = !!overrides[s.pmid] || s.verified;
       const treffVer = erVerifisert ? verVerified : verUnverified;
-      return treffSok && treffKat && treffKval && treffVer;
+      const o = s.outcomeDirection;
+      const treffUt = o === "positive" ? outPositive : o === "negative" ? outNegative : o === "neutral" ? outNeutral : outUnset;
+      return treffSok && treffKat && treffKval && treffVer && treffUt;
     });
     return list.sort((a, b) => {
       if (sortBy === "quality") {
@@ -194,7 +230,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       return (b.ar || "").localeCompare(a.ar || "");
     });
   }, [
-    studier,
+    zichtbareStudier,
     sok,
     valgtKategori,
     sortBy,
@@ -204,6 +240,10 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     qualUnscored,
     verVerified,
     verUnverified,
+    outPositive,
+    outNeutral,
+    outNegative,
+    outUnset,
     overrides,
   ]);
 
@@ -230,7 +270,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
             {k.navn}
           </SideItem>
         ))}
-        <SideItem active={valgtKategori === null} onClick={() => velgKategori(null)} count={studier.length}>
+        <SideItem active={valgtKategori === null} onClick={() => velgKategori(null)} count={zichtbareStudier.length}>
           All studies
         </SideItem>
         {meta.configured && (
@@ -274,7 +314,33 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           </SideCheck>
         </div>
       </SideSection>
-      <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
+      <SideSection title="Outcome">
+        <SideCheck checked={outAll} onChange={setOutAll}>
+          All outcomes
+        </SideCheck>
+        <div className="pl-1">
+          <SideCheck checked={outPositive} onChange={setOutPositive}>
+            Positive
+          </SideCheck>
+          <SideCheck checked={outNeutral} onChange={setOutNeutral}>
+            Neutral
+          </SideCheck>
+          <SideCheck checked={outNegative} onChange={setOutNegative}>
+            Negative
+          </SideCheck>
+          <SideCheck checked={outUnset} onChange={setOutUnset}>
+            Not set
+          </SideCheck>
+        </div>
+      </SideSection>
+      {removedCount > 0 && (
+        <SideSection title="Status">
+          <SideCheck checked={showRemoved} onChange={setShowRemoved}>
+            Show {removedCount} removed stud{removedCount === 1 ? "y" : "ies"}
+          </SideCheck>
+        </SideSection>
+      )}
+      <SideReviewer value={reviewer} hint="Recorded on approvals and quality scores." />
     </div>
   );
 
@@ -448,6 +514,8 @@ function StudyRow({
             </span>
           )}
           <QualityWord s={s} />
+          <OutcomeWord s={s} />
+          {s.removed && <Pill tone="red">Removed</Pill>}
           <span className="flex-1" />
           <button
             onClick={(e) => {
@@ -490,11 +558,13 @@ function StudyPanel({
   const [editing, setEditing] = useState(false);
   const [diagramsOpen, setDiagramsOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [addingFinding, setAddingFinding] = useState(false);
 
   // Leaving a study closes any half-open edit state from the previous one.
   useEffect(() => {
     setEditing(false);
     setToolsOpen(false);
+    setAddingFinding(false);
   }, [s.pmid]);
 
   const edited = !!override;
@@ -540,6 +610,17 @@ function StudyPanel({
                 AI generated summary from the abstract. Not yet verified by a scientist.
               </p>
             )}
+            {(s.abstract || s.keyFindingsAssessment) && (
+              <div className="mb-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#0A7A8A]">
+                  Science team assessment
+                </p>
+                {s.abstract && <PanelSection label="Abstract" text={s.abstract} />}
+                {s.keyFindingsAssessment && (
+                  <PanelSection label="Key findings assessment" text={s.keyFindingsAssessment} />
+                )}
+              </div>
+            )}
             <PanelSection label="Background" text={summary.background} />
             <PanelSection label="Design" text={summary.design} />
             <PanelSection label="Key findings" text={summary.findings} />
@@ -557,6 +638,14 @@ function StudyPanel({
               >
                 Edit summary
               </button>
+              {!s.removed && (
+                <button
+                  onClick={() => setAddingFinding(true)}
+                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
+                >
+                  Add finding
+                </button>
+              )}
               {meta.editable && (
                 <button
                   onClick={() => setToolsOpen((v) => !v)}
@@ -571,7 +660,15 @@ function StudyPanel({
 
         {/* A study with no summary still needs the reviewer entry point. */}
         {!summary && meta.editable && !toolsOpen && (
-          <div className="mt-2 text-center">
+          <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+            {!s.removed && (
+              <button
+                onClick={() => setAddingFinding(true)}
+                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
+              >
+                Add finding
+              </button>
+            )}
             <button
               onClick={() => setToolsOpen(true)}
               className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
@@ -598,6 +695,14 @@ function StudyPanel({
       </div>
 
       {diagramsOpen && <DiagramsModal pmid={s.pmid} title={s.tittel} onClose={() => setDiagramsOpen(false)} />}
+      {addingFinding && (
+        <AddFindingModal
+          study={s}
+          categories={meta.categories}
+          onClose={() => setAddingFinding(false)}
+          onCreated={() => setAddingFinding(false)}
+        />
+      )}
     </div>
   );
 }
@@ -626,14 +731,23 @@ function ReviewerTools({
 }) {
   const [redigererKategorier, setRedigererKategorier] = useState(false);
   const [redigererKvalitet, setRedigererKvalitet] = useState(false);
+  const [redigererAssessment, setRedigererAssessment] = useState(false);
+  const [fjerner, setFjerner] = useState(false);
   const [melding, setMelding] = useState<string | null>(null);
 
   if (!meta.editable) return null;
 
+  function closeAllBut(which: "categories" | "quality" | "assessment" | "remove" | null) {
+    setRedigererKategorier(which === "categories");
+    setRedigererKvalitet(which === "quality");
+    setRedigererAssessment(which === "assessment");
+    setFjerner(which === "remove");
+    setMelding(null);
+  }
+
   async function etterEndring(tekst: string) {
     setMelding(tekst);
-    setRedigererKategorier(false);
-    setRedigererKvalitet(false);
+    closeAllBut(null);
     await onMetaChanged();
   }
 
@@ -641,29 +755,38 @@ function ReviewerTools({
     <div>
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <button
-          onClick={() => {
-            setRedigererKategorier((v) => !v);
-            setRedigererKvalitet(false);
-            setMelding(null);
-          }}
+          onClick={() => closeAllBut(redigererKategorier ? null : "categories")}
           className="rounded-[10px] border border-[#D9D9DE] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7]"
         >
           Categories
         </button>
         <button
-          onClick={() => {
-            setRedigererKvalitet((v) => !v);
-            setRedigererKategorier(false);
-            setMelding(null);
-          }}
+          onClick={() => closeAllBut(redigererKvalitet ? null : "quality")}
           className="rounded-[10px] border border-[#D9D9DE] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7]"
         >
           {s.quality ? "Quality" : "Add quality"}
         </button>
+        {meta.editableV2 && (
+          <button
+            onClick={() => closeAllBut(redigererAssessment ? null : "assessment")}
+            className="rounded-[10px] border border-[#D9D9DE] bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7]"
+          >
+            {s.abstract || s.keyFindingsAssessment ? "Assessment" : "Add assessment"}
+          </button>
+        )}
         <span className="text-[11.5px] text-[#AEAEB2]">
           {s.kategori.length ? s.kategori.join(", ") : "No category"}
           {s.quality ? ` · ${s.quality.score}% ${s.quality.label}` : " · no quality score"}
+          {s.outcomeDirection ? ` · ${OUTCOME_LABEL[s.outcomeDirection]} outcome` : ""}
         </span>
+        {meta.editableV2 && (
+          <button
+            onClick={() => closeAllBut(fjerner ? null : "remove")}
+            className="ml-auto text-[12px] font-semibold text-[#B3403A] hover:underline"
+          >
+            {s.removed ? "Restore study" : "Remove study…"}
+          </button>
+        )}
       </div>
 
       {melding && (
@@ -677,7 +800,7 @@ function ReviewerTools({
           s={s}
           meta={meta}
           reviewer={reviewer}
-          onCancel={() => setRedigererKategorier(false)}
+          onCancel={() => closeAllBut(null)}
           onSaved={etterEndring}
         />
       )}
@@ -686,7 +809,25 @@ function ReviewerTools({
         <QualityEditor
           s={s}
           reviewer={reviewer}
-          onCancel={() => setRedigererKvalitet(false)}
+          onCancel={() => closeAllBut(null)}
+          onSaved={etterEndring}
+        />
+      )}
+
+      {redigererAssessment && (
+        <AssessmentEditor
+          s={s}
+          reviewer={reviewer}
+          onCancel={() => closeAllBut(null)}
+          onSaved={etterEndring}
+        />
+      )}
+
+      {fjerner && (
+        <RemoveStudyEditor
+          s={s}
+          reviewer={reviewer}
+          onCancel={() => closeAllBut(null)}
           onSaved={etterEndring}
         />
       )}
@@ -816,6 +957,7 @@ function QualityEditor({
   const [label, setLabel] = useState<"High" | "Moderate" | "Low">(
     s.quality?.label ?? suggestLabel(s.quality?.score ?? 75)
   );
+  const [outcomeDirection, setOutcomeDirection] = useState<OutcomeDirection | "">(s.outcomeDirection ?? "");
   const [note, setNote] = useState(s.qualityNote ?? "");
   const [busy, setBusy] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
@@ -829,7 +971,7 @@ function QualityEditor({
 
   async function lagre() {
     if (!reviewer.trim()) {
-      setFeil("Add your name in the Reviewer field in the sidebar first.");
+      setFeil("Still confirming your sign in — try again in a moment.");
       return;
     }
     setBusy(true);
@@ -838,14 +980,25 @@ function QualityEditor({
       const res = await fetch("/api/study-quality", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pmid: s.pmid, score: Number(score), label, note, reviewer }),
+        body: JSON.stringify({
+          pmid: s.pmid,
+          score: Number(score),
+          label,
+          outcomeDirection: outcomeDirection || null,
+          note,
+          reviewer,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
         setFeil(data.error || "Could not save the score.");
         return;
       }
-      await onSaved(`Quality saved as ${score}% ${label}.`);
+      await onSaved(
+        `Research quality saved as ${score}% ${label}${
+          outcomeDirection ? `; outcome ${OUTCOME_LABEL[outcomeDirection]}` : ""
+        }.`
+      );
     } catch (e) {
       setFeil((e as Error).message);
     } finally {
@@ -855,7 +1008,7 @@ function QualityEditor({
 
   async function fjern() {
     if (!reviewer.trim()) {
-      setFeil("Add your name in the Reviewer field in the sidebar first.");
+      setFeil("Still confirming your sign in — try again in a moment.");
       return;
     }
     setBusy(true);
@@ -881,7 +1034,7 @@ function QualityEditor({
   return (
     <div className="mb-3 mt-3">
       <div className="mb-2 text-[12.5px] font-semibold text-[#AEAEB2]">
-        Scientific quality · how rigorously the study was designed and run
+        Research quality · how rigorously the study was designed and run
       </div>
       <div className="flex flex-wrap items-end gap-3">
         <label className="text-[11.5px] font-semibold text-[#6E6E73]">
@@ -920,7 +1073,32 @@ function QualityEditor({
           />
         </label>
       </div>
-      <p className="mt-2 text-[11.5px] text-[#AEAEB2]">
+
+      <div className="mt-3 text-[12.5px] font-semibold text-[#AEAEB2]">
+        Outcome · which way the study's own result pointed for krill oil (independent of quality above)
+      </div>
+      <div className="mt-1.5 flex gap-2">
+        {(["positive", "neutral", "negative"] as OutcomeDirection[]).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setOutcomeDirection(v)}
+            className={`rounded-[10px] border px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              outcomeDirection === v
+                ? v === "positive"
+                  ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
+                  : v === "negative"
+                  ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
+                  : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
+                : "border-[#E8E8ED] text-[#6E6E73] hover:bg-[#F5F5F7]"
+            }`}
+          >
+            {OUTCOME_LABEL[v]}
+          </button>
+        ))}
+      </div>
+
+      <p className="mt-3 text-[11.5px] text-[#AEAEB2]">
         Saved as {reviewer || "…"} on {formatDate(new Date().toISOString())}. The name and date are
         stored with the score.
       </p>
@@ -942,6 +1120,213 @@ function QualityEditor({
             Clear score
           </button>
         )}
+        <button
+          onClick={onCancel}
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AssessmentEditor({
+  s,
+  reviewer,
+  onCancel,
+  onSaved,
+}: {
+  s: Studie;
+  reviewer: string;
+  onCancel: () => void;
+  onSaved: (melding: string) => Promise<void>;
+}) {
+  const [abstract, setAbstract] = useState(s.abstract ?? "");
+  const [keyFindingsAssessment, setKeyFindingsAssessment] = useState(s.keyFindingsAssessment ?? "");
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+
+  async function lagre() {
+    if (!reviewer.trim()) {
+      setFeil("Still confirming your sign in — try again in a moment.");
+      return;
+    }
+    if (!abstract.trim() && !keyFindingsAssessment.trim()) {
+      setFeil("Add an abstract or a key findings assessment.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch("/api/study-assessment", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pmid: s.pmid, abstract, keyFindingsAssessment, reviewer }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not save.");
+        return;
+      }
+      await onSaved("Science team assessment saved.");
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mb-3 mt-3">
+      <div className="mb-2 text-[12.5px] font-semibold text-[#AEAEB2]">
+        Science team assessment · your own abstract and evaluation, separate from the summary above
+      </div>
+      <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">Abstract</label>
+      <AutoTextarea value={abstract} onChange={setAbstract} />
+      <label className="mb-1 mt-3 block text-[11.5px] font-semibold text-[#6E6E73]">
+        Key findings assessment
+      </label>
+      <AutoTextarea value={keyFindingsAssessment} onChange={setKeyFindingsAssessment} />
+      <p className="mt-2 text-[11.5px] text-[#AEAEB2]">
+        Saved as {reviewer || "…"} on {formatDate(new Date().toISOString())}.
+      </p>
+      {feil && <p className="mt-2 text-[12px] font-semibold text-[#B3403A]">{feil}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          onClick={() => void lagre()}
+          disabled={busy}
+          className="rounded-[10px] bg-[#1D1D1F] px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-[#3A3A3C] disabled:opacity-40"
+        >
+          {busy ? "Saving…" : "Save assessment"}
+        </button>
+        <button
+          onClick={onCancel}
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RemoveStudyEditor({
+  s,
+  reviewer,
+  onCancel,
+  onSaved,
+}: {
+  s: Studie;
+  reviewer: string;
+  onCancel: () => void;
+  onSaved: (melding: string) => Promise<void>;
+}) {
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+
+  async function fjern() {
+    if (!reviewer.trim()) {
+      setFeil("Still confirming your sign in — try again in a moment.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch("/api/study-removed", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pmid: s.pmid, reason, reviewer }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not remove the study.");
+        return;
+      }
+      await onSaved("Study removed from this page.");
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function gjenopprett() {
+    if (!reviewer.trim()) {
+      setFeil("Still confirming your sign in — try again in a moment.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = await fetch(`/api/study-removed?pmid=${encodeURIComponent(s.pmid)}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error || "Could not restore the study.");
+        return;
+      }
+      await onSaved("Study restored.");
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (s.removed) {
+    return (
+      <div className="mb-3 mt-3 rounded-[12px] border border-[#E6C9C9] bg-[#FBF3F3] p-4">
+        <p className="text-[12.5px] text-[#8A3530]">
+          Removed by {s.removedBy} on {formatDate(s.removedAt)}
+          {s.removedReason && <> · “{s.removedReason}”</>}. It stays off the Scientific Studies page and
+          the content generator's study picker until restored.
+        </p>
+        {feil && <p className="mt-2 text-[12px] font-semibold text-[#B3403A]">{feil}</p>}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            onClick={() => void gjenopprett()}
+            disabled={busy}
+            className="rounded-[10px] bg-[#1D1D1F] px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-[#3A3A3C] disabled:opacity-40"
+          >
+            {busy ? "Restoring…" : "Restore study"}
+          </button>
+          <button
+            onClick={onCancel}
+            className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-3 mt-3 rounded-[12px] border border-[#E6C9C9] bg-[#FBF3F3] p-4">
+      <p className="text-[12.5px] text-[#8A3530]">
+        Removing hides this study from the Scientific Studies page and the content generator's
+        study picker. Any findings already grounded in it are kept, not deleted. This is reversible
+        — a removed study can be restored later.
+      </p>
+      <label className="mb-1 mt-3 block text-[11.5px] font-semibold text-[#6E6E73]">
+        Reason, optional
+      </label>
+      <input
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder="Why is this study being removed?"
+        className="w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
+      />
+      {feil && <p className="mt-2 text-[12px] font-semibold text-[#B3403A]">{feil}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          onClick={() => void fjern()}
+          disabled={busy}
+          className="rounded-[10px] bg-[#B3403A] px-4 py-2 text-[12.5px] font-semibold text-white hover:bg-[#9A322D] disabled:opacity-40"
+        >
+          {busy ? "Removing…" : "Confirm remove"}
+        </button>
         <button
           onClick={onCancel}
           className="rounded-[10px] border border-[#D9D9DE] bg-white px-4 py-2 text-[12.5px] font-semibold text-[#6E6E73] hover:bg-[#F5F5F7]"

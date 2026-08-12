@@ -6,30 +6,31 @@
 // /api/* routes would still be open, and those SPEND MONEY (every generation is an Anthropic call)
 // and read the Supabase claims data. Running in the proxy is what actually protects them.
 //
-// This is a single shared password, not real user accounts. It is the right weight for "send a link
-// to the client so they can try it", and it keeps the API routes from being hit by anyone who finds
-// the URL. It is NOT a substitute for per-user auth if this ever becomes a production tool.
+// Gate is "sign in with any Microsoft account" (see app/api/auth/*), not per-organization AD or a
+// shared password. That is a deliberate choice: it captures a verified name for reviewer
+// attribution, but it is NOT an access restriction — anyone with a Microsoft account (work, school,
+// or personal) can sign in.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COOKIE, accessToken } from "./app/lib/access";
+import { SESSION_COOKIE, verifySessionToken } from "./app/lib/session";
 
-/** Paths that must stay reachable, or nobody could ever log in. */
-const OPEN_PATHS = ["/login", "/api/login", "/api/logout"];
+/** Paths that must stay reachable, or nobody could ever sign in. */
+const OPEN_PATHS = ["/login", "/api/auth/login", "/api/auth/callback"];
 
 export async function proxy(request: NextRequest) {
-  const password = process.env.APP_PASSWORD;
+  const clientId = process.env.AZURE_CLIENT_ID;
 
   // Unconfigured means unchanged: this site is already live, and failing closed on a deploy would
-  // lock out the team the moment this shipped. The gate turns itself on when APP_PASSWORD is set.
-  if (!password) return NextResponse.next();
+  // lock out the team the moment this shipped. The gate turns itself on when AZURE_CLIENT_ID is set.
+  if (!clientId) return NextResponse.next();
 
   const { pathname, search } = request.nextUrl;
   if (OPEN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return NextResponse.next();
   }
 
-  const expected = await accessToken(password);
-  if (request.cookies.get(COOKIE)?.value === expected) return NextResponse.next();
+  const user = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
+  if (user) return NextResponse.next();
 
   // API callers get a status they can act on; browsers get sent to the login page.
   if (pathname.startsWith("/api/")) {

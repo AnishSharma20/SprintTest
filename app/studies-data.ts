@@ -16,6 +16,12 @@ export type Summary = {
 
 export type Quality = { score: number; label: "High" | "Moderate" | "Low" };
 
+// Whether the study's own RESULT favored krill oil — independent of how rigorously it was run.
+// Quality/score above is "how much to trust the method"; this is "which way the result pointed".
+// The two are deliberately separate fields: a rigorous trial can still land on a null/negative
+// result (see KARAOKE below), and a poorly run one can still land on a positive result.
+export type OutcomeDirection = "positive" | "neutral" | "negative";
+
 export type CuratedStudy = {
   pmid: string;
   doi: string;
@@ -25,6 +31,7 @@ export type CuratedStudy = {
   authors: string;
   akerNote: string; // relationship to Aker BioMarine — shown for transparency
   quality: Quality;
+  outcomeDirection: OutcomeDirection;
   summary: Summary;
 };
 
@@ -39,6 +46,7 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     authors: "Stonehouse W, Benassi-Evans B, Bednarz J, et al.",
     akerNote: "Aker BioMarine (Superba krill oil) — strongest positive evidence to date",
     quality: { score: 100, label: "High" },
+    outcomeDirection: "positive",
     summary: {
       background:
         "At publication, the largest, longest and highest-dose RCT of krill oil in knee osteoarthritis. Designed to overcome earlier methodological limitations and generate high-quality evidence for clinical and regulatory discussions.",
@@ -59,6 +67,9 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     authors: "Laslett LL, Scheepers LEJM, Antony B, et al.",
     akerNote: "Independent (NHMRC / University of Tasmania funded) — Aker BioMarine supplied product only, no role in analysis",
     quality: { score: 100, label: "High" },
+    // Rigorous, well powered JAMA RCT — the null primary-endpoint result doesn't make the study
+    // itself weak, so research quality stays High; only the outcome direction is negative.
+    outcomeDirection: "negative",
     summary: {
       background:
         "The KARAOKE trial — the most ambitious krill-oil study to date, published in JAMA. Funded independently by the Australian NHMRC and the University of Tasmania; Aker BioMarine provided supplements only, with no role in data analysis or interpretation.",
@@ -79,6 +90,7 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     authors: "Suzuki Y, Fukushima M, Sakuraba K, et al.",
     akerNote: "Superba krill oil (Aker BioMarine product); study funded by Sunsho Pharmaceutical",
     quality: { score: 63, label: "Moderate" },
+    outcomeDirection: "positive",
     summary: {
       background:
         "Building on Deutsch, this trial targeted a more commercially relevant population: adults with mild knee pain not yet requiring pharmacotherapy — the primary consumer segment for krill-oil supplements. Conducted at an orthopaedic clinic in rural Japan.",
@@ -100,6 +112,7 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     authors: "Deutsch L.",
     akerNote: "Neptune Krill Oil (NKO™) — a competitor product, NOT Aker BioMarine; included as the first clinical evidence",
     quality: { score: 25, label: "Low" },
+    outcomeDirection: "positive",
     summary: {
       background:
         "The first RCT to examine krill oil specifically in humans with arthritic and inflammatory conditions. Motivated by pre-clinical evidence that omega-3s could lower C-reactive protein (CRP) and attenuate arthritic symptoms (WOMAC).",
@@ -121,6 +134,7 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     authors: "Sampalis F, Bunea R, Pelland MF, et al.",
     akerNote: "Neptune Krill Oil (NKO™) — a competitor product, NOT Aker BioMarine; lead author was Vice President of Research & Development at the manufacturer (Neptune Technologies & Bioressources Inc.), a significant conflict of interest",
     quality: { score: 50, label: "Moderate" },
+    outcomeDirection: "positive",
     summary: {
       background:
         "The first (and to date only) RCT evaluating krill oil specifically for premenstrual syndrome (PMS) and dysmenorrhea. Motivated by evidence that omega-3 fatty acids counter the omega-6 driven inflammatory prostaglandin and leukotriene pathway implicated in menstrual pain and PMS, and by krill oil's phospholipid-bound omega-3 form.",

@@ -4,6 +4,9 @@ export type ClaimScope = "paper" | "category";
 export type ClaimType = "science" | "marketing";
 export type ClaimStatus = "draft" | "pending_review" | "approved" | "rejected" | "superseded";
 export type ClaimOrigin = "ai_extracted" | "human";
+// Which way a finding's result points, so a presentation can show balanced evidence instead of
+// cherry picked positives. Independent of status/approval — null means not yet assessed.
+export type ClaimSentiment = "positive" | "neutral" | "negative";
 
 export type Category = {
   id: string;
@@ -39,6 +42,7 @@ export type Claim = {
   text: string;
   status: ClaimStatus;
   origin: ClaimOrigin;
+  sentiment: ClaimSentiment | null;
   created_by: string | null;
   approved_by: string | null;
   approved_at: string | null;

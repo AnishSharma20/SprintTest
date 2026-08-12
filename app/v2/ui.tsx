@@ -223,27 +223,17 @@ export function Pill({
   );
 }
 
-/** The Reviewer field as it appears at the bottom of both V2 sidebars. */
-export function SideReviewer({
-  value,
-  onChange,
-  hint,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  hint: string;
-}) {
+/** The Reviewer identity as it appears at the bottom of both V2 sidebars: the signed-in Microsoft
+ *  account, not a typed name. */
+export function SideReviewer({ value, hint }: { value: string; hint: string }) {
   return (
     <div className="mb-8 pt-9">
       <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[#AEAEB2]">
         Reviewer
       </div>
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Your name"
-        className="w-full rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-2 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-      />
+      <div className="w-full rounded-[10px] border border-[#E8E8ED] bg-[#F5F5F7] px-3 py-2 text-[13.5px] text-[#1D1D1F]">
+        {value || "Signing in…"}
+      </div>
       <p className="mt-1.5 text-[11.5px] leading-snug text-[#AEAEB2]">{hint}</p>
     </div>
   );

@@ -66,6 +66,7 @@ export async function POST(req: Request) {
       study, // StudyMeta — required for paper claims
       quote, // optional supporting quote for a manually-added claim
       backed_by, // marketing claim: ids of the science claims that substantiate it
+      sentiment, // positive | neutral | negative | undefined (not yet assessed)
     } = body as {
       scope?: string;
       claim_type?: string;
@@ -75,12 +76,15 @@ export async function POST(req: Request) {
       study?: StudyMeta;
       quote?: string;
       backed_by?: string[];
+      sentiment?: string;
     };
 
     if (!text?.trim()) return Response.json({ error: "Claim text is required." }, { status: 400 });
     if (!category_id) return Response.json({ error: "Category is required." }, { status: 400 });
     if (scope === "paper" && !study?.pmid)
       return Response.json({ error: "Paper claims need a study (pmid)." }, { status: 400 });
+    if (sentiment && !["positive", "neutral", "negative"].includes(sentiment))
+      return Response.json({ error: "Sentiment must be positive, neutral or negative." }, { status: 400 });
     // Findings must only ever be grounded in a study that is actually in the Scientific Studies
     // library (AKBM-supplied full-text PDFs + the curated key trials) — never an arbitrary pmid,
     // which is how ~45 legacy studies from a retired live PubMed search ended up backing findings
@@ -90,6 +94,14 @@ export async function POST(req: Request) {
         { error: "This study is not in the Scientific Studies library, so a finding can't be grounded in it." },
         { status: 400 }
       );
+    if (scope === "paper" && study?.pmid) {
+      const removed = await sb.from("study_removed").select("pmid").eq("pmid", study.pmid).maybeSingle();
+      if (removed.data)
+        return Response.json(
+          { error: "This study has been removed from the Scientific Studies page, so a finding can't be added to it." },
+          { status: 400 }
+        );
+    }
 
     const studyId = scope === "paper" && study ? await getOrCreateStudy(sb, study) : null;
 
@@ -104,6 +116,7 @@ export async function POST(req: Request) {
         status: "pending_review",
         origin: "human",
         created_by: created_by ?? null,
+        sentiment: sentiment ?? null,
       })
       .select(CLAIM_SELECT)
       .single();

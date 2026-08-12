@@ -19,6 +19,7 @@ import io
 import json
 import os
 import re
+import sys
 import threading
 import time
 import unicodedata
@@ -246,6 +247,47 @@ def _parse_custom_slides(custom_slides_meta: str,
     return out
 
 
+def _parse_layout_overrides(layout_overrides_meta: str,
+                            custom_file_blobs: dict[str, bytes]) -> list[dict]:
+    """The About page's TEAM REDESIGNED layouts (design overrides), matched to their uploaded
+    .pptx blobs — the blobs ride the same custom_files channel as team slides, named
+    <file_id>.pptx. Same never-fail contract as _parse_custom_slides: malformed or incomplete
+    entries (unknown/fixed-role layout, missing blob, no slots) are dropped silently."""
+    try:
+        meta = json.loads(layout_overrides_meta) if layout_overrides_meta else []
+    except Exception:  # noqa: BLE001
+        return []
+    from src.overrides import OVERRIDE_EXCLUDED
+    try:
+        known = set(config.catalog())
+    except Exception:  # noqa: BLE001
+        known = set()
+    out, seen = [], set()
+    for m in meta if isinstance(meta, list) else []:
+        if not isinstance(m, dict):
+            continue
+        layout = str(m.get("layout") or "")
+        blob = custom_file_blobs.get(str(m.get("file_id") or ""))
+        slots = m.get("slots")
+        if (not layout or layout in seen or layout in OVERRIDE_EXCLUDED
+                or (known and layout not in known) or not blob
+                or not isinstance(slots, list) or not slots):
+            continue
+        if not all(isinstance(s, dict) and s.get("slot_id") and s.get("char_budget")
+                   for s in slots):
+            continue
+        png = None
+        if m.get("preview_b64"):
+            try:
+                png = base64.b64decode(m["preview_b64"])
+            except Exception:  # noqa: BLE001
+                png = None
+        seen.add(layout)
+        out.append({"layout": layout, "bytes": blob, "index": int(m.get("slide_index") or 0),
+                    "slots": slots, "png": png})
+    return out
+
+
 def _parse_custom_photos(custom_photos_meta: str,
                          photo_blobs: dict[str, bytes]) -> list[dict]:
     """The About page's team photo library, matched to the uploaded image blobs. Same
@@ -277,7 +319,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              preferred_layouts: str = "",
              disabled_photos: str = "",
              preferred_photos: str = "",
-             color_theme: str = "") -> None:
+             color_theme: str = "",
+             layout_overrides_meta: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -366,6 +409,7 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
             parsed_design = None
         parsed_custom = _parse_custom_slides(custom_slides_meta, custom_file_blobs or {})
         parsed_photos = _parse_custom_photos(custom_photos_meta, custom_photo_blobs or {})
+        parsed_overrides = _parse_layout_overrides(layout_overrides_meta, custom_file_blobs or {})
         parsed_preferred = [p.strip() for p in (preferred_layouts or "").split(",") if p.strip()]
         parsed_disabled_photos = [p.strip() for p in (disabled_photos or "").split(",") if p.strip()]
         parsed_preferred_photos = [p.strip() for p in (preferred_photos or "").split(",") if p.strip()]
@@ -392,7 +436,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                          preferred_layouts=parsed_preferred,
                          disabled_photos=parsed_disabled_photos,
                          preferred_photos=parsed_preferred_photos,
-                         color_theme=color_theme.strip() or None)
+                         color_theme=color_theme.strip() or None,
+                         layout_overrides=parsed_overrides)
 
         # Named after the deck's own generated deck_title (the topic), falling back to the
         # source file stem when the title yields no usable ASCII.
@@ -484,6 +529,7 @@ async def create_job(
     disabled_photos: str = Form(default=""),
     preferred_photos: str = Form(default=""),
     color_theme: str = Form(default=""),
+    layout_overrides_meta: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -510,7 +556,11 @@ async def create_job(
     disabled_photos: comma separated BUILT-IN photo ids turned OFF on the About page — removed
     from every asset_id enum so the model cannot pick them; deck only.
     preferred_photos: comma separated photo ids (built-in or team_photo_<id>) starred as house
-    favourites — a soft planner preference among equally fitting photos; deck only."""
+    favourites — a soft planner preference among equally fitting photos; deck only.
+    layout_overrides_meta: the About page's TEAM REDESIGNED layouts — a JSON array of
+    {layout, file_id, slide_index, slots, preview_b64?}; the .pptx blobs ride the SAME
+    custom_files channel, named <file_id>.pptx. The design is spliced verbatim; the planner
+    writes fresh per-slot text on every use; deck only."""
     err = _auth_or_error(x_deck_token)
     if err:
         return err
@@ -538,7 +588,8 @@ async def create_job(
                            sprak, sider, study_meta, custom_rules, disabled_layouts,
                            design_settings, custom_slides_meta, custom_blobs,
                            custom_photos_meta, photo_blobs, preferred_layouts,
-                           disabled_photos, preferred_photos, color_theme),
+                           disabled_photos, preferred_photos, color_theme,
+                           layout_overrides_meta),
                      daemon=True).start()
     return {"job_id": job_id}
 
@@ -636,6 +687,87 @@ async def slides_inspect(
             im.save(buf, "JPEG", quality=82)
             out.append({"index": i, "preview_b64": base64.b64encode(buf.getvalue()).decode("ascii")})
         return {"slides": out}
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
+
+
+@app.post("/slides/inspect-slots")
+async def slides_inspect_slots(
+    file: UploadFile,
+    slide_index: int = Form(default=0),
+    layout: str = Form(default=""),
+    x_deck_token: str | None = Header(default=None),
+):
+    """Measure the AI-refillable TEXT SLOTS of one slide in an uploaded .pptx — the analysis
+    half of a layout design override ("TEAM REDESIGNED" layout). For every text-bearing shape:
+    a stable slot id (survives the renderer's splice), the text it says now, and a character
+    budget measured from its geometry. The About page stores the result in Supabase and ships
+    it back with each generation job (layout_overrides_meta) — this service stays stateless.
+
+    Rejects up front (400, human message) anything the recipe path cannot honour: an excluded
+    fixed-role layout, a slide with an embedded chart/video/object (the splice cannot carry
+    those parts, and the picture fallback would freeze the text), no editable text at all, or
+    more slots than the schema/prompt can reasonably carry.
+
+    { file, slide_index, layout? } -> { slide_index, slots: [...], preview_b64 }"""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    data = await file.read()
+    if not data:
+        return JSONResponse({"feil": "Empty file."}, status_code=400)
+    from src.overrides import MAX_SLOTS, OVERRIDE_EXCLUDED, extract_slots, slide_ineligible_reason
+    if layout:
+        try:
+            known = set(config.catalog())
+        except Exception:  # noqa: BLE001
+            known = set()
+        if known and layout not in known:
+            return JSONResponse({"feil": f'Unknown layout "{layout}".'}, status_code=400)
+        if layout in OVERRIDE_EXCLUDED:
+            return JSONResponse(
+                {"feil": "This slide has a fixed structural role in every deck and its design "
+                         "can't be replaced."}, status_code=400)
+    try:
+        from pptx import Presentation
+
+        prs = Presentation(io.BytesIO(data))
+        slides = list(prs.slides)
+        if not 0 <= slide_index < len(slides):
+            return JSONResponse(
+                {"feil": f"slide_index {slide_index} out of range ({len(slides)} slides)."},
+                status_code=400)
+        src_slide = slides[slide_index]
+        reason = slide_ineligible_reason(src_slide)
+        if reason:
+            return JSONResponse({"feil": f"This slide can't be used as a design: {reason}."},
+                                status_code=400)
+        slots = extract_slots(src_slide)
+        if not slots:
+            return JSONResponse(
+                {"feil": "No editable text found on this slide — the AI would have nothing to "
+                         "write into."}, status_code=400)
+        if len(slots) > MAX_SLOTS:
+            return JSONResponse(
+                {"feil": f"This slide has {len(slots)} text areas — the limit is {MAX_SLOTS}. "
+                         f"Simplify the design and try again."}, status_code=400)
+
+        preview_b64 = None
+        try:
+            from PIL import Image
+
+            from src import qa_gate
+            images = qa_gate.rasterize(data)
+            if images and slide_index < len(images):
+                im = Image.open(io.BytesIO(images[slide_index])).convert("RGB")
+                if im.width > 1280:
+                    im = im.resize((1280, round(im.height * 1280 / im.width)))
+                buf = io.BytesIO()
+                im.save(buf, "JPEG", quality=82)
+                preview_b64 = base64.b64encode(buf.getvalue()).decode("ascii")
+        except Exception as e:  # noqa: BLE001 — a missing preview must not block the analysis
+            print(f"[inspect-slots] preview rasterisation failed: {e}", file=sys.stderr)
+        return {"slide_index": slide_index, "slots": slots, "preview_b64": preview_b64}
     except Exception as e:  # noqa: BLE001 — surface a clean error to the client
         return JSONResponse({"feil": f"Could not read the presentation: {e}"}, status_code=500)
 

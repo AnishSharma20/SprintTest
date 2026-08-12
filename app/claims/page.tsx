@@ -6,9 +6,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Claim, Category } from "../lib/claims-types";
+import type { Studie } from "../studies";
+import { applyStudyMeta, loadStudyMeta } from "../study-meta";
+import { useCurrentUser } from "../lib/use-current-user";
 import FindingsV2 from "./findings-v2";
-
-const REVIEWER_KEY = "claimsReviewerName:v1";
 
 export type Link = { parent_claim_id: string; child_claim_id: string; relation: string };
 export type LibClaim = Claim & {
@@ -28,15 +29,23 @@ export default function FindingsV2Page() {
   const [claims, setClaims] = useState<LibClaim[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [reviewer, setReviewer] = useState("");
+  const [studies, setStudies] = useState<Studie[]>([]);
+  const { name: reviewer } = useCurrentUser();
 
   const load = useCallback(async () => {
     try {
-      const d = await (await fetch("/api/claims")).json();
+      const [d, studiesRaw, meta] = await Promise.all([
+        fetch("/api/claims").then((r) => r.json()),
+        fetch("/api/studies").then((r) => (r.ok ? r.json() : [])),
+        loadStudyMeta(),
+      ]);
       setConfigured(d.configured !== false);
       setClaims((d.claims ?? []).filter((c: Claim) => c.status !== "superseded"));
       setLinks(d.links ?? []);
       setCategories(d.categories ?? []);
+      // A study a reviewer has removed from the Scientific Studies page can't be picked here
+      // either — writing a new finding for it is rejected server side anyway.
+      setStudies(applyStudyMeta(Array.isArray(studiesRaw) ? studiesRaw : [], meta).filter((s) => !s.removed));
     } catch {
       setConfigured(false);
     } finally {
@@ -46,17 +55,7 @@ export default function FindingsV2Page() {
 
   useEffect(() => {
     void load();
-    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
   }, [load]);
-
-  const onReviewerChange = (v: string) => {
-    setReviewer(v);
-    try {
-      window.localStorage.setItem(REVIEWER_KEY, v);
-    } catch {
-      /* ignore */
-    }
-  };
 
   if (!configured) {
     return (
@@ -80,8 +79,8 @@ export default function FindingsV2Page() {
       claims={claims}
       links={links}
       categories={categories}
+      studies={studies}
       reviewer={reviewer}
-      onReviewerChange={onReviewerChange}
       onChanged={load}
     />
   );

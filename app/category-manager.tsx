@@ -73,7 +73,16 @@ export default function CategoryManager({
   // Effective study count per category: the reviewer assignment when there is one, otherwise the
   // built in assignment from app/studies.ts (which the API cannot see).
   const meta: StudyMeta = useMemo(
-    () => ({ configured: true, editable: true, categories: rows, studyCategories, quality: {} }),
+    () => ({
+      configured: true,
+      editable: true,
+      editableV2: true,
+      categories: rows,
+      studyCategories,
+      quality: {},
+      assessment: {},
+      removed: {},
+    }),
     [rows, studyCategories]
   );
   const studyCount = useMemo(() => {

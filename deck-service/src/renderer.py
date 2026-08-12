@@ -639,7 +639,46 @@ def _find_design_slide(marker: str):
     raise ValueError(f"Design source slide not found in template.pptx (marker {marker!r}).")
 
 
-def _splice_shapes(dst_slide, src_slide, *, strict: bool = False) -> bool:
+def _ph_marker(el):
+    """The p:ph element of a copied shape (sp OR pic placeholder), or None."""
+    for nvPr in el.iter(qn("p:nvPr")):
+        ph = nvPr.find(qn("p:ph"))
+        if ph is not None:
+            return ph
+    return None
+
+
+def _bake_placeholder(el, box, lst) -> None:
+    """Turn a COPIED placeholder element into a free-standing shape: explicit geometry from the
+    SOURCE file's own inheritance chain, the source layout's list-style text defaults baked into
+    its txBody, and the p:ph marker removed — so nothing re-inherits from the DESTINATION blank
+    layout (which has no matching placeholder and would collapse it to default position/styling)."""
+    spPr = el.find(qn("p:spPr"))
+    if spPr is not None and box is not None and spPr.find(qn("a:xfrm")) is None:
+        spPr.insert(0, parse_xml(
+            f'<a:xfrm {nsdecls("a")}><a:off x="{box[0]}" y="{box[1]}"/>'
+            f'<a:ext cx="{box[2]}" cy="{box[3]}"/></a:xfrm>'))
+    if (spPr is not None and el.tag == qn("p:sp")
+            and spPr.find(qn("a:prstGeom")) is None and spPr.find(qn("a:custGeom")) is None):
+        xfrm = spPr.find(qn("a:xfrm"))
+        geom = parse_xml(f'<a:prstGeom {nsdecls("a")} prst="rect"><a:avLst/></a:prstGeom>')
+        spPr.insert(list(spPr).index(xfrm) + 1 if xfrm is not None else 0, geom)
+    txBody = el.find(qn("p:txBody"))
+    if txBody is not None and lst is not None and len(lst):
+        own = txBody.find(qn("a:lstStyle"))
+        if own is None or not len(own):
+            if own is not None:
+                txBody.remove(own)
+            bodyPr = txBody.find(qn("a:bodyPr"))
+            txBody.insert(list(txBody).index(bodyPr) + 1 if bodyPr is not None else 0,
+                          copy.deepcopy(lst))
+    ph = _ph_marker(el)
+    if ph is not None:
+        ph.getparent().remove(ph)
+
+
+def _splice_shapes(dst_slide, src_slide, *, strict: bool = False,
+                   bake_placeholders: bool = False) -> bool:
     """Deep-copy every shape of src_slide onto dst_slide, re-embedding images and re-linking
     external hyperlinks — the one verbatim-splice mechanism (ingredient, benefits, and the
     About page's team-uploaded slides all ride on it). Internal references that are NOT images
@@ -648,11 +687,35 @@ def _splice_shapes(dst_slide, src_slide, *, strict: bool = False) -> bool:
     PNG; with strict=False just those shapes are skipped. PLACEHOLDER shapes are also unsafe in
     strict mode: their geometry AND text formatting inherit from the source deck's layout, which
     does not travel with them, so a copied placeholder lands at a default position with default
-    styling (verified: a spliced two-column slide collapsed to centre-stacked unstyled text)."""
+    styling (verified: a spliced two-column slide collapsed to centre-stacked unstyled text).
+    bake_placeholders=True (the layout-override path) lifts that restriction by BAKING each
+    placeholder instead: explicit geometry resolved through the source's own layout chain, the
+    layout's lstStyle copied in, and the p:ph marker removed — chrome placeholders (date/footer/
+    slide number) are dropped entirely."""
     rmap = dict(src_slide.part.rels.items())
 
+    baked: dict[int, dict] = {}
+    if bake_placeholders:
+        lay_lst: dict[int, object] = {}
+        try:
+            for lp in src_slide.slide_layout.placeholders:
+                tx = lp._element.find(qn("p:txBody"))
+                lst = tx.find(qn("a:lstStyle")) if tx is not None else None
+                if lst is not None and len(lst):
+                    lay_lst[lp.placeholder_format.idx] = lst
+        except Exception:  # noqa: BLE001 — style baking is best-effort
+            lay_lst = {}
+        for ph in src_slide.placeholders:
+            idx = ph.placeholder_format.idx
+            try:
+                box = (int(ph.left), int(ph.top), int(ph.width), int(ph.height)) \
+                    if None not in (ph.left, ph.top, ph.width, ph.height) else None
+            except (TypeError, ValueError):
+                box = None
+            baked[idx] = {"box": box, "lst": lay_lst.get(idx)}
+
     def unsafe(element) -> bool:
-        if strict and element.find(qn("p:nvSpPr")) is not None:
+        if strict and not bake_placeholders and element.find(qn("p:nvSpPr")) is not None:
             nvPr = element.find(qn("p:nvSpPr")).find(qn("p:nvPr"))
             if nvPr is not None and nvPr.find(qn("p:ph")) is not None:
                 return True
@@ -672,6 +735,14 @@ def _splice_shapes(dst_slide, src_slide, *, strict: bool = False) -> bool:
         if unsafe(shp._element):
             continue
         el = copy.deepcopy(shp._element)
+        if bake_placeholders:
+            ph = _ph_marker(el)
+            if ph is not None:
+                idx = int(ph.get("idx") or 0)
+                if idx in CHROME_IDX:
+                    continue   # date/footer/slide-number chrome never travels
+                info = baked.get(idx) or {}
+                _bake_placeholder(el, info.get("box"), info.get("lst"))
         for node in el.iter():                    # remap every relationship reference in the copy
             for a in _R_ATTRS:
                 if a in node.attrib:
@@ -803,6 +874,135 @@ def _add_custom_slide(prs, master_index: int, pptx_bytes: bytes, slide_index: in
         _splice_shapes(slide, src_slide, strict=False)
     except Exception as e:  # noqa: BLE001
         print(f"[custom-slide] splice failed ({e}); slide skipped", file=sys.stderr)
+
+
+def _rewrite_txbody(sp, text: str) -> None:
+    """Replace a shape's text while keeping its DESIGN: per paragraph, the pPr and the first
+    run's formatting survive, surplus runs/breaks go; extra plan lines clone the last original
+    paragraph's formatting; surplus original paragraphs are removed (always keeping one). Field
+    runs (slide number/date) are preserved untouched."""
+    txBody = sp.find(qn("p:txBody"))
+    if txBody is None:
+        return
+    # Stale autofit factors were computed for the ORIGINAL text; drop them so the new text
+    # renders at the authored size (PowerPoint recomputes; LibreOffice honours the attributes).
+    bodyPr = txBody.find(qn("a:bodyPr"))
+    if bodyPr is not None:
+        norm = bodyPr.find(qn("a:normAutofit"))
+        if norm is not None:
+            norm.attrib.pop("fontScale", None)
+            norm.attrib.pop("lnSpcReduction", None)
+
+    paras = txBody.findall(qn("a:p"))
+    if not paras:
+        return
+    template = copy.deepcopy(paras[-1])   # pristine formatting for any extra plan lines
+
+    def set_para(p, line: str) -> None:
+        first = None
+        for child in list(p):
+            if child.tag == qn("a:r"):
+                if first is None:
+                    first = child
+                else:
+                    p.remove(child)
+            elif child.tag == qn("a:br"):
+                p.remove(child)
+        if first is None:
+            end_pr = p.find(qn("a:endParaRPr"))
+            first = parse_xml(f'<a:r {nsdecls("a")}><a:t/></a:r>')
+            if end_pr is not None:
+                r_pr = copy.deepcopy(end_pr)
+                r_pr.tag = qn("a:rPr")
+                first.insert(0, r_pr)
+                p.insert(list(p).index(end_pr), first)
+            else:
+                p.append(first)
+        ts = first.findall(qn("a:t"))
+        if not ts:
+            t = parse_xml(f'<a:t {nsdecls("a")}/>')
+            first.append(t)
+            ts = [t]
+        ts[0].text = line
+        for extra in ts[1:]:
+            first.remove(extra)
+
+    lines = text.split("\n") or [text]
+    for i, line in enumerate(lines):
+        if i < len(paras):
+            set_para(paras[i], line)
+        else:
+            clone = copy.deepcopy(template)
+            set_para(clone, line)
+            txBody.append(clone)
+    for p in paras[len(lines):]:
+        txBody.remove(p)
+
+
+def _refill_slots(slide, slots_meta: list[dict], plan_slots: dict) -> None:
+    """Write the plan's per-slot text into the just-spliced override shapes, matched by the
+    stable cNvPr@id the splice preserves. A slot the plan left blank keeps its designed text —
+    never blank a designed box. Text is capped at the slot's measured budget, never shrunk."""
+    from .overrides import truncate_budget
+    by_id = {s.get("slot_id"): s for s in (slots_meta or []) if s.get("slot_id")}
+    if not by_id or not plan_slots:
+        return
+    for sp in slide.shapes._spTree.iter(qn("p:sp")):   # iter() reaches shapes inside groups too
+        cnv = sp.find(qn("p:nvSpPr") + "/" + qn("p:cNvPr"))
+        if cnv is None:
+            continue
+        slot_id = f"s{cnv.get('id')}"
+        meta = by_id.get(slot_id)
+        text = str(plan_slots.get(slot_id) or "").strip()
+        if meta is None or not text:
+            continue
+        _rewrite_txbody(sp, truncate_budget(text, int(meta.get("char_budget") or 800)))
+
+
+def _add_override_slide(prs, master_index: int, ov: dict, spec: dict,
+                        skip_number: set | None = None) -> None:
+    """Splice a TEAM-REDESIGNED layout (an About page design override) and refill its measured
+    text slots with the plan's fresh text — the recipe path: their design, the AI's content.
+    Placeholders are baked (bake_placeholders) since a downloaded native layout is placeholder
+    built. Never raises: like a team slide, an override must not fail the whole deck."""
+    try:
+        src = Presentation(io.BytesIO(ov["bytes"]))
+        slides = list(src.slides)
+        idx = int(ov.get("index") or 0)
+        if not 0 <= idx < len(slides):
+            print(f"[override] {ov.get('layout')}: slide index {idx} out of range "
+                  f"({len(slides)} slides); skipped", file=sys.stderr)
+            return
+        src_slide = slides[idx]
+        slide = prs.slides.add_slide(_blank_layout(prs, master_index))
+        # The user's redesign may carry its own chrome — our footer pass must skip it.
+        if skip_number is not None:
+            skip_number.add(slide.slide_id)
+        for ph in list(slide.shapes):
+            ph._element.getparent().remove(ph._element)
+        _copy_slide_bg(slide, src_slide)
+        if _splice_shapes(slide, src_slide, strict=True, bake_placeholders=True):
+            _refill_slots(slide, ov.get("slots") or [], spec.get("slots") or {})
+            return
+        png = ov.get("png")
+        if png:
+            # Shouldn't happen (inspect-slots pre-screens uploads), but the file may have been
+            # edited since: freeze the design as a picture rather than ship nothing.
+            print(f"[override] {ov.get('layout')} not refillable (splice refused); "
+                  f"shipped as picture", file=sys.stderr)
+            from PIL import Image
+            with Image.open(io.BytesIO(png)) as im:
+                iw, ih = im.size
+            _set_white_bg(slide)
+            sw, sh = prs.slide_width, prs.slide_height
+            scale = min(sw / iw, sh / ih)
+            w, h = int(iw * scale), int(ih * scale)
+            slide.shapes.add_picture(io.BytesIO(png), (sw - w) // 2, (sh - h) // 2, w, h)
+            return
+        _splice_shapes(slide, src_slide, strict=False, bake_placeholders=True)
+        _refill_slots(slide, ov.get("slots") or [], spec.get("slots") or {})
+    except Exception as e:  # noqa: BLE001
+        print(f"[override] {ov.get('layout')} splice failed ({e}); slide skipped", file=sys.stderr)
 
 
 # ---------------------------------------------------------------------------
@@ -2628,7 +2828,8 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
 
 
 def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
-                custom_by_key: dict, placed_custom: set, unnumbered: set) -> None:
+                custom_by_key: dict, placed_custom: set, unnumbered: set,
+                overrides_by_key: dict | None = None) -> None:
     """Add ONE slide for a plan spec — the layout dispatch, extracted from render_deck so the
     loop can apply per-slide extras (speaker notes) to whatever slide any branch added."""
     layout_name = spec["layout"]
@@ -2639,6 +2840,10 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
             placed_custom.add(layout_name)
         else:
             print(f"[custom-slide] plan references unknown {layout_name}; skipped", file=sys.stderr)
+        return
+    ov = (overrides_by_key or {}).get(layout_name)
+    if ov:   # the team replaced this layout's DESIGN — splice theirs, refill its text slots
+        _add_override_slide(prs, dark, ov, spec, unnumbered)
         return
     if layout_name == "ingredient":   # AKBM's standard slide, spliced in verbatim
         _add_ingredient_slide(prs, dark)
@@ -2721,6 +2926,7 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
                 design: dict | None = None,
                 custom_slides: list[dict] | None = None,
                 custom_photos: list[dict] | None = None,
+                layout_overrides: list[dict] | None = None,
                 return_slide_map: bool = False) -> bytes | tuple[bytes, list[int | None]]:
     """design: the About page's deterministic overrides (fonts/sizes/spacing/margins/footer) —
     applied (or reset to brand defaults when empty) before anything is drawn.
@@ -2729,6 +2935,10 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     slides are appended after the content (before the benefits overview) on every deck.
     custom_photos: the team's uploaded photo library, each {key, bytes} — resolvable wherever
     the plan sets an asset_id, exactly like a built-in library photo.
+    layout_overrides: the About page's design overrides, each {layout, bytes, index, slots,
+    png} — whenever the plan picks that layout key, the team's redesigned slide is spliced in
+    and its measured text slots are refilled from the plan's `slots` dict (see
+    _add_override_slide); the layout's normal fill function never runs.
     return_slide_map: when True, also return a list (one entry per FINAL rendered slide, in
     order) of the plan['slides'] index it came from, or None for a slide with no plan entry
     (the benefits overview, an "always" team slide, an appendix figure/table) — the benefits
@@ -2738,6 +2948,7 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     apply_design(design)
     register_custom_photos(custom_photos)
     custom_by_key = {c["key"]: c for c in (custom_slides or [])}
+    overrides_by_key = {o["layout"]: o for o in (layout_overrides or [])}
     placed_custom: set[str] = set()
     unnumbered: set[int] = set()   # slide ids that carry their own baked page number
 
@@ -2749,7 +2960,8 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     owners: list[int | None] = []  # parallel to prs.slides, kept in sync through every reorder
     for plan_idx, spec in enumerate(plan["slides"]):
         before = len(prs.slides._sldIdLst)
-        _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered)
+        _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered,
+                    overrides_by_key)
         added = len(prs.slides._sldIdLst) - before
         owners.extend([plan_idx] * added)
         # Speaker notes are written HERE, on whatever slide the dispatch just added, so every

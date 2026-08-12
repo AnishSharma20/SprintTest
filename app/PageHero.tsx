@@ -43,28 +43,15 @@ export default function PageHero({
   );
 }
 
-/** The Reviewer field, so the two pages that record a reviewer stay identical too. */
-export function ReviewerField({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-}) {
+/** The Reviewer identity, so the pages that record a reviewer stay identical: the signed-in
+ *  Microsoft account, not a typed name. */
+export function ReviewerField({ value }: { value: string }) {
   return (
     <>
-      <label htmlFor="reviewer" className="text-xs font-semibold text-[#7FD4E6]">
-        Reviewer
-      </label>
-      <input
-        id="reviewer"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-64 rounded-[4px] border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder:text-[#8FB8D0] outline-none focus:border-[#3FD0C9]"
-      />
+      <span className="text-xs font-semibold text-[#7FD4E6]">Reviewer</span>
+      <span className="w-64 rounded-[4px] border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white">
+        {value || "Signing in…"}
+      </span>
     </>
   );
 }

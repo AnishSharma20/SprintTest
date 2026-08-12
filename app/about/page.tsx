@@ -6,11 +6,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ReviewerField } from "../PageHero";
+import { useCurrentUser } from "../lib/use-current-user";
 import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
 import { PRODUCTS, type ProductId } from "../products";
-
-const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
 type Rule = {
   id: number;
@@ -32,9 +31,22 @@ type CustomSlide = {
   description: string;
   mode: "auto" | "always" | "off";
   preview_b64: string | null;
+  removed?: boolean;
   created_by?: string | null;
   created_at?: string;
 };
+
+/** A built-in layout whose design the team replaced from an uploaded .pptx — the AI keeps
+ * writing the slide's text; only the look changes. */
+type LayoutOverride = {
+  layout: string;
+  file_id: string;
+  slide_index: number;
+  preview_b64: string | null;
+  enabled: boolean;
+};
+
+type NameOverride = { display_name?: string | null; description?: string | null };
 
 type UploadPick = {
   index: number;
@@ -68,6 +80,7 @@ type CustomPhoto = {
   enabled: boolean;
   preferred: boolean;
   thumb_b64: string | null;
+  removed?: boolean;
   created_by?: string | null;
 };
 
@@ -127,7 +140,7 @@ function cleanUsage(s: string): string {
 }
 
 export default function AboutV2Page() {
-  const [reviewer, setReviewer] = useState("");
+  const { name: reviewer } = useCurrentUser();
   const [product, setProduct] = useState<ProductId>("superba");
   const selectedProduct = PRODUCTS.find((p) => p.id === product) ?? PRODUCTS[0];
   const [activeTab, setActiveTab] = useState<TabKey>("rules");
@@ -154,13 +167,25 @@ export default function AboutV2Page() {
   // ----- layouts -----
   const [layoutsMigrated, setLayoutsMigrated] = useState(true);
   const [starsMigrated, setStarsMigrated] = useState(true);
+  const [metaMigrated, setMetaMigrated] = useState(true); // migration 0009 (removed + names)
   const [disabled, setDisabled] = useState<Set<string>>(new Set());
   const [preferred, setPreferred] = useState<Set<string>>(new Set());
+  const [layoutRemoved, setLayoutRemoved] = useState<Set<string>>(new Set());
+  const [layoutNames, setLayoutNames] = useState<Record<string, NameOverride>>({});
   const [layoutError, setLayoutError] = useState("");
-  const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
+  const [filter, setFilter] = useState<"all" | "on" | "off" | "favourites">("all");
   const [galleryTheme, setGalleryTheme] = useState<"dark" | "light" | "pastel">("dark");
   const GALLERY_THEME_LABEL = { dark: "Blue Ocean", light: "White", pastel: "Pastel Blue" } as const;
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [slidesView, setSlidesView] = useState<"library" | "deleted">("library");
+  const [editingLayout, setEditingLayout] = useState<string | null>(null);
+  const [layoutNameDraft, setLayoutNameDraft] = useState("");
+  const [layoutDescDraft, setLayoutDescDraft] = useState("");
+
+  // ----- layout design overrides (TEAM REDESIGNED layouts) -----
+  const [overrides, setOverrides] = useState<Record<string, LayoutOverride>>({});
+  const [overridingLayout, setOverridingLayout] = useState<string | null>(null);
+  const [overrideNotice, setOverrideNotice] = useState("");
 
   // ----- design preview -----
   const [previewBusy, setPreviewBusy] = useState(false);
@@ -178,9 +203,14 @@ export default function AboutV2Page() {
   const [photoName, setPhotoName] = useState("");
   const [photoDesc, setPhotoDesc] = useState("");
   const [photoSettingsMigrated, setPhotoSettingsMigrated] = useState(true);
+  const [photoMetaMigrated, setPhotoMetaMigrated] = useState(true); // migration 0009
   const [photoDisabled, setPhotoDisabled] = useState<Set<string>>(new Set());
   const [photoPreferred, setPhotoPreferred] = useState<Set<string>>(new Set());
-  const [photoFilter, setPhotoFilter] = useState<"all" | "on" | "off" | "favourites" | "mine">("all");
+  const [builtinPhotoRemoved, setBuiltinPhotoRemoved] = useState<Set<string>>(new Set());
+  const [photoNames, setPhotoNames] = useState<Record<string, NameOverride>>({});
+  const [photoFilter, setPhotoFilter] = useState<"all" | "on" | "off" | "favourites">("all");
+  const [photosView, setPhotosView] = useState<"library" | "deleted">("library");
+  const [editingBuiltinPhoto, setEditingBuiltinPhoto] = useState<string | null>(null);
 
   // ----- custom slides -----
   const [slidesMigrated, setSlidesMigrated] = useState(true);
@@ -217,10 +247,24 @@ export default function AboutV2Page() {
       const l = await (await fetch("/api/layout-settings")).json();
       setLayoutsMigrated(l.configured !== false && l.migrated !== false);
       setStarsMigrated(l.starsMigrated !== false);
-      setDisabled(new Set<string>(l.disabled ?? []));
+      setMetaMigrated(l.configured !== false && l.migrated !== false && l.metaMigrated !== false);
+      const removed = new Set<string>(l.removed ?? []);
+      // The server folds removed into `disabled` (so generation excludes them for free);
+      // the page un-folds so the Turned off filter/counts never show a removed slide.
+      setDisabled(new Set<string>((l.disabled ?? []).filter((k: string) => !removed.has(k))));
       setPreferred(new Set<string>(l.preferred ?? []));
+      setLayoutRemoved(removed);
+      setLayoutNames(l.names ?? {});
     } catch {
       setLayoutsMigrated(false);
+    }
+    try {
+      const o = await (await fetch("/api/layout-overrides")).json();
+      const map: Record<string, LayoutOverride> = {};
+      for (const ov of (o.overrides ?? []) as LayoutOverride[]) map[ov.layout] = ov;
+      setOverrides(map);
+    } catch {
+      /* no overrides — the standard designs render as before */
     }
     try {
       const p = await (await fetch("/api/custom-photos")).json();
@@ -232,8 +276,12 @@ export default function AboutV2Page() {
     try {
       const ps = await (await fetch("/api/photo-settings")).json();
       setPhotoSettingsMigrated(ps.configured !== false && ps.migrated !== false);
-      setPhotoDisabled(new Set<string>(ps.disabled ?? []));
+      setPhotoMetaMigrated(ps.configured !== false && ps.migrated !== false && ps.metaMigrated !== false);
+      const removed = new Set<string>(ps.removed ?? []);
+      setPhotoDisabled(new Set<string>((ps.disabled ?? []).filter((k: string) => !removed.has(k))));
       setPhotoPreferred(new Set<string>(ps.preferred ?? []));
+      setBuiltinPhotoRemoved(removed);
+      setPhotoNames(ps.names ?? {});
     } catch {
       setPhotoSettingsMigrated(false);
     }
@@ -256,17 +304,7 @@ export default function AboutV2Page() {
 
   useEffect(() => {
     void load();
-    setReviewer(window.localStorage.getItem(REVIEWER_KEY) || "");
   }, [load]);
-
-  const onReviewerChange = (v: string) => {
-    setReviewer(v);
-    try {
-      window.localStorage.setItem(REVIEWER_KEY, v);
-    } catch {
-      /* ignore */
-    }
-  };
 
   const canEdit = rulesConfigured && rulesMigrated;
 
@@ -406,6 +444,233 @@ export default function AboutV2Page() {
     }
   }
 
+  // ---------- built-in slide: remove / restore / retitle ----------
+  async function removeLayout(key: string, name: string) {
+    if (!window.confirm(`Move "${name}" to Deleted items? It stops appearing in new decks. You can restore it there.`))
+      return;
+    setLayoutError("");
+    const before = new Set(layoutRemoved);
+    setLayoutRemoved(new Set(layoutRemoved).add(key)); // optimistic
+    try {
+      const res = await fetch("/api/layout-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layout: key, removed: true, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not remove the slide.");
+      }
+    } catch (e) {
+      setLayoutRemoved(before);
+      setLayoutError((e as Error).message);
+    }
+  }
+
+  async function restoreLayout(key: string) {
+    setLayoutError("");
+    const before = new Set(layoutRemoved);
+    const next = new Set(layoutRemoved);
+    next.delete(key);
+    setLayoutRemoved(next); // optimistic
+    try {
+      const res = await fetch("/api/layout-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layout: key, removed: false, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not restore the slide.");
+      }
+    } catch (e) {
+      setLayoutRemoved(before);
+      setLayoutError((e as Error).message);
+    }
+  }
+
+  async function saveLayoutMeta(key: string) {
+    setLayoutError("");
+    try {
+      const res = await fetch("/api/layout-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          layout: key,
+          display_name: layoutNameDraft,
+          description: layoutDescDraft,
+          author: reviewer,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not save the changes.");
+      }
+      setLayoutNames((n) => ({
+        ...n,
+        [key]: {
+          display_name: layoutNameDraft.trim() || null,
+          description: layoutDescDraft.trim() || null,
+        },
+      }));
+      setEditingLayout(null);
+    } catch (e) {
+      setLayoutError((e as Error).message);
+    }
+  }
+
+  // ---------- built-in slide: design override (edit the slide itself) ----------
+  /** Upload an edited .pptx back over a built-in layout: the design is used verbatim from now
+   * on while the AI keeps writing the slide's text into the boxes it finds ("recipe", not a
+   * frozen picture). Same upload-once flow as replaceCustomSlide. */
+  async function uploadLayoutOverride(key: string, file: File) {
+    setLayoutError("");
+    setOverrideNotice("");
+    setOverridingLayout(key);
+    let storagePath: string | null = null;
+    try {
+      const urlRes = await fetch("/api/custom-slides/upload-url", { method: "POST" });
+      const uploadUrl = await urlRes.json();
+      if (!urlRes.ok) throw new Error(uploadUrl.error || "Could not prepare the upload.");
+      storagePath = uploadUrl.path;
+      const uploadForm = new FormData();
+      uploadForm.append("cacheControl", "3600");
+      uploadForm.append("", file);
+      const putRes = await fetch(uploadUrl.signedUrl, { method: "PUT", body: uploadForm });
+      if (!putRes.ok) throw new Error(`Could not upload the file (status ${putRes.status}).`);
+
+      // Measure the design's text slots (what the AI will keep writing into).
+      const inspectRes = await fetch("/api/custom-slides/inspect-slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storage_path: storagePath, filename: file.name, slide_index: 0, layout: key }),
+      });
+      const inspected = await inspectRes.json();
+      if (!inspectRes.ok) throw new Error(inspected.error || "Could not read the presentation.");
+
+      const res = await fetch("/api/layout-overrides", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          layout: key,
+          storage_path: storagePath,
+          filename: file.name,
+          slide_index: 0,
+          slots: inspected.slots ?? [],
+          preview_b64: inspected.preview_b64 ?? null,
+          author: reviewer,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not save the design.");
+      setOverrides((o) => ({ ...o, [key]: d.override }));
+      setEditingLayout(null);
+      setOverrideNotice(
+        `Saved. Found ${(inspected.slots ?? []).length} text area(s) the AI will keep writing on "${
+          layoutNames[key]?.display_name || pretty(key)
+        }".`
+      );
+    } catch (e) {
+      setLayoutError((e as Error).message);
+      if (storagePath) {
+        void fetch("/api/custom-slides/discard-upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ storage_path: storagePath }),
+        }).catch(() => {});
+      }
+    } finally {
+      setOverridingLayout(null);
+    }
+  }
+
+  async function revertOverride(key: string, name: string) {
+    if (!window.confirm(`Revert "${name}" to the standard design? Your uploaded design is deleted.`)) return;
+    setLayoutError("");
+    setOverrideNotice("");
+    try {
+      const res = await fetch(`/api/layout-overrides?layout=${encodeURIComponent(key)}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not revert the design.");
+      }
+      setOverrides((o) => {
+        const next = { ...o };
+        delete next[key];
+        return next;
+      });
+    } catch (e) {
+      setLayoutError((e as Error).message);
+    }
+  }
+
+  // ---------- built-in photo: remove / restore / retitle ----------
+  async function removeBuiltinPhoto(id: string, name: string) {
+    if (!window.confirm(`Move "${name}" to Deleted items? It stops appearing in new decks. You can restore it there.`))
+      return;
+    setPhotoError("");
+    const before = new Set(builtinPhotoRemoved);
+    setBuiltinPhotoRemoved(new Set(builtinPhotoRemoved).add(id)); // optimistic
+    try {
+      const res = await fetch("/api/photo-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photo: id, removed: true, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not remove the photo.");
+      }
+    } catch (e) {
+      setBuiltinPhotoRemoved(before);
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function restoreBuiltinPhoto(id: string) {
+    setPhotoError("");
+    const before = new Set(builtinPhotoRemoved);
+    const next = new Set(builtinPhotoRemoved);
+    next.delete(id);
+    setBuiltinPhotoRemoved(next); // optimistic
+    try {
+      const res = await fetch("/api/photo-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photo: id, removed: false, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not restore the photo.");
+      }
+    } catch (e) {
+      setBuiltinPhotoRemoved(before);
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function saveBuiltinPhotoMeta(id: string) {
+    setPhotoError("");
+    try {
+      const res = await fetch("/api/photo-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photo: id, display_name: photoName, description: photoDesc, author: reviewer }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "Could not save the changes.");
+      }
+      setPhotoNames((n) => ({
+        ...n,
+        [id]: { display_name: photoName.trim() || null, description: photoDesc.trim() || null },
+      }));
+      setEditingBuiltinPhoto(null);
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
   // ---------- design preview ----------
   async function previewDesign() {
     setPreviewBusy(true);
@@ -516,13 +781,47 @@ export default function AboutV2Page() {
   }
 
   async function deletePhoto(id: string) {
-    if (!window.confirm("Remove this photo from the tool? Decks already generated keep it.")) return;
+    if (!window.confirm("Move this photo to Deleted items? It stops appearing in new decks. You can restore it there."))
+      return;
     setPhotoError("");
     try {
       const res = await fetch(`/api/custom-photos/${id}`, { method: "DELETE" });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.error || "Could not remove the photo.");
+      // Soft removed (post-0009) → keep the row flagged for Deleted items; a pre-0009 database
+      // hard-deleted it, so drop it from the list entirely.
+      setCustomPhotos((p) =>
+        d.removed ? p.map((x) => (x.id === id ? { ...x, removed: true } : x)) : p.filter((x) => x.id !== id)
+      );
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function restorePhoto(id: string) {
+    setPhotoError("");
+    try {
+      const res = await fetch(`/api/custom-photos/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ removed: false, author: reviewer }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not restore the photo.");
+      setCustomPhotos((p) => p.map((x) => (x.id === id ? { ...x, removed: false } : x)));
+    } catch (e) {
+      setPhotoError((e as Error).message);
+    }
+  }
+
+  async function purgePhoto(id: string, name: string) {
+    if (!window.confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+    setPhotoError("");
+    try {
+      const res = await fetch(`/api/custom-photos/${id}?purge=1`, { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
-        throw new Error(d.error || "Could not remove the photo.");
+        throw new Error(d.error || "Could not delete the photo.");
       }
       setCustomPhotos((p) => p.filter((x) => x.id !== id));
     } catch (e) {
@@ -594,13 +893,48 @@ export default function AboutV2Page() {
   }
 
   async function deleteSlide(id: string) {
-    if (!window.confirm("Remove this slide from the tool? Decks already generated keep it.")) return;
+    if (!window.confirm("Move this slide to Deleted items? It stops appearing in new decks. You can restore it there."))
+      return;
     setCustomError("");
     try {
       const res = await fetch(`/api/custom-slides/${id}`, { method: "DELETE" });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.error || "Could not remove the slide.");
+      // Soft removed (post-0009) → keep it flagged for Deleted items; a pre-0009 database
+      // hard-deleted it, so drop it entirely.
+      setCustomSlides((s) =>
+        d.removed ? s.map((x) => (x.id === id ? { ...x, removed: true } : x)) : s.filter((x) => x.id !== id)
+      );
+    } catch (e) {
+      setCustomError((e as Error).message);
+    }
+  }
+
+  async function restoreSlide(id: string) {
+    setCustomError("");
+    try {
+      const res = await fetch(`/api/custom-slides/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ removed: false, author: reviewer }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Could not restore the slide.");
+      setCustomSlides((s) => s.map((x) => (x.id === id ? { ...x, removed: false } : x)));
+    } catch (e) {
+      setCustomError((e as Error).message);
+    }
+  }
+
+  async function purgeSlide(id: string, name: string) {
+    if (!window.confirm(`Permanently delete "${name}"? This cannot be undone — the stored file is deleted too.`))
+      return;
+    setCustomError("");
+    try {
+      const res = await fetch(`/api/custom-slides/${id}?purge=1`, { method: "DELETE" });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
-        throw new Error(d.error || "Could not remove the slide.");
+        throw new Error(d.error || "Could not delete the slide.");
       }
       setCustomSlides((s) => s.filter((x) => x.id !== id));
     } catch (e) {
@@ -746,11 +1080,15 @@ export default function AboutV2Page() {
     setLayoutError("");
     setExportingLayout(key);
     try {
-      const res = await fetch("/api/layout-gallery/export", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ layout: key, background: galleryTheme }),
-      });
+      // An overridden layout downloads the team's CURRENT design, so the next edit iterates on
+      // it; otherwise the pristine standard sample is rendered fresh by the deck service.
+      const res = overrides[key]
+        ? await fetch(`/api/layout-overrides?layout=${encodeURIComponent(key)}&file=1`)
+        : await fetch("/api/layout-gallery/export", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ layout: key, background: galleryTheme }),
+          });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error || "Could not export the slide.");
@@ -863,35 +1201,48 @@ export default function AboutV2Page() {
 
   // ---------- derived ----------
   const entries = (gallery as GalleryEntry[]).filter((g) => {
-    if (filter === "mine") return false;
+    if (layoutRemoved.has(g.key)) return false; // removed slides live only in Deleted items
     if (filter === "off") return disabled.has(g.key);
     if (filter === "favourites") return preferred.has(g.key);
     if (filter === "on") return !disabled.has(g.key) && g.kind !== "verbatim";
     return true;
   });
   const shownCustom = customSlides.filter((c) => {
+    if (c.removed) return false;
     if (filter === "on") return c.mode !== "off";
     if (filter === "off") return c.mode === "off";
     if (filter === "favourites") return false;
-    return true; // all + mine
+    return true; // all
   });
-  const offCount = disabled.size + customSlides.filter((c) => c.mode === "off").length;
+  const offCount =
+    disabled.size + customSlides.filter((c) => !c.removed && c.mode === "off").length;
+  const removedLayoutEntries = (gallery as GalleryEntry[]).filter((g) => layoutRemoved.has(g.key));
+  const removedCustomSlides = customSlides.filter((c) => c.removed);
+  const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
+  const slideCount =
+    (gallery as GalleryEntry[]).length - removedLayoutEntries.length + customSlides.length - removedCustomSlides.length;
 
   const shownCustomPhotos = customPhotos.filter((p) => {
+    if (p.removed) return false;
     if (photoFilter === "on") return p.enabled;
     if (photoFilter === "off") return !p.enabled;
     if (photoFilter === "favourites") return p.enabled && p.preferred;
-    return true; // all + mine
+    return true; // all
   });
   const shownBuiltinPhotos = (photoLibrary as BuiltinPhoto[]).filter((p) => {
-    if (photoFilter === "mine") return false;
+    if (builtinPhotoRemoved.has(p.id)) return false;
     if (photoFilter === "on") return !photoDisabled.has(p.id);
     if (photoFilter === "off") return photoDisabled.has(p.id);
     if (photoFilter === "favourites") return !photoDisabled.has(p.id) && photoPreferred.has(p.id);
     return true; // all
   });
-  const photoOffCount = photoDisabled.size + customPhotos.filter((p) => !p.enabled).length;
-  const photoFavCount = photoPreferred.size + customPhotos.filter((p) => p.enabled && p.preferred).length;
+  const photoOffCount =
+    photoDisabled.size + customPhotos.filter((p) => !p.removed && !p.enabled).length;
+  const photoFavCount =
+    photoPreferred.size + customPhotos.filter((p) => !p.removed && p.enabled && p.preferred).length;
+  const removedBuiltinPhotos = (photoLibrary as BuiltinPhoto[]).filter((p) => builtinPhotoRemoved.has(p.id));
+  const removedCustomPhotos = customPhotos.filter((p) => p.removed);
+  const deletedPhotosCount = removedBuiltinPhotos.length + removedCustomPhotos.length;
 
   const switchCls = (on: boolean) =>
     `relative h-5 w-9 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -942,7 +1293,7 @@ export default function AboutV2Page() {
             <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#0A7A8A]">About V2</div>
             <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[#1D1D1F]">Generation settings</h1>
           </div>
-          <ReviewerField value={reviewer} onChange={onReviewerChange} placeholder="Your name (recorded on changes)" />
+          <ReviewerField value={reviewer} />
         </div>
 
         {/* ----- brand — same picker as /about ----- */}
@@ -1365,17 +1716,18 @@ export default function AboutV2Page() {
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="text-lg font-bold text-[#031B34]">Slide library</h2>
                 <span className="text-xs text-zinc-500">
-                  {(gallery as GalleryEntry[]).length + customSlides.length} slides · {offCount} turned off
+                  {slideCount} slides · {offCount} turned off
                 </span>
               </div>
               <p className="mt-2 max-w-3xl text-sm text-zinc-600">
                 Every slide the tool can put in a deck, with real example renders. Turn a slide type off
                 and the AI can no longer pick it; turn it back on any time. Add your own finished slides
                 from a PowerPoint file — they are inserted exactly as designed, either where the AI
-                judges they fit or in every deck. Cover and Agenda are required and stay on. Want to
-                change how one looks? Use <span className="font-semibold">⬇ Download to edit</span> on any
-                card to get a real, editable PowerPoint file — edit it, then upload it back through
-                &ldquo;Add your own slides&rdquo; below to save your own version.
+                judges they fit or in every deck. Cover and Agenda are required and stay on. Use{" "}
+                <span className="font-semibold">✎ Edit</span> on any card to change its name, its
+                description, or the slide design itself (download it, restyle it in PowerPoint, upload it
+                back — the AI keeps writing the text). <span className="font-semibold">Remove</span> moves
+                a slide to Deleted items, where it can be restored.
               </p>
 
               {!layoutsMigrated && (
@@ -1387,8 +1739,10 @@ export default function AboutV2Page() {
               )}
               {layoutError && <p className="mt-2 text-sm text-red-700">{layoutError}</p>}
               {customError && <p className="mt-2 text-sm text-red-700">{customError}</p>}
+              {overrideNotice && <p className="mt-2 text-sm font-semibold text-[#0A7A8A]">{overrideNotice}</p>}
 
               {/* upload flow */}
+              {slidesView === "library" && (
               <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
@@ -1520,54 +1874,86 @@ export default function AboutV2Page() {
                   </div>
                 )}
               </div>
+              )}
 
               {/* filters */}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap gap-1.5">
-                  {(
-                    [
-                      ["all", "All"],
-                      ["on", "In use"],
-                      ["off", `Turned off (${offCount})`],
-                      ["favourites", `Favourites (${preferred.size})`],
-                      ["mine", `Your slides (${customSlides.length})`],
-                    ] as const
-                  ).map(([k, label]) => (
+                  {slidesView === "library" &&
+                    (
+                      [
+                        ["all", "All"],
+                        ["on", "In use"],
+                        ["off", `Turned off (${offCount})`],
+                        ["favourites", `Favourites (${preferred.size})`],
+                      ] as const
+                    ).map(([k, label]) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setFilter(k)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                          filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  {slidesView === "deleted" && (
                     <button
-                      key={k}
                       type="button"
-                      onClick={() => setFilter(k)}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                        filter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                      }`}
+                      onClick={() => setSlidesView("library")}
+                      className="rounded-full px-3 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
                     >
-                      {label}
+                      ← Back to the library
                     </button>
-                  ))}
+                  )}
                 </div>
-                <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
-                  {(
-                    [
-                      ["dark", "Blue Ocean"],
-                      ["light", "White"],
-                      ["pastel", "Pastel Blue"],
-                    ] as const
-                  ).map(([k, label]) => (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() => setGalleryTheme(k)}
-                      title={`Preview slides in the ${label} color theme`}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                        galleryTheme === k ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!metaMigrated && customSlides.every((c) => !c.removed)}
+                    title={
+                      metaMigrated
+                        ? "Removed slides land here and can be restored"
+                        : "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor"
+                    }
+                    onClick={() => setSlidesView((v) => (v === "deleted" ? "library" : "deleted"))}
+                    className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                      slidesView === "deleted"
+                        ? "border-[#031B34] bg-[#031B34] text-white"
+                        : "border-[#C2D9E3] bg-white text-[#6E6E73] hover:bg-[#EAF3F7]"
+                    }`}
+                  >
+                    🗑 Deleted items ({deletedSlidesCount})
+                  </button>
+                  {slidesView === "library" && (
+                    <div className="flex items-center gap-1.5 rounded-full border border-[#C2D9E3] bg-white p-1">
+                      {(
+                        [
+                          ["dark", "Blue Ocean"],
+                          ["light", "White"],
+                          ["pastel", "Pastel Blue"],
+                        ] as const
+                      ).map(([k, label]) => (
+                        <button
+                          key={k}
+                          type="button"
+                          onClick={() => setGalleryTheme(k)}
+                          title={`Preview slides in the ${label} color theme`}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                            galleryTheme === k ? "bg-[#031B34] text-white" : "text-[#06456B] hover:bg-[#EAF3F7]"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
+              {slidesView === "library" && (
               <div className="mt-3 flex items-center justify-end">
                 <button
                   type="button"
@@ -1579,14 +1965,97 @@ export default function AboutV2Page() {
                   {exportingAll ? "Preparing download…" : "⬇ Download all template slides to edit"}
                 </button>
               </div>
+              )}
 
-              {/* the grid: custom slides first, then built-ins */}
+              {/* Deleted items: removed slides, restorable (team slides can also be purged) */}
+              {slidesView === "deleted" && (
+                <div className="mt-4">
+                  {deletedSlidesCount === 0 ? (
+                    <p className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-6 text-sm text-zinc-500">
+                      Nothing here. Removed slides land in this list and can be restored.
+                    </p>
+                  ) : (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {removedCustomSlides.map((c) => (
+                        <div key={c.id} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
+                          {c.preview_b64 ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={`data:image/jpeg;base64,${c.preview_b64}`}
+                              alt={c.name}
+                              className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
+                              No preview
+                            </div>
+                          )}
+                          <div className="p-3">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Removed</div>
+                            <div className="mt-2 flex gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => void restoreSlide(c.id)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Restore
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void purgeSlide(c.id, c.name)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                              >
+                                Delete permanently
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {removedLayoutEntries.map((g) => (
+                        <div key={g.key} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={
+                              overrides[g.key]?.preview_b64
+                                ? `data:image/jpeg;base64,${overrides[g.key].preview_b64}`
+                                : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`
+                            }
+                            alt={`Example of the ${pretty(g.key)} slide`}
+                            className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
+                            loading="lazy"
+                          />
+                          <div className="p-3">
+                            <div className="truncate text-sm font-bold text-[#031B34]">
+                              {layoutNames[g.key]?.display_name || pretty(g.key)}
+                            </div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Removed</div>
+                            <div className="mt-2">
+                              <button
+                                type="button"
+                                onClick={() => void restoreLayout(g.key)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Restore
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* the grid: team slides first, then built-ins — one uniform library */}
+              {slidesView === "library" && (
               <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {shownCustom.map((c) => (
                   <div
                     key={c.id}
                     className={`overflow-hidden rounded-[4px] border bg-white ${
-                      c.mode === "off" ? "border-[#E3EDF2] opacity-60" : "border-[#3FD0C9]"
+                      c.mode === "off" ? "border-[#E3EDF2] opacity-60" : "border-[#C2D9E3]"
                     }`}
                   >
                     {c.preview_b64 ? (
@@ -1641,7 +2110,7 @@ export default function AboutV2Page() {
                           <div className="flex items-center justify-between gap-2">
                             <div className="min-w-0">
                               <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
-                              <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your slide</div>
+                              <div className="text-[11px] uppercase tracking-wide text-zinc-400">Standard slide</div>
                             </div>
                           </div>
                           {c.description && <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{c.description}</p>}
@@ -1667,14 +2136,14 @@ export default function AboutV2Page() {
                               }}
                               className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
                             >
-                              ✎
+                              ✎ Edit
                             </button>
                             <button
                               type="button"
                               onClick={() => void deleteSlide(c.id)}
                               className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
                             >
-                              Delete
+                              Remove
                             </button>
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -1716,6 +2185,9 @@ export default function AboutV2Page() {
                 {entries.map((g) => {
                   const off = disabled.has(g.key);
                   const locked = LOCKED.has(g.key) || g.kind === "verbatim";
+                  const ov = overrides[g.key];
+                  const displayName = layoutNames[g.key]?.display_name || pretty(g.key);
+                  const displayDesc = layoutNames[g.key]?.description || cleanUsage(g.usage);
                   return (
                     <div
                       key={g.key}
@@ -1725,15 +2197,29 @@ export default function AboutV2Page() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`}
-                        alt={`Example of the ${pretty(g.key)} slide in ${GALLERY_THEME_LABEL[galleryTheme]}`}
+                        src={
+                          ov?.preview_b64
+                            ? `data:image/jpeg;base64,${ov.preview_b64}`
+                            : `/layout-gallery${galleryTheme === "dark" ? "" : `-${galleryTheme}`}/${g.key}.png`
+                        }
+                        alt={`Example of the ${displayName} slide${ov ? "" : ` in ${GALLERY_THEME_LABEL[galleryTheme]}`}`}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"
                       />
                       <div className="p-3">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0">
-                            <div className="truncate text-sm font-bold text-[#031B34]">{pretty(g.key)}</div>
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
+                              {ov && (
+                                <span
+                                  className="shrink-0 rounded-md bg-[#EEFAF9] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#0A7A8A]"
+                                  title="The team replaced this slide's design — the AI keeps writing its text"
+                                >
+                                  Custom design
+                                </span>
+                              )}
+                            </div>
                             <div className="text-[11px] uppercase tracking-wide text-zinc-400">
                               {g.kind === "verbatim"
                                 ? "Fixed brand slide"
@@ -1774,29 +2260,136 @@ export default function AboutV2Page() {
                             </div>
                           )}
                         </div>
-                        <p
-                          className={`mt-2 cursor-pointer text-xs text-zinc-500 ${expanded === g.key ? "" : "line-clamp-2"}`}
-                          onClick={() => setExpanded(expanded === g.key ? null : g.key)}
-                          title={expanded === g.key ? "Click to collapse" : "Click to read the full guidance"}
-                        >
-                          {cleanUsage(g.usage)}
-                        </p>
-                        {g.kind !== "verbatim" && (
-                          <button
-                            type="button"
-                            onClick={() => void downloadStandardLayout(g.key)}
-                            disabled={exportingLayout === g.key}
-                            title="Download this slide as an editable PowerPoint file — edit it, then upload it above to save your own version"
-                            className="mt-2 rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
-                          >
-                            {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
-                          </button>
+                        {editingLayout === g.key ? (
+                          <div className="mt-2 space-y-2">
+                            <input
+                              value={layoutNameDraft}
+                              placeholder={pretty(g.key)}
+                              onChange={(e) => setLayoutNameDraft(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <textarea
+                              value={layoutDescDraft}
+                              rows={3}
+                              placeholder={cleanUsage(g.usage)}
+                              onChange={(e) => setLayoutDescDraft(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <div className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-2">
+                              <p className="text-[11px] text-zinc-500">
+                                Want a different look? Download the slide, restyle it in PowerPoint, and
+                                upload it back. The AI keeps writing this slide&rsquo;s text — your upload
+                                changes only the design.
+                              </p>
+                              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => void downloadStandardLayout(g.key)}
+                                  disabled={exportingLayout === g.key}
+                                  className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                                >
+                                  {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
+                                </button>
+                                <label
+                                  className={`rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] ${
+                                    overridingLayout === g.key ? "opacity-40" : "cursor-pointer"
+                                  }`}
+                                >
+                                  {overridingLayout === g.key ? "Analysing design…" : "↑ Upload edited design"}
+                                  <input
+                                    type="file"
+                                    accept=".pptx"
+                                    className="hidden"
+                                    disabled={overridingLayout === g.key}
+                                    onChange={(e) => {
+                                      const f = e.target.files?.[0];
+                                      if (f) void uploadLayoutOverride(g.key, f);
+                                      e.target.value = "";
+                                    }}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => void saveLayoutMeta(g.key)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingLayout(null)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p
+                              className={`mt-2 cursor-pointer text-xs text-zinc-500 ${expanded === g.key ? "" : "line-clamp-2"}`}
+                              onClick={() => setExpanded(expanded === g.key ? null : g.key)}
+                              title={expanded === g.key ? "Click to collapse" : "Click to read the full guidance"}
+                            >
+                              {displayDesc}
+                            </p>
+                            {g.kind !== "verbatim" && (
+                              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => void downloadStandardLayout(g.key)}
+                                  disabled={exportingLayout === g.key}
+                                  title="Download this slide as an editable PowerPoint file"
+                                  className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7] disabled:opacity-40"
+                                >
+                                  {exportingLayout === g.key ? "Downloading…" : "⬇ Download to edit"}
+                                </button>
+                                {metaMigrated && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingLayout(g.key);
+                                      setLayoutNameDraft(layoutNames[g.key]?.display_name ?? "");
+                                      setLayoutDescDraft(layoutNames[g.key]?.description ?? "");
+                                    }}
+                                    title="Edit the name, the description, or the slide design itself"
+                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                                  >
+                                    ✎ Edit
+                                  </button>
+                                )}
+                                {ov && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void revertOverride(g.key, displayName)}
+                                    title="Delete the uploaded design and go back to the standard one"
+                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-zinc-500 hover:bg-zinc-100"
+                                  >
+                                    ↩ Revert to standard design
+                                  </button>
+                                )}
+                                {!locked && metaMigrated && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void removeLayout(g.key, displayName)}
+                                    className="rounded-[4px] px-2 py-1 text-[11px] font-semibold text-red-700 hover:bg-red-50"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
                   );
                 })}
               </div>
+              )}
             </section>
           )}
 
@@ -1815,8 +2408,11 @@ export default function AboutV2Page() {
                 it; star one as a house favourite and the AI prefers it when several photos fit
                 equally well. Add your own brand photos with a short description — the description is
                 how the AI decides when to use a photo, so write it like a caption (&quot;Athlete
-                stretching outdoors, for sports performance slides&quot;). Images are downscaled
-                automatically before saving.
+                stretching outdoors, for sports performance slides&quot;). Use{" "}
+                <span className="font-semibold">✎ Edit</span> to change a photo&rsquo;s name or
+                description (to change the image itself, remove the photo and add a new one);{" "}
+                <span className="font-semibold">Remove</span> moves it to Deleted items, where it can
+                be restored. Images are downscaled automatically before saving.
               </p>
               {!photoSettingsMigrated && (
                 <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-4 text-sm text-zinc-500">
@@ -1827,6 +2423,7 @@ export default function AboutV2Page() {
               )}
               {photoError && <p className="mt-2 text-sm text-red-700">{photoError}</p>}
 
+              {photosView === "library" && (
               <div className="mt-4 rounded-[4px] border border-[#C2D9E3] bg-white p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
@@ -1900,38 +2497,145 @@ export default function AboutV2Page() {
                   </div>
                 )}
               </div>
+              )}
 
               {/* filters */}
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {(
-                  [
-                    ["all", "All"],
-                    ["on", "In use"],
-                    ["off", `Turned off (${photoOffCount})`],
-                    ["favourites", `Favourites (${photoFavCount})`],
-                    ["mine", `Your photos (${customPhotos.length})`],
-                  ] as const
-                ).map(([k, label]) => (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => setPhotoFilter(k)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                      photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {photosView === "library" &&
+                    (
+                      [
+                        ["all", "All"],
+                        ["on", "In use"],
+                        ["off", `Turned off (${photoOffCount})`],
+                        ["favourites", `Favourites (${photoFavCount})`],
+                      ] as const
+                    ).map(([k, label]) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setPhotoFilter(k)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                          photoFilter === k ? "bg-[#031B34] text-white" : "bg-white text-[#06456B] hover:bg-[#EAF3F7]"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  {photosView === "deleted" && (
+                    <button
+                      type="button"
+                      onClick={() => setPhotosView("library")}
+                      className="rounded-full px-3 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                    >
+                      ← Back to the library
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  disabled={!photoMetaMigrated && customPhotos.every((p) => !p.removed)}
+                  title={
+                    photoMetaMigrated
+                      ? "Removed photos land here and can be restored"
+                      : "Run migration 0009_deleted_items_and_layout_overrides.sql in the Supabase SQL editor"
+                  }
+                  onClick={() => setPhotosView((v) => (v === "deleted" ? "library" : "deleted"))}
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                    photosView === "deleted"
+                      ? "border-[#031B34] bg-[#031B34] text-white"
+                      : "border-[#C2D9E3] bg-white text-[#6E6E73] hover:bg-[#EAF3F7]"
+                  }`}
+                >
+                  🗑 Deleted items ({deletedPhotosCount})
+                </button>
               </div>
 
-              {/* team photos first, then the built-in library */}
+              {/* Deleted items: removed photos, restorable (team photos can also be purged) */}
+              {photosView === "deleted" && (
+                <div className="mt-4">
+                  {deletedPhotosCount === 0 ? (
+                    <p className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-white p-6 text-sm text-zinc-500">
+                      Nothing here. Removed photos land in this list and can be restored.
+                    </p>
+                  ) : (
+                    <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                      {removedCustomPhotos.map((p) => (
+                        <div key={p.id} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
+                          {p.thumb_b64 ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={`data:image/jpeg;base64,${p.thumb_b64}`}
+                              alt={p.name}
+                              className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="flex aspect-video items-center justify-center border-b border-[#E3EDF2] bg-[#F7FAFC] text-xs text-zinc-400">
+                              No preview
+                            </div>
+                          )}
+                          <div className="p-3">
+                            <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Removed</div>
+                            <div className="mt-2 flex gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => void restorePhoto(p.id)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Restore
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void purgePhoto(p.id, p.name)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                              >
+                                Delete permanently
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {removedBuiltinPhotos.map((p) => (
+                        <div key={p.id} className="overflow-hidden rounded-[4px] border border-[#E3EDF2] bg-white">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`/photo-library/${p.id}.jpg`}
+                            alt={p.description}
+                            className="aspect-video w-full border-b border-[#E3EDF2] object-cover opacity-60"
+                            loading="lazy"
+                          />
+                          <div className="p-3">
+                            <div className="truncate text-sm font-bold text-[#031B34]">
+                              {photoNames[p.id]?.display_name || pretty(p.id.replace(/^photo_/, ""))}
+                            </div>
+                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Removed</div>
+                            <div className="mt-2">
+                              <button
+                                type="button"
+                                onClick={() => void restoreBuiltinPhoto(p.id)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
+                              >
+                                Restore
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* team photos first, then the built-in library — one uniform grid */}
+              {photosView === "library" && (
               <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 {shownCustomPhotos.map((p) => (
                     <div
                       key={p.id}
                       className={`overflow-hidden rounded-[4px] border bg-white ${
-                        p.enabled ? "border-[#3FD0C9]" : "border-[#E3EDF2] opacity-60"
+                        p.enabled ? "border-[#C2D9E3]" : "border-[#E3EDF2] opacity-60"
                       }`}
                     >
                       {p.thumb_b64 ? (
@@ -1986,7 +2690,7 @@ export default function AboutV2Page() {
                             <div className="flex items-center justify-between gap-2">
                               <div className="min-w-0">
                                 <div className="truncate text-sm font-bold text-[#031B34]">{p.name}</div>
-                                <div className="text-[11px] uppercase tracking-wide text-[#0E7490]">Your photo</div>
+                                <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
                               </div>
                               <div className="flex shrink-0 items-center gap-1.5">
                                 {p.enabled && (
@@ -2022,6 +2726,7 @@ export default function AboutV2Page() {
                               <button
                                 type="button"
                                 onClick={() => {
+                                  setEditingBuiltinPhoto(null); // the two photo editors share drafts
                                   setEditingPhoto(p.id);
                                   setPhotoName(p.name);
                                   setPhotoDesc(p.description);
@@ -2035,7 +2740,7 @@ export default function AboutV2Page() {
                                 onClick={() => void deletePhoto(p.id)}
                                 className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
                               >
-                                Delete
+                                Remove
                               </button>
                             </div>
                           </>
@@ -2046,6 +2751,8 @@ export default function AboutV2Page() {
 
                 {shownBuiltinPhotos.map((p) => {
                   const off = photoDisabled.has(p.id);
+                  const displayName = photoNames[p.id]?.display_name || pretty(p.id.replace(/^photo_/, ""));
+                  const displayDesc = photoNames[p.id]?.description || p.description;
                   return (
                     <div
                       key={p.id}
@@ -2056,52 +2763,115 @@ export default function AboutV2Page() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={`/photo-library/${p.id}.jpg`}
-                        alt={p.description}
+                        alt={displayDesc}
                         className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
                         loading="lazy"
                       />
                       <div className="p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-bold text-[#031B34]">{pretty(p.id.replace(/^photo_/, ""))}</div>
-                            <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-1.5">
-                            {!off && photoSettingsMigrated && (
+                        {editingBuiltinPhoto === p.id ? (
+                          <div className="space-y-2">
+                            <input
+                              value={photoName}
+                              placeholder={pretty(p.id.replace(/^photo_/, ""))}
+                              onChange={(e) => setPhotoName(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <textarea
+                              value={photoDesc}
+                              rows={2}
+                              placeholder={p.description}
+                              onChange={(e) => setPhotoDesc(e.target.value)}
+                              className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none focus:border-[#3FD0C9]"
+                            />
+                            <p className="text-[11px] text-zinc-400">
+                              To change the image itself, remove this photo and add a new one.
+                            </p>
+                            <div className="flex gap-2">
                               <button
                                 type="button"
-                                onClick={() => void toggleBuiltinPhotoStar(p.id, !photoPreferred.has(p.id))}
-                                title={
-                                  photoPreferred.has(p.id)
-                                    ? "House favourite: the AI prefers this when several photos fit"
-                                    : "Star as a house favourite"
-                                }
-                                className={`text-lg leading-none ${
-                                  photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
-                                }`}
+                                onClick={() => void saveBuiltinPhotoMeta(p.id)}
+                                className="rounded-[4px] bg-[#031B34] px-3 py-1 text-xs font-semibold text-white"
                               >
-                                {photoPreferred.has(p.id) ? "★" : "☆"}
+                                Save
                               </button>
-                            )}
-                            <button
-                              type="button"
-                              role="switch"
-                              aria-checked={!off}
-                              disabled={!photoSettingsMigrated}
-                              title={off ? "Off: the AI cannot pick this photo" : "On: available to the AI"}
-                              onClick={() => void toggleBuiltinPhoto(p.id, off)}
-                              className={switchCls(!off)}
-                            >
-                              <span className={knobCls(!off)} />
-                            </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingBuiltinPhoto(null)}
+                                className="rounded-[4px] px-2 py-1 text-xs font-semibold text-zinc-500 hover:bg-zinc-100"
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{p.description}</p>
+                        ) : (
+                          <>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="min-w-0">
+                                <div className="truncate text-sm font-bold text-[#031B34]">{displayName}</div>
+                                <div className="text-[11px] uppercase tracking-wide text-zinc-400">Brand photo</div>
+                              </div>
+                              <div className="flex shrink-0 items-center gap-1.5">
+                                {!off && photoSettingsMigrated && (
+                                  <button
+                                    type="button"
+                                    onClick={() => void toggleBuiltinPhotoStar(p.id, !photoPreferred.has(p.id))}
+                                    title={
+                                      photoPreferred.has(p.id)
+                                        ? "House favourite: the AI prefers this when several photos fit"
+                                        : "Star as a house favourite"
+                                    }
+                                    className={`text-lg leading-none ${
+                                      photoPreferred.has(p.id) ? "text-amber-500" : "text-zinc-300 hover:text-amber-400"
+                                    }`}
+                                  >
+                                    {photoPreferred.has(p.id) ? "★" : "☆"}
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  role="switch"
+                                  aria-checked={!off}
+                                  disabled={!photoSettingsMigrated}
+                                  title={off ? "Off: the AI cannot pick this photo" : "On: available to the AI"}
+                                  onClick={() => void toggleBuiltinPhoto(p.id, off)}
+                                  className={switchCls(!off)}
+                                >
+                                  <span className={knobCls(!off)} />
+                                </button>
+                              </div>
+                            </div>
+                            <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{displayDesc}</p>
+                            {photoMetaMigrated && (
+                              <div className="mt-2 flex gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingPhoto(null); // the two photo editors share drafts
+                                    setEditingBuiltinPhoto(p.id);
+                                    setPhotoName(photoNames[p.id]?.display_name ?? "");
+                                    setPhotoDesc(photoNames[p.id]?.description ?? "");
+                                  }}
+                                  className="rounded-[4px] px-2 py-1 text-xs font-semibold text-[#06456B] hover:bg-[#EAF3F7]"
+                                >
+                                  ✎ Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => void removeBuiltinPhoto(p.id, displayName)}
+                                  className="rounded-[4px] px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
                   );
                 })}
               </div>
+              )}
             </section>
           )}
         </div>

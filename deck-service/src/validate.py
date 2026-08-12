@@ -202,12 +202,14 @@ def _text_density_warnings(plan: dict) -> list[str]:
 
 
 def _schema_with_extras(extra_layouts: list[str] | None,
-                        extra_photo_ids: list[str] | None = None) -> dict:
+                        extra_photo_ids: list[str] | None = None,
+                        layout_overrides: list[dict] | None = None) -> dict:
     """The slide schema, with the team's own verbatim slide keys (custom_<id>) added to the
-    layout enum and the team's photo ids (team_photo_<id>) added to every asset_id enum, so a
-    plan that uses either still validates. Verbatim slides need no if/then conditional — they
-    carry no other fields."""
-    if not extra_layouts and not extra_photo_ids:
+    layout enum, the team's photo ids (team_photo_<id>) added to every asset_id enum, and any
+    overridden layout's conditional swapped to its text slots (planner.apply_layout_overrides,
+    the same mutation the tool schema gets — guidance and enforcement can't drift). Verbatim
+    slides need no if/then conditional — they carry no other fields."""
+    if not extra_layouts and not extra_photo_ids and not layout_overrides:
         return config.schema()
     import copy
     s = copy.deepcopy(config.schema())
@@ -218,16 +220,21 @@ def _schema_with_extras(extra_layouts: list[str] | None,
     if extra_photo_ids:
         from .planner import extend_asset_enums
         extend_asset_enums(s, extra_photo_ids)
+    if layout_overrides:
+        from .planner import apply_layout_overrides
+        apply_layout_overrides(s, layout_overrides)
     return s
 
 
 def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   extra_photo_ids: list[str] | None = None,
                   photo_level: str = "default",
-                  disabled_layouts=None) -> list[str]:
+                  disabled_layouts=None,
+                  layout_overrides: list[dict] | None = None) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid)."""
     errors: list[str] = []
-    validator = jsonschema.Draft202012Validator(_schema_with_extras(extra_layouts, extra_photo_ids))
+    validator = jsonschema.Draft202012Validator(
+        _schema_with_extras(extra_layouts, extra_photo_ids, layout_overrides))
     for e in sorted(validator.iter_errors(plan), key=lambda e: list(e.absolute_path)):
         where = "/".join(str(p) for p in e.absolute_path) or "(root)"
         # Precise, actionable message for the planner's retry: exact length, limit, and how

@@ -6,7 +6,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { Category, ClaimStatus } from "../lib/claims-types";
+import type { Category, ClaimStatus, ClaimSentiment } from "../lib/claims-types";
+import type { Studie } from "../studies";
 import { decodeEntities } from "../lib/text";
 import { formatDate } from "../study-meta";
 import {
@@ -75,19 +76,41 @@ function statusPill(s: ClaimStatus) {
   return <Pill tone="amber">Pending review</Pill>;
 }
 
+const SENTIMENT_LABEL: Record<ClaimSentiment, string> = {
+  positive: "Positive",
+  neutral: "Neutral",
+  negative: "Negative",
+};
+
+/** Which way the finding's result points, so a review queue or a deck shows balanced evidence
+ * rather than cherry picked positives — deliberately as visible as the status pill next to it. */
+function sentimentPill(s: ClaimSentiment | null | undefined) {
+  if (!s) return <Pill tone="gray">Not yet assessed</Pill>;
+  return <Pill tone={s === "positive" ? "green" : s === "negative" ? "red" : "gray"}>{SENTIMENT_LABEL[s]}</Pill>;
+}
+
+/** Manual entries are clearly distinguished from AI extracted ones everywhere a finding shows. */
+function originPill(origin: LibClaim["origin"], createdBy: string | null) {
+  return origin === "ai_extracted" ? (
+    <Pill tone="gray">AI extracted</Pill>
+  ) : (
+    <Pill tone="teal">Manual{createdBy ? ` · ${createdBy}` : ""}</Pill>
+  );
+}
+
 export default function FindingsV2({
   claims,
   links,
   categories,
+  studies,
   reviewer,
-  onReviewerChange,
   onChanged,
 }: {
   claims: LibClaim[];
   links: Link[];
   categories: Category[];
+  studies: Studie[];
   reviewer: string;
-  onReviewerChange: (v: string) => void;
   onChanged: () => Promise<void>;
 }) {
   const [q, setQ] = useState("");
@@ -212,7 +235,7 @@ export default function FindingsV2({
           Manage categories
         </button>
       </SideSection>
-      <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals, rejections and comments." />
+      <SideReviewer value={reviewer} hint="Recorded on approvals, rejections and comments." />
     </div>
   );
 
@@ -310,6 +333,8 @@ export default function FindingsV2({
                 >
                   <div className="mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
                     {statusPill(c.status)}
+                    {sentimentPill(c.sentiment)}
+                    {originPill(c.origin, c.created_by)}
                     {!valgtKategori && (
                       <span className="text-[12.5px] text-[#AEAEB2]">{catName[c.category_id] ?? c.category_id}</span>
                     )}
@@ -350,6 +375,7 @@ export default function FindingsV2({
         <NewFindingModal
           categories={categories}
           scienceClaims={scienceClaims}
+          studies={studies}
           reviewer={reviewer}
           onClose={() => setCreating(false)}
           onCreated={async () => {
@@ -445,6 +471,8 @@ function EvidencePanel({
         )}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
           {statusPill(claim.status)}
+          {sentimentPill(claim.sentiment)}
+          {originPill(claim.origin, claim.created_by)}
           <span className="text-[12.5px] text-[#AEAEB2]">{categoryName}</span>
           <span className="text-[12.5px] text-[#AEAEB2]">
             {claim.scope === "paper" ? "Single study finding" : "Aggregated claim"}
@@ -608,8 +636,7 @@ function EvidencePanel({
         </div>
 
         <div className="mt-7 border-t border-[#E8E8ED] pt-4 text-[12px] leading-[1.9] text-[#AEAEB2]">
-          {claim.origin === "ai_extracted" ? "Extracted by AI" : `Created by ${claim.created_by || "unknown"}`}
-          {claim.created_at && <> · {formatDate(claim.created_at)}</>} · decisions are recorded with
+          {claim.created_at && <>Created {formatDate(claim.created_at)}</>} · decisions are recorded with
           your reviewer name
           {claim.approved_by && claim.status === "approved" && (
             <div>
@@ -636,12 +663,14 @@ function EvidencePanel({
 function NewFindingModal({
   categories,
   scienceClaims,
+  studies,
   reviewer,
   onClose,
   onCreated,
 }: {
   categories: Category[];
   scienceClaims: LibClaim[];
+  studies: Studie[];
   reviewer: string;
   onClose: () => void;
   onCreated: () => void;
@@ -649,6 +678,7 @@ function NewFindingModal({
   const [categoryId, setCategoryId] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [q, setQ] = useState("");
+  const [sentiment, setSentiment] = useState<ClaimSentiment | "">("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -659,6 +689,19 @@ function NewFindingModal({
   const [design, setDesign] = useState("");
   // Freeform text, used only when evidence spans more than one study (an aggregated claim).
   const [aggregateText, setAggregateText] = useState("");
+
+  // A finding no AI extraction has touched yet: pick the study directly instead of linking
+  // pre-extracted evidence claims. Only consulted when nothing is checked below.
+  const [directPick, setDirectPick] = useState(false);
+  const [studyQ, setStudyQ] = useState("");
+  const [directStudy, setDirectStudy] = useState<Studie | null>(null);
+  const matchingStudies = useMemo(() => {
+    const needle = studyQ.toLowerCase().trim();
+    if (!needle) return [];
+    return studies
+      .filter((s) => s.tittel.toLowerCase().includes(needle) || s.forfattere.toLowerCase().includes(needle))
+      .slice(0, 8);
+  }, [studies, studyQ]);
 
   const catName = useMemo(() => {
     const m: Record<string, string> = {};
@@ -692,16 +735,42 @@ function NewFindingModal({
   }, [selectedClaims]);
   const isAggregate = selected.size > 0 && !evidenceStudy;
 
+  // No linked evidence yet? The reviewer can pick the study directly instead — same
+  // "Author Year: result (design)" composer, just with no backing science claims. Only used
+  // when nothing is checked above (checked evidence always wins).
+  const directStudyRef = useMemo(
+    () =>
+      directStudy
+        ? {
+            pmid: directStudy.pmid,
+            title: directStudy.tittel,
+            authors: directStudy.forfattere,
+            year: directStudy.ar ? parseInt(directStudy.ar, 10) || null : null,
+            journal: directStudy.tidsskrift,
+            doi: directStudy.doiUrl ? directStudy.doiUrl.replace("https://doi.org/", "") : null,
+          }
+        : null,
+    [directStudy]
+  );
+  const targetStudy = selected.size > 0 ? evidenceStudy : directStudyRef;
+
   // Re-suggest the author/year prefix from the detected study, unless the reviewer already
   // edited it by hand (never clobber a deliberate correction).
   useEffect(() => {
-    if (evidenceStudy && !authorYearTouched) {
-      setAuthorYear(authorYearPrefix(evidenceStudy.authors, evidenceStudy.year));
+    if (targetStudy && !authorYearTouched) {
+      setAuthorYear(authorYearPrefix(targetStudy.authors, targetStudy.year));
     }
-  }, [evidenceStudy, authorYearTouched]);
+  }, [targetStudy, authorYearTouched]);
 
-  const composedText = evidenceStudy ? composeFindingText({ authorYear, result, design }) : aggregateText;
-  const canSubmit = !!categoryId && selected.size > 0 && (evidenceStudy ? !!result.trim() : !!aggregateText.trim());
+  const composedText = targetStudy ? composeFindingText({ authorYear, result, design }) : aggregateText;
+  const canSubmit =
+    !!categoryId &&
+    !!sentiment &&
+    (selected.size > 0
+      ? evidenceStudy
+        ? !!result.trim()
+        : !!aggregateText.trim()
+      : !!directStudy && !!result.trim());
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -717,12 +786,16 @@ function NewFindingModal({
       setError("Pick a category.");
       return;
     }
-    if (selected.size === 0) {
-      setError("Link at least one piece of evidence.");
+    if (!sentiment) {
+      setError("Pick which way this result points.");
+      return;
+    }
+    if (selected.size === 0 && !directStudy) {
+      setError("Link evidence, or pick a study directly.");
       return;
     }
     if (!composedText.trim()) {
-      setError(evidenceStudy ? "Describe the endpoint result." : "Write the finding.");
+      setError(targetStudy ? "Describe the endpoint result." : "Write the finding.");
       return;
     }
     setBusy(true);
@@ -732,21 +805,22 @@ function NewFindingModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          scope: evidenceStudy ? "paper" : "category",
+          scope: targetStudy ? "paper" : "category",
           claim_type: "marketing",
           category_id: categoryId,
           text: composedText,
           backed_by: [...selected],
+          sentiment,
           created_by: reviewer,
-          ...(evidenceStudy
+          ...(targetStudy
             ? {
                 study: {
-                  pmid: evidenceStudy.pmid,
-                  title: evidenceStudy.title,
-                  authors: evidenceStudy.authors,
-                  year: evidenceStudy.year,
-                  journal: evidenceStudy.journal,
-                  doi: evidenceStudy.doi,
+                  pmid: targetStudy.pmid,
+                  title: targetStudy.title,
+                  authors: targetStudy.authors,
+                  year: targetStudy.year,
+                  journal: targetStudy.journal,
+                  doi: targetStudy.doi,
                 },
               }
             : {}),
@@ -830,6 +904,30 @@ function NewFindingModal({
             </optgroup>
           </select>
 
+          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">
+            Sentiment · which way this result points
+          </label>
+          <div className="mb-5 flex gap-2">
+            {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setSentiment(v)}
+                className={`flex-1 rounded-[10px] border px-3 py-2 text-[13px] font-semibold transition-colors ${
+                  sentiment === v
+                    ? v === "positive"
+                      ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
+                      : v === "negative"
+                      ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
+                      : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
+                    : "border-[#E8E8ED] text-[#6E6E73] hover:bg-[#F5F5F7]"
+                }`}
+              >
+                {SENTIMENT_LABEL[v]}
+              </button>
+            ))}
+          </div>
+
           <div className="mb-1.5 flex items-center justify-between">
             <label className="text-[12.5px] font-semibold text-[#6E6E73]">
               Evidence · pick the study result this finding restates
@@ -865,10 +963,79 @@ function NewFindingModal({
             )}
           </div>
 
-          {selected.size === 0 ? null : evidenceStudy ? (
+          {selected.size === 0 && (
+            <div className="mt-3">
+              {!directPick ? (
+                <button
+                  type="button"
+                  onClick={() => setDirectPick(true)}
+                  className="text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+                >
+                  No matching evidence above? Pick the study directly →
+                </button>
+              ) : (
+                <div className="rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-3.5">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-[12.5px] font-semibold text-[#6E6E73]">
+                      Study · write a finding with no linked evidence yet
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDirectPick(false);
+                        setDirectStudy(null);
+                        setStudyQ("");
+                      }}
+                      className="text-[11.5px] font-semibold text-[#AEAEB2] hover:text-[#6E6E73]"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {directStudy ? (
+                    <div className="flex items-center justify-between rounded-[10px] border border-[#1D1D1F] bg-white px-3 py-2">
+                      <span className="text-[13px] font-semibold text-[#1D1D1F]">{directStudy.tittel}</span>
+                      <button
+                        type="button"
+                        onClick={() => setDirectStudy(null)}
+                        className="ml-2 shrink-0 text-[12px] font-semibold text-[#AEAEB2] hover:text-[#6E6E73]"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <input
+                        value={studyQ}
+                        onChange={(e) => setStudyQ(e.target.value)}
+                        placeholder="Search studies by title or author…"
+                        className="w-full rounded-[10px] border border-[#E8E8ED] p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
+                      />
+                      {matchingStudies.length > 0 && (
+                        <div className="mt-1.5 max-h-40 space-y-0.5 overflow-y-auto">
+                          {matchingStudies.map((s) => (
+                            <button
+                              key={s.pmid}
+                              type="button"
+                              onClick={() => setDirectStudy(s)}
+                              className="block w-full rounded-[8px] p-2 text-left text-[12.5px] leading-snug text-[#3A3A3C] hover:bg-white"
+                            >
+                              <span className="font-semibold text-[#1D1D1F]">{s.tittel}</span>
+                              <span className="text-[#AEAEB2]"> · {s.forfattere} · {s.ar}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {selected.size === 0 && !directStudy ? null : targetStudy ? (
             <div className="mt-5 rounded-[12px] border border-[#E8E8ED] p-4">
               <p className="mb-3 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-[#AEAEB2]">
-                One study detected · endpoint result
+                {evidenceStudy ? "One study detected" : "Study picked directly"} · endpoint result
               </p>
               <div className="mb-3 flex gap-3">
                 <div className="w-[140px] shrink-0">

@@ -12,6 +12,7 @@ import {
   type Summary,
 } from "./studies-data";
 import { canonicalIds } from "./lib/category-ids";
+import { supabase } from "./lib/supabase";
 import aiSummariesRaw from "./ai-summaries.json";
 import fulltextStudiesRaw from "./fulltext-studies.json";
 
@@ -55,6 +56,11 @@ export type Studie = {
   removedReason?: string | null;
   removedBy?: string | null;
   removedAt?: string | null;
+  // A study added through "Add study" (migration 0011's custom_studies table) carries the PDF it
+  // was uploaded with — a short lived signed Storage URL, since that bucket is private. Takes
+  // priority over url/doiUrl in app/wiki-v2.tsx's studyPdfHref(), which otherwise has nothing
+  // real to link to for a study with no PMID.
+  customPdfUrl?: string | null;
 };
 
 const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
@@ -201,12 +207,68 @@ function curatedToStudie(c: CuratedStudy): Studie {
   };
 }
 
+/** Studies a reviewer added directly through "Add study" (migration 0011's custom_studies table)
+ * — a PDF the site otherwise has no way to carry: no PMID, or AKBM never supplied it as part of
+ * the curated/full text library (see STATUS.md's Ding 2024 note). Unlike the rest of this file,
+ * these rows carry every field directly (no PubMed lookup, no override layer to merge). */
+async function egendefinerteStudier(): Promise<Studie[]> {
+  const sb = supabase();
+  if (!sb) return [];
+  const [rows, cats] = await Promise.all([
+    sb.from("custom_studies").select("*"),
+    sb.from("categories").select("id, name"),
+  ]);
+  if (rows.error || !rows.data) return [];
+  const navn = new Map((cats.data ?? []).map((c) => [c.id, c.name as string]));
+  // The bucket is private (no built in study's PDF is public either), so link to it with a
+  // short lived signed URL generated fresh on every request rather than a public path.
+  const signed = await Promise.all(
+    rows.data.map((r) => sb.storage.from("custom-studies").createSignedUrl(r.storage_path, 3600))
+  );
+  return rows.data.map((r, i): Studie => {
+    const ids = (r.category_ids ?? []) as string[];
+    const pdfUrl = signed[i]?.data?.signedUrl ?? null;
+    return {
+      pmid: r.pmid || `custom-${r.id}`,
+      tittel: r.title,
+      tidsskrift: r.journal ?? "",
+      dato: r.year ? String(r.year) : "",
+      ar: r.year ? String(r.year) : "",
+      forfattere: r.authors ?? "",
+      flereForfattere: false,
+      kategori: ids.map((id) => navn.get(id) ?? id),
+      kategoriIds: ids,
+      url: r.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/` : r.doi ? `https://doi.org/${r.doi}` : pdfUrl || "#",
+      doiUrl: r.doi ? `https://doi.org/${r.doi}` : null,
+      summary: null,
+      verified: false,
+      quality: r.quality_score != null && r.quality_label ? { score: r.quality_score, label: r.quality_label } : null,
+      outcomeDirection: r.outcome_direction ?? null,
+      akerNote: null,
+      harFulltekst: !!r.full_text,
+      abstract: r.abstract ?? null,
+      keyFindingsAssessment: r.key_findings_assessment ?? null,
+      customPdfUrl: pdfUrl,
+    };
+  });
+}
+
 export async function hentStudier(): Promise<Studie[]> {
+  const [basis, egendefinerte] = await Promise.all([basisStudier(), egendefinerteStudier()]);
+  // Verified studies first, then by year (newest first).
+  return [...basis, ...egendefinerte].sort((a, b) => {
+    if (!!b.verified !== !!a.verified) return b.verified ? 1 : -1;
+    return (b.ar || "").localeCompare(a.ar || "");
+  });
+}
+
+async function basisStudier(): Promise<Studie[]> {
   // 1) The list is AKBM's OWN library: the papers they supplied as PDFs (app/fulltext-studies.json,
   //    written by deck-service/scripts/import_fulltext_pdfs.py) plus the curated key trials.
   //    It used to be a live '"Aker BioMarine"[Affiliation]' PubMed search, which pulled in ~45 papers
   //    AKBM never sent us and missed the third-party ones they did (competitor trials,
-  //    meta-analyses). Add a PDF to get a study in the list; there is no other source.
+  //    meta-analyses). A "Add study" upload (custom_studies, merged in by hentStudier() above) is
+  //    the only other source.
   const alleKurerte = CURATED_STUDIES.map(curatedToStudie);
   const ider: string[] = Array.from(
     new Set([...Object.keys(FULLTEXT_STUDIES), ...CURATED_STUDIES.map((c) => c.pmid)])
@@ -257,9 +319,5 @@ export async function hentStudier(): Promise<Studie[]> {
   const tilstede = new Set(hentet.map((s) => s.pmid));
   const mangler = CURATED_STUDIES.filter((c) => !tilstede.has(c.pmid)).map(curatedToStudie);
 
-  // Verified studies first, then by year (newest first).
-  return [...mangler, ...hentet].sort((a, b) => {
-    if (!!b.verified !== !!a.verified) return b.verified ? 1 : -1;
-    return (b.ar || "").localeCompare(a.ar || "");
-  });
+  return [...mangler, ...hentet]; // sorted once, with custom_studies merged in, by hentStudier() above
 }

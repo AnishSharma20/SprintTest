@@ -88,12 +88,21 @@ export async function POST(req: Request) {
     // Findings must only ever be grounded in a study that is actually in the Scientific Studies
     // library (AKBM-supplied full-text PDFs + the curated key trials) — never an arbitrary pmid,
     // which is how ~45 legacy studies from a retired live PubMed search ended up backing findings
-    // that weren't traceable to anything on the Scientific Studies page.
-    if (scope === "paper" && study?.pmid && !canonicalStudyPmids().has(study.pmid))
-      return Response.json(
-        { error: "This study is not in the Scientific Studies library, so a finding can't be grounded in it." },
-        { status: 400 }
-      );
+    // that weren't traceable to anything on the Scientific Studies page. A study added through
+    // "Add study" (migration 0011) carries a synthetic "custom-<uuid>" pmid instead of a real
+    // one — accepted only if that exact custom_studies row still exists (so the id can't be
+    // spoofed to bypass this check).
+    if (scope === "paper" && study?.pmid && !canonicalStudyPmids().has(study.pmid)) {
+      const customMatch = study.pmid.match(/^custom-([0-9a-f-]{36})$/i);
+      const customRow = customMatch
+        ? await sb.from("custom_studies").select("id").eq("id", customMatch[1]).maybeSingle()
+        : null;
+      if (!customRow?.data)
+        return Response.json(
+          { error: "This study is not in the Scientific Studies library, so a finding can't be grounded in it." },
+          { status: 400 }
+        );
+    }
     if (scope === "paper" && study?.pmid) {
       const removed = await sb.from("study_removed").select("pmid").eq("pmid", study.pmid).maybeSingle();
       if (removed.data)

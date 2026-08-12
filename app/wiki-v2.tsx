@@ -12,6 +12,7 @@
 // labelled "Categorize & score".
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Studie } from "./studies";
 import type { Summary, OutcomeDirection } from "./studies-data";
 import type { Category } from "./lib/claims-types";
@@ -40,12 +41,14 @@ import {
 } from "./v2/ui";
 import { benefitIcon } from "./v2/benefit-icons";
 import AddFindingModal from "./add-finding-modal";
+import AddStudyModal from "./add-study-modal";
 import { useCurrentUser } from "./lib/use-current-user";
 
 const STUDY_PDFS = studyPdfsRaw as Record<string, { file: string; sizeKB: number }>;
 
 /** The real paper's PDF when AKBM supplied it, else its DOI page, else its PubMed record. */
 function studyPdfHref(s: Studie): string {
+  if (s.customPdfUrl) return s.customPdfUrl; // the PDF this study was added with — always the real thing
   const local = STUDY_PDFS[s.pmid];
   return local ? `/study-pdfs/${local.file}` : s.doiUrl ?? s.url;
 }
@@ -136,6 +139,8 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   const { name: reviewer } = useCurrentUser();
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
   const [administrerer, setAdministrerer] = useState(false);
+  const [addingStudy, setAddingStudy] = useState(false);
+  const router = useRouter();
   const [valgtPmid, setValgtPmid] = useState<string | null>(null);
 
   const lastMeta = useCallback(async () => setMeta(await loadStudyMeta()), []);
@@ -356,7 +361,15 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
               Aker BioMarine affiliated research from AKBM's internal Science Archive, summarized in plain language.
             </p>
           </div>
-          <div className="w-full sm:w-[300px]">
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-[300px]">
+            {meta.editableV2 && (
+              <button
+                onClick={() => setAddingStudy(true)}
+                className="self-end rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+              >
+                + Add study
+              </button>
+            )}
             <SearchBox value={sok} onChange={setSok} placeholder="Search studies" />
           </div>
         </div>
@@ -437,6 +450,17 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
       {administrerer && (
         <CategoryManager reviewer={reviewer} onClose={() => setAdministrerer(false)} onChanged={lastMeta} />
+      )}
+
+      {addingStudy && (
+        <AddStudyModal
+          categories={meta.categories}
+          onClose={() => setAddingStudy(false)}
+          onCreated={() => {
+            setAddingStudy(false);
+            router.refresh();
+          }}
+        />
       )}
     </V2Shell>
   );
@@ -590,9 +614,23 @@ function StudyPanel({
       </PanelHeader>
 
       <div className="px-7 py-6">
+        {/* Shown regardless of whether an AI/curated summary exists below — a study added
+            through "Add study" never has one, only this. */}
+        {(s.abstract || s.keyFindingsAssessment) && !editing && (
+          <div className="mb-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#0A7A8A]">
+              Science team assessment
+            </p>
+            {s.abstract && <PanelSection label="Abstract" text={s.abstract} />}
+            {s.keyFindingsAssessment && (
+              <PanelSection label="Key findings assessment" text={s.keyFindingsAssessment} />
+            )}
+          </div>
+        )}
+
         {!summary ? (
           <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
-            No summary is available for this study yet.
+            No AI or curated summary is available for this study.
           </p>
         ) : editing ? (
           <SummaryEditor
@@ -610,71 +648,47 @@ function StudyPanel({
                 AI generated summary from the abstract. Not yet verified by a scientist.
               </p>
             )}
-            {(s.abstract || s.keyFindingsAssessment) && (
-              <div className="mb-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#0A7A8A]">
-                  Science team assessment
-                </p>
-                {s.abstract && <PanelSection label="Abstract" text={s.abstract} />}
-                {s.keyFindingsAssessment && (
-                  <PanelSection label="Key findings assessment" text={s.keyFindingsAssessment} />
-                )}
-              </div>
-            )}
             <PanelSection label="Background" text={summary.background} />
             <PanelSection label="Design" text={summary.design} />
             <PanelSection label="Key findings" text={summary.findings} />
             <PanelSection label="Limitations" text={summary.limitations} />
-            <div className="mt-7 flex flex-wrap gap-2.5">
-              <button
-                onClick={() => setDiagramsOpen(true)}
-                className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
-              >
-                View diagrams
-              </button>
-              <button
-                onClick={() => setEditing(true)}
-                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
-              >
-                Edit summary
-              </button>
-              {!s.removed && (
-                <button
-                  onClick={() => setAddingFinding(true)}
-                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
-                >
-                  Add finding
-                </button>
-              )}
-              {meta.editable && (
-                <button
-                  onClick={() => setToolsOpen((v) => !v)}
-                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
-                >
-                  Categorize & score
-                </button>
-              )}
-            </div>
           </>
         )}
 
-        {/* A study with no summary still needs the reviewer entry point. */}
-        {!summary && meta.editable && !toolsOpen && (
-          <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+        {!editing && (
+          <div className="mt-7 flex flex-wrap gap-2.5">
+            {summary && (
+              <>
+                <button
+                  onClick={() => setDiagramsOpen(true)}
+                  className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+                >
+                  View diagrams
+                </button>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
+                >
+                  Edit summary
+                </button>
+              </>
+            )}
             {!s.removed && (
               <button
                 onClick={() => setAddingFinding(true)}
-                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
+                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
               >
                 Add finding
               </button>
             )}
-            <button
-              onClick={() => setToolsOpen(true)}
-              className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F]"
-            >
-              Categorize & score
-            </button>
+            {meta.editable && (
+              <button
+                onClick={() => setToolsOpen((v) => !v)}
+                className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
+              >
+                Categorize & score
+              </button>
+            )}
           </div>
         )}
 

@@ -945,6 +945,63 @@ async def slides_extract(
         return JSONResponse({"feil": f"Could not extract the slide: {e}"}, status_code=500)
 
 
+@app.post("/studies/extract-text")
+async def studies_extract_text(
+    file: UploadFile,
+    x_deck_token: str | None = Header(default=None),
+):
+    """Extract full text from an uploaded study PDF and draft a plain language abstract from it —
+    the "Add study" flow on the Scientific Studies page, for a study the site otherwise has no
+    way to carry (no PMID, or AKBM never supplied it as part of the curated/full text library).
+    Pure text extraction (PyMuPDF) + one Claude call for the abstract; no plan/schema involved,
+    same server-to-server shape as /slides/inspect (the browser uploads to Storage first; this
+    route's only caller is Vercel). { file } -> {full_text, abstract, pages, chars}."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    data = await file.read()
+    if not data:
+        return JSONResponse({"feil": "Empty file."}, status_code=400)
+
+    try:
+        import fitz  # PyMuPDF, already a dependency
+
+        doc = fitz.open(stream=data, filetype="pdf")
+        pages = [doc[i].get_text() for i in range(doc.page_count)]
+        page_count = doc.page_count
+        full_text = "\n\n".join(pages).strip()
+    except Exception as e:  # noqa: BLE001 — surface a clean error to the client
+        return JSONResponse({"feil": f"Could not read the PDF: {e}"}, status_code=400)
+    if len(full_text) < 200:
+        return JSONResponse(
+            {"feil": "No extractable text found — the PDF may be a scanned image with no text layer."},
+            status_code=400,
+        )
+
+    abstract = ""
+    try:
+        client = anthropic.Anthropic()
+        msg = client.messages.create(
+            model=config.MODEL,
+            max_tokens=600,
+            messages=[{
+                "role": "user",
+                "content": (
+                    "Write a plain language abstract (120 to 200 words) of the study below: what "
+                    "was tested, on whom, and the headline result. State only what the text "
+                    "supports; do not invent numbers or a conclusion it doesn't contain. No dash "
+                    "characters (\"-\", \"—\", \"–\"); reword instead.\n\n"
+                    f"<paper>\n{full_text[:60000]}\n</paper>\n\nReturn ONLY the abstract text, no heading."
+                ),
+            }],
+        )
+        abstract = "".join(b.text for b in msg.content if b.type == "text").strip()
+    except Exception:  # noqa: BLE001 — extraction still succeeds without an AI abstract
+        abstract = ""
+
+    return {"full_text": full_text, "abstract": abstract, "pages": page_count, "chars": len(full_text)}
+
+
 @app.get("/jobs/{job_id}")
 def job_status(job_id: str):
     j = JOBS.get(job_id)

@@ -148,28 +148,35 @@ def _shrink_pptx_images(data: bytes) -> bytes:
 
         src = zipfile.ZipFile(io.BytesIO(data))
         shrunk_any = False
+        media_seen = []
         out_buf = io.BytesIO()
         with zipfile.ZipFile(out_buf, "w", zipfile.ZIP_DEFLATED) as dst:
             for item in src.infolist():
                 content = src.read(item.filename)
                 ext = item.filename.lower().rsplit(".", 1)[-1] if "." in item.filename else ""
-                if item.filename.startswith("ppt/media/") and ext in ("jpg", "jpeg", "png", "bmp", "tiff", "gif"):
-                    try:
-                        im = Image.open(io.BytesIO(content))
-                        if max(im.size) > _SHRINK_MAX_DIM:
-                            ratio = _SHRINK_MAX_DIM / max(im.size)
-                            new_size = (max(1, round(im.width * ratio)), max(1, round(im.height * ratio)))
-                            fmt = "JPEG" if ext in ("jpg", "jpeg") else im.format or "PNG"
-                            if fmt == "JPEG" and im.mode not in ("RGB", "L"):
-                                im = im.convert("RGB")
-                            im = im.resize(new_size)
-                            buf = io.BytesIO()
-                            im.save(buf, fmt, quality=85) if fmt == "JPEG" else im.save(buf, fmt)
-                            content = buf.getvalue()
-                            shrunk_any = True
-                    except Exception:  # noqa: BLE001 — one bad image must not break the whole pass
-                        pass
+                if item.filename.startswith("ppt/media/"):
+                    if ext in ("jpg", "jpeg", "png", "bmp", "tiff", "gif"):
+                        try:
+                            im = Image.open(io.BytesIO(content))
+                            media_seen.append(f"{item.filename} {im.size[0]}x{im.size[1]} {len(content)}b")
+                            if max(im.size) > _SHRINK_MAX_DIM:
+                                ratio = _SHRINK_MAX_DIM / max(im.size)
+                                new_size = (max(1, round(im.width * ratio)), max(1, round(im.height * ratio)))
+                                fmt = "JPEG" if ext in ("jpg", "jpeg") else im.format or "PNG"
+                                if fmt == "JPEG" and im.mode not in ("RGB", "L"):
+                                    im = im.convert("RGB")
+                                im = im.resize(new_size)
+                                buf = io.BytesIO()
+                                im.save(buf, fmt, quality=85) if fmt == "JPEG" else im.save(buf, fmt)
+                                content = buf.getvalue()
+                                shrunk_any = True
+                        except Exception as e:  # noqa: BLE001 — one bad image must not break the whole pass
+                            media_seen.append(f"{item.filename} UNREADABLE ({e})")
+                    else:
+                        media_seen.append(f"{item.filename} {len(content)}b (not a raster type this pass handles)")
                 dst.writestr(item, content)
+        print(f"[qa-gate] shrink pass: {len(media_seen)} media item(s) — " + "; ".join(media_seen),
+              file=sys.stderr)
         return out_buf.getvalue() if shrunk_any else data
     except Exception as e:  # noqa: BLE001 — this is an optimisation, never a hard requirement
         print(f"[qa-gate] image shrink skipped ({e}); rasterising the file as-is", file=sys.stderr)
@@ -179,7 +186,9 @@ def _shrink_pptx_images(data: bytes) -> bytes:
 def rasterize(pptx_bytes: bytes) -> list[bytes] | None:
     """Render a deck to one PNG per slide, in order. None if no rasteriser is available (gate off)."""
     try:
+        orig_size = len(pptx_bytes)
         pptx_bytes = _shrink_pptx_images(pptx_bytes)
+        print(f"[qa-gate] pptx size before/after shrink: {orig_size}b / {len(pptx_bytes)}b", file=sys.stderr)
         with tempfile.TemporaryDirectory() as tmp:
             deck = Path(tmp) / "deck.pptx"
             deck.write_bytes(pptx_bytes)

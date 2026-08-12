@@ -236,6 +236,45 @@ def _cap_list_fields(plan: dict, brand: str | None = None) -> dict:
     return plan
 
 
+def _sanitize_enums(plan: dict, brand: str | None = None,
+                    extra_photo_ids: list[str] | None = None) -> dict:
+    """Drop `background` and `asset_id` values the brand/layout does not actually offer, in place.
+
+    A forced tool schema is not a hard guarantee: the model still occasionally emits a value from
+    outside an enum, especially when the SOURCE material pulls it that way — a Revervia deck built
+    from krill source material reached for `photo_krill_swarm`, and a light-only layout was given
+    `background: dark`. Both are HARD validation errors, so one slip costs the whole deck after a
+    retry, for two fields that are decoration rather than content.
+
+    Dropped, not remapped: the layout then falls back to its own default background, and the slide
+    simply has no photo. Both are correct-looking outcomes; substituting a different photo would
+    put an unrelated image next to the text.
+    """
+    try:
+        catalog = config.catalog(brand)
+        photos = {a["id"] for a in config.selectable_photos(brand)} | set(extra_photo_ids or ())
+    except Exception:  # noqa: BLE001 — never fail a deck over the net itself
+        return plan
+    dropped = []
+    for i, slide in enumerate(plan.get("slides") or []):
+        if not isinstance(slide, dict):
+            continue
+        cat = catalog.get(slide.get("layout") or "")
+        bg = slide.get("background")
+        if bg and cat:
+            # "pastel" is a variant of the light master, so it needs the same availability.
+            needed = "light" if bg in ("light", "pastel") else bg
+            if needed not in (cat.get("backgrounds") or []):
+                dropped.append(f"slide {i + 1} {slide['layout']} background={slide.pop('background')!r}")
+        aid = slide.get("asset_id")
+        if aid and aid not in photos:
+            dropped.append(f"slide {i + 1} asset_id={slide.pop('asset_id')!r}")
+    if dropped:
+        print(f"[enums] dropped {len(dropped)} value(s) outside this brand's options: "
+              + ", ".join(dropped[:6]) + (" ..." if len(dropped) > 6 else ""))
+    return plan
+
+
 def _sanitize_icons(plan: dict, brand: str | None = None) -> dict:
     """Drop icon names this brand has no icon for, in place.
 
@@ -445,16 +484,30 @@ _COLOR_THEMES = {"dark", "light", "pastel"}
 
 
 def _apply_color_theme(plan: dict, color_theme: str | None,
-                       override_keys: frozenset | set = frozenset()) -> dict:
+                       override_keys: frozenset | set = frozenset(),
+                       brand: str | None = None) -> dict:
     """Force every slide's `background` to the chosen theme, deck-wide. Verbatim slides (ingredient,
     custom_*, TEAM REDESIGNED layout overrides — they carry their own design) and the benefits/
     appendix splices have no `background` concept and are untouched — this only ever sets a field
     the renderer already reads."""
     if color_theme not in _COLOR_THEMES:
         return plan
+    try:
+        catalog = config.catalog(brand)
+    except Exception:  # noqa: BLE001
+        catalog = {}
+    needed = "light" if color_theme in ("light", "pastel") else color_theme
+
     def keeps_own(s):
         layout = s.get("layout") or ""
-        return layout.startswith("custom_") or layout == "ingredient" or layout in override_keys
+        if layout.startswith("custom_") or layout == "ingredient" or layout in override_keys:
+            return True
+        # A layout that cannot render this background keeps its own: five layouts are light-only
+        # (key_points, comparison, harvey_ball, coverage_matrix, chart_takeaways), and forcing a
+        # dark deck onto them used to produce a slide the renderer has no dark variant for.
+        cat = catalog.get(layout)
+        return bool(cat) and needed not in (cat.get("backgrounds") or [])
+
     slides = [s if keeps_own(s) else {**s, "background": color_theme}
               for s in plan.get("slides", [])]
     return {**plan, "slides": slides}
@@ -653,7 +706,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
-    plan = _cap_list_fields(_sanitize_icons(plan, brand), brand)
+    plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(plan, brand), brand, photo_ids), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
                                     layout_overrides=slot_layouts, brand=brand)
@@ -667,7 +720,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                    layout_overrides=layout_overrides, required_slides=required,
                                    managed_blocks=managed_blocks, brand=brand)
-        plan = _cap_list_fields(_sanitize_icons(plan, brand), brand)
+        plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(plan, brand), brand, photo_ids), brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts, brand=brand)
@@ -728,7 +781,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _apply_structure(plan, structure)                # pin each slide to its slot
     if _has_action(structure, "speaker_notes"):
         plan = _ensure_notes(plan)                          # backstop the every-slide notes rule
-    plan = _apply_color_theme(plan, color_theme, override_keys)  # deck-wide theme override, if requested
+    plan = _apply_color_theme(plan, color_theme, override_keys, brand)  # deck-wide theme override, if requested
     if _has_action(structure, "no_dashes"):
         plan = _strip_dashes_plan(plan)   # the no-dash brand rule, applied deterministically
     benefits_slot = next((r["position"] for r in structure

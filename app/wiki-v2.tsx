@@ -388,19 +388,21 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
               {!visKastet && valgtKategori ? `${kategoriNavn} Studies` : kategoriNavn}
             </h1>
             <p className="mt-2 max-w-[540px] text-[15px] text-[#6E6E73]">
-              Aker BioMarine affiliated research from AKBM's internal Science Archive, summarized in plain language.
+              Aker BioMarine affiliated research from AKBM's internal Science Archive
             </p>
           </div>
           <div className="flex w-full shrink-0 flex-col gap-3 sm:w-[300px]">
+            <SearchBox value={sok} onChange={setSok} placeholder="Search studies" />
             {meta.editableV2 && (
               <button
                 onClick={() => setAddingStudy(true)}
-                className="self-end rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+                className={`rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C] ${
+                  valgt ? "self-start" : "self-end"
+                }`}
               >
                 + Add study
               </button>
             )}
-            <SearchBox value={sok} onChange={setSok} placeholder="Search studies" />
           </div>
         </div>
 

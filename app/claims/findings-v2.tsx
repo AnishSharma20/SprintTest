@@ -259,13 +259,15 @@ export default function FindingsV2({
             </p>
           </div>
           <div className="flex w-full shrink-0 flex-col gap-3 sm:w-[300px]">
+            <SearchBox value={q} onChange={setQ} placeholder="Search findings" />
             <button
               onClick={() => setCreating(true)}
-              className="self-end rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+              className={`rounded-full bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C] ${
+                valgt ? "self-start" : "self-end"
+              }`}
             >
               + New finding
             </button>
-            <SearchBox value={q} onChange={setQ} placeholder="Search findings" />
           </div>
         </div>
 
@@ -864,7 +866,7 @@ function NewFindingModal({
                     value={f.text}
                     onChange={(e) => updateFinding(f.id, { text: e.target.value })}
                     rows={2}
-                    placeholder="Author Year: result on the primary or secondary endpoint (study design)"
+                    placeholder="e.g. Reduced inflammation markers after 8 weeks of daily supplementation"
                     className="w-full rounded-[10px] border border-[#E8E8ED] bg-white p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
                   />
                 </div>

@@ -394,7 +394,7 @@ export default function AddStudyModal({
                       value={f.text}
                       onChange={(e) => updateFinding(f.id, { text: e.target.value })}
                       rows={2}
-                      placeholder="Author Year: result on the primary or secondary endpoint (study design)"
+                      placeholder="e.g. Reduced inflammation markers after 8 weeks of daily supplementation"
                       className="w-full rounded-[10px] border border-[#E8E8ED] bg-white p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
                     />
                   </div>

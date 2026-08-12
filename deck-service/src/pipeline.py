@@ -259,6 +259,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
     photo_ids = planner.custom_photo_ids(custom_photos)
     photo_level = (design or {}).get("photo_level", "default")
     override_keys = frozenset(o["layout"] for o in (layout_overrides or []))
+    slot_layouts = planner.slot_entries(layout_overrides, custom_slides)
     rounds = max(1, int(os.environ.get("DECK_QA_ROUNDS", "1")))
     for _ in range(rounds):
         pptx, geo_issues = qa_geometry.review_and_fix(pptx, plan, slide_map=slide_map,
@@ -291,7 +292,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         errs = validate.validate_plan(candidate, extra_layouts=extra,
                                       extra_photo_ids=photo_ids, photo_level=photo_level,
                                       disabled_layouts=disabled_layouts,
-                                      layout_overrides=layout_overrides)
+                                      layout_overrides=slot_layouts)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -306,7 +307,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts,
-                                          layout_overrides=layout_overrides)
+                                          layout_overrides=slot_layouts)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -365,6 +366,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     layout_overrides = planner.sanitize_overrides(
         layout_overrides, planner.sanitize_disabled(disabled_layouts))
     override_keys = frozenset(o["layout"] for o in layout_overrides)
+    slot_layouts = planner.slot_entries(layout_overrides, custom_slides)
 
     _p(5, "Planning the deck")
     plan = planner.plan_deck(client, summary_text, length=length, tone=tone, instructions=instructions,
@@ -376,7 +378,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                    layout_overrides=layout_overrides)
+                                    layout_overrides=slot_layouts)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -388,7 +390,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    layout_overrides=layout_overrides)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                        layout_overrides=layout_overrides)
+                                        layout_overrides=slot_layouts)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders

@@ -2836,7 +2836,12 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
     if layout_name.startswith("custom_"):   # a team slide the planner placed in the storyline
         c = custom_by_key.get(layout_name)
         if c:
-            _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+            if c.get("slots"):
+                # A team slide the team asked us to FILL: same splice as a redesigned built-in
+                # layout, with the plan's per-slot text written into the design's own boxes.
+                _add_override_slide(prs, dark, {**c, "layout": layout_name}, spec, unnumbered)
+            else:
+                _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
             placed_custom.add(layout_name)
         else:
             print(f"[custom-slide] plan references unknown {layout_name}; skipped", file=sys.stderr)
@@ -2977,7 +2982,14 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     for c in (custom_slides or []):
         if c.get("mode") == "always" and c["key"] not in placed_custom:
             before = len(prs.slides._sldIdLst)
-            _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
+            if c.get("slots"):
+                # An "always" slide is never shown to the planner, so there is no per-slot text
+                # to write — the design keeps its own words (_refill_slots leaves a slot the plan
+                # didn't fill untouched). The About page steers AI-filled designs to "AI decides"
+                # for exactly this reason.
+                _add_override_slide(prs, dark, {**c, "layout": c["key"]}, {}, unnumbered)
+            else:
+                _add_custom_slide(prs, dark, c["bytes"], c["index"], c.get("png"), unnumbered)
             owners.extend([None] * (len(prs.slides._sldIdLst) - before))
 
     # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last

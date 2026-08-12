@@ -204,11 +204,12 @@ def _text_density_warnings(plan: dict) -> list[str]:
 def _schema_with_extras(extra_layouts: list[str] | None,
                         extra_photo_ids: list[str] | None = None,
                         layout_overrides: list[dict] | None = None) -> dict:
-    """The slide schema, with the team's own verbatim slide keys (custom_<id>) added to the
-    layout enum, the team's photo ids (team_photo_<id>) added to every asset_id enum, and any
-    overridden layout's conditional swapped to its text slots (planner.apply_layout_overrides,
-    the same mutation the tool schema gets — guidance and enforcement can't drift). Verbatim
-    slides need no if/then conditional — they carry no other fields."""
+    """The slide schema, with the team's own slide keys (custom_<id>) added to the layout enum,
+    the team's photo ids (team_photo_<id>) added to every asset_id enum, and every SLOT-FILLED
+    key's conditional demanding per-slot text (planner.apply_slot_layouts — the same mutation
+    the tool schema gets, so guidance and enforcement can't drift; covers both a redesigned
+    built-in layout and a team-uploaded design). Verbatim slides need no if/then conditional —
+    they carry no other fields."""
     if not extra_layouts and not extra_photo_ids and not layout_overrides:
         return config.schema()
     import copy
@@ -221,8 +222,8 @@ def _schema_with_extras(extra_layouts: list[str] | None,
         from .planner import extend_asset_enums
         extend_asset_enums(s, extra_photo_ids)
     if layout_overrides:
-        from .planner import apply_layout_overrides
-        apply_layout_overrides(s, layout_overrides)
+        from .planner import apply_slot_layouts
+        apply_slot_layouts(s, layout_overrides)
     return s
 
 

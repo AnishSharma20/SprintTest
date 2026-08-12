@@ -165,42 +165,64 @@ def sanitize_overrides(layout_overrides, disabled: set[str] | None = None) -> li
     return out
 
 
-def apply_layout_overrides(schema: dict, layout_overrides: list[dict]) -> None:
-    """Swap each overridden layout's schema conditional from its normal fields to the
-    override's measured text slots — the model then MUST emit {"layout", "slots": {...}} for
-    that key (a normal-field plan fails validation and lands in the structural repair bucket).
+def _slots_conditional(slots: list[dict]) -> dict:
+    """The `then` branch that forces {"layout", "slots": {...}} with one measured, described
+    property per text slot — what makes a spliced design refillable by the model."""
+    slot_props = {}
+    for s in slots or []:
+        sid = s.get("slot_id")
+        if not sid:
+            continue
+        hint = str(s.get("original_text") or "").replace("\n", " / ")[:80]
+        slot_props[sid] = {
+            "type": "string", "maxLength": int(s.get("char_budget") or 200),
+            "description": (f'Fresh text for the box that currently says "{hint}" '
+                            f'(~{s.get("lines_estimate") or 1} line(s)); play the same '
+                            f"role with this deck's content.")}
+    return {"required": ["layout", "slots"],
+            "properties": {"slots": {
+                "type": "object", "additionalProperties": False,
+                "required": sorted(slot_props), "properties": slot_props}}}
+
+
+def apply_slot_layouts(schema: dict, entries: list[dict]) -> None:
+    """Make every listed layout key slot-filled: its schema conditional demands {"layout",
+    "slots": {...}} instead of that layout's normal fields, so the model MUST write per-slot text
+    (a normal-field plan fails validation and lands in the structural repair bucket).
+
+    Serves both kinds of spliced design: a BUILT-IN layout the team redesigned (its conditional
+    already exists and is replaced) and a TEAM-UPLOADED slide the team asked us to fill (a
+    custom_<id> key with no conditional yet — one is appended). Each entry is {layout, slots}.
     Mutates in place; callers deep-copy first (config.schema() is cached). Shared by
     _tool_schema and validate._schema_with_extras so guidance and enforcement can't drift."""
-    if not layout_overrides:
+    if not entries:
         return
-    by_key = {o["layout"]: o for o in layout_overrides}
+    by_key = {e["layout"]: e for e in entries if e.get("layout") and e.get("slots")}
+    if not by_key:
+        return
     items = schema["properties"]["slides"]["items"]
     # The slide object is additionalProperties:false — without a top-level `slots` property
     # every slot plan is rejected outright, whatever the conditionals say.
     items["properties"]["slots"] = {
         "type": "object",
-        "description": "Per-slot text for a TEAM REDESIGNED layout (see the system prompt)."}
-    for cond in items.get("allOf", []):
+        "description": "Per-slot text for a spliced team design (see the system prompt)."}
+    conds = items.setdefault("allOf", [])
+    seen = set()
+    for cond in conds:
         key = cond.get("if", {}).get("properties", {}).get("layout", {}).get("const")
-        ov = by_key.get(key)
-        if not ov:
-            continue
-        slot_props = {}
-        for s in ov.get("slots") or []:
-            sid = s.get("slot_id")
-            if not sid:
-                continue
-            hint = str(s.get("original_text") or "").replace("\n", " / ")[:80]
-            slot_props[sid] = {
-                "type": "string", "maxLength": int(s.get("char_budget") or 200),
-                "description": (f'Fresh text for the box that currently says "{hint}" '
-                                f'(~{s.get("lines_estimate") or 1} line(s)); play the same '
-                                f"role with this deck's content.")}
-        cond["then"] = {"required": ["layout", "slots"],
-                        "properties": {"slots": {
-                            "type": "object", "additionalProperties": False,
-                            "required": sorted(slot_props),
-                            "properties": slot_props}}}
+        if key in by_key:
+            cond["then"] = _slots_conditional(by_key[key]["slots"])
+            seen.add(key)
+    for key, e in by_key.items():
+        if key in seen:
+            continue  # a custom_<id> key has no conditional of its own yet — add one
+        conds.append({"if": {"properties": {"layout": {"const": key}}},
+                      "then": _slots_conditional(e["slots"])})
+
+
+# Kept as the name the layout-override path reads at its call sites; the mechanism is shared
+# with team-uploaded designs now (see apply_slot_layouts).
+apply_layout_overrides = apply_slot_layouts
 
 
 def _override_guide(layout_overrides) -> str:
@@ -234,22 +256,63 @@ def auto_custom_slides(custom_slides) -> list[dict]:
     return [c for c in (custom_slides or []) if c.get("mode") == "auto" and c.get("key")]
 
 
+def filled_custom_slides(custom_slides) -> list[dict]:
+    """The team slides the AI WRITES THE TEXT ON: a design the team uploaded and asked us to fill
+    (they carry measured text slots), as opposed to a finished slide spliced in untouched."""
+    return [c for c in auto_custom_slides(custom_slides) if c.get("slots")]
+
+
+def verbatim_custom_slides(custom_slides) -> list[dict]:
+    """The team slides inserted exactly as drawn — no slots, so the model writes nothing."""
+    return [c for c in auto_custom_slides(custom_slides) if not c.get("slots")]
+
+
+def slot_entries(layout_overrides=None, custom_slides=None) -> list[dict]:
+    """Every layout key whose plan must carry per-slot text, in ONE list for the schema mutation:
+    the built-in layouts the team redesigned, plus the team-uploaded slides they asked us to
+    fill. Both are spliced designs with measured text slots — the only difference is where the
+    key comes from."""
+    out = [{"layout": o["layout"], "slots": o["slots"]}
+           for o in (layout_overrides or []) if o.get("layout") and o.get("slots")]
+    out += [{"layout": c["key"], "slots": c["slots"]} for c in filled_custom_slides(custom_slides)]
+    return out
+
+
 def _custom_slide_guide(custom_slides) -> str:
-    """Prompt block offering the team's own slides as verbatim layouts. Each is a FIXED, finished
-    slide (spliced in unchanged), so the model only decides WHERE it belongs — it writes nothing."""
-    autos = auto_custom_slides(custom_slides)
-    if not autos:
-        return ""
-    lines = []
-    for c in autos:
-        desc = (c.get("description") or "").strip() or "a finished team slide"
-        lines.append(f'- {c["key"]} — "{c.get("name", "Team slide")}": {desc}')
-    return (
-        "\n\nTEAM SLIDES (finished, pre-approved slides the team added to this tool — inserted "
-        "VERBATIM): when one of these genuinely fits the storyline, include it by emitting ONLY "
-        f'{{"layout":"<its key>"}} at that point — never write a title/body for it (anything you '
-        "write is ignored), and use each AT MOST once. Include one only where its content belongs; "
-        "never force one in.\n" + "\n".join(lines))
+    """Prompt block offering the team's own slides. Two kinds, and the difference is what the
+    model must emit: a VERBATIM slide is a fixed finished slide (it writes nothing but the key),
+    while a FILLED one is the team's design whose text boxes the model writes fresh each time."""
+    verbatim = verbatim_custom_slides(custom_slides)
+    filled = filled_custom_slides(custom_slides)
+    out = ""
+    if verbatim:
+        lines = [f'- {c["key"]} — "{c.get("name", "Team slide")}": '
+                 f'{(c.get("description") or "").strip() or "a finished team slide"}'
+                 for c in verbatim]
+        out += (
+            "\n\nTEAM SLIDES (finished, pre-approved slides the team added to this tool — inserted "
+            "VERBATIM): when one of these genuinely fits the storyline, include it by emitting ONLY "
+            f'{{"layout":"<its key>"}} at that point — never write a title/body for it (anything you '
+            "write is ignored), and use each AT MOST once. Include one only where its content belongs; "
+            "never force one in.\n" + "\n".join(lines))
+    if filled:
+        lines = []
+        for c in filled:
+            desc = (c.get("description") or "").strip() or "a team designed slide"
+            lines.append(f'- {c["key"]} — "{c.get("name", "Team slide")}": {desc}')
+            for s in c["slots"]:
+                hint = str(s.get("original_text") or "").replace("\n", " / ")[:80]
+                lines.append(f'  · {s.get("slot_id")} [<={s.get("char_budget")} chars, '
+                             f'~{s.get("lines_estimate") or 1} line(s)] currently: "{hint}"')
+        out += (
+            "\n\nTEAM DESIGNED SLIDES (the team uploaded these designs for YOU to fill): the design "
+            'is spliced in verbatim, but you write its text. Emit ONLY {"layout": "<its key>", '
+            '"slots": {"<slot_id>": "..."}, "speaker_notes": "..."} — no title/body/items for these '
+            "keys. For each slot, write text that plays the same ROLE as its current text (a one "
+            "word label stays a short label, a headline stays a headline), using THIS deck's own "
+            "content, within the [bracketed] budget. Use each AT MOST once, and only where it "
+            "genuinely fits.\n" + "\n".join(lines))
+    return out
 
 
 def _asset_guide(custom_photos=None, disabled_photos: set[str] | None = None) -> str:
@@ -606,7 +669,7 @@ def _tool_schema(disabled: set[str] | None = None, extra_layouts: list[str] | No
         if disabled_photo_ids:
             remove_from_asset_enums(s, disabled_photo_ids)
         if layout_overrides:
-            apply_layout_overrides(s, layout_overrides)
+            apply_slot_layouts(s, layout_overrides)
     return s
 
 
@@ -687,7 +750,7 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides), user, model,
                                max_tokens, disabled, extra, photo_ids, disabled_photo_ids,
-                               layout_overrides))
+                               slot_entries(layout_overrides, custom_slides)))
 
 
 def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: list[str], *,
@@ -788,7 +851,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids, layout_overrides))
+                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))
 
 
 def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, findings: list[dict], *,
@@ -830,4 +893,4 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
-                               disabled_photo_ids, layout_overrides))
+                               disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))

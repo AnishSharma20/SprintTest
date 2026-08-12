@@ -243,10 +243,19 @@ def _parse_custom_slides(custom_slides_meta: str,
                 png = base64.b64decode(m["preview_b64"])
             except Exception:  # noqa: BLE001
                 png = None
+        # slots (optional) mark this as a design the AI FILLS rather than a verbatim slide: the
+        # same measured text-slot map a redesigned built-in layout carries. Entries must be
+        # well formed or the slide falls back to verbatim — never fail a job over it.
+        slots = m.get("slots")
+        if not (isinstance(slots, list) and slots
+                and all(isinstance(s, dict) and s.get("slot_id") and s.get("char_budget")
+                        for s in slots)):
+            slots = None
         out.append({"key": f"custom_{m['id']}", "name": str(m.get("name") or "Team slide"),
                     "description": str(m.get("description") or ""),
                     "mode": m.get("mode") if m.get("mode") in ("auto", "always") else "auto",
-                    "bytes": blob, "index": int(m.get("slide_index") or 0), "png": png})
+                    "bytes": blob, "index": int(m.get("slide_index") or 0), "png": png,
+                    "slots": slots})
     return out
 
 
@@ -549,9 +558,11 @@ async def create_job(
     the planner's vocabulary and schema so the model cannot pick them; deck only.
     design_settings: JSON object of deterministic design overrides (fonts, sizes, spacing,
     margins) the renderer enforces; deck only.
-    custom_slides_meta + custom_files: the team's own verbatim slides — meta is a JSON array of
-    {id, file_id, slide_index, name, description, mode, preview_b64?}; each custom_files upload
-    is named <file_id>.pptx; deck only.
+    custom_slides_meta + custom_files: the team's own slides — meta is a JSON array of
+    {id, file_id, slide_index, name, description, mode, preview_b64?, slots?}; each custom_files
+    upload is named <file_id>.pptx. Without `slots` the slide is spliced VERBATIM (the AI writes
+    nothing on it); with `slots` it is a design the AI FILLS, exactly like a redesigned built-in
+    layout (see layout_overrides_meta); deck only.
     custom_photos_meta + custom_photo_files: the team's photo library — meta is a JSON array of
     {id, name, description}; each custom_photo_files upload is named <id>.jpg; deck only.
     preferred_layouts: comma separated layout keys the team starred as house favourites —

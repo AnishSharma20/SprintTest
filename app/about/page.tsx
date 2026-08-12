@@ -33,6 +33,8 @@ type CustomSlide = {
   mode: "auto" | "always" | "off";
   preview_b64: string | null;
   removed?: boolean;
+  /** Present = the AI writes this design's text each deck; absent = inserted exactly as drawn. */
+  slots?: unknown[] | null;
   created_by?: string | null;
   created_at?: string;
 };
@@ -56,6 +58,13 @@ type UploadPick = {
   name: string;
   description: string;
   mode: "auto" | "always";
+  /** true = the AI writes this slide's text into the design (the default: it is what someone
+   * who restyled one of our slides and uploaded it back means); false = keep it exactly as
+   * drawn. `slots`/`slotsError` are filled lazily by measuring the design when it is ticked. */
+  aiFills: boolean;
+  slots?: unknown[];
+  slotsBusy?: boolean;
+  slotsError?: string;
 };
 
 type DesignSettings = {
@@ -1070,6 +1079,7 @@ export default function AboutV2Page() {
           name: "",
           description: "",
           mode: "auto" as const,
+          aiFills: true,
         }))
       );
     } catch (e) {
@@ -1082,6 +1092,41 @@ export default function AboutV2Page() {
     }
   }
 
+  /** Measure one picked slide's text boxes, so the AI can refill them per deck. Runs when a
+   * slide is ticked (or switched back to AI-filled) and caches the result on the pick; a design
+   * the recipe path can't honour (embedded chart/video, no text) reports why and falls back to
+   * "use exactly as is". */
+  async function measurePick(index: number) {
+    if (!uploadPathRef.current || !uploadFile) return;
+    setPicks((ps) => ps!.map((x) => (x.index === index ? { ...x, slotsBusy: true, slotsError: "" } : x)));
+    try {
+      const res = await fetch("/api/custom-slides/inspect-slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storage_path: uploadPathRef.current,
+          filename: uploadFile.name,
+          slide_index: index,
+        }),
+      });
+      const d = await safeJson(res);
+      if (!res.ok) throw new Error((d.error as string) || "Could not read this slide's text.");
+      const slots = (d.slots as unknown[]) ?? [];
+      if (!slots.length) throw new Error("No editable text found on this slide.");
+      setPicks((ps) =>
+        ps!.map((x) => (x.index === index ? { ...x, slots, slotsBusy: false, slotsError: "" } : x))
+      );
+    } catch (e) {
+      setPicks((ps) =>
+        ps!.map((x) =>
+          x.index === index
+            ? { ...x, aiFills: false, slots: undefined, slotsBusy: false, slotsError: (e as Error).message }
+            : x
+        )
+      );
+    }
+  }
+
   async function savePicks() {
     if (!uploadFile || !picks || !uploadPathRef.current) return;
     const chosen = picks.filter((p) => p.picked);
@@ -1091,6 +1136,10 @@ export default function AboutV2Page() {
     }
     if (chosen.some((p) => !p.name.trim())) {
       setUploadError("Give every ticked slide a short name.");
+      return;
+    }
+    if (chosen.some((p) => p.slotsBusy)) {
+      setUploadError("Still reading a slide's text areas — give it a moment.");
       return;
     }
     setSavingPicks(true);
@@ -1109,6 +1158,8 @@ export default function AboutV2Page() {
             description: p.description,
             mode: p.mode,
             preview_b64: p.preview_b64,
+            // Only sent when the AI should write this slide's text; absent = verbatim.
+            slots: p.aiFills && p.slots?.length ? p.slots : undefined,
           })),
         }),
       });
@@ -1814,8 +1865,9 @@ export default function AboutV2Page() {
                   <div>
                     <div className="text-sm font-bold text-[#031B34]">Add your own slides</div>
                     <p className="text-xs text-zinc-500">
-                      Upload a .pptx, pick the slides you want, give each a name and a line
-                      on when to use it.
+                      Upload a .pptx, pick the slides you want, give each a name and a line on when
+                      to use it. Each one can either be a design the AI writes fresh text into, or a
+                      finished slide inserted exactly as drawn.
                     </p>
                   </div>
                   <label className="cursor-pointer rounded-[4px] bg-[#031B34] px-4 py-2 text-sm font-semibold text-white">
@@ -1876,9 +1928,13 @@ export default function AboutV2Page() {
                           <button
                             type="button"
                             className="relative block w-full"
-                            onClick={() =>
-                              setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, picked: !x.picked } : x)))
-                            }
+                            onClick={() => {
+                              const nowPicked = !p.picked;
+                              setPicks((ps) => ps!.map((x, j) => (j === i ? { ...x, picked: nowPicked } : x)));
+                              // Measure the design as soon as it is ticked, so the "N text areas"
+                              // confirmation is there before the user hits Add.
+                              if (nowPicked && p.aiFills && !p.slots?.length) void measurePick(p.index);
+                            }}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -1922,8 +1978,61 @@ export default function AboutV2Page() {
                                 className="w-full rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
                               >
                                 <option value="auto">AI decides when it fits</option>
-                                <option value="always">In every deck</option>
+                                <option value="always" disabled={p.aiFills}>
+                                  In every deck{p.aiFills ? " (needs 'use exactly as is')" : ""}
+                                </option>
                               </select>
+                              {/* The choice that decides whether this is a design or a finished
+                                  slide. Default is AI-filled: someone who restyled one of our
+                                  slides and uploaded it back means "keep my design, keep writing
+                                  the text", and that used to be impossible here. */}
+                              <div className="rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-2">
+                                <label className="flex cursor-pointer items-start gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={p.aiFills}
+                                    className="mt-0.5"
+                                    onChange={(e) => {
+                                      const on = e.target.checked;
+                                      setPicks((ps) =>
+                                        ps!.map((x, j) =>
+                                          j === i
+                                            ? {
+                                                ...x,
+                                                aiFills: on,
+                                                slotsError: "",
+                                                mode: on && x.mode === "always" ? "auto" : x.mode,
+                                              }
+                                            : x
+                                        )
+                                      );
+                                      if (on && !p.slots?.length) void measurePick(p.index);
+                                    }}
+                                  />
+                                  <span className="text-[11px] text-zinc-600">
+                                    <span className="font-semibold text-[#031B34]">
+                                      Let the AI write this slide&rsquo;s text
+                                    </span>
+                                    <br />
+                                    Keeps your design exactly as it is and writes fresh text into its
+                                    boxes for every deck. Untick to insert the slide unchanged, text
+                                    and all.
+                                  </span>
+                                </label>
+                                {p.slotsBusy && (
+                                  <p className="mt-1 text-[11px] text-zinc-500">Reading its text areas…</p>
+                                )}
+                                {p.aiFills && !p.slotsBusy && p.slots?.length ? (
+                                  <p className="mt-1 text-[11px] font-semibold text-[#0A7A8A]">
+                                    {p.slots.length} text area(s) the AI will write.
+                                  </p>
+                                ) : null}
+                                {p.slotsError && (
+                                  <p className="mt-1 text-[11px] text-red-700">
+                                    {p.slotsError} Saved as a fixed slide instead.
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -2191,7 +2300,24 @@ export default function AboutV2Page() {
                         <>
                           <div className="flex items-center justify-between gap-2">
                             <div className="min-w-0">
-                              <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                              <div className="flex min-w-0 items-center gap-1.5">
+                                <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                                {c.slots?.length ? (
+                                  <span
+                                    className="shrink-0 rounded-md bg-[#EEFAF9] px-1.5 py-0.5 text-[9px] font-semibold uppercase text-[#0A7A8A]"
+                                    title={`Your design, ${c.slots.length} text area(s) the AI writes for each deck`}
+                                  >
+                                    AI writes text
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-500"
+                                    title="Inserted exactly as drawn — the AI writes nothing on it"
+                                  >
+                                    As is
+                                  </span>
+                                )}
+                              </div>
                               <div className="text-[11px] uppercase tracking-wide text-zinc-400">Standard slide</div>
                             </div>
                           </div>

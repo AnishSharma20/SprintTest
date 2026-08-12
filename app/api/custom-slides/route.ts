@@ -8,11 +8,14 @@
 //                                      pages at generation time to ship the slides to the
 //                                      deck service as job files. Removed slides ship none.
 //   POST /api/custom-slides            { filename, storage_path | pptx_b64, slides: [{
-//                                        slide_index, name, description, mode, preview_b64 }],
-//                                        author? } → stores the file once + one row per slide.
+//                                        slide_index, name, description, mode, preview_b64,
+//                                        slots? }], author? } → the file once + a row per slide.
 //
-// Slides are spliced verbatim (shapes + images) into generated decks: mode 'auto' lets the
-// AI place the slide where it fits the storyline, 'always' includes it in every deck.
+// Slides are spliced (shapes + images) into generated decks: mode 'auto' lets the AI place the
+// slide where it fits the storyline, 'always' includes it in every deck. `slots` decides whether
+// the AI writes the slide's TEXT: with slots (the measured text-slot map from the deck service's
+// /slides/inspect-slots) the design is kept but its boxes are refilled per deck, exactly like a
+// redesigned built-in layout; without slots the slide goes in exactly as drawn, untouched.
 //
 // storage_path (Supabase Storage, see 0008_custom_slide_storage.sql) is how every new upload
 // arrives — the browser PUTs the file straight to Storage via a signed URL first (see
@@ -36,24 +39,26 @@ export async function GET(req: Request) {
     // supabase-js's type-level column parser can't resolve a UNION of select strings; the
     // runtime rows are plain objects, so route them through unknown.
     type SlideRow = { id: string; file_id: string; mode: string; removed?: boolean };
+    const BASE = "id, file_id, slide_index, name, description, mode, preview_b64";
+    const TAIL = "created_by, created_at, updated_by, updated_at";
+    // Newest columns first, degrading one migration at a time: slots is 0012, removed is 0009.
     let softDeleteMigrated = true;
+    let slotsMigrated = true;
     let data: unknown;
-    const r1 = await sb
-      .from("custom_slides")
-      .select("id, file_id, slide_index, name, description, mode, preview_b64, removed, created_by, created_at, updated_by, updated_at")
-      .order("sort_order")
-      .order("created_at");
+    const attempt = (cols: string) =>
+      sb.from("custom_slides").select(cols).order("sort_order").order("created_at");
+    const r1 = await attempt(`${BASE}, removed, slots, ${TAIL}`);
     if (!r1.error) data = r1.data;
     else {
-      // Pre-0009 databases have no `removed` column; every slide is implicitly not removed.
-      softDeleteMigrated = false;
-      const r2 = await sb
-        .from("custom_slides")
-        .select("id, file_id, slide_index, name, description, mode, preview_b64, created_by, created_at, updated_by, updated_at")
-        .order("sort_order")
-        .order("created_at");
-      if (r2.error) return Response.json({ configured: true, migrated: false, slides: [] });
-      data = r2.data;
+      slotsMigrated = false;
+      const r2 = await attempt(`${BASE}, removed, ${TAIL}`);
+      if (!r2.error) data = r2.data;
+      else {
+        softDeleteMigrated = false;
+        const r3 = await attempt(`${BASE}, ${TAIL}`);
+        if (r3.error) return Response.json({ configured: true, migrated: false, slides: [] });
+        data = r3.data;
+      }
     }
     const slides = data as SlideRow[];
 
@@ -88,7 +93,7 @@ export async function GET(req: Request) {
       }
     }
 
-    return Response.json({ configured: true, migrated: true, softDeleteMigrated, slides, files });
+    return Response.json({ configured: true, migrated: true, softDeleteMigrated, slotsMigrated, slides, files });
   } catch (e) {
     return Response.json({ error: "Could not load slides: " + (e as Error).message }, { status: 500 });
   }
@@ -103,7 +108,7 @@ export async function POST(req: Request) {
       filename?: string;
       pptx_b64?: string;
       storage_path?: string;
-      slides?: { slide_index?: number; name?: string; description?: string; mode?: string; preview_b64?: string }[];
+      slides?: { slide_index?: number; name?: string; description?: string; mode?: string; preview_b64?: string; slots?: unknown[] }[];
       author?: string;
     };
     if (!storage_path && (!pptx_b64 || typeof pptx_b64 !== "string"))
@@ -140,10 +145,21 @@ export async function POST(req: Request) {
       description: (s.description ?? "").trim().slice(0, 400),
       mode: s.mode ?? "auto",
       preview_b64: s.preview_b64 ?? null,
+      // Present = the AI writes this design's text (measured slots); absent = verbatim.
+      slots: s.slots?.length ? s.slots : null,
       sort_order: i,
       created_by: by,
     }));
-    const ins = await sb.from("custom_slides").insert(rows).select("id, name");
+    let ins = await sb.from("custom_slides").insert(rows).select("id, name");
+    if (ins.error && `${ins.error.message}`.includes("slots")) {
+      // Pre-0012 database: save the slides as verbatim rather than refusing the upload. The AI
+      // then writes nothing on them until 0012_custom_slide_slots.sql is run and they are
+      // re-added — better than a dead "Add slides" button.
+      ins = await sb
+        .from("custom_slides")
+        .insert(rows.map(({ slots: _slots, ...rest }) => rest))
+        .select("id, name");
+    }
     if (ins.error) {
       await sb.from("custom_slide_files").delete().eq("id", fileId); // don't orphan the blob
       return Response.json({ error: ins.error.message }, { status: 500 });

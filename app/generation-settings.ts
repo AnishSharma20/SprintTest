@@ -13,6 +13,8 @@ export type CustomSlidePayload = {
     description: string;
     mode: string;
     preview_b64?: string;
+    /** Present = the AI writes this design's text into these measured boxes; absent = verbatim. */
+    slots?: unknown[];
   }[];
   /** file_id → base64 .pptx, deduplicated (several slides can come from one upload). */
   files: Record<string, string>;
@@ -162,6 +164,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
         description: s.description,
         mode: s.mode,
         preview_b64: preview || undefined,
+        slots: s.slots?.length ? s.slots : undefined,
       });
     }
     customSlides.files = sentFiles;

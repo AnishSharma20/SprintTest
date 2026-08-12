@@ -1,11 +1,10 @@
 "use client";
 
-// Lightweight "Add finding" quick action from a study's own card on the Scientific Studies
-// page — writes a finding directly for THIS study with no evidence-linking step (unlike the
-// Findings Library's "New finding" modal, which composes from pre-extracted evidence claims).
-// Posts straight to /api/claims (scope: paper, claim_type: marketing), the same endpoint and
-// validation the Findings Library uses, so it's still gated to studies in this library and
-// still lands as pending_review for a reviewer to check.
+// "Add finding" from a study's own card on the Scientific Studies page — writes one or more
+// findings directly for THIS study, same repeatable-list structure as the findings section of
+// "Add study" (app/add-study-modal.tsx). Posts each to /api/claims (scope: paper, claim_type:
+// marketing), the same endpoint and validation the Findings Library uses, so it's still gated to
+// studies in this library and still lands as pending_review for a reviewer to check.
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -19,6 +18,12 @@ const SENTIMENT_LABEL: Record<ClaimSentiment, string> = {
   negative: "Negative",
 };
 
+type FindingDraft = { id: string; categoryId: string; text: string; sentiment: ClaimSentiment | "" };
+
+function newFinding(): FindingDraft {
+  return { id: crypto.randomUUID(), categoryId: "", text: "", sentiment: "" };
+}
+
 export default function AddFindingModal({
   study,
   categories,
@@ -31,54 +36,69 @@ export default function AddFindingModal({
   onCreated: () => void;
 }) {
   const { name: reviewer } = useCurrentUser();
-  const [categoryId, setCategoryId] = useState("");
-  const [text, setText] = useState("");
-  const [sentiment, setSentiment] = useState<ClaimSentiment | "">("");
+  const [findings, setFindings] = useState<FindingDraft[]>([newFinding()]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const scienceCategories = categories.filter((c) => c.parent === "science");
-  const canSubmit = !!categoryId && !!sentiment && !!text.trim();
+
+  function updateFinding(id: string, patch: Partial<FindingDraft>) {
+    setFindings((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
+  }
+  function removeFinding(id: string) {
+    setFindings((prev) => (prev.length > 1 ? prev.filter((f) => f.id !== id) : prev));
+  }
+
+  const toCreate = findings.filter((f) => f.text.trim());
+  const canSubmit =
+    toCreate.length > 0 && toCreate.every((f) => f.categoryId && f.sentiment && f.text.trim());
 
   async function submit() {
-    if (!categoryId) {
-      setError("Pick a category.");
+    if (toCreate.length === 0) {
+      setError("Write at least one finding.");
       return;
     }
-    if (!sentiment) {
-      setError("Pick which way this result points.");
-      return;
+    for (const f of findings) {
+      if (!f.text.trim()) continue; // an untouched row is skipped, not an error
+      if (!f.categoryId || !f.sentiment) {
+        setError("Every finding needs a category and a sentiment.");
+        return;
+      }
     }
-    if (!text.trim()) {
-      setError("Write the finding.");
-      return;
-    }
+
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/claims", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scope: "paper",
-          claim_type: "marketing",
-          category_id: categoryId,
-          text: text.trim(),
-          sentiment,
-          created_by: reviewer,
-          study: {
-            pmid: study.pmid,
-            title: study.tittel,
-            authors: study.forfattere,
-            year: study.ar ? parseInt(study.ar, 10) || null : null,
-            journal: study.tidsskrift,
-            doi: study.doiUrl ? study.doiUrl.replace("https://doi.org/", "") : null,
-          },
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Could not create the finding.");
+      const studyRef = {
+        pmid: study.pmid,
+        title: study.tittel,
+        authors: study.forfattere,
+        year: study.ar ? parseInt(study.ar, 10) || null : null,
+        journal: study.tidsskrift,
+        doi: study.doiUrl ? study.doiUrl.replace("https://doi.org/", "") : null,
+      };
+      // Sequential, not Promise.all: the first request may be what registers this study in the
+      // findings library's own studies table (if this is its first ever finding) — firing every
+      // finding at once would race that insert and drop whichever request lost.
+      let failed = 0;
+      for (const f of toCreate) {
+        const res = await fetch("/api/claims", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope: "paper",
+            claim_type: "marketing",
+            category_id: f.categoryId,
+            text: f.text.trim(),
+            sentiment: f.sentiment,
+            created_by: reviewer,
+            study: studyRef,
+          }),
+        });
+        if (!res.ok) failed++;
+      }
+      if (failed > 0) {
+        setError(`${failed} of ${toCreate.length} finding(s) could not be created — try again.`);
         return;
       }
       onCreated();
@@ -113,59 +133,80 @@ export default function AddFindingModal({
           </button>
         </div>
 
-        <div className="px-7 py-6">
+        <div className="max-h-[76vh] overflow-y-auto px-7 py-6">
           <div className="mb-5 rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] px-4 py-3 text-[12px] leading-relaxed text-[#6E6E73]">
             A finding restates what this study itself measured, never a consumer benefit. e.g.
             “Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
             moderate knee osteoarthritis (6-month RCT, placebo-controlled)”.
           </div>
 
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">Category</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="mb-5 w-full rounded-[12px] border border-[#E8E8ED] bg-white p-2.5 text-[14px] outline-none focus:border-[#C7C7CC]"
-          >
-            <option value="">Select a category…</option>
-            {scienceCategories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">
-            Sentiment · which way this result points
-          </label>
-          <div className="mb-5 flex gap-2">
-            {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setSentiment(v)}
-                className={`flex-1 rounded-[10px] border px-3 py-2 text-[13px] font-semibold transition-colors ${
-                  sentiment === v
-                    ? v === "positive"
-                      ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
-                      : v === "negative"
-                      ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
-                      : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
-                    : "border-[#E8E8ED] text-[#6E6E73] hover:bg-[#F5F5F7]"
-                }`}
-              >
-                {SENTIMENT_LABEL[v]}
-              </button>
+          <div className="mb-1.5 flex items-center justify-between">
+            <div className="text-[12.5px] font-semibold text-[#6E6E73]">Findings</div>
+            <button
+              type="button"
+              onClick={() => setFindings((prev) => [...prev, newFinding()])}
+              className="text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+            >
+              + Add finding
+            </button>
+          </div>
+          <div className="space-y-3">
+            {findings.map((f, i) => (
+              <div key={f.id} className="rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-3.5">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[11.5px] font-semibold text-[#AEAEB2]">Finding {i + 1}</span>
+                  {findings.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFinding(f.id)}
+                      className="text-[11.5px] font-semibold text-[#AEAEB2] hover:text-[#B3403A]"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <select
+                    value={f.categoryId}
+                    onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
+                    className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
+                  >
+                    <option value="">Category…</option>
+                    {scienceCategories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => updateFinding(f.id, { sentiment: v })}
+                      className={`rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
+                        f.sentiment === v
+                          ? v === "positive"
+                            ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
+                            : v === "negative"
+                            ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
+                            : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
+                          : "border-[#E8E8ED] text-[#6E6E73] hover:bg-white"
+                      }`}
+                    >
+                      {SENTIMENT_LABEL[v]}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={f.text}
+                  onChange={(e) => updateFinding(f.id, { text: e.target.value })}
+                  rows={2}
+                  placeholder="Author Year: result on the primary or secondary endpoint (study design)"
+                  className="w-full rounded-[10px] border border-[#E8E8ED] bg-white p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
+                />
+              </div>
             ))}
           </div>
-
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">Finding</label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={3}
-            placeholder="Author Year: result on the primary or secondary endpoint (study design)"
-            className="w-full rounded-[12px] border border-[#E8E8ED] p-3 text-[14px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-          />
 
           {error && <p className="mt-3 text-[12px] font-semibold text-[#B3403A]">{error}</p>}
 

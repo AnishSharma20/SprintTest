@@ -11,8 +11,6 @@ import type { Studie } from "../studies";
 import { decodeEntities } from "../lib/text";
 import { formatDate } from "../study-meta";
 import {
-  authorYearPrefix,
-  composeFindingText,
   evidenceBasisLine,
   guessAuthorSurname,
   splitDesignSuffix,
@@ -127,10 +125,6 @@ export default function FindingsV2({
 
   const marketing = useMemo(
     () => claims.filter((c) => c.claim_type === "marketing" && c.status !== "superseded"),
-    [claims]
-  );
-  const scienceClaims = useMemo(
-    () => claims.filter((c) => c.claim_type === "science" && c.status !== "superseded"),
     [claims]
   );
 
@@ -367,7 +361,6 @@ export default function FindingsV2({
       {creating && (
         <NewFindingModal
           categories={categories}
-          scienceClaims={scienceClaims}
           studies={studies}
           reviewer={reviewer}
           onClose={() => setCreating(false)}
@@ -652,175 +645,115 @@ function EvidencePanel({
 
 /* ---------- new finding modal (same behavior as V1's) ---------- */
 
+type FindingRowDraft = {
+  id: string;
+  categoryId: string;
+  studyId: string;
+  text: string;
+  sentiment: ClaimSentiment | "";
+};
+
+function newFindingRow(): FindingRowDraft {
+  return { id: crypto.randomUUID(), categoryId: "", studyId: "", text: "", sentiment: "" };
+}
+
 function NewFindingModal({
   categories,
-  scienceClaims,
   studies,
   reviewer,
   onClose,
   onCreated,
 }: {
   categories: Category[];
-  scienceClaims: LibClaim[];
   studies: Studie[];
   reviewer: string;
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [categoryId, setCategoryId] = useState("");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [q, setQ] = useState("");
-  const [sentiment, setSentiment] = useState<ClaimSentiment | "">("");
+  const [findings, setFindings] = useState<FindingRowDraft[]>([newFindingRow()]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Structured composer fields for a single study finding — see app/lib/finding-format.ts.
-  const [authorYear, setAuthorYear] = useState("");
-  const [authorYearTouched, setAuthorYearTouched] = useState(false);
-  const [result, setResult] = useState("");
-  const [design, setDesign] = useState("");
-  // Freeform text, used only when evidence spans more than one study (an aggregated claim).
-  const [aggregateText, setAggregateText] = useState("");
-
-  // A finding no AI extraction has touched yet: pick the study directly instead of linking
-  // pre-extracted evidence claims. Only consulted when nothing is checked below.
-  const [directPick, setDirectPick] = useState(false);
-  const [studyQ, setStudyQ] = useState("");
-  const [directStudy, setDirectStudy] = useState<Studie | null>(null);
-  const matchingStudies = useMemo(() => {
-    const needle = studyQ.toLowerCase().trim();
-    if (!needle) return [];
-    return studies
-      .filter((s) => s.tittel.toLowerCase().includes(needle) || s.forfattere.toLowerCase().includes(needle))
-      .slice(0, 8);
-  }, [studies, studyQ]);
-
+  const scienceCategories = useMemo(() => categories.filter((c) => c.parent === "science"), [categories]);
   const catName = useMemo(() => {
     const m: Record<string, string> = {};
     categories.forEach((c) => (m[c.id] = c.name));
     return m;
   }, [categories]);
 
-  const filtered = useMemo(() => {
-    const needle = q.toLowerCase().trim();
-    const list = scienceClaims.filter(
-      (c) =>
-        !needle ||
-        c.text.toLowerCase().includes(needle) ||
-        (c.studies?.title ?? "").toLowerCase().includes(needle)
-    );
-    const sel = list.filter((c) => selected.has(c.id));
-    const rest = list.filter((c) => !selected.has(c.id));
-    return { shown: [...sel, ...rest].slice(0, 60), total: list.length };
-  }, [scienceClaims, q, selected]);
-
-  const selectedClaims = useMemo(
-    () => scienceClaims.filter((c) => selected.has(c.id)),
-    [scienceClaims, selected]
-  );
-  // A finding restates ONE study's own endpoint result — evidence from a single study gets the
-  // structured "Author Year: result (design)" composer; evidence spanning several studies is a
-  // broader aggregated claim, which keeps the old freeform text plus an evidence-basis line.
-  const evidenceStudy = useMemo(() => {
-    const pmids = new Set(selectedClaims.map((c) => c.studies?.pmid).filter(Boolean));
-    return pmids.size === 1 ? selectedClaims.find((c) => c.studies?.pmid)!.studies! : null;
-  }, [selectedClaims]);
-  const isAggregate = selected.size > 0 && !evidenceStudy;
-
-  // No linked evidence yet? The reviewer can pick the study directly instead — same
-  // "Author Year: result (design)" composer, just with no backing science claims. Only used
-  // when nothing is checked above (checked evidence always wins).
-  const directStudyRef = useMemo(
-    () =>
-      directStudy
-        ? {
-            pmid: directStudy.pmid,
-            title: directStudy.tittel,
-            authors: directStudy.forfattere,
-            year: directStudy.ar ? parseInt(directStudy.ar, 10) || null : null,
-            journal: directStudy.tidsskrift,
-            doi: directStudy.doiUrl ? directStudy.doiUrl.replace("https://doi.org/", "") : null,
-          }
-        : null,
-    [directStudy]
-  );
-  const targetStudy = selected.size > 0 ? evidenceStudy : directStudyRef;
-
-  // Re-suggest the author/year prefix from the detected study, unless the reviewer already
-  // edited it by hand (never clobber a deliberate correction).
-  useEffect(() => {
-    if (targetStudy && !authorYearTouched) {
-      setAuthorYear(authorYearPrefix(targetStudy.authors, targetStudy.year));
-    }
-  }, [targetStudy, authorYearTouched]);
-
-  const composedText = targetStudy ? composeFindingText({ authorYear, result, design }) : aggregateText;
-  const canSubmit =
-    !!categoryId &&
-    !!sentiment &&
-    (selected.size > 0
-      ? evidenceStudy
-        ? !!result.trim()
-        : !!aggregateText.trim()
-      : !!directStudy && !!result.trim());
-
-  function toggle(id: string) {
-    setSelected((prev) => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
-      return n;
-    });
+  function studiesFor(categoryId: string): Studie[] {
+    if (!categoryId) return [];
+    return studies.filter((s) => (s.kategoriIds ?? []).includes(categoryId));
   }
 
+  function updateFinding(id: string, patch: Partial<FindingRowDraft>) {
+    setFindings((prev) =>
+      prev.map((f) => {
+        if (f.id !== id) return f;
+        const next = { ...f, ...patch };
+        // A study picked under the old category no longer applies once the category changes.
+        if (patch.categoryId !== undefined && patch.categoryId !== f.categoryId) next.studyId = "";
+        return next;
+      })
+    );
+  }
+  function removeFinding(id: string) {
+    setFindings((prev) => (prev.length > 1 ? prev.filter((f) => f.id !== id) : prev));
+  }
+
+  const toCreate = findings.filter((f) => f.text.trim());
+  const canSubmit =
+    toCreate.length > 0 && toCreate.every((f) => f.categoryId && f.studyId && f.sentiment && f.text.trim());
+
   async function submit() {
-    if (!categoryId) {
-      setError("Pick a category.");
+    if (toCreate.length === 0) {
+      setError("Write at least one finding.");
       return;
     }
-    if (!sentiment) {
-      setError("Pick which way this result points.");
-      return;
+    for (const f of findings) {
+      if (!f.text.trim()) continue; // an untouched row is skipped, not an error
+      if (!f.categoryId || !f.studyId || !f.sentiment) {
+        setError("Every finding needs a category, a study and a sentiment.");
+        return;
+      }
     }
-    if (selected.size === 0 && !directStudy) {
-      setError("Link evidence, or pick a study directly.");
-      return;
-    }
-    if (!composedText.trim()) {
-      setError(targetStudy ? "Describe the endpoint result." : "Write the finding.");
-      return;
-    }
+
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/claims", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scope: targetStudy ? "paper" : "category",
-          claim_type: "marketing",
-          category_id: categoryId,
-          text: composedText,
-          backed_by: [...selected],
-          sentiment,
-          created_by: reviewer,
-          ...(targetStudy
-            ? {
-                study: {
-                  pmid: targetStudy.pmid,
-                  title: targetStudy.title,
-                  authors: targetStudy.authors,
-                  year: targetStudy.year,
-                  journal: targetStudy.journal,
-                  doi: targetStudy.doi,
-                },
-              }
-            : {}),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Could not create the finding.");
+      // Sequential, not Promise.all: two findings for the same brand new study would race each
+      // other's getOrCreateStudy() insert into the findings library's own studies table.
+      let failed = 0;
+      for (const f of toCreate) {
+        const study = studies.find((s) => s.pmid === f.studyId);
+        if (!study) {
+          failed++;
+          continue;
+        }
+        const res = await fetch("/api/claims", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope: "paper",
+            claim_type: "marketing",
+            category_id: f.categoryId,
+            text: f.text.trim(),
+            sentiment: f.sentiment,
+            created_by: reviewer,
+            study: {
+              pmid: study.pmid,
+              title: study.tittel,
+              authors: study.forfattere,
+              year: study.ar ? parseInt(study.ar, 10) || null : null,
+              journal: study.tidsskrift,
+              doi: study.doiUrl ? study.doiUrl.replace("https://doi.org/", "") : null,
+            },
+          }),
+        });
+        if (!res.ok) failed++;
+      }
+      if (failed > 0) {
+        setError(`${failed} of ${toCreate.length} finding(s) could not be created — try again.`);
         return;
       }
       onCreated();
@@ -838,7 +771,7 @@ function NewFindingModal({
       onClick={onClose}
     >
       <div
-        className="my-6 w-full max-w-3xl overflow-hidden rounded-[20px] bg-white shadow-2xl"
+        className="my-6 w-full max-w-2xl overflow-hidden rounded-[20px] bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-[#E8E8ED] px-7 py-5">
@@ -854,7 +787,7 @@ function NewFindingModal({
 
         <div className="max-h-[76vh] overflow-y-auto px-7 py-6">
           <div className="mb-5 rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] px-4 py-3 text-[12px] leading-relaxed text-[#6E6E73]">
-            A finding restates what the study itself measured, never a consumer benefit.
+            A finding restates what a study itself measured, never a consumer benefit.
             <br />
             <span className="text-[#B3403A]">Not: </span>
             "Your body handles X with ease", "reduces inflammation", "supports easy digestion"
@@ -863,236 +796,98 @@ function NewFindingModal({
             "Stonehouse 2022: Krill oil improved osteoarthritic knee pain in adults with mild to
             moderate knee osteoarthritis (6-month RCT, multicenter, double-blind,
             placebo-controlled)"
-            <br />
-            Only add a finding for a result favorable to krill oil — a benefit shown, or a
-            favorable safety/tolerability result. Skip null or unfavorable endpoints rather than
-            wording around them.
-          </div>
-
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">Category</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="mb-5 w-full rounded-[12px] border border-[#E8E8ED] bg-white p-2.5 text-[14px] outline-none focus:border-[#C7C7CC]"
-          >
-            <option value="">Select a category…</option>
-            <optgroup label="Science">
-              {categories
-                .filter((c) => c.parent === "science")
-                .map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-            </optgroup>
-            <optgroup label="Marketing">
-              {categories
-                .filter((c) => c.parent === "marketing")
-                .map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-            </optgroup>
-          </select>
-
-          <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">
-            Sentiment · which way this result points
-          </label>
-          <div className="mb-5 flex gap-2">
-            {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setSentiment(v)}
-                className={`flex-1 rounded-[10px] border px-3 py-2 text-[13px] font-semibold transition-colors ${
-                  sentiment === v
-                    ? v === "positive"
-                      ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
-                      : v === "negative"
-                      ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
-                      : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
-                    : "border-[#E8E8ED] text-[#6E6E73] hover:bg-[#F5F5F7]"
-                }`}
-              >
-                {SENTIMENT_LABEL[v]}
-              </button>
-            ))}
           </div>
 
           <div className="mb-1.5 flex items-center justify-between">
-            <label className="text-[12.5px] font-semibold text-[#6E6E73]">
-              Evidence · pick the study result this finding restates
-            </label>
-            <span className="text-[12px] font-semibold text-[#1D1D1F]">{selected.size} selected</span>
+            <div className="text-[12.5px] font-semibold text-[#6E6E73]">Findings</div>
+            <button
+              type="button"
+              onClick={() => setFindings((prev) => [...prev, newFindingRow()])}
+              className="text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
+            >
+              + Add finding
+            </button>
           </div>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search findings or studies…"
-            className="mb-2.5 w-full rounded-[12px] border border-[#E8E8ED] p-2.5 text-[14px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-          />
-          <div className="max-h-56 space-y-1 overflow-y-auto rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-2">
-            {filtered.shown.map((c) => (
-              <label key={c.id} className="flex cursor-pointer items-start gap-2.5 rounded-[8px] p-2 hover:bg-white">
-                <input
-                  type="checkbox"
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#1D1D1F]"
-                  checked={selected.has(c.id)}
-                  onChange={() => toggle(c.id)}
-                />
-                <span className="text-[12.5px] leading-snug text-[#3A3A3C]">
-                  <span className="font-semibold text-[#1D1D1F]">[{catName[c.category_id] ?? c.category_id}]</span>{" "}
-                  {decodeEntities(c.text)}
-                  {c.studies?.title && <span className="text-[#AEAEB2]"> · {c.studies.title.slice(0, 60)}</span>}
-                </span>
-              </label>
-            ))}
-            {filtered.total > filtered.shown.length && (
-              <p className="px-2 py-1 text-[11.5px] text-[#AEAEB2]">
-                Showing {filtered.shown.length} of {filtered.total}. Refine the search to narrow.
-              </p>
-            )}
-          </div>
-
-          {selected.size === 0 && (
-            <div className="mt-3">
-              {!directPick ? (
-                <button
-                  type="button"
-                  onClick={() => setDirectPick(true)}
-                  className="text-[12.5px] font-semibold text-[#0A7A8A] hover:underline"
-                >
-                  No matching evidence above? Pick the study directly →
-                </button>
-              ) : (
-                <div className="rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-3.5">
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <label className="text-[12.5px] font-semibold text-[#6E6E73]">
-                      Study · write a finding with no linked evidence yet
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDirectPick(false);
-                        setDirectStudy(null);
-                        setStudyQ("");
-                      }}
-                      className="text-[11.5px] font-semibold text-[#AEAEB2] hover:text-[#6E6E73]"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  {directStudy ? (
-                    <div className="flex items-center justify-between rounded-[10px] border border-[#1D1D1F] bg-white px-3 py-2">
-                      <span className="text-[13px] font-semibold text-[#1D1D1F]">{directStudy.tittel}</span>
+          <div className="space-y-3">
+            {findings.map((f, i) => {
+              const studyOptions = studiesFor(f.categoryId);
+              return (
+                <div key={f.id} className="rounded-[12px] border border-[#E8E8ED] bg-[#FBFBFD] p-3.5">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[11.5px] font-semibold text-[#AEAEB2]">Finding {i + 1}</span>
+                    {findings.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => setDirectStudy(null)}
-                        className="ml-2 shrink-0 text-[12px] font-semibold text-[#AEAEB2] hover:text-[#6E6E73]"
+                        onClick={() => removeFinding(f.id)}
+                        className="text-[11.5px] font-semibold text-[#AEAEB2] hover:text-[#B3403A]"
                       >
-                        Change
+                        Remove
                       </button>
-                    </div>
-                  ) : (
-                    <>
-                      <input
-                        value={studyQ}
-                        onChange={(e) => setStudyQ(e.target.value)}
-                        placeholder="Search studies by title or author…"
-                        className="w-full rounded-[10px] border border-[#E8E8ED] p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-                      />
-                      {matchingStudies.length > 0 && (
-                        <div className="mt-1.5 max-h-40 space-y-0.5 overflow-y-auto">
-                          {matchingStudies.map((s) => (
-                            <button
-                              key={s.pmid}
-                              type="button"
-                              onClick={() => setDirectStudy(s)}
-                              className="block w-full rounded-[8px] p-2 text-left text-[12.5px] leading-snug text-[#3A3A3C] hover:bg-white"
-                            >
-                              <span className="font-semibold text-[#1D1D1F]">{s.tittel}</span>
-                              <span className="text-[#AEAEB2]"> · {s.forfattere} · {s.ar}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </>
+                    )}
+                  </div>
+                  <div className="mb-2 grid gap-2 sm:grid-cols-2">
+                    <select
+                      value={f.categoryId}
+                      onChange={(e) => updateFinding(f.id, { categoryId: e.target.value })}
+                      className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC]"
+                    >
+                      <option value="">Select a category…</option>
+                      {scienceCategories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={f.studyId}
+                      onChange={(e) => updateFinding(f.id, { studyId: e.target.value })}
+                      disabled={!f.categoryId}
+                      className="rounded-[10px] border border-[#E8E8ED] bg-white px-3 py-1.5 text-[12.5px] outline-none focus:border-[#C7C7CC] disabled:bg-[#F5F5F5] disabled:text-[#AEAEB2]"
+                    >
+                      <option value="">{f.categoryId ? "Select a study…" : "Pick a category first"}</option>
+                      {studyOptions.map((s) => (
+                        <option key={s.pmid} value={s.pmid}>
+                          {s.tittel}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {f.categoryId && studyOptions.length === 0 && (
+                    <p className="mb-2 text-[11.5px] text-[#AEAEB2]">
+                      No studies are filed under {catName[f.categoryId] ?? "this category"} yet.
+                    </p>
                   )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {selected.size === 0 && !directStudy ? null : targetStudy ? (
-            <div className="mt-5 rounded-[12px] border border-[#E8E8ED] p-4">
-              <p className="mb-3 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-[#AEAEB2]">
-                {evidenceStudy ? "One study detected" : "Study picked directly"} · endpoint result
-              </p>
-              <div className="mb-3 flex gap-3">
-                <div className="w-[140px] shrink-0">
-                  <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">
-                    Author + year
-                  </label>
-                  <input
-                    value={authorYear}
-                    onChange={(e) => {
-                      setAuthorYear(e.target.value);
-                      setAuthorYearTouched(true);
-                    }}
-                    placeholder="Stonehouse 2022"
-                    className="w-full rounded-[10px] border border-[#E8E8ED] p-2 text-[13px] outline-none focus:border-[#C7C7CC]"
+                  <div className="mb-2 flex gap-2">
+                    {(["positive", "neutral", "negative"] as ClaimSentiment[]).map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => updateFinding(f.id, { sentiment: v })}
+                        className={`flex-1 rounded-[10px] border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${
+                          f.sentiment === v
+                            ? v === "positive"
+                              ? "border-[#2E7D4F] bg-[#E9F4EC] text-[#2E7D4F]"
+                              : v === "negative"
+                              ? "border-[#B3403A] bg-[#FBF3F3] text-[#B3403A]"
+                              : "border-[#1D1D1F] bg-[#F4F4F5] text-[#1D1D1F]"
+                            : "border-[#E8E8ED] text-[#6E6E73] hover:bg-white"
+                        }`}
+                      >
+                        {SENTIMENT_LABEL[v]}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={f.text}
+                    onChange={(e) => updateFinding(f.id, { text: e.target.value })}
+                    rows={2}
+                    placeholder="Author Year: result on the primary or secondary endpoint (study design)"
+                    className="w-full rounded-[10px] border border-[#E8E8ED] bg-white p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
                   />
                 </div>
-                <div className="flex-1">
-                  <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">
-                    Study design
-                  </label>
-                  <input
-                    value={design}
-                    onChange={(e) => setDesign(e.target.value)}
-                    placeholder="e.g. 6-month RCT, multicenter, double-blind, placebo-controlled"
-                    className="w-full rounded-[10px] border border-[#E8E8ED] p-2 text-[13px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-                  />
-                </div>
-              </div>
-              <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">
-                Result on the primary or secondary endpoint
-              </label>
-              <textarea
-                value={result}
-                onChange={(e) => setResult(e.target.value)}
-                rows={2}
-                placeholder="e.g. Krill oil improved osteoarthritic knee pain in adults with mild to moderate knee osteoarthritis"
-                className="mb-3 w-full rounded-[10px] border border-[#E8E8ED] p-2.5 text-[13.5px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
-              />
-              <p className="text-[11.5px] font-semibold text-[#AEAEB2]">Preview</p>
-              <p className="mt-1 rounded-[10px] bg-[#FBFBFD] p-2.5 text-[13px] text-[#1D1D1F]">
-                {composedText || "…"}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-5">
-              <div className="mb-2 rounded-[10px] border border-[#F2E3BC] bg-[#FFF8E9] px-3.5 py-2.5 text-[12px] text-[#8A6A2B]">
-                Evidence spans more than one study, so this becomes an aggregated claim —
-                describe what the combined evidence shows, not a single study's result.
-              </div>
-              <label className="mb-1.5 block text-[12.5px] font-semibold text-[#6E6E73]">
-                Aggregated finding
-              </label>
-              <textarea
-                value={aggregateText}
-                onChange={(e) => setAggregateText(e.target.value)}
-                rows={2}
-                className="w-full rounded-[12px] border border-[#E8E8ED] p-3 text-[14px] outline-none focus:border-[#C7C7CC]"
-              />
-              <p className="mt-2 text-[11.5px] text-[#AEAEB2]">
-                {evidenceBasisLine(
-                  selectedClaims.map((c) => ({ pmid: c.studies?.pmid ?? null, title: c.studies?.title ?? "" }))
-                )}
-              </p>
-            </div>
-          )}
+              );
+            })}
+          </div>
 
           <p className="mt-4 text-[11px] leading-relaxed text-[#AEAEB2]">{REGULATORY_DISCLAIMER}</p>
 

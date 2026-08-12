@@ -134,7 +134,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     setOutNegative(v);
     setOutUnset(v);
   };
-  const [showRemoved, setShowRemoved] = useState(false);
+  const [visKastet, setVisKastet] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [reviewer, setReviewer] = useState("");
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
@@ -150,12 +150,12 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
   const studier = useMemo(() => applyStudyMeta(grunnStudier, meta), [grunnStudier, meta]);
   const removedCount = useMemo(() => studier.filter((s) => s.removed).length, [studier]);
-  // Removed studies stay reachable (so a reviewer can restore one) but are excluded from the
-  // default view, category counts and search — same treatment as "Turned off" layouts/photos
-  // elsewhere in the app.
+  // "Discarded items" is its own bin, not a facet of the normal view — picking it shows every
+  // removed study regardless of category/quality/verification/outcome, the same way a trash can
+  // doesn't sort by folder. Picking a benefit area or "All studies" (velgKategori) leaves it.
   const zichtbareStudier = useMemo(
-    () => (showRemoved ? studier : studier.filter((s) => !s.removed)),
-    [studier, showRemoved]
+    () => studier.filter((s) => (visKastet ? s.removed : !s.removed)),
+    [studier, visKastet]
   );
 
   useEffect(() => {
@@ -214,6 +214,12 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   const velgKategori = (id: string | null) => {
     brukerHarValgt.current = true;
     setValgtKategori(id);
+    setVisKastet(false);
+  };
+  const velgKastet = () => {
+    brukerHarValgt.current = true;
+    setValgtKategori(null);
+    setVisKastet(true);
   };
 
   const filtrert = useMemo(() => {
@@ -224,6 +230,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         s.tittel.toLowerCase().includes(q) ||
         s.tidsskrift.toLowerCase().includes(q) ||
         s.forfattere.toLowerCase().includes(q);
+      if (visKastet) return treffSok; // the bin: every discarded study, no other facet applies
       const treffKat = !valgtKategori || (s.kategoriIds ?? []).includes(valgtKategori);
       const lbl = s.quality?.label;
       const treffKval =
@@ -246,6 +253,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
   }, [
     zichtbareStudier,
     sok,
+    visKastet,
     valgtKategori,
     sortBy,
     qualHigh,
@@ -266,7 +274,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     [studier, valgtPmid]
   );
 
-  const kategoriNavn = valgtKategori
+  const kategoriNavn = visKastet
+    ? "Discarded items"
+    : valgtKategori
     ? kategorier.find((k) => k.id === valgtKategori)?.navn ?? "Category"
     : "All studies";
 
@@ -276,7 +286,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         {kategorier.map((k) => (
           <SideItem
             key={k.id}
-            active={valgtKategori === k.id}
+            active={!visKastet && valgtKategori === k.id}
             onClick={() => velgKategori(k.id)}
             count={k.antall}
             icon={benefitIcon(k.navn)}
@@ -284,7 +294,11 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
             {k.navn}
           </SideItem>
         ))}
-        <SideItem active={valgtKategori === null} onClick={() => velgKategori(null)} count={zichtbareStudier.length}>
+        <SideItem
+          active={!visKastet && valgtKategori === null}
+          onClick={() => velgKategori(null)}
+          count={studier.filter((s) => !s.removed).length}
+        >
           All studies
         </SideItem>
         {meta.configured && (
@@ -348,10 +362,17 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         </div>
       </SideSection>
       {removedCount > 0 && (
-        <SideSection title="Status">
-          <SideCheck checked={showRemoved} onChange={setShowRemoved}>
-            Show {removedCount} removed stud{removedCount === 1 ? "y" : "ies"}
-          </SideCheck>
+        <SideSection title="Bin">
+          <button
+            onClick={velgKastet}
+            className={`flex w-full items-center gap-2.5 py-[5px] text-left text-[14px] transition-colors ${
+              visKastet ? "font-bold text-[#1D1D1F]" : "text-[#6E6E73] hover:text-[#1D1D1F]"
+            }`}
+          >
+            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[14px]">🗑️</span>
+            <span className="min-w-0 flex-1 truncate">Discarded items</span>
+            <span className="shrink-0 text-[12.5px] tabular-nums text-[#C7C7CC]">{removedCount}</span>
+          </button>
         </SideSection>
       )}
       <SideReviewer value={reviewer} onChange={onReviewerChange} hint="Recorded on approvals and quality scores." />
@@ -364,7 +385,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
           <div>
             <h1 className="text-[28px] font-bold tracking-[-0.022em] text-[#1D1D1F] sm:text-[32px]">
-              {valgtKategori ? `${kategoriNavn} Studies` : kategoriNavn}
+              {!visKastet && valgtKategori ? `${kategoriNavn} Studies` : kategoriNavn}
             </h1>
             <p className="mt-2 max-w-[540px] text-[15px] text-[#6E6E73]">
               Aker BioMarine affiliated research from AKBM's internal Science Archive, summarized in plain language.
@@ -390,7 +411,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
               key={k.id}
               onClick={() => velgKategori(k.id)}
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold ${
-                valgtKategori === k.id ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
+                !visKastet && valgtKategori === k.id ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
               }`}
             >
               {k.navn} · {k.antall}
@@ -399,11 +420,21 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           <button
             onClick={() => velgKategori(null)}
             className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold ${
-              valgtKategori === null ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
+              !visKastet && valgtKategori === null ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
             }`}
           >
-            All · {studier.length}
+            All · {studier.filter((s) => !s.removed).length}
           </button>
+          {removedCount > 0 && (
+            <button
+              onClick={velgKastet}
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold ${
+                visKastet ? "bg-[#1D1D1F] text-white" : "bg-[#EFEFF1] text-[#1D1D1F]"
+              }`}
+            >
+              🗑️ · {removedCount}
+            </button>
+          )}
         </div>
 
         <div className="mt-7 flex items-baseline gap-6 border-b border-[#E8E8ED] pb-3.5 text-[13.5px] text-[#6E6E73]">

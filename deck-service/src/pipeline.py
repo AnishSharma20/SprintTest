@@ -90,6 +90,12 @@ def sanitize_structure(structure_rules) -> list[dict]:
     return out
 
 
+# Built in writing rules the pipeline itself guarantees a moment later: the no-dash rule is applied
+# by _strip_dashes_plan and the notes rule is backstopped by _ensure_notes, so handing them to the
+# rule check would surface "breaches" that are already on their way to being fixed.
+_SELF_ENFORCED_BLOCKS = frozenset({"text_style", "speaker_notes"})
+
+
 def _has_action(rules: list[dict] | None, action: str) -> bool:
     """Is this deck-wide guarantee in force? None (no rules reached us) keeps the old always-on
     behaviour, so an unmigrated database loses nothing."""
@@ -559,13 +565,21 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     # plan against them and give the model one chance to fix what it missed — the same
     # ask-then-check-then-repair shape the coverage/notes nudges already use. Never fatal: no rules,
     # no findings, or any failure in the check and the deck ships exactly as planned.
-    if (custom_rules or "").strip():
+    # Everything the team can edit gets checked, not just what they typed from scratch: an edited
+    # built in rule that nothing verified was the reason a deliberate edit could be ignored
+    # (caught by generating a real deck). Two are left out because the code already applies them
+    # moments later, so checking them here would only report breaches about to be fixed anyway.
+    checkable = "\n".join(
+        [t for t in [(custom_rules or "").strip()] if t]
+        + [text for key, text in (managed_blocks or {}).items() if key not in _SELF_ENFORCED_BLOCKS]
+    )
+    if checkable.strip():
         _p(62, "Checking the deck against your rules")
-        breaches = rules_gate.review(client, plan, custom_rules)
+        breaches = rules_gate.review(client, plan, checkable)
         if breaches:
             candidate = planner.revise_plan(client, summary_text, plan, breaches, length=length,
                                             tone=tone, instructions=instructions,
-                                            custom_rules=custom_rules,
+                                            custom_rules=checkable,
                                             disabled_layouts=disabled_layouts,
                                             custom_slides=custom_slides, custom_photos=custom_photos,
                                             preferred_layouts=preferred_layouts, design=design,

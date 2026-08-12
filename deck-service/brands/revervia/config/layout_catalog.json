@@ -1,0 +1,551 @@
+{
+  "title": {
+    "template_layout": "Title 1",
+    "kind": "title",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0
+    },
+    "limits": {
+      "title": 17
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0,
+      13,
+      14,
+      15,
+      16
+    ]
+  },
+  "section": {
+    "template_layout": "Section Break 1",
+    "kind": "section",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0
+    },
+    "limits": {
+      "title": 68
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0
+    ]
+  },
+  "agenda": {
+    "template_layout": "Content 3",
+    "kind": "agenda",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0,
+      "items": 19
+    },
+    "limits": {
+      "title": 31,
+      "items": {
+        "maxItems": 7,
+        "item_max": 62
+      }
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0,
+      16,
+      19
+    ]
+  },
+  "highlight": {
+    "template_layout": "Highlight 2",
+    "kind": "highlight",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": [
+      17
+    ]
+  },
+  "title_only": {
+    "template_layout": "Title Only",
+    "kind": "title_only",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0
+    },
+    "limits": {
+      "title": 72
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0
+    ]
+  },
+  "text": {
+    "template_layout": "Content 3",
+    "kind": "text",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0
+    },
+    "limits": {
+      "title": 72
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0,
+      16,
+      19
+    ]
+  },
+  "text_with_picture": {
+    "template_layout": "Content 4",
+    "kind": "text_picture",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0,
+      "heading": 16,
+      "body": 19,
+      "picture": 20
+    },
+    "limits": {
+      "title": 109,
+      "heading": 45,
+      "body": 472
+    },
+    "picture_slots": [
+      20
+    ],
+    "removable_idx": [
+      0,
+      16,
+      19,
+      20
+    ]
+  },
+  "three_columns": {
+    "template_layout": "Content 1",
+    "kind": "columns",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {
+      "title": 0,
+      "columns": [
+        {
+          "heading": 13,
+          "body": 19
+        },
+        {
+          "heading": 16,
+          "body": 20
+        },
+        {
+          "heading": 14,
+          "body": 21
+        }
+      ]
+    },
+    "limits": {
+      "title": 72,
+      "columns": {
+        "n": 3,
+        "heading_max": 12,
+        "body_max": 171
+      }
+    },
+    "picture_slots": [],
+    "removable_idx": [
+      0,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "ingredient": {
+    "template_layout": "Blank",
+    "kind": "ingredient",
+    "backgrounds": [
+      "dark"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "key_points": {
+    "template_layout": "Blank",
+    "kind": "key_points",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "chart": {
+    "template_layout": "Blank",
+    "kind": "chart",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "matrix": {
+    "template_layout": "Blank",
+    "kind": "matrix",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "exec_summary": {
+    "template_layout": "Blank",
+    "kind": "exec_summary",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "comparison": {
+    "template_layout": "Blank",
+    "kind": "comparison",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "stat": {
+    "template_layout": "Blank",
+    "kind": "stat",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "harvey_ball": {
+    "template_layout": "Blank",
+    "kind": "harvey_ball",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "funnel": {
+    "template_layout": "Blank",
+    "kind": "funnel",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "closing": {
+    "template_layout": "Blank",
+    "kind": "closing",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "kpi_dashboard": {
+    "template_layout": "Blank",
+    "kind": "kpi_dashboard",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "roadmap": {
+    "template_layout": "Blank",
+    "kind": "roadmap",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "icon_grid": {
+    "template_layout": "Blank",
+    "kind": "icon_grid",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "takeaways": {
+    "template_layout": "Blank",
+    "kind": "takeaways",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "from_to": {
+    "template_layout": "Blank",
+    "kind": "from_to",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "pillars": {
+    "template_layout": "Blank",
+    "kind": "pillars",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "team": {
+    "template_layout": "Blank",
+    "kind": "team",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "metric_bars": {
+    "template_layout": "Blank",
+    "kind": "metric_bars",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "cause_effect": {
+    "template_layout": "Blank",
+    "kind": "cause_effect",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "org_chart": {
+    "template_layout": "Blank",
+    "kind": "org_chart",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "decision_tree": {
+    "template_layout": "Blank",
+    "kind": "decision_tree",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "cycle": {
+    "template_layout": "Blank",
+    "kind": "cycle",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "gantt": {
+    "template_layout": "Blank",
+    "kind": "gantt",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "serpentine": {
+    "template_layout": "Blank",
+    "kind": "serpentine",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "coverage_matrix": {
+    "template_layout": "Blank",
+    "kind": "coverage_matrix",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "photo_stats": {
+    "template_layout": "Blank",
+    "kind": "photo_stats",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "numbered_cards": {
+    "template_layout": "Blank",
+    "kind": "numbered_cards",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "implications": {
+    "template_layout": "Blank",
+    "kind": "implications",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "breakdown": {
+    "template_layout": "Blank",
+    "kind": "breakdown",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "chart_bands": {
+    "template_layout": "Blank",
+    "kind": "chart_bands",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
+  "chart_takeaways": {
+    "template_layout": "Blank",
+    "kind": "chart_takeaways",
+    "backgrounds": [
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  }
+}

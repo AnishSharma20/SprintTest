@@ -35,6 +35,7 @@ from pptx.oxml import parse_xml
 from pptx.oxml.ns import nsdecls, qn
 from pptx.util import Emu, Inches, Pt
 
+from . import brand as _brand_theme
 from . import config
 
 CHROME_IDX = {10, 11, 12}   # date / footer / slide-number — never fill, never remove
@@ -56,11 +57,20 @@ def _delete_example_slides(prs) -> None:
         lst.remove(sldId)
 
 
-def _master_indices():
-    inv = config.inventory()
-    dark = inv["superba_master_index"]
+def _master_indices(brand: str | None = None):
+    """(dark, light) master indices for a brand's template.
+
+    Superba ships a dark master and its light twin, both on the theme's major font, next to
+    leftover default Office masters — so the light one is "another master using the SAME major
+    font as the primary", which finds it without naming a typeface. A brand whose template has
+    only ONE master (Revervia) gets that master for both, i.e. its single background is used
+    whichever theme a slide asks for."""
+    inv = config.inventory(brand)
+    dark = inv.get("primary_master_index", inv.get("superba_master_index", 0))
+    primary_font = next((m.get("major_font") for m in inv["masters"] if m["index"] == dark), None)
     light = next((m["index"] for m in inv["masters"]
-                  if m["index"] != dark and (m.get("major_font") or "").lower().startswith("exo")), dark)
+                  if m["index"] != dark and primary_font
+                  and (m.get("major_font") or "").lower() == primary_font.lower()), dark)
     return dark, light
 
 
@@ -68,9 +78,13 @@ def _master_indices():
 # fold into this same scale, and native template placeholders are forced onto it too, not just
 # code-built layouts). Hierarchy is expressed through WEIGHT, COLOUR and CAPS, not extra sizes.
 # Defined early: default args below (_set_text/_set_lines) are evaluated at def-time.
-_SZ_HERO = 60                          # hero data figures (stat values); ALSO the "big statement"
-                                        # title layouts (cover, agenda, highlight) — matches what
-                                        # those specific layouts used natively before normalization
+_SZ_HERO = 60                          # hero DATA FIGURES (stat values, KPI numbers)
+_SZ_COVER = 60                         # the "big statement" title layouts (cover, agenda,
+                                        # highlight). Superba uses one number for both roles, which
+                                        # is why they were a single constant until multi-brand:
+                                        # Revervia's cover title box is 4.6in wide, so a 60pt cover
+                                        # title fits ~10 characters. Split so a brand can keep big
+                                        # stat figures without an unusable cover title limit.
 _SZ_TITLE = 32                         # regular slide titles (every other layout, native or code-built)
 _SZ_SUBTITLE = 16                      # cover subtitle, column/text-picture headings
 _SZ_BODY = 14                          # body, bullets, table cells, items
@@ -99,6 +113,11 @@ _DATE_STAMP: bool = False
 _ICONS_OFF: bool = False
 # The team's own uploaded photos, registered per render: asset key -> temp file path. Kept
 # alongside a TemporaryDirectory handle so the files outlive the render that uses them.
+# Which brand the in-flight render belongs to. A module global rather than a parameter threaded
+# through 31 _fill_* functions, for the same reason _ICONS_OFF and _CUSTOM_PHOTO_PATHS are:
+# _RENDER_LOCK serializes the whole of render_deck, so only one brand is ever in flight.
+_BRAND: str | None = None
+_LIGHT_ONLY: bool = False    # brand's template has no dark master; see apply_brand/_make_slide
 _CUSTOM_PHOTO_PATHS: dict[str, "Path"] = {}
 _CUSTOM_PHOTO_DIR = None
 
@@ -234,7 +253,7 @@ _BULLET_MARL, _BULLET_INDENT, _BULLET_SZ = "342900", "-342900", "100000"
 
 def _bullet_rid(slide) -> str | None:
     """Embed the brand bullet image in the slide part (idempotent) and return its relationship id."""
-    path = config.ASSETS_DIR / "bullet.png"
+    path = config.assets_dir(_BRAND) / "bullet.png"
     if not path.exists():
         return None
     _, rid = slide.part.get_or_add_image_part(str(path))
@@ -286,10 +305,10 @@ def _icon_path(benefit: str):
     here or _generic_icon_path, so gating the two covers the whole deck deterministically."""
     if _ICONS_OFF or not benefit or benefit == "none":
         return None
-    entry = config.asset_index().get(f"icon_{benefit}")
+    entry = config.asset_index(_BRAND).get(f"icon_{benefit}")
     if not entry or not entry.get("path"):
         return None
-    p = config.resolve_asset(entry["path"])
+    p = config.resolve_asset(entry["path"], _BRAND)
     return p if p.exists() else None
 
 
@@ -299,10 +318,10 @@ def _generic_icon_path(keyword: str):
     icons-off gate as _icon_path."""
     if _ICONS_OFF or not keyword or keyword == "none":
         return None
-    entry = config.asset_index().get(f"generic_{keyword}")
+    entry = config.asset_index(_BRAND).get(f"generic_{keyword}")
     if not entry or not entry.get("path"):
         return None
-    p = config.resolve_asset(entry["path"])
+    p = config.resolve_asset(entry["path"], _BRAND)
     return p if p.exists() else None
 
 
@@ -331,17 +350,17 @@ def _photo_path(aid: str):
     p = _CUSTOM_PHOTO_PATHS.get(aid)
     if p is not None:
         return p if p.exists() else None
-    entry = config.asset_index().get(aid)
+    entry = config.asset_index(_BRAND).get(aid)
     if not entry or not entry.get("path"):
         return None
-    p = config.resolve_asset(entry["path"])
+    p = config.resolve_asset(entry["path"], _BRAND)
     return p if p.exists() else None
 
 
 def _layout_box(layout_name: str, master_index: int, idx: int):
     """(left, top, width, height) in EMU for a placeholder, from the inventory (dims already
     resolved through master inheritance)."""
-    for lay in config.inventory()["layouts"]:
+    for lay in config.inventory(_BRAND)["layouts"]:
         if lay["name"] == layout_name and lay["master_index"] == master_index:
             for p in lay["placeholders"]:
                 if p["idx"] == idx and p["width_emu"] and p["height_emu"]:
@@ -476,7 +495,7 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
         title = _fit(title, lim.get("title"))
     # "Big statement" layouts (cover, agenda, highlight) get the hero size, matching what these
     # specific layouts used natively; every other kind gets the regular title size.
-    title_size = _SZ_HERO if cat["kind"] in ("title", "agenda", "highlight") else _SZ_TITLE
+    title_size = _SZ_COVER if cat["kind"] in ("title", "agenda", "highlight") else _SZ_TITLE
     # Explicit, not inherited: two native "kind"s (highlight, text_picture) resolve their title
     # placeholder to "Exo 2 Light italic" instead of the template's dominant "Exo 2 italic" — an
     # inconsistency in the template itself. Force the SAME cut everywhere so every title, whatever
@@ -621,17 +640,22 @@ def _fill_slide(slide, spec: dict, cat: dict, master_index: int, dark: bool) -> 
         ph._element.getparent().remove(ph._element)
 
 _R_ATTRS = (qn("r:embed"), qn("r:link"), qn("r:id"))
-_DESIGN_SRC = None
+_DESIGN_SRC: dict | None = None
 
 
 def _design_source():
     """Cache-load template.pptx — the SINGLE design file. It holds the master layouts + theme +
     logos AND the verbatim source slides (ingredient, benefits) that the renderer splices in, so all
-    design the AI uses lives in one place."""
+    design the AI uses lives in one place.
+
+    Keyed by brand: a single cached Presentation would serve the FIRST brand rendered to every
+    brand after it, splicing the wrong template's slides."""
     global _DESIGN_SRC
     if _DESIGN_SRC is None:
-        _DESIGN_SRC = Presentation(str(config.template_path()))
-    return _DESIGN_SRC
+        _DESIGN_SRC = {}
+    if _BRAND not in _DESIGN_SRC:
+        _DESIGN_SRC[_BRAND] = Presentation(str(config.template_path(_BRAND)))
+    return _DESIGN_SRC[_BRAND]
 
 
 def _find_design_slide(marker: str):
@@ -1064,13 +1088,55 @@ _BOX = MSO_SHAPE.RECTANGLE            # one shape style for content boxes (squar
 # the next) and then applies the given overrides. Subtitle and hero sizes scale with the title
 # size so the type hierarchy keeps its designed proportions.
 _DESIGN_DEFAULTS = {
-    "_SZ_HERO": _SZ_HERO, "_SZ_TITLE": _SZ_TITLE, "_SZ_SUBTITLE": _SZ_SUBTITLE,
+    "_SZ_HERO": _SZ_HERO, "_SZ_COVER": _SZ_COVER, "_SZ_TITLE": _SZ_TITLE,
+    "_SZ_SUBTITLE": _SZ_SUBTITLE,
     "_SZ_BODY": _SZ_BODY, "_SZ_SMALL": _SZ_SMALL,
     "_LINE_SPACING": _LINE_SPACING, "_MARGIN": _MARGIN, "_GUTTER": _GUTTER,
     "_HEAD": _HEAD, "_BODY": _BODY, "_HEAD_TITLE": _HEAD_TITLE,
     "_FORCE_BODY_FONT": None, "_FORCE_LINE_SPACING": False,
     "_PAGE_NUMBERS": True, "_FOOTER_TEXT": "", "_DATE_STAMP": False, "_ICONS_OFF": False,
 }
+
+
+def _hex(h: str) -> RGBColor:
+    return RGBColor(int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+
+def apply_brand(brand: str | None = None) -> None:
+    """Point the palette/typography globals at one brand's theme (src/brand.py).
+
+    Called at the top of every render, BEFORE apply_design(), and it rewrites the font and
+    size entries of _DESIGN_DEFAULTS too — otherwise apply_design's reset-to-defaults would
+    immediately undo the brand and every deck would come out in Superba's typography. The
+    team's own design overrides are applied after this, so they still win.
+
+    Colours are only ever read from these globals by the code-built layouts. Native template
+    slides keep inheriting their own .pptx theme, untouched, exactly as before."""
+    t = _brand_theme.theme(brand)
+    c, f, s = t["colors"], t["fonts"], t["sizes"]
+    g = globals()
+    g["_BRAND"] = brand
+    g["_RED"] = _hex(c["accent"])
+    g["_TEAL"] = _hex(c["deep"])
+    g["_TEAL2"] = _hex(c["deep2"])
+    g["_PANEL"] = _hex(c["panel"])
+    g["_INKC"] = _hex(c["ink"])
+    g["_LTEAL"] = _hex(c["tint"])
+    g["_ONTEAL"] = _hex(c["on_deep"])
+    g["_TBL_LINE"] = c["table_line"]
+    g["_CHART_COLORS"] = [_hex(h) for h in t["chart_colors"]]
+    # Rounded vs square content boxes. Superba's design system is deliberately square (the
+    # "consulting look"); Revervia's identity is rounded. _BOX is the single shape token every
+    # code-built layout draws its panels with, so this is the whole change.
+    g["_BOX"] = MSO_SHAPE.ROUNDED_RECTANGLE if t.get("rounded") else MSO_SHAPE.RECTANGLE
+    g["_LIGHT_ONLY"] = bool(t.get("light_only"))
+    brand_type = {
+        "_HEAD": f["head"], "_BODY": f["body"], "_HEAD_TITLE": f["title"],
+        "_SZ_TITLE": s["title"], "_SZ_BODY": s["body"], "_SZ_SMALL": s["small"],
+        "_SZ_HERO": s["hero"], "_SZ_COVER": s["cover"], "_SZ_SUBTITLE": s["subtitle"],
+    }
+    g.update(brand_type)
+    _DESIGN_DEFAULTS.update(brand_type)
 
 
 def apply_design(design: dict | None) -> None:
@@ -1096,6 +1162,7 @@ def apply_design(design: dict | None) -> None:
         g["_SZ_TITLE"] = v
         g["_SZ_SUBTITLE"] = round(_DESIGN_DEFAULTS["_SZ_SUBTITLE"] * ratio)
         g["_SZ_HERO"] = round(_DESIGN_DEFAULTS["_SZ_HERO"] * ratio)
+        g["_SZ_COVER"] = round(_DESIGN_DEFAULTS["_SZ_COVER"] * ratio)
     if (v := num("size_body", 9, 24)) is not None:
         g["_SZ_BODY"] = v
     if (v := num("size_small", 8, 18)) is not None:
@@ -2798,7 +2865,7 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
     extracted figures/tables (assets/figures/, built by scripts/extract_figures.py)."""
     if not study_meta:
         return
-    index = config.figures_index()
+    index = config.figures_index(_BRAND)
     if not index:
         return
     entries = []  # (pmid, cite, entry)
@@ -2819,7 +2886,7 @@ def _add_appendix_slides(prs, master_index: int, study_meta: list[dict] | None) 
         "Appendix: the original charts and tables from the cited studies, reproduced unmodified "
         "for reference.")
     for pmid, cite, e in entries:
-        path = config.figure_path(pmid, e["file"])
+        path = config.figure_path(pmid, e["file"], _BRAND)
         if not path.exists():
             continue
         kind_label = "Table" if e.get("kind") == "table" else "Figure"
@@ -2838,6 +2905,12 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
     """Add ONE slide for a plan spec — the layout dispatch, extracted from render_deck so the
     loop can apply per-slide extras (speaker notes) to whatever slide any branch added."""
     layout_name = spec["layout"]
+    if _LIGHT_ONLY and not layout_name.startswith("custom_") and spec.get("background") != "light":
+        # A brand with no dark master renders everything on the light path, whatever the plan
+        # asked for. Done here, once, rather than in each of the 26 layouts that decide their own
+        # `light` flag. Copied, not mutated: the caller's plan is not ours to rewrite. Verbatim
+        # `custom_*` slides are exempt — they carry their own background and no light/dark concept.
+        spec = {**spec, "background": "light"}
     if layout_name.startswith("custom_"):   # a team slide the planner placed in the storyline
         c = custom_by_key.get(layout_name)
         if c:
@@ -2939,24 +3012,26 @@ def _render_deck_impl(plan: dict, study_meta: list[dict] | None,
                       layout_overrides: list[dict] | None,
                       benefits_slot: str | None,
                       source_appendix: bool,
-                      return_slide_map: bool) -> bytes | tuple[bytes, list[int | None]]:
+                      return_slide_map: bool,
+                      brand: str | None = None) -> bytes | tuple[bytes, list[int | None]]:
     """Unguarded implementation of render_deck. Called from render_deck within a lock.
 
     benefits_slot: where AKBM's verbatim benefits overview goes ("first"/"second"/"third"/
     "second_to_last"/"last"), or None to leave it out. source_appendix: append the picked studies'
     own charts and tables. Both were unconditional and invisible until the team's structure rules
     could decide them."""
-    apply_design(design)
+    apply_brand(brand)        # palette + typography for this brand; must precede apply_design
+    apply_design(design)      # ...which resets to the brand defaults apply_brand just set
     register_custom_photos(custom_photos)
     custom_by_key = {c["key"]: c for c in (custom_slides or [])}
     overrides_by_key = {o["layout"]: o for o in (layout_overrides or [])}
     placed_custom: set[str] = set()
     unnumbered: set[int] = set()   # slide ids that carry their own baked page number
 
-    prs = Presentation(str(config.template_path()))
+    prs = Presentation(str(config.template_path(_BRAND)))
     _delete_example_slides(prs)
-    catalog = config.catalog()
-    dark, light = _master_indices()
+    catalog = config.catalog(_BRAND)
+    dark, light = _master_indices(_BRAND)
 
     owners: list[int | None] = []  # parallel to prs.slides, kept in sync through every reorder
     for plan_idx, spec in enumerate(plan["slides"]):
@@ -3032,11 +3107,13 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
                 layout_overrides: list[dict] | None = None,
                 benefits_slot: str | None = "second_to_last",
                 source_appendix: bool = True,
-                return_slide_map: bool = False) -> bytes | tuple[bytes, list[int | None]]:
-    """Serialize render access: design, photos, icons and other rendering globals are
-    mutated at the start of each render. Without synchronization, concurrent renders
-    stomp each other's settings. The lock gates the entire render operation."""
+                return_slide_map: bool = False,
+                brand: str | None = None) -> bytes | tuple[bytes, list[int | None]]:
+    """Serialize render access: design, photos, icons, the brand palette and other rendering
+    globals are mutated at the start of each render. Without synchronization, concurrent
+    renders stomp each other's settings — including each other's BRAND, now that one process
+    serves several. The lock gates the entire render operation."""
     with _RENDER_LOCK:
         return _render_deck_impl(plan, study_meta, design, custom_slides, custom_photos,
                                  layout_overrides, benefits_slot, source_appendix,
-                                 return_slide_map)
+                                 return_slide_map, brand)

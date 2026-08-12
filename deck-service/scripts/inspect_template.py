@@ -6,10 +6,12 @@ the layout name, its master, and every placeholder's idx / type / name / dimensi
 and measure the text lengths of the bundled example slides per (layout, placeholder) so
 Step 3 can derive character limits empirically instead of guessing.
 
-    python scripts/inspect_template.py [path/to/template.pptx]
+    python scripts/inspect_template.py [path/to/template.pptx] [--brand <id>]
 
-Writes config/template_inventory.json (the renderer's ground truth) and prints a summary.
-Nothing here is Superba-specific: point it at any .pptx to inventory that template.
+Writes <brand>/config/template_inventory.json (the renderer's ground truth) and prints a
+summary. Nothing here is Superba-specific: point it at any .pptx to inventory that template.
+With --brand, both the template default and the output path come from that brand's directory,
+so `--brand revervia` alone is enough to (re)generate Revervia's inventory.
 """
 from __future__ import annotations
 
@@ -30,8 +32,10 @@ except Exception:  # noqa: BLE001
     pass
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+from src import config as _cfg  # noqa: E402  (needs ROOT on the path first)
+
 DEFAULT_TEMPLATE = ROOT / "brand_assets" / "05. Superba Brand Identity" / "Superba refresh power point template.pptx"
-OUT = ROOT / "config" / "template_inventory.json"
 
 A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 
@@ -117,7 +121,8 @@ def placeholder_rows(container, master_dims=None):
     return rows
 
 
-def main(template: Path) -> None:
+def main(template: Path, brand: str | None = None) -> None:
+    out = _cfg.config_dir(brand) / "template_inventory.json"
     prs = Presentation(str(template))
 
     master_index = {id(m): i for i, m in enumerate(prs.slide_masters)}
@@ -131,8 +136,18 @@ def main(template: Path) -> None:
         masters_out.append({"index": i, "name": m.name, "major_font": master_major_font(m),
                             "placeholders": placeholder_rows(m)})
 
-    superba_idx = next((mo["index"] for mo in masters_out
-                        if (mo["major_font"] or "").lower().startswith("exo")), 0)
+    # The brand's PRIMARY master — the one its own layouts are built on. Superba's template
+    # carries two (a dark master and its light twin, both on the theme major font) plus Office
+    # leftovers; picking "the master carrying the theme's major font" finds the real one in any
+    # template without naming a specific typeface. Falls back to #0, which is also the right
+    # answer for a single-master template like Revervia's.
+    theme_major = next((t["fonts"].get("major") for t in read_themes(template)
+                        if t["fonts"].get("major")), None)
+    primary_idx = 0
+    if theme_major:
+        primary_idx = next((mo["index"] for mo in masters_out
+                            if (mo["major_font"] or "").lower() == theme_major.lower()), 0)
+    superba_idx = primary_idx   # local name kept: it threads through the summary print below
 
     layouts_out = []
     for i, m in enumerate(prs.slide_masters):
@@ -140,7 +155,8 @@ def main(template: Path) -> None:
             layouts_out.append({
                 "name": layout.name,
                 "master_index": i,
-                "is_superba_master": i == superba_idx,
+                "is_primary_master": i == superba_idx,
+                "is_superba_master": i == superba_idx,   # legacy alias; see primary_master_index
                 "placeholders": placeholder_rows(layout, master_dims_by_idx.get(i)),
             })
 
@@ -166,6 +182,9 @@ def main(template: Path) -> None:
         "slide_size_emu": {"width": prs.slide_width, "height": prs.slide_height},
         "slide_size_in": {"width": _emu_to_in(prs.slide_width), "height": _emu_to_in(prs.slide_height)},
         "themes": read_themes(template),
+        # Brand-neutral name, plus the original as an alias so an inventory generated before
+        # multi-brand keeps working against readers that only know the old key.
+        "primary_master_index": superba_idx,
         "superba_master_index": superba_idx,
         "masters": masters_out,
         "layouts": layouts_out,
@@ -178,8 +197,8 @@ def main(template: Path) -> None:
         },
     }
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(inventory, indent=2, ensure_ascii=False), encoding="utf-8")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(inventory, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # ---- human summary ----
     print(f"Template: {template.name}")
@@ -190,21 +209,32 @@ def main(template: Path) -> None:
         keys = ["dk1", "lt1", "dk2", "lt2", "accent1", "accent2", "accent3", "accent4", "accent5", "accent6"]
         print("  colors: " + ", ".join(f"{k}={th['colors'].get(k)}" for k in keys if th['colors'].get(k)))
     print(f"\nMasters: " + "; ".join(f"#{mo['index']} font={mo['major_font']!r}" for mo in masters_out)
-          + f"  ->  Superba master = #{superba_idx}")
+          + f"  ->  primary master = #{superba_idx}")
     print(f"Example slides resolve to master(s): {dict(layout_master_usage)}")
     sup = [l for l in layouts_out if l["master_index"] == superba_idx]
-    print(f"\n{len(sup)} layouts on the Superba master (#{superba_idx}):")
+    print(f"\n{len(sup)} layouts on the primary master (#{superba_idx}):")
     for lay in sup:
         phs = ", ".join(f"[{p['idx']}]{p['type']}({p['width_in']}x{p['height_in']}\")" for p in lay["placeholders"])
         print(f"  - {lay['name']:<22}  ->  {phs or 'no placeholders'}")
     print(f"\nExample slides: {inventory['example_slides']['count']}. Layout usage:")
     for ln, c in inventory["example_slides"]["layout_usage"].items():
         print(f"  {c:>3}x  {ln}")
-    print(f"\nWrote {OUT.relative_to(ROOT)}")
+    print(f"\nWrote {out.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
-    tpl = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_TEMPLATE
+    argv = sys.argv[1:]
+    brand = None
+    if "--brand" in argv:
+        i = argv.index("--brand")
+        brand = argv[i + 1]
+        del argv[i:i + 2]
+    if argv:
+        tpl = Path(argv[0])
+    elif brand and brand != _cfg.DEFAULT_BRAND:
+        tpl = _cfg.template_path(brand)
+    else:
+        tpl = DEFAULT_TEMPLATE
     if not tpl.exists():
         sys.exit(f"Template not found: {tpl}")
-    main(tpl)
+    main(tpl, brand)

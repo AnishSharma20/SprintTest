@@ -31,10 +31,9 @@ except Exception:  # noqa: BLE001
     pass
 
 ROOT = Path(__file__).resolve().parent.parent
-INV = ROOT / "config" / "template_inventory.json"
-MANIFEST = ROOT / "config" / "asset_manifest.json"
-SCHEMA_OUT = ROOT / "config" / "slide_schema.json"
-CATALOG_OUT = ROOT / "config" / "layout_catalog.json"
+sys.path.insert(0, str(ROOT))
+from src import brand as _brand  # noqa: E402  (needs ROOT on the path first)
+from src import config as _cfg  # noqa: E402
 
 # Footer / date / slide-number placeholders — never filled, never removed (they inherit the
 # brand footer + slide number from the master). Everything else is content.
@@ -42,28 +41,61 @@ CHROME_IDX = {10, 11, 12}
 
 # The 10-12 LLM-facing layouts (justified in README): semantic name -> template layout + kind.
 # Kept deliberately small; more choices degrade the model's layout selection.
-LAYOUTS = {
-    "title":              {"tpl": "Title Slide 1",       "kind": "title"},
-    "section":            {"tpl": "Section Header 1",    "kind": "section"},
-    "agenda":             {"tpl": "Agenda 1",            "kind": "agenda"},
-    "highlight":          {"tpl": "Highlight Text",      "kind": "highlight"},
-    "title_only":         {"tpl": "Title Only 1",        "kind": "title_only"},
-    "text":               {"tpl": "Text Slide 1",        "kind": "text"},
-    "text_with_picture":  {"tpl": "Text With Picture 1", "kind": "text_picture"},
-    "picture_full":       {"tpl": "Text With Picture 3", "kind": "picture_full"},
-    "two_columns":        {"tpl": "Two Columns",         "kind": "columns", "n": 2},
-    "three_columns":      {"tpl": "Three Columns",       "kind": "columns", "n": 3},
-    "four_columns":       {"tpl": "Four Columns",        "kind": "columns", "n": 4},
+#
+# HAND-AUTHORED, PER BRAND, and the one part of the config that cannot be generated: only a
+# person can say which of a template's layouts is "the agenda". A brand simply omits any
+# semantic layout its template has no home for — the code-built layouts cover that ground, and
+# main() prints what was skipped rather than failing.
+LAYOUTS_BY_BRAND = {
+    "superba": {
+        "title":              {"tpl": "Title Slide 1",       "kind": "title"},
+        "section":            {"tpl": "Section Header 1",    "kind": "section"},
+        "agenda":             {"tpl": "Agenda 1",            "kind": "agenda"},
+        "highlight":          {"tpl": "Highlight Text",      "kind": "highlight"},
+        "title_only":         {"tpl": "Title Only 1",        "kind": "title_only"},
+        "text":               {"tpl": "Text Slide 1",        "kind": "text"},
+        "text_with_picture":  {"tpl": "Text With Picture 1", "kind": "text_picture"},
+        "picture_full":       {"tpl": "Text With Picture 3", "kind": "picture_full"},
+        "two_columns":        {"tpl": "Two Columns",         "kind": "columns", "n": 2},
+        "three_columns":      {"tpl": "Three Columns",       "kind": "columns", "n": 3},
+        "four_columns":       {"tpl": "Four Columns",        "kind": "columns", "n": 4},
+    },
+    # Revervia's template offers 6 near-identical cover variants and 8 section-break variants,
+    # but only four real content layouts — so it natively covers 7 of the 11 roles above. The
+    # gaps (two_columns, four_columns, picture_full) are exactly what the 31 code-built layouts
+    # already do better, so nothing is lost by leaving them unmapped.
+    # `agenda` and `text` deliberately share Content 3: it is the template's only plain
+    # title-plus-body layout, and an agenda IS a titled list. They stay separate semantic
+    # layouts because their kinds fill it differently.
+    "revervia": {
+        "title":              {"tpl": "Title 1",             "kind": "title"},
+        "section":            {"tpl": "Section Break 1",     "kind": "section"},
+        "agenda":             {"tpl": "Content 3",           "kind": "agenda"},
+        "highlight":          {"tpl": "Highlight 2",         "kind": "highlight"},
+        "title_only":         {"tpl": "Title Only",          "kind": "title_only"},
+        "text":               {"tpl": "Content 3",           "kind": "text"},
+        "text_with_picture":  {"tpl": "Content 4",           "kind": "text_picture"},
+        "three_columns":      {"tpl": "Content 1",           "kind": "columns", "n": 3},
+    },
 }
 
-FONT_PT = {  # forced explicitly by the renderer now (deck-wide scale: 60/32/16/14/12, agenda items
-             # a deliberate exception at 16 bold), not measured from the template's own inherited
-             # layout styles — used only to size char limits.
-    "cover_title": 60, "agenda_title": 60, "highlight_title": 60,
-    "content_title": 32, "section_title": 32,
-    "subtitle": 16, "heading": 16, "section_body": 16, "agenda_item": 16,
-    "body": 14, "object": 14, "small_body": 14,
-}
+def font_pt(brand: str | None = None) -> dict:
+    """Point size the RENDERER will actually force for each text role, per brand — used only to
+    size char limits. Not measured from the template's own inherited layout styles, because the
+    renderer overrides those (the deck-wide 3-size rule). Derived from the brand theme so the two
+    can never drift: a limit computed against the wrong size is either overflow or wasted space.
+
+    Superba resolves to 60/32/16/14, i.e. exactly the table this replaced."""
+    s = _brand.theme(brand)["sizes"]
+    return {
+        "cover_title": s["cover"], "agenda_title": s["cover"], "highlight_title": s["cover"],
+        "content_title": s["title"], "section_title": s["title"],
+        "subtitle": s["subtitle"], "heading": s["subtitle"], "section_body": s["subtitle"],
+        "agenda_item": s["subtitle"],
+        "body": s["body"], "object": s["body"], "small_body": s["body"],
+    }
+
+
 TITLE_FONT = {"title": "cover_title", "section": "section_title", "agenda": "agenda_title",
               "highlight": "highlight_title"}
 
@@ -84,8 +116,8 @@ def char_limit(w, h, pt, max_lines, fill=0.85, lo=16, hi=800, honor_height=True)
 TITLE_LINES = {"highlight": 4, "picture_title": 1, "picture_full": 3, "text_picture": 3}
 
 
-def load_superba_layouts(inv):
-    si = inv["superba_master_index"]
+def load_primary_layouts(inv):
+    si = inv.get("primary_master_index", inv.get("superba_master_index", 0))
     by_name = {}
     for lay in inv["layouts"]:
         if lay["master_index"] == si:
@@ -121,7 +153,7 @@ def classify(phs):
             "headings": headings, "bodies": bodies, "pics": pics}
 
 
-def build(sem, spec, layout, light_names):
+def build(sem, spec, layout, light_names, FONT_PT):
     kind = spec["kind"]
     c = classify(content_phs(layout))
     fields, limits, cat_fields = {}, {}, {}
@@ -236,20 +268,25 @@ def slide_conditional(sem, kind, limits, asset_ids, benefits, generic):
             "then": {"required": required, "properties": props}}
 
 
-def main():
-    inv = json.loads(INV.read_text(encoding="utf-8"))
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+def main(brand: str | None = None):
+    cfg_dir = _cfg.config_dir(brand)
+    inv = json.loads((cfg_dir / "template_inventory.json").read_text(encoding="utf-8"))
+    manifest = json.loads((cfg_dir / "asset_manifest.json").read_text(encoding="utf-8"))
+    LAYOUTS = LAYOUTS_BY_BRAND.get(brand or _cfg.DEFAULT_BRAND, {})
+    FONT_PT = font_pt(brand)
+    if not LAYOUTS:
+        sys.exit(f"No native layout map authored for brand {brand!r} — add one to LAYOUTS_BY_BRAND.")
     asset_ids = [a["id"] for a in manifest["assets"] if a.get("selectable") and a["kind"] == "photo"]
     benefits = manifest["benefits"] + ["none"]
     generic = manifest.get("generic_icons", []) + ["none"]
 
-    by_name, light_names = load_superba_layouts(inv)
+    by_name, light_names = load_primary_layouts(inv)
     catalog, conditionals, summary = {}, [], []
     for sem, spec in LAYOUTS.items():
         layout = by_name.get(spec["tpl"])
         if not layout:
             print(f"  !! template layout missing: {spec['tpl']} ({sem})"); continue
-        cat, limits = build(sem, spec, layout, light_names)
+        cat, limits = build(sem, spec, layout, light_names, FONT_PT)
         catalog[sem] = cat
         conditionals.append(slide_conditional(sem, spec["kind"], limits, asset_ids, benefits, generic))
         summary.append((sem, spec["tpl"], cat["backgrounds"], limits))
@@ -704,10 +741,11 @@ def main():
         },
     }
 
-    SCHEMA_OUT.write_text(json.dumps(schema, indent=2, ensure_ascii=False), encoding="utf-8")
-    CATALOG_OUT.write_text(json.dumps(catalog, indent=2, ensure_ascii=False), encoding="utf-8")
+    schema_out, catalog_out = cfg_dir / "slide_schema.json", cfg_dir / "layout_catalog.json"
+    schema_out.write_text(json.dumps(schema, indent=2, ensure_ascii=False), encoding="utf-8")
+    catalog_out.write_text(json.dumps(catalog, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    print(f"Wrote {SCHEMA_OUT.relative_to(ROOT)} + {CATALOG_OUT.relative_to(ROOT)}")
+    print(f"Wrote {schema_out.relative_to(ROOT)} + {catalog_out.relative_to(ROOT)}")
     print(f"{len(catalog)} layouts, asset_id enum has {len(asset_ids)} photos, {len(benefits)-1} benefits\n")
     for sem, tpl, bgs, lim in summary:
         pretty = ", ".join(f"{k}:{(v if not isinstance(v, dict) else v)}" for k, v in lim.items())
@@ -715,4 +753,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    argv = sys.argv[1:]
+    brand_arg = None
+    if "--brand" in argv:
+        brand_arg = argv[argv.index("--brand") + 1]
+    main(brand_arg)

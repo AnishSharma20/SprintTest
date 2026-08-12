@@ -2839,7 +2839,11 @@ def _stamp_footer(slide, n: int) -> None:
     if not parts:
         return
     text = "  ·  ".join(parts)
-    color = _TEAL if _slide_has_white_bg(slide) else _LTEAL
+    # _slide_has_white_bg only sees a background the RENDERER set on the slide. A light-only
+    # brand's pale background comes from its master instead, so without the first test the footer
+    # picks the pale tint and the page number is invisible on it (and fails that brand guide's own
+    # contrast matrix).
+    color = _TEAL if (_LIGHT_ONLY or _slide_has_white_bg(slide)) else _LTEAL
     w = 9.0 if len(parts) > 1 else 1.0   # a lone number keeps its original narrow box
     tb = slide.shapes.add_textbox(Inches((13.333 - w) / 2), Inches(7.06), Inches(w), Inches(0.3))
     tf = tb.text_frame

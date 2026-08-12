@@ -8,6 +8,7 @@
 // object = pure brand template defaults.
 
 import { supabase, dbNotConfigured } from "../../lib/supabase";
+import { brandFromBody, brandFromRequest } from "../../lib/brand";
 
 type Settings = Record<string, string | number | boolean>;
 
@@ -61,11 +62,26 @@ function clean(input: unknown): { settings?: Settings; error?: string } {
   return { settings: out };
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const sb = supabase();
   if (!sb) return Response.json({ configured: false, migrated: false, settings: {} });
 
-  const res = await sb.from("design_settings").select("*").eq("id", "default").maybeSingle();
+  // design_settings' primary key IS the brand: migration 0016 renames the lone 'default' row to
+  // 'superba', so no extra column is involved. Both ids are accepted because this code has to work
+  // BEFORE that migration is run as well as after — reading only 'superba' on an unmigrated
+  // database would silently report the team's design settings as empty, and every deck would
+  // quietly lose their overrides instead of showing a setup hint.
+  const brand = brandFromRequest(req);
+  const ids = brand === "superba" ? ["superba", "default"] : [brand];
+  // descending + limit(1): 'superba' sorts after 'default', so the migrated row wins when both
+  // exist. maybeSingle() alone would ERROR on two matching rows rather than picking one.
+  const res = await sb
+    .from("design_settings")
+    .select("*")
+    .in("id", ids)
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
   if (res.error) return Response.json({ configured: true, migrated: false, settings: {} });
 
   return Response.json({
@@ -82,14 +98,18 @@ export async function PUT(req: Request) {
   if (!sb) return dbNotConfigured();
 
   try {
-    const { settings, author } = (await req.json()) as { settings?: unknown; author?: string };
+    const body = (await req.json()) as { settings?: unknown; author?: string; brand?: string };
+    const { settings, author } = body;
     const cleaned = clean(settings ?? {});
     if (cleaned.error) return Response.json({ error: cleaned.error }, { status: 400 });
 
     const up = await sb
       .from("design_settings")
       .upsert({
-        id: "default",
+        // Writes always use the brand id. On an unmigrated database this inserts a second row
+        // ('superba' beside the legacy 'default'); the read above prefers 'superba', so the newer
+        // row wins and the legacy one is simply ignored rather than silently resurrected.
+        id: brandFromBody(req, body),
         settings: cleaned.settings,
         updated_by: (author ?? "").trim() || null,
         updated_at: new Date().toISOString(),

@@ -363,12 +363,125 @@ def photo_minimum(total: int, photo_level: str) -> int:
     return max(2, total // 4)
 
 
+# ---------------------------------------------------------------------------
+# The writing rules the team can SEE and EDIT (About page → Rules). These used to be buried in
+# the prompt below, so a request like "action titles must state a number" could only be changed
+# by editing this file. They are served to the app by GET /rules/builtin, stored as ordinary rule
+# rows, and passed back per generation as `managed_blocks`.
+#
+# Only interpolation-free blocks live here on purpose: STORYLINE and GO BEYOND THE FAMILIAR FEW
+# compute numbers from the requested deck length, so they stay code-managed rather than handing
+# the team text with placeholders in it. The CLAIM FIDELITY rules and the AI-generated disclaimer
+# are deliberately NOT here either — they are integrity and compliance guardrails, not style.
+# ---------------------------------------------------------------------------
+BUILTIN_BLOCKS: dict[str, tuple[str, str]] = {
+    "speaker_notes": (
+        "Speaker notes on every slide",
+        """SPEAKER NOTES (REQUIRED — every slide): give EVERY slide a `speaker_notes` field with a presenter-ready
+script of 3 to 6 spoken sentences: an opening line that states the slide's takeaway, a walk through the
+slide's content in the order a presenter would point at it, the heavy detail that backs it up (effect
+sizes, CI, p values, dose, study design, full citations — this is where that detail lives, never on the
+slide), and a one-line bridge into the next slide. Write them in the SAME language as the slide text, as
+speech a presenter can read aloud (no headings, no markup). Structural beats need notes too: on the cover
+a welcome plus the deck's core message, on the executive summary a spoken version of its 5 rows, on the
+agenda how the presentation will run, on a section divider what the coming section will show. The ONLY
+exceptions are verbatim slides (`ingredient` and team slides), which stay exactly {"layout":"<key>"}.""",
+    ),
+    "context_first": (
+        "Set the scene before the evidence",
+        """CONTEXT BEFORE EVIDENCE (match AKBM's own decks): do not leap from the agenda straight into the first
+specific data point. Spend the NEXT 1 to 2 slides setting the scene first — the underlying trend, need or
+problem this deck responds to (a market or consumer shift, a category challenge, why this matters now) —
+the way AKBM's own presentations open before turning to Superba specific proof. Good layouts for this beat:
+`serpentine`, `photo_stats`, `numbered_cards`, `stat`, `chart`, `implications`, `highlight`, or a `text`
+slide. Only after this scene setting should the deck turn to the first slide of product specific evidence.
+Keep full ACTION TITLE discipline even here — a real claim about the landscape (e.g. "Omega 3 deficiency
+now affects most adults"), never a bare topic label ("Omega 3 status").""",
+    ),
+    "action_titles": (
+        "Action titles, not topic labels",
+        """ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
+claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
+Index"). Titles render LARGE (32pt) — keep it to AT MOST 2 lines, roughly 50 characters, tight enough to
+usually fit on ONE line — a reader who skims only the titles should get the whole argument. Mirror this
+discipline across the deck.""",
+    ),
+    "text_density": (
+        "Write to the space available",
+        """TEXT DENSITY (write substantially, not sparsely): every body/detail field has a real character budget for
+its box — the [bracketed] limit printed next to each layout below is that budget, measured from the actual
+template geometry. Write to CLOSE TO that budget, not a small fraction of it: bring real supporting
+substance (a number, a mechanism, a comparison, a consequence), never a bare single clause when the box has
+room for three. AKBM's own decks read as dense and information rich; a slide whose text stops at a small
+fraction of its available room reads as thin next to them. This applies everywhere text has room to
+grow — column bodies, card bodies, item bodies — not only the `text` layout.""",
+    ),
+    "bullets": (
+        "Bullet discipline",
+        """BULLETS (discipline — a consulting deck is disciplined, not dense in COUNT, even though it is dense in
+TEXT per bullet — see TEXT DENSITY above):
+- At most 5 to 6 top-level bullets on a slide; if you have more, cap the CONTENT (split into two slides or
+  cut) rather than cramming — never shrink to fit.
+- Each bullet is ONE idea, about 20 to 28 words, on a single thought (no run-on sentences stitched with
+  commas) — long enough to carry real substance, not a terse fragment. At most 2 indent levels; prefer just
+  one.
+- PARALLEL PHRASING inside a group: every bullet in a list starts the same grammatical way (all verbs, or
+  all noun phrases) and has a similar length and shape, so the group reads as a set.
+- LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
+  SIMILAR number of lines (and similar bullet counts) so the slide looks balanced, not lopsided.""",
+    ),
+    "rhythm": (
+        "Alternate light and dark slides",
+        """BACKGROUND & RHYTHM: most slides default to the dark deep-sea master; set `background`:"light" on some
+slides for rhythm (light works well for airy statement/picture slides). Alternate — never many identical
+slides in a row.""",
+    ),
+    "citations": (
+        "How sources are cited",
+        """CITATIONS: where the source cites studies, carry them into `source_citations` and the detail into
+`speaker_notes`. LANGUAGE: if the user context specifies an output language, write ALL slide text in that
+language and set `language` accordingly; otherwise write in the SAME language as the source. Never invent
+facts not in the source.""",
+    ),
+    "text_style": (
+        "No dash characters in the text",
+        """TEXT STYLE (strict brand rule): do NOT use dash characters in any reader-facing text you write (titles,
+subtitles, bodies, items/bullets, column headings, captions, speaker_notes). Never an em-dash, an en-dash,
+or a hyphen between words; rephrase to avoid them (write "evidence based", "double blind", "Omega 3",
+"12 week") using commas, colons, parentheses or separate words. This applies ONLY to human-readable text,
+NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `asset_id` (leave those exact).""",
+    ),
+}
+
+
+def builtin_blocks() -> list[dict]:
+    """The editable writing rules, for the About page to seed and display."""
+    return [{"key": k, "label": lab, "text": t} for k, (lab, t) in BUILTIN_BLOCKS.items()]
+
+
 def build_system(length: str, tone: str, instructions: str = "", custom_rules: str = "",
                  disabled_layouts=None, custom_slides=None, custom_photos=None,
                  preferred_layouts=None, design=None, disabled_photos=None,
-                 preferred_photos=None, layout_overrides=None, required_slides=None) -> str:
+                 preferred_photos=None, layout_overrides=None, required_slides=None,
+                 managed_blocks: dict[str, str] | None = None) -> str:
     target = config.SLIDE_TARGETS.get(length, 9)
     disabled = sanitize_disabled(disabled_layouts, required_slides)
+    # managed_blocks None = the app never told us (unmigrated database or an older frontend), so
+    # every default applies exactly as before. A dict means the team owns these now: a key present
+    # carries their text, a key absent means they switched that rule off.
+    def _block(key: str) -> str:
+        if managed_blocks is None:
+            return BUILTIN_BLOCKS[key][1]
+        return managed_blocks.get(key, "")
+
+    b_speaker_notes = _block("speaker_notes")
+    b_context_first = _block("context_first")
+    b_action_titles = _block("action_titles")
+    b_text_density = _block("text_density")
+    b_bullets = _block("bullets")
+    b_rhythm = _block("rhythm")
+    b_citations = _block("citations")
+    b_text_style = _block("text_style")
     overridden = {o["layout"] for o in (layout_overrides or []) if isinstance(o, dict) and o.get("layout")}
     disabled_photos_set = sanitize_disabled_photos(disabled_photos)
     design = design or {}
@@ -539,50 +652,15 @@ the executive summary is turned off) MUST be an `agenda` slide listing the deck'
 exactly "Agenda"; put 3 to 7 short contents lines in `items` (each a concise section label, well within 26
 characters). They render as branded bullets on the standard Agenda layout.
 
-SPEAKER NOTES (REQUIRED — every slide): give EVERY slide a `speaker_notes` field with a presenter-ready
-script of 3 to 6 spoken sentences: an opening line that states the slide's takeaway, a walk through the
-slide's content in the order a presenter would point at it, the heavy detail that backs it up (effect
-sizes, CI, p values, dose, study design, full citations — this is where that detail lives, never on the
-slide), and a one-line bridge into the next slide. Write them in the SAME language as the slide text, as
-speech a presenter can read aloud (no headings, no markup). Structural beats need notes too: on the cover
-a welcome plus the deck's core message, on the executive summary a spoken version of its 5 rows, on the
-agenda how the presentation will run, on a section divider what the coming section will show. The ONLY
-exceptions are verbatim slides (`ingredient` and team slides), which stay exactly {{"layout":"<key>"}}.
+{b_speaker_notes}
 
-CONTEXT BEFORE EVIDENCE (match AKBM's own decks): do not leap from the agenda straight into the first
-specific data point. Spend the NEXT 1 to 2 slides setting the scene first — the underlying trend, need or
-problem this deck responds to (a market or consumer shift, a category challenge, why this matters now) —
-the way AKBM's own presentations open before turning to Superba specific proof. Good layouts for this beat:
-`serpentine`, `photo_stats`, `numbered_cards`, `stat`, `chart`, `implications`, `highlight`, or a `text`
-slide. Only after this scene setting should the deck turn to the first slide of product specific evidence.
-Keep full ACTION TITLE discipline even here — a real claim about the landscape (e.g. "Omega 3 deficiency
-now affects most adults"), never a bare topic label ("Omega 3 status").
+{b_context_first}
 
-ACTION TITLES (takeaway, not topic): every title STATES THE TAKEAWAY the slide proves as a full-sentence
-claim (e.g. "Superba raised the Omega-3 Index by 65% in 12 weeks"), never a bare topic label ("Omega-3
-Index"). Titles render LARGE (32pt) — keep it to AT MOST 2 lines, roughly 50 characters, tight enough to
-usually fit on ONE line — a reader who skims only the titles should get the whole argument. Mirror this
-discipline across the deck.
+{b_action_titles}
 
-TEXT DENSITY (write substantially, not sparsely): every body/detail field has a real character budget for
-its box — the [bracketed] limit printed next to each layout below is that budget, measured from the actual
-template geometry. Write to CLOSE TO that budget, not a small fraction of it: bring real supporting
-substance (a number, a mechanism, a comparison, a consequence), never a bare single clause when the box has
-room for three. AKBM's own decks read as dense and information rich; a slide whose text stops at a small
-fraction of its available room reads as thin next to them. This applies everywhere text has room to
-grow — column bodies, card bodies, item bodies — not only the `text` layout.
+{b_text_density}
 
-BULLETS (discipline — a consulting deck is disciplined, not dense in COUNT, even though it is dense in
-TEXT per bullet — see TEXT DENSITY above):
-- At most 5 to 6 top-level bullets on a slide; if you have more, cap the CONTENT (split into two slides or
-  cut) rather than cramming — never shrink to fit.
-- Each bullet is ONE idea, about 20 to 28 words, on a single thought (no run-on sentences stitched with
-  commas) — long enough to carry real substance, not a terse fragment. At most 2 indent levels; prefer just
-  one.
-- PARALLEL PHRASING inside a group: every bullet in a list starts the same grammatical way (all verbs, or
-  all noun phrases) and has a similar length and shape, so the group reads as a set.
-- LINE-COUNT BALANCE across parallel columns: when bullets run in side-by-side columns, give the columns a
-  SIMILAR number of lines (and similar bullet counts) so the slide looks balanced, not lopsided.
+{b_bullets}
 
 {ingredient_block}
 LAYOUTS — pick the layout whose SHAPE matches the point, not just text/columns. Reach for a structural
@@ -624,24 +702,15 @@ Put the explanation in the column body, not the heading.
 
 {photos_block}
 
-BACKGROUND & RHYTHM: most slides default to the dark deep-sea master; set `background`:"light" on some
-slides for rhythm (light works well for airy statement/picture slides). Alternate — never many identical
-slides in a row.
+{b_rhythm}
 
 {icons_block}
 
 TONE: {TONE_GUIDANCE.get(tone, TONE_GUIDANCE['balansert'])}
 
-CITATIONS: where the source cites studies, carry them into `source_citations` and the detail into
-`speaker_notes`. LANGUAGE: if the user context specifies an output language, write ALL slide text in that
-language and set `language` accordingly; otherwise write in the SAME language as the source. Never invent
-facts not in the source.
+{b_citations}
 
-TEXT STYLE (strict brand rule): do NOT use dash characters in any reader-facing text you write (titles,
-subtitles, bodies, items/bullets, column headings, captions, speaker_notes). Never an em-dash, an en-dash,
-or a hyphen between words; rephrase to avoid them (write "evidence based", "double blind", "Omega 3",
-"12 week") using commas, colons, parentheses or separate words. This applies ONLY to human-readable text,
-NOT to schema field values like `layout`, `benefit`, `icon`, `icon_generic` or `asset_id` (leave those exact).
+{b_text_style}
 
 {CLAIM_RULES}
 
@@ -742,7 +811,7 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
               disabled_layouts=None, custom_slides=None, custom_photos=None,
               preferred_layouts=None, design=None, disabled_photos=None,
               preferred_photos=None, layout_overrides=None, required_slides=None,
-              model: str | None = None) -> dict:
+              managed_blocks=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     disabled = sanitize_disabled(disabled_layouts, required_slides)
@@ -755,7 +824,7 @@ def plan_deck(client: anthropic.Anthropic, summary: str, *, length: str = "stand
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides), user, model,
+                                                    required_slides, managed_blocks), user, model,
                                max_tokens, disabled, extra, photo_ids, disabled_photo_ids,
                                slot_entries(layout_overrides, custom_slides)))
 
@@ -765,7 +834,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                 custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                 custom_photos=None, preferred_layouts=None, design=None,
                 disabled_photos=None, preferred_photos=None, layout_overrides=None,
-                required_slides=None, model: str | None = None) -> dict:
+                required_slides=None, managed_blocks=None, model: str | None = None) -> dict:
     target = config.SLIDE_TARGETS.get(length, 9)
     max_tokens = _max_tokens(target)
     # Three different kinds of feedback need three different repair instructions. Schema errors name
@@ -866,7 +935,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides), user, model,
+                                                    required_slides, managed_blocks), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
                                disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))
 
@@ -876,7 +945,8 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
                        custom_rules: str = "", disabled_layouts=None, custom_slides=None,
                        custom_photos=None, preferred_layouts=None, design=None,
                        disabled_photos=None, preferred_photos=None, layout_overrides=None,
-                       required_slides=None, model: str | None = None) -> dict:
+                       required_slides=None, managed_blocks=None,
+                       model: str | None = None) -> dict:
     """Fix the specific slides a VISUAL QA pass flagged (overflow / collision / truncation /
     mismatched icon). Same discipline as revise_plan: touch only the listed slides."""
     target = config.SLIDE_TARGETS.get(length, 9)
@@ -909,6 +979,6 @@ def revise_plan_visual(client: anthropic.Anthropic, summary: str, prior: dict, f
                                                     disabled, custom_slides, custom_photos,
                                                     preferred_layouts, design, disabled_photos,
                                                     preferred_photos, layout_overrides,
-                                                    required_slides), user, model,
+                                                    required_slides, managed_blocks), user, model,
                                max_tokens, disabled, extra, custom_photo_ids(custom_photos),
                                disabled_photo_ids, slot_entries(layout_overrides, custom_slides)))

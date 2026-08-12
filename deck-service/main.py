@@ -357,7 +357,8 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
              preferred_photos: str = "",
              color_theme: str = "",
              layout_overrides_meta: str = "",
-             structure_rules: str = "") -> None:
+             structure_rules: str = "",
+             managed_blocks: str = "") -> None:
     try:
         client = anthropic.Anthropic(api_key=key)
 
@@ -451,6 +452,13 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
         parsed_overrides = _parse_layout_overrides(layout_overrides_meta, custom_file_blobs or {})
         # None (field absent) = no answer, keep the built in shape; [] = the team removed every
         # structure rule and means it. Malformed input is treated as no answer.
+        parsed_blocks = None
+        if managed_blocks.strip():
+            try:
+                loaded = json.loads(managed_blocks)
+                parsed_blocks = loaded if isinstance(loaded, dict) else None
+            except Exception:  # noqa: BLE001 — malformed input falls back to the defaults
+                parsed_blocks = None
         parsed_structure = None
         if structure_rules.strip():
             try:
@@ -583,6 +591,7 @@ async def create_job(
     color_theme: str = Form(default=""),
     layout_overrides_meta: str = Form(default=""),
     structure_rules: str = Form(default=""),
+    managed_blocks: str = Form(default=""),
     x_deck_token: str | None = Header(default=None),
 ):
     """Start a deck-generation job in the background and return its id immediately.
@@ -612,6 +621,9 @@ async def create_job(
     from every asset_id enum so the model cannot pick them; deck only.
     preferred_photos: comma separated photo ids (built-in or team_photo_<id>) starred as house
     favourites — a soft planner preference among equally fitting photos; deck only.
+    managed_blocks: JSON object {block_key: text} of the WRITING rules the team now owns (see
+    GET /rules/builtin). Absent = every built in default applies; a key missing from a supplied
+    object means the team switched that rule off; deck only.
     structure_rules: JSON array of the About page's STRUCTURE rules ({slide, action, position}) —
     which slides every deck must have and where they sit. Empty keeps the built in shape (cover
     first, executive summary second, agenda third); deck only.
@@ -647,7 +659,7 @@ async def create_job(
                            design_settings, custom_slides_meta, custom_blobs,
                            custom_photos_meta, photo_blobs, preferred_layouts,
                            disabled_photos, preferred_photos, color_theme,
-                           layout_overrides_meta, structure_rules),
+                           layout_overrides_meta, structure_rules, managed_blocks),
                      daemon=True).start()
     return {"job_id": job_id}
 
@@ -729,6 +741,19 @@ def _inspect_previews(data: bytes) -> list[dict]:
         im.save(buf, "JPEG", quality=82)
         out.append({"index": i, "preview_b64": base64.b64encode(buf.getvalue()).decode("ascii")})
     return out
+
+
+@app.get("/rules/builtin")
+def rules_builtin(x_deck_token: str | None = Header(default=None)):
+    """The WRITING rules the team can see and edit, with the exact text the planner uses today.
+    The About page seeds these as ordinary rule rows on first view, so what used to be buried in
+    the prompt becomes something the team can reword or switch off. Read only: this endpoint never
+    changes anything, it just says what the built in defaults are."""
+    expected = os.environ.get("DECK_SERVICE_TOKEN")
+    if expected and x_deck_token != expected:
+        return JSONResponse({"feil": "Unauthorized."}, status_code=401)
+    from src.planner import builtin_blocks
+    return {"blocks": builtin_blocks()}
 
 
 @app.post("/slides/inspect")

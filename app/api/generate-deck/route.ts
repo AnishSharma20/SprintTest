@@ -63,6 +63,7 @@ export async function POST(req: Request) {
       "custom_photos_meta",
       "layout_overrides_meta",
       "structure_rules",
+      "managed_blocks",
       "color_theme",
     ] as const) {
       const v = incoming.get(key);

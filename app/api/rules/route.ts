@@ -37,10 +37,14 @@ export async function GET() {
   // no row to inspect, and guessing "migrated" there let the page offer a slide-rule builder that
   // could only fail on save.
   const probe = await sb.from("generation_rules").select("slide_key").limit(1);
+  const builtinProbe = await sb.from("generation_rules").select("builtin_key").limit(1);
   return Response.json({
     configured: true,
     migrated: true,
     structureMigrated: !probe.error,
+    // Whether the team OWNS the built in writing rules yet (migration 0014 + the one time import
+    // in /api/rules/builtin). Until then the deck service keeps using its own defaults.
+    builtinManaged: !builtinProbe.error,
     rules: res.data,
   });
 }

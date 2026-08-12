@@ -20,7 +20,9 @@ type Rule = {
   /** Set = a STRUCTURE rule the pipeline applies (which slide, and what to guarantee about it);
    * null = an ordinary writing rule that is checked against the finished deck instead. */
   slide_key?: string | null;
-  action?: "position" | "always_include" | null;
+  /** Set = the team's copy of a rule that used to live inside the AI's instructions. */
+  builtin_key?: string | null;
+  action?: "position" | "always_include" | "speaker_notes" | "no_dashes" | "source_appendix" | null;
   position?: "first" | "second" | "third" | "last" | "second_to_last" | null;
   created_by: string | null;
   created_at: string;
@@ -331,6 +333,20 @@ export default function AboutV2Page() {
       setRulesConfigured(r.configured !== false);
       setRulesMigrated(r.migrated !== false);
       setStructureMigrated(r.migrated !== false && r.structureMigrated !== false);
+      // One time import of the writing rules that used to be buried in the AI's instructions, so
+      // they show up here as ordinary editable rules. Only ever creates missing rows.
+      if (r.builtinManaged) {
+        try {
+          const seeded = await (await fetch("/api/rules/builtin")).json();
+          if (seeded.seeded) {
+            const again = await (await fetch("/api/rules")).json();
+            setRules(again.rules ?? r.rules ?? []);
+            return;
+          }
+        } catch {
+          /* the defaults keep applying until the import succeeds */
+        }
+      }
       setRules(r.rules ?? []);
     } catch {
       setRulesConfigured(false);
@@ -1603,6 +1619,14 @@ export default function AboutV2Page() {
                 <span className="font-semibold">Design</span> instead — those are written by the code and
                 the AI is never asked.
               </p>
+              <p className="mt-1.5 max-w-3xl text-xs text-zinc-500">
+                Rules marked <span className="font-semibold">Built in</span> are the tool&rsquo;s own,
+                imported here so you can see them: reword one, switch it off, or delete it to drop that
+                instruction entirely. Rules marked <span className="font-semibold">Enforced</span> are
+                applied by the code rather than asked of the AI, so they cannot be missed. A few things
+                stay locked on purpose and are not listed: never stating a fact the source does not
+                support, the AI generated disclaimer, and each text box&rsquo;s measured character limit.
+              </p>
 
               {!canEdit ? (
                 <p className="mt-4 rounded-[4px] border border-dashed border-[#C2D9E3] bg-[#F7FAFC] p-4 text-sm text-zinc-500">
@@ -1672,7 +1696,15 @@ export default function AboutV2Page() {
                               {/* A rule the pipeline applies is a guarantee; the rest are checked
                                   against the finished deck. Saying which is which was the whole
                                   point of this pass. */}
-                              <Strength kind={r.slide_key && r.action ? "enforced" : "checked"} />
+                              <Strength kind={r.action ? "enforced" : "checked"} />
+                              {r.builtin_key && (
+                                <span
+                                  className={PILL_ASIS}
+                                  title="One of the tool's own rules, now yours: reword it, switch it off, or delete it to drop it entirely."
+                                >
+                                  Built in
+                                </span>
+                              )}
                             </div>
                             <p className="mt-1 text-[11px] text-zinc-400">
                               {r.slide_key && r.action ? "Applied by the code · " : ""}

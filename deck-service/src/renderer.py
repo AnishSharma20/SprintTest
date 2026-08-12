@@ -21,6 +21,7 @@ import math
 import re
 import sys
 import tempfile
+import threading
 from pathlib import Path
 
 from pptx import Presentation
@@ -37,6 +38,10 @@ from pptx.util import Emu, Inches, Pt
 from . import config
 
 CHROME_IDX = {10, 11, 12}   # date / footer / slide-number — never fill, never remove
+
+# Serialize render_deck access: the renderer modifies module-level globals (font, size, margins,
+# custom photos) at call time. Without a lock, concurrent renders stomp each other's settings.
+_RENDER_LOCK = threading.Lock()
 
 # trailing connector words a truncation must not end on (English + Norwegian)
 _ORPHANS = {"and", "og", "of", "the", "to", "for", "with", "og", "&", "i", "på", "med", "av"}
@@ -2927,29 +2932,20 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
         _set_bg(slide, _LTEAL)
 
 
-def render_deck(plan: dict, study_meta: list[dict] | None = None,
-                design: dict | None = None,
-                custom_slides: list[dict] | None = None,
-                custom_photos: list[dict] | None = None,
-                layout_overrides: list[dict] | None = None,
-                return_slide_map: bool = False) -> bytes | tuple[bytes, list[int | None]]:
-    """design: the About page's deterministic overrides (fonts/sizes/spacing/margins/footer) —
-    applied (or reset to brand defaults when empty) before anything is drawn.
-    custom_slides: the team's own verbatim slides, each {key, name, mode, bytes, index, png}.
-    mode 'auto' slides appear where the PLAN placed them (layout == their key); mode 'always'
-    slides are appended after the content (before the benefits overview) on every deck.
-    custom_photos: the team's uploaded photo library, each {key, bytes} — resolvable wherever
-    the plan sets an asset_id, exactly like a built-in library photo.
-    layout_overrides: the About page's design overrides, each {layout, bytes, index, slots,
-    png} — whenever the plan picks that layout key, the team's redesigned slide is spliced in
-    and its measured text slots are refilled from the plan's `slots` dict (see
-    _add_override_slide); the layout's normal fill function never runs.
-    return_slide_map: when True, also return a list (one entry per FINAL rendered slide, in
-    order) of the plan['slides'] index it came from, or None for a slide with no plan entry
-    (the benefits overview, an "always" team slide, an appendix figure/table) — the benefits
-    splice reorders slides after they're added, and an unresolved custom_ layout key adds none
-    at all, so a caller can never assume rendered-slide index == plan-slide index without this.
-    Default False keeps the plain `bytes` return every existing caller relies on."""
+def _render_deck_impl(plan: dict, study_meta: list[dict] | None,
+                      design: dict | None,
+                      custom_slides: list[dict] | None,
+                      custom_photos: list[dict] | None,
+                      layout_overrides: list[dict] | None,
+                      benefits_slot: str | None,
+                      source_appendix: bool,
+                      return_slide_map: bool) -> bytes | tuple[bytes, list[int | None]]:
+    """Unguarded implementation of render_deck. Called from render_deck within a lock.
+
+    benefits_slot: where AKBM's verbatim benefits overview goes ("first"/"second"/"third"/
+    "second_to_last"/"last"), or None to leave it out. source_appendix: append the picked studies'
+    own charts and tables. Both were unconditional and invisible until the team's structure rules
+    could decide them."""
     apply_design(design)
     register_custom_photos(custom_photos)
     custom_by_key = {c["key"]: c for c in (custom_slides or [])}
@@ -2994,23 +2990,27 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
 
     # AKBM's standard "Proven Health Benefits" overview, spliced in verbatim as the second-to-last
     # slide of every deck (appended, then moved into place).
-    _add_benefits_slide(prs, light)
-    owners.append(None)
-    sldIdLst = prs.slides._sldIdLst
-    ids = list(sldIdLst)
-    benefits = ids[-1]
-    sldIdLst.remove(benefits)
-    sldIdLst.insert(max(1, len(sldIdLst) - 1), benefits)
-    ben_owner = owners.pop()                              # mirrors sldIdLst.remove(benefits) —
-    owners.insert(max(1, len(owners) - 1), ben_owner)      # benefits was owners' own last entry
+    if benefits_slot:
+        _add_benefits_slide(prs, light)
+        owners.append(None)
+        sldIdLst = prs.slides._sldIdLst
+        benefits = list(sldIdLst)[-1]
+        n = len(sldIdLst)
+        at = {"first": 0, "second": min(1, n - 1), "third": min(2, n - 1),
+              "last": n - 1}.get(benefits_slot, max(1, n - 1))   # default: second to last
+        sldIdLst.remove(benefits)
+        sldIdLst.insert(at, benefits)
+        ben_owner = owners.pop()                          # mirrors sldIdLst.remove(benefits) —
+        owners.insert(at, ben_owner)                      # benefits was owners' own last entry
 
     # The reviewer's own source charts/tables, appended after everything else (added here, so it
     # naturally lands after the just-reordered benefits slide, and picks up page numbers below like
     # any other slide). Dark master, like every other synthetic content slide — the white margin
     # baked into each extracted image already gives it a clean card-like frame against that background.
-    before = len(prs.slides._sldIdLst)
-    _add_appendix_slides(prs, dark, study_meta)
-    owners.extend([None] * (len(prs.slides._sldIdLst) - before))
+    if source_appendix:
+        before = len(prs.slides._sldIdLst)
+        _add_appendix_slides(prs, dark, study_meta)
+        owners.extend([None] * (len(prs.slides._sldIdLst) - before))
 
     # Footer line (page number / footer text / date) in a fixed position on every slide (cover
     # excluded; team slides carry their own baked chrome and would double-print), in final order.
@@ -3023,3 +3023,20 @@ def render_deck(plan: dict, study_meta: list[dict] | None = None,
     prs.save(buf)
     data = buf.getvalue()
     return (data, owners) if return_slide_map else data
+
+
+def render_deck(plan: dict, study_meta: list[dict] | None = None,
+                design: dict | None = None,
+                custom_slides: list[dict] | None = None,
+                custom_photos: list[dict] | None = None,
+                layout_overrides: list[dict] | None = None,
+                benefits_slot: str | None = "second_to_last",
+                source_appendix: bool = True,
+                return_slide_map: bool = False) -> bytes | tuple[bytes, list[int | None]]:
+    """Serialize render access: design, photos, icons and other rendering globals are
+    mutated at the start of each render. Without synchronization, concurrent renders
+    stomp each other's settings. The lock gates the entire render operation."""
+    with _RENDER_LOCK:
+        return _render_deck_impl(plan, study_meta, design, custom_slides, custom_photos,
+                                 layout_overrides, benefits_slot, source_appendix,
+                                 return_slide_map)

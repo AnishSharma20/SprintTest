@@ -43,6 +43,9 @@ export type DeckSettings = {
   /** JSON array of the team's STRUCTURE rules ({slide, action, position}) — which slides every
    * deck must have and where they sit. "" keeps the deck service's built in shape. */
   structureRules: string;
+  /** JSON object {block_key: text} of the built in WRITING rules the team now owns. "" means they
+   * were never imported, and the deck service keeps using its own defaults. */
+  managedBlocks: string;
   disabledLayouts: string;
   preferredLayouts: string;
   disabledPhotos: string;
@@ -71,6 +74,7 @@ export function b64ToBlob(b64: string): Blob {
 export function appendDeckSettings(form: FormData, s: DeckSettings): void {
   if (s.customRules) form.append("custom_rules", s.customRules);
   if (s.structureRules) form.append("structure_rules", s.structureRules);
+  if (s.managedBlocks) form.append("managed_blocks", s.managedBlocks);
   if (s.disabledLayouts) form.append("disabled_layouts", s.disabledLayouts);
   if (s.preferredLayouts) form.append("preferred_layouts", s.preferredLayouts);
   if (s.disabledPhotos) form.append("disabled_photos", s.disabledPhotos);
@@ -102,6 +106,7 @@ export function appendDeckSettings(form: FormData, s: DeckSettings): void {
 export async function deckGenerationSettings(): Promise<DeckSettings> {
   let customRules = "";
   let structureRules = "";
+  let managedBlocks = "";
   let disabledLayouts = "";
   let preferredLayouts = "";
   let disabledPhotos = "";
@@ -113,13 +118,26 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   try {
     const r = await (await fetch("/api/rules")).json();
     const active = (r.rules ?? []).filter((x: { enabled?: boolean }) => x.enabled);
-    type RuleRow = { text: string; slide_key?: string | null; action?: string | null; position?: string | null };
-    // A rule carrying a slide_key is STRUCTURAL — the pipeline applies it, so it travels as data
-    // rather than prose. The rest are writing rules, numbered so the planner can follow several
-    // without merging them into one.
-    const structural = (active as RuleRow[]).filter((x) => x.slide_key && x.action);
-    const writing = (active as RuleRow[]).filter((x) => !x.slide_key || !x.action);
-    customRules = writing.map((x, i) => `${i + 1}. ${x.text.trim()}`).join("\n");
+    type RuleRow = {
+      text: string;
+      slide_key?: string | null;
+      action?: string | null;
+      position?: string | null;
+      builtin_key?: string | null;
+    };
+    // Three kinds, and they travel differently: a STRUCTURE rule is data the pipeline applies
+    // (some are deck wide and carry no slide), the team's copies of the BUILT IN writing rules
+    // replace the prompt's own text, and rules they wrote themselves go as numbered prose.
+    const structural = (active as RuleRow[]).filter((x) => x.action);
+    const builtin = (active as RuleRow[]).filter((x) => !x.action && x.builtin_key);
+    const own = (active as RuleRow[]).filter((x) => !x.action && !x.builtin_key);
+    customRules = own.map((x, i) => `${i + 1}. ${x.text.trim()}`).join("\n");
+    // Sent whenever the column exists, so a key missing from the object reads as "switched off"
+    // rather than "never imported" — that is what lets a deleted rule actually disappear.
+    if (r.builtinManaged)
+      managedBlocks = JSON.stringify(
+        Object.fromEntries(builtin.map((x) => [x.builtin_key as string, x.text]))
+      );
     // Sent whenever the structural columns exist — INCLUDING as "[]". An empty list is a real
     // answer ("the team removed every structure rule") and must not be mistaken for "no answer",
     // which is what makes the deck service fall back to its built in shape.
@@ -246,6 +264,7 @@ export async function deckGenerationSettings(): Promise<DeckSettings> {
   return {
     customRules,
     structureRules,
+    managedBlocks,
     disabledLayouts,
     preferredLayouts,
     disabledPhotos,

@@ -49,22 +49,38 @@ def _strip_text(s: str) -> str:
 # ---------------------------------------------------------------------------
 _POSITION_SLOTS = ("first", "second", "third", "last", "second_to_last")
 _COMPOSABLE = ("title", "exec_summary", "agenda")
+_SLIDE_ACTIONS = ("position", "always_include")
+# Deck-wide guarantees that are not about one slide's place: each was hardcoded and invisible
+# until now, and each is a rule the team can switch off. `speaker_notes` and `no_dashes` are also
+# asked of the model in the prompt, so deleting the rule drops both the ask and the backstop.
+_DECK_ACTIONS = ("speaker_notes", "no_dashes", "source_appendix")
 _DEFAULT_STRUCTURE = [
     {"slide": "title", "action": "position", "position": "first"},
     {"slide": "exec_summary", "action": "position", "position": "second"},
     {"slide": "agenda", "action": "position", "position": "third"},
+    {"slide": "benefits_verbatim", "action": "position", "position": "second_to_last"},
+    {"slide": None, "action": "speaker_notes", "position": None},
+    {"slide": None, "action": "no_dashes", "position": None},
+    {"slide": None, "action": "source_appendix", "position": None},
 ]
 
 
 def sanitize_structure(structure_rules) -> list[dict]:
-    """Only well-formed rules, and never two rules fighting over one slide (first wins)."""
+    """Only well-formed rules, and never two rules fighting over the same slide or the same
+    deck-wide guarantee (first wins)."""
     out, seen = [], set()
     for r in structure_rules or []:
         if not isinstance(r, dict):
             continue
         slide = str(r.get("slide") or "").strip()
         action = str(r.get("action") or "").strip()
-        if not slide or slide in seen or action not in ("position", "always_include"):
+        if action in _DECK_ACTIONS:
+            if action in seen:
+                continue
+            seen.add(action)
+            out.append({"slide": None, "action": action, "position": None})
+            continue
+        if not slide or slide in seen or action not in _SLIDE_ACTIONS:
             continue
         pos = str(r.get("position") or "").strip()
         if action == "position" and pos not in _POSITION_SLOTS:
@@ -74,9 +90,18 @@ def sanitize_structure(structure_rules) -> list[dict]:
     return out
 
 
+def _has_action(rules: list[dict] | None, action: str) -> bool:
+    """Is this deck-wide guarantee in force? None (no rules reached us) keeps the old always-on
+    behaviour, so an unmigrated database loses nothing."""
+    if rules is None:
+        return True
+    return any(r.get("action") == action for r in rules)
+
+
 def _required_slides(rules: list[dict]) -> set[str]:
-    """Slides a rule says every deck must have — a position rule implies the slide is wanted."""
-    return {r["slide"] for r in rules}
+    """Slides a rule says every deck must have — a position rule implies the slide is wanted.
+    Deck-wide rules (speaker notes, no dashes, appendix) carry no slide and are skipped."""
+    return {r["slide"] for r in rules if r.get("slide")}
 
 
 def _place(slides: list[dict], index: int, slot: str) -> int:
@@ -354,7 +379,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                  custom_rules="", disabled_layouts=None, design=None, custom_slides=None,
                  custom_photos=None, preferred_layouts=None, disabled_photos=None,
                  preferred_photos=None, layout_overrides=None, required_slides=None,
-                 slide_map=None):
+                 benefits_slot="second_to_last", source_appendix=True, slide_map=None):
     """Polished mode: render → look at the slides → fix flagged ones → re-render. Bounded to
     DECK_QA_ROUNDS passes (default 1). Never fails the deck — a gate error or a revision that
     breaks validation keeps the pre-gate deck.
@@ -435,6 +460,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
                                                design=design, custom_slides=custom_slides,
                                                custom_photos=custom_photos,
                                                layout_overrides=layout_overrides,
+                                               benefits_slot=benefits_slot,
+                                               source_appendix=source_appendix,
                                                return_slide_map=True)
     return pptx, plan
 
@@ -452,7 +479,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
              preferred_photos: list[str] | None = None,
              color_theme: str | None = None,
              layout_overrides: list[dict] | None = None,
-             structure_rules: list[dict] | None = None) -> dict:
+             structure_rules: list[dict] | None = None,
+             managed_blocks: dict[str, str] | None = None) -> dict:
     """design / custom_slides / custom_photos / preferred_layouts: the About page's levers —
     deterministic design overrides, the team's verbatim slides ({key, name, description, mode,
     bytes, index, png} each), the team's photo library ({key, name, description, bytes} each)
@@ -464,7 +492,9 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     design is spliced verbatim while the planner writes fresh per-slot text on every use.
     structure_rules: the deck's SHAPE as the team set it on the About page ({slide, action,
     position} each) — which slides every deck must have and where they sit. None/[] keeps the
-    old hardcoded shape (cover first, summary second, agenda third)."""
+    old hardcoded shape (cover first, summary second, agenda third).
+    managed_blocks: the writing rules the team now owns ({key: text}) — see
+    planner.BUILTIN_BLOCKS. None means they never reached us and every default applies."""
     def _p(pct, step):
         if on_progress:
             try:
@@ -493,7 +523,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              custom_slides=custom_slides, custom_photos=custom_photos,
                              preferred_layouts=preferred_layouts, design=design,
                              disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                             layout_overrides=layout_overrides, required_slides=required)
+                             layout_overrides=layout_overrides, required_slides=required,
+                             managed_blocks=managed_blocks)
 
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
@@ -506,7 +537,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    custom_photos=custom_photos,
                                    preferred_layouts=preferred_layouts, design=design,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
-                                   layout_overrides=layout_overrides, required_slides=required)
+                                   layout_overrides=layout_overrides, required_slides=required,
+                                   managed_blocks=managed_blocks)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts)
@@ -540,7 +572,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                             disabled_photos=disabled_photos,
                                             preferred_photos=preferred_photos,
                                             layout_overrides=layout_overrides,
-                                            required_slides=required)
+                                            required_slides=required,
+                                            managed_blocks=managed_blocks)
             errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
                                           photo_level=photo_level, disabled_layouts=disabled_layouts,
                                           layout_overrides=slot_layouts)
@@ -556,12 +589,20 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta, required)
     plan = _ensure_agenda(plan, required)
     plan = _apply_structure(plan, structure)                # pin each slide to its slot
-    plan = _ensure_notes(plan)                              # guarantee speaker notes on every slide
+    if _has_action(structure, "speaker_notes"):
+        plan = _ensure_notes(plan)                          # backstop the every-slide notes rule
     plan = _apply_color_theme(plan, color_theme, override_keys)  # deck-wide theme override, if requested
-    plan = _strip_dashes_plan(plan)  # enforce the no-dash brand rule deterministically
+    if _has_action(structure, "no_dashes"):
+        plan = _strip_dashes_plan(plan)   # the no-dash brand rule, applied deterministically
+    benefits_slot = next((r["position"] for r in structure
+                          if r.get("slide") == "benefits_verbatim" and r["action"] == "position"),
+                         "second_to_last" if structure_rules is None else None)
+    source_appendix = _has_action(structure, "source_appendix")
     pptx, slide_map = renderer.render_deck(plan, study_meta=study_meta, design=design,
                                            custom_slides=custom_slides, custom_photos=custom_photos,
                                            layout_overrides=layout_overrides,
+                                           benefits_slot=benefits_slot,
+                                           source_appendix=source_appendix,
                                            return_slide_map=True)
 
     # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
@@ -574,6 +615,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                   preferred_layouts=preferred_layouts,
                                   disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                   layout_overrides=layout_overrides, required_slides=required,
+                                  benefits_slot=benefits_slot, source_appendix=source_appendix,
                                   slide_map=slide_map)
     else:
         # Fast mode never runs the vision gate (no LLM/rasteriser call), but the deterministic

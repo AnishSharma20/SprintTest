@@ -15,7 +15,7 @@ import {
   recordAssetClaims,
   type ApprovedClaim,
 } from "../claims-source";
-import { appendDeckSettings, deckGenerationSettings } from "../generation-settings";
+import { appendDeckSettings, deckGenerationSettings, tooLargeMessage } from "../generation-settings";
 import { BRAND_FEATURES, PRODUCTS, type ProductId } from "../products";
 import { ProductLogo } from "../product-logo";
 
@@ -461,6 +461,12 @@ export default function ContentGenerator() {
 
   async function kjorEn(type: ContentType, kilder: File[], claimIds: string[], studyMeta: { pmid: string; cite: string }[]) {
     try {
+      // Checked before anything is sent: over the proxy's body ceiling the request dies at the
+      // gateway as a bare "Server responded 413", which tells the user neither the limit nor which
+      // file broke it. tooLargeMessage says both.
+      const tooLarge = tooLargeMessage(kilder);
+      if (tooLarge) throw new Error(tooLarge);
+
       const form = new FormData();
       kilder.forEach((f) => form.append("filer", f));
       form.append("lengde", lengde);
@@ -477,7 +483,10 @@ export default function ContentGenerator() {
       // splice Superba's uploaded team slides and photos into its deck. Skipped until those tables
       // carry a brand column.
       if (type === "deck" && BRAND_FEATURES[produkt].teamSettings) {
-        appendDeckSettings(form, await deckGenerationSettings(produkt));
+        // The library gets only the room the user's own sources leave, so a big source file
+        // trims the slide library rather than pushing the whole request over the ceiling.
+        const uploaded = kilder.reduce((n, f) => n + f.size, 0);
+        appendDeckSettings(form, await deckGenerationSettings(produkt, uploaded));
       }
 
       const start = await fetch("/api/generate-deck", { method: "POST", body: form });

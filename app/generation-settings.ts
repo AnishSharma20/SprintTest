@@ -57,9 +57,32 @@ export type DeckSettings = {
   layoutOverrides: LayoutOverridePayload;
 };
 
-// The Vercel proxy in front of the deck service caps request bodies around 4.5 MB, and the job
-// already carries the source files — keep the team-slide payload comfortably under that.
-const MAX_CUSTOM_BYTES = 3_500_000;
+// The Vercel proxy in front of the deck service caps request bodies around 4.5 MB. ONE budget,
+// shared by the team slides, the team photos and the design overrides, because they all ride in
+// the SAME request: they used to get 3.5 MB each, so a well stocked library could send 10.5 MB at
+// a 4.5 MB ceiling and the whole job came back as a bare "Server responded 413" — which is what a
+// client hit. Multipart framing and the text fields need a little room too, hence 4.0 not 4.5.
+export const MAX_BODY_BYTES = 4_000_000;
+
+/** What the library may spend once the user's own uploads have taken their share. Never negative:
+ *  a caller over the ceiling gets 0 here and is stopped by tooLargeMessage() before it sends. */
+export function librarySpace(uploadedBytes: number): number {
+  return Math.max(0, MAX_BODY_BYTES - uploadedBytes);
+}
+
+/** The user-facing refusal for a request that cannot fit, or null when it can. Names the biggest
+ *  file and the real numbers: "Server responded 413" told the user nothing they could act on. */
+export function tooLargeMessage(files: { name: string; size: number }[]): string | null {
+  const total = files.reduce((n, f) => n + f.size, 0);
+  if (total <= MAX_BODY_BYTES) return null;
+  const mb = (n: number) => (n / 1_000_000).toFixed(1) + " MB";
+  const biggest = [...files].sort((a, b) => b.size - a.size)[0];
+  return (
+    `Your source files come to ${mb(total)}, and one upload can carry at most ` +
+    `${mb(MAX_BODY_BYTES)}. The largest is "${biggest.name}" at ${mb(biggest.size)}. ` +
+    `Remove or split it, or save it as .txt or .docx, which are a fraction of the size of a .pptx.`
+  );
+}
 
 export function b64ToBlob(b64: string): Blob {
   const bin = atob(b64);
@@ -103,7 +126,12 @@ export function appendDeckSettings(form: FormData, s: DeckSettings): void {
   }
 }
 
-export async function deckGenerationSettings(brand: string): Promise<DeckSettings> {
+export async function deckGenerationSettings(
+  brand: string,
+  /** Bytes the caller's own uploads already claim in this request. The library fills only
+   *  what is left, so a big source file never gets crowded out by the slide library. */
+  uploadedBytes = 0,
+): Promise<DeckSettings> {
   // The brand rides the query string; every settings route resolves it from there.
   const q = (url: string) => url + (url.includes("?") ? "&" : "?") + "brand=" + encodeURIComponent(brand);
   let customRules = "";
@@ -117,6 +145,9 @@ export async function deckGenerationSettings(brand: string): Promise<DeckSetting
   const customSlides: CustomSlidePayload = { meta: [], files: {} };
   const customPhotos: CustomPhotoPayload = { meta: [], files: {} };
   const layoutOverrides: LayoutOverridePayload = { meta: [], files: {} };
+  // ONE budget for slides + photos + overrides, drawn down in that order as each is fetched: they
+  // share a single request, so separate per-kind budgets could only ever overshoot the ceiling.
+  let budget = librarySpace(uploadedBytes);
   try {
     const r = await (await fetch(q("/api/rules"))).json();
     const active = (r.rules ?? []).filter((x: { enabled?: boolean }) => x.enabled);
@@ -173,7 +204,6 @@ export async function deckGenerationSettings(brand: string): Promise<DeckSetting
   try {
     const c = await (await fetch(q("/api/custom-slides?blobs=1"))).json();
     const files: Record<string, string> = c.files ?? {};
-    let budget = MAX_CUSTOM_BYTES;
     const sentFiles: Record<string, string> = {};
     const slides = (c.slides ?? []) as (CustomSlidePayload["meta"][number] & { preview_b64: string | null })[];
     for (const s of slides) {
@@ -208,7 +238,6 @@ export async function deckGenerationSettings(brand: string): Promise<DeckSetting
   }
   try {
     const p = await (await fetch(q("/api/custom-photos?blobs=1"))).json();
-    let budget = MAX_CUSTOM_BYTES; // photos get their own budget; each is a few hundred KB
     for (const ph of (p.photos ?? []) as {
       id: string;
       name: string;
@@ -235,7 +264,6 @@ export async function deckGenerationSettings(brand: string): Promise<DeckSetting
     const o = await (await fetch(q("/api/layout-overrides?blobs=1"))).json();
     const files: Record<string, string> = o.files ?? {};
     const disabledSet = new Set(disabledLayouts.split(",").filter(Boolean));
-    let budget = MAX_CUSTOM_BYTES; // own budget, same ceiling rationale as team slides
     for (const ov of (o.overrides ?? []) as (LayoutOverridePayload["meta"][number] & {
       enabled?: boolean;
       preview_b64?: string | null;

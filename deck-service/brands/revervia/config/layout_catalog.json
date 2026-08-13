@@ -61,19 +61,6 @@
       19
     ]
   },
-  "highlight": {
-    "template_layout": "Highlight 2",
-    "kind": "highlight",
-    "backgrounds": [
-      "dark"
-    ],
-    "fields": {},
-    "limits": {},
-    "picture_slots": [],
-    "removable_idx": [
-      17
-    ]
-  },
   "title_only": {
     "template_layout": "Title Only",
     "kind": "title_only",

@@ -741,6 +741,16 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   Also regenerated `brands/revervia/config/` so revervia has `freeform` too (39 → 40 layouts;
   `build_schema.py` defaults to superba, so a new layout needs `--brand revervia` as a second run).
 
+- **Blank-slide bug: a field-less native layout was still offered to the model. Fixed 2026-08-13.**
+  Revervia's `highlight` (template layout "Highlight 2") maps **zero fillable fields**, so the renderer
+  had nothing to write and the slide shipped EMPTY apart from its page number — slide 12 of the first
+  real Revervia client deck. `build_schema.py` now drops any native layout whose catalog `fields` is
+  empty, and the layout enum derives from the layouts that actually SURVIVED into the catalog
+  (`NATIVE_KEYS`) rather than from the authored `LAYOUTS_BY_BRAND` map, so the enum, the prompt guide,
+  the validator and the gallery cannot disagree about whether a layout exists. Superba is unaffected
+  (43 layouts, its `highlight` maps a title); revervia goes 40 → 39. Same principle as omitting
+  `ingredient` for a brand whose template has no such slide.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

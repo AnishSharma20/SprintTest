@@ -36,7 +36,6 @@
               "title",
               "section",
               "agenda",
-              "highlight",
               "title_only",
               "text",
               "text_with_picture",
@@ -685,24 +684,6 @@
                   }
                 }
               }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
-                  "const": "highlight"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout"
-              ],
-              "properties": {}
             }
           },
           {

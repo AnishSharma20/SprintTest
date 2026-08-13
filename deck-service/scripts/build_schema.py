@@ -282,12 +282,25 @@ def main(brand: str | None = None):
 
     by_name, light_names = load_primary_layouts(inv)
     catalog, conditionals, summary = {}, [], []
+    NATIVE_KEYS: list[str] = []      # native layouts that actually survived into the catalog
     for sem, spec in LAYOUTS.items():
         layout = by_name.get(spec["tpl"])
         if not layout:
             print(f"  !! template layout missing: {spec['tpl']} ({sem})"); continue
         cat, limits = build(sem, spec, layout, light_names, FONT_PT)
+        # A native layout that maps NO fillable field can never carry content: the renderer has
+        # nothing to write, so the slide ships blank apart from its page number. Offering it in the
+        # layout enum means the model can spend a slide on it — revervia's `highlight` (template
+        # layout "Highlight 2") did exactly that, producing an empty slide 12 in a real client deck.
+        # Drop it here so the enum, the prompt guide, the validator and the gallery all agree the
+        # layout does not exist for this brand, the same way a template with no ingredient slide
+        # omits `ingredient` below.
+        if not cat["fields"]:
+            print(f"  !! {sem} ({spec['tpl']}) maps no fillable fields — omitted from this brand's "
+                  f"catalog, since it would only ever render blank")
+            continue
         catalog[sem] = cat
+        NATIVE_KEYS.append(sem)
         conditionals.append(slide_conditional(sem, spec["kind"], limits, asset_ids, benefits, generic))
         summary.append((sem, spec["tpl"], cat["backgrounds"], limits))
 
@@ -664,7 +677,10 @@ def main(brand: str | None = None):
                     "additionalProperties": False,
                     "required": ["layout"],
                     "properties": {
-                        "layout": {"enum": list(LAYOUTS) + ["ingredient", "key_points", "chart",
+                        # NATIVE_KEYS, not list(LAYOUTS): a layout the loop above refused (missing from
+                        # the template, or mapping no fillable field) must not remain in the enum, or
+                        # the model can pick a layout the catalog says does not exist.
+                        "layout": {"enum": NATIVE_KEYS + ["ingredient", "key_points", "chart",
                                                             "matrix", "exec_summary", "comparison",
                                                             "stat", "harvey_ball", "funnel",
                                                             "closing",

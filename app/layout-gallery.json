@@ -151,11 +151,6 @@
       "usage": "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide."
     },
     {
-      "key": "freeform",
-      "kind": "synthetic",
-      "usage": "COMPOSE your own slide: the one layout where YOU arrange the elements rather than filling a prepared structure. Emit `title`, an optional `eyebrow`, and `blocks`: 2 to 6 objects each with a `type` (`stat` = `value` + `label`; `note` = `heading` + `body`; `bullets` = `heading` + up to 5 short `items`; `photo` = `asset_id`), a `span` (how many of 12 columns it takes, 3 to 12) and an optional `tone` (`plain` sits on the background, `panel` is a tinted card, `accent` is a solid teal card). Blocks flow left to right and wrap to a new row once the spans fill up, so the spans in each row should add up to about 12. Vary the tones so the slide has a focal point rather than a row of identical cards. Best for a MIXED slide no prepared layout carries: one hero figure beside two supporting notes, a photo beside a short bulleted list, or a wide summary band under two narrow columns."
-    },
-    {
       "key": "ingredient",
       "kind": "synthetic",
       "usage": "AKBM's SIGNATURE nutrient overview — the EXACT standard slide AKBM always uses (softgel + phospholipids/omega-3/choline/astaxanthin). Inserted VERBATIM with fixed, pre-approved copy: emit ONLY {\"layout\":\"ingredient\"} — do NOT write title/eyebrow/callouts (anything you write is ignored). Include in almost every product deck."

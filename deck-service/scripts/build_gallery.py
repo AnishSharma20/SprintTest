@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT))
 
 from src import config, renderer, validate            # noqa: E402
 from src.planner import LAYOUT_USAGE                  # noqa: E402
+from src.pipeline import _SOFT_ERRORS                 # noqa: E402  (one definition, see below)
 
 OUT = Path(sys.argv[1]).expanduser() if len(sys.argv) > 1 else ROOT / "build"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -185,17 +186,6 @@ SYNTH = [
         {"heading": "Superba absorbs better than standard fish oil.", "body": "Phospholipid delivery is the mechanism."},
         {"heading": "The proof base is deep, human and growing.", "body": "More than 50 clinical trials across body systems."},
         {"heading": "The supply chain is clean and traceable.", "body": "One certified Antarctic fishery, end to end."}]},
-    # The composed layout. Sample shows the case it exists for: one hero figure beside two
-    # supporting notes, a shape no prepared layout carries.
-    {"layout": "freeform", "title": "Two trials, one mechanism", "eyebrow": "Evidence summary",
-     "blocks": [
-         {"type": "stat", "span": 4, "tone": "accent", "value": "14%",
-          "label": "better working memory than placebo"},
-         {"type": "note", "span": 4, "tone": "panel", "heading": "Memory",
-          "body": "235 older adults, 6 months, 4 g per day. The primary endpoint was met."},
-         {"type": "bullets", "span": 4, "tone": "panel", "heading": "Joints",
-          "items": ["WOMAC pain 2.3 points below placebo", "Stiffness improved in step",
-                    "Tolerability matched placebo"]}]},
     {"layout": "ingredient"},
     {"layout": "closing", "title": "Let us build the evidence together",
      "tagline": "Superba krill oil by Aker BioMarine", "contact": "science@akerbiomarine.com"},
@@ -252,10 +242,16 @@ def build(name: str, slides: list[dict], cover: dict) -> None:
         while len(chunk) < 3:
             chunk = chunk + [cover]
         errs = validate.validate_plan({"deck_title": name, "language": "en", "slides": chunk})
-        # This gallery deliberately lists each layout ONCE as a terse design reference, so the
-        # VARIETY:/PHOTOS:/TEXT: nudges (meant for a real generated deck) always fire here and
-        # aren't a real problem — only fail the smoke test on genuine schema violations.
-        hard = [e for e in errs if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:"))]
+        # This gallery deliberately lists each layout ONCE as a terse design reference, and it
+        # validates in chunks, so every soft nudge meant for a REAL generated deck fires here and is
+        # not a real problem — only genuine schema violations should fail the smoke test.
+        #
+        # Reuses pipeline._SOFT_ERRORS rather than its own list: the local copy said
+        # VARIETY:/PHOTOS:/TEXT: only, and when SUMMARY:/NOTES:/EXEC_LENGTH: were added to the
+        # pipeline's list this script started failing on a chunk that simply has no exec_summary
+        # slide in it — so the smoke test has been red (and its output stale) ever since. Same
+        # substring test the pipeline uses, so the two cannot drift apart again.
+        hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
         if hard:
             print(f"  VALIDATION ERRORS in {name} chunk at {i}:")
             for e in hard[:12]:

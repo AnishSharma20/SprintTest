@@ -74,8 +74,7 @@
               "implications",
               "breakdown",
               "chart_bands",
-              "chart_takeaways",
-              "freeform"
+              "chart_takeaways"
             ]
           },
           "background": {
@@ -439,9 +438,6 @@
             "type": "string"
           },
           "items": {
-            "type": "array"
-          },
-          "blocks": {
             "type": "array"
           },
           "columns": {
@@ -1942,125 +1938,6 @@
                           "sustainability",
                           "traceability",
                           "none"
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "layout": {
-                  "const": "freeform"
-                }
-              },
-              "required": [
-                "layout"
-              ]
-            },
-            "then": {
-              "required": [
-                "layout",
-                "title",
-                "blocks"
-              ],
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                "eyebrow": {
-                  "type": "string",
-                  "maxLength": 60
-                },
-                "blocks": {
-                  "type": "array",
-                  "minItems": 2,
-                  "maxItems": 6,
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "type",
-                      "span"
-                    ],
-                    "properties": {
-                      "type": {
-                        "enum": [
-                          "stat",
-                          "note",
-                          "bullets",
-                          "photo"
-                        ]
-                      },
-                      "span": {
-                        "type": "integer",
-                        "minimum": 3,
-                        "maximum": 12
-                      },
-                      "tone": {
-                        "enum": [
-                          "plain",
-                          "panel",
-                          "accent"
-                        ]
-                      },
-                      "heading": {
-                        "type": "string",
-                        "maxLength": 40
-                      },
-                      "body": {
-                        "type": "string",
-                        "maxLength": 220
-                      },
-                      "items": {
-                        "type": "array",
-                        "maxItems": 5,
-                        "items": {
-                          "type": "string",
-                          "maxLength": 80
-                        }
-                      },
-                      "value": {
-                        "type": "string",
-                        "maxLength": 12
-                      },
-                      "label": {
-                        "type": "string",
-                        "maxLength": 60
-                      },
-                      "asset_id": {
-                        "enum": [
-                          "photo_capsule_single",
-                          "photo_capsules_white",
-                          "photo_capsules_glass",
-                          "photo_capsules_daily",
-                          "photo_capsules_wood",
-                          "photo_capsules_heart",
-                          "photo_breakfast",
-                          "photo_ingredients",
-                          "photo_jar_antarctic",
-                          "photo_capsules_pattern",
-                          "photo_oil_in_water",
-                          "photo_oil_texture",
-                          "photo_oil_lab",
-                          "photo_krill_closeup",
-                          "photo_krill_blue_water",
-                          "photo_krill_swarm",
-                          "photo_krill_single",
-                          "photo_krill_ice",
-                          "photo_iceberg",
-                          "photo_antarctic_ocean",
-                          "photo_antarctic_land",
-                          "photo_antarctic_bright",
-                          "photo_antarctic_sunset",
-                          "photo_lab",
-                          "photo_team",
-                          "photo_warehouse",
-                          null
                         ]
                       }
                     }

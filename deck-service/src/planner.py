@@ -67,7 +67,6 @@ LAYOUT_USAGE = {
     "kpi_dashboard":      "A KPI DASHBOARD: a grid of 3 to 6 headline metric tiles. Emit `title`, optional `caption`, and `metrics`: each a short `value` (e.g. '65%', '2x', '50+'), a `label`, and an optional one-line `note`. Use ONLY real figures from the source. Great for a results scoreboard (more tiles than `stat`, which is 1 to 3 hero numbers).",
     "roadmap":            "A ROADMAP of 2 to 5 sequential PHASES as interlocking chevrons. Emit `title` and `phases`: each with an optional `date` (a GENERIC forward planning period only, e.g. 'Q1' or '0 to 3 months' — never a calendar year or a specific past event date, that is `serpentine`'s job), a short `heading` (the phase name), and a `body` of the phase's activities. Use for a FORWARD-LOOKING plan/workstream (what happens next, in order), or for any sequence of 5 phases (past serpentine's 4-item cap). For 3 or 4 items that are a HISTORICAL/chronological narrative (real years or named past events, e.g. '2007', '2022'), that is `serpentine`, NOT roadmap, even though roadmap could technically hold the same fields — do not default to roadmap out of habit for a story that has an actual timeline shape.",
     "icon_grid":          "A GRID of 3 to 6 icon tiles (3 across). Emit `title`, an optional one-line `banner`, and `items`: 3 to 6 objects each with a short `heading`, a one-line `body`, and an `icon` (health benefit) OR `icon_generic` (science/quality keyword). All items share ONE icon source or none. Use for a set of parallel points, benefits, capabilities or reasons; prefer over key_points when you have 5 to 6 items.",
-    "freeform":           "COMPOSE your own slide: the one layout where YOU arrange the elements rather than filling a prepared structure. Emit `title`, an optional `eyebrow`, and `blocks`: 2 to 6 objects each with a `type` (`stat` = `value` + `label`; `note` = `heading` + `body`; `bullets` = `heading` + up to 5 short `items`; `photo` = `asset_id`), a `span` (how many of 12 columns it takes, 3 to 12) and an optional `tone` (`plain` sits on the background, `panel` is a tinted card, `accent` is a solid teal card). Blocks flow left to right and wrap to a new row once the spans fill up, so the spans in each row should add up to about 12. Vary the tones so the slide has a focal point rather than a row of identical cards. Best for a MIXED slide no prepared layout carries: one hero figure beside two supporting notes, a photo beside a short bulleted list, or a wide summary band under two narrow columns.",
     "takeaways":          "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide.",
     "from_to":            "A FROM/TO transformation: two panels with an arrow between. Emit `title`, `before` (`heading` + optional `body`, the current state) and `after` (`heading` + optional `body`, the target state). Use for a shift, before/after, or 'from X to Y' ambition.",
     "pillars":            "PILLARS under a roof: 2 to 5 tall columns capped by an optional roof `banner` (the overarching statement they support). Emit `title`, optional `banner`, and `items`: each a short `heading`, a `body`, and an `icon` OR `icon_generic` (all items share ONE icon source or none). Use for 'our approach rests on N pillars', a framework, or the components of a strategy.",
@@ -557,19 +556,6 @@ def build_system(length: str, tone: str, instructions: str = "", custom_rules: s
     if disabled:
         disabled_note = ("\nDISABLED LAYOUTS: the team has turned OFF these layouts, so they are NOT "
                          "available in this deck: " + ", ".join(sorted(disabled)) + ".")
-    # Without a block of its own, `freeform` is never chosen: with 30 prepared layouts on offer the
-    # model always finds one that "fits", so a usage line phrased as a last resort makes the layout
-    # inert (verified — a full generation used it zero times). Ask for exactly one, the same way the
-    # ingredient and executive-summary blocks ask, and cap it deterministically in
-    # pipeline._cap_freeform rather than trusting the prompt to hold the number.
-    freeform_block = "" if "freeform" in disabled else """
-COMPOSED SLIDE (include exactly ONE): put ONE `freeform` slide in this deck. It is the single place you
-compose the slide yourself instead of filling a prepared structure, so use it where the content is a MIXED
-shape none of the prepared layouts carries: a hero figure beside two supporting notes, a photo beside a
-short bulleted list, or two narrow columns above a wide summary band. Choose the spot where that genuinely
-helps the argument (a synthesis or "so what" beat is usually the best home) rather than forcing it early.
-Every other slide should still use a prepared layout.
-"""
     ingredient_block = "" if ("ingredient" in disabled or not bt["has_ingredient_slide"]) else f"""
 INGREDIENT SLIDE (use in ALMOST EVERY deck): include exactly ONE `ingredient` slide — AKBM's SIGNATURE
 nutrient overview, the standard slide AkerBM always uses. It is inserted VERBATIM with fixed, pre-approved copy,
@@ -732,7 +718,7 @@ characters). They render as branded bullets on the standard Agenda layout.
 
 {b_bullets}
 
-{ingredient_block}{freeform_block}
+{ingredient_block}
 LAYOUTS — pick the layout whose SHAPE matches the point, not just text/columns. Reach for a structural
 layout whenever the content has that shape:
 - numbers worth comparing -> `chart`;  one decisive figure -> `stat`;

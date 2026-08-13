@@ -677,56 +677,24 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     — about half the wall clock. The prompt says "roughly 50 characters"; tightening that wording (or
     raising the limit) would remove a whole round trip.
 
-- **`freeform` — the ONE composed layout, capped at 1 per deck. NEW 2026-08-13.** Client asked for an
-  80/20 split: 80% of slides from the catalogued library, 20% where the AI has real visual freedom but
-  "must follow the colors we do and not make it look like ai". This is the evaluation slice — one
-  composed slide per deck so the look can be judged on real renders before widening. Catalog is now
-  **43** layouts (30 code-built + 11 native + `ingredient` + `freeform`).
-  - **Why this is not the deleted `svcgen/` SVG pipeline again.** That failed because freedom was
-    UNBOUNDED (free hex, free fonts, free x/y). Here the model controls COMPOSITION only: which
-    primitives (`stat`/`note`/`bullets`/`photo`), their order, a 12-column `span`, and a `tone`.
-    Colours are NAMED TOKENS (`plain`/`panel`/`accent`) resolved to brand constants in
-    `renderer._freeform_block`, so an off-brand colour is **unrepresentable**, not merely discouraged.
-    Type sizes are the existing scale. Position is DERIVED from spans by `renderer._freeform_rows`
-    (flow + wrap, never absolute), so an overlap or off-canvas box is arithmetically impossible.
-    `qa_geometry` + the vision gate police it like any other slide.
-  - **Quota is deterministic, not a validation error** (`pipeline._cap_freeform`, called before
-    validate): a hard error surviving the one revision RAISES and costs the user the whole deck, far
-    too steep for a layout choice. Surplus slides are **downgraded to `takeaways`** — the prepared
-    layout whose shape maps onto freeform blocks — with values truncated to that layout's own limits,
-    so no content is lost. A surplus too thin to make ≥2 rows is left as freeform instead. Quota is
-    `DECK_FREEFORM_MAX` (default 1): raising it toward the eventual ~20% is a config change, and **0
-    disables the layout entirely without a deploy**.
-  - **Two bugs found by rendering rather than reasoning.** (1) `blocks` was stripped before it ever
-    reached the renderer — the slide-item schema has `additionalProperties: false` and a **top-level
-    property whitelist** separate from the per-layout conditional; a field missing there is silently
-    dropped. (2) The first version tested `background in ("white", "pastel")`, but the schema's value
-    is `"light"` — so every "light" freeform slide rendered on the DARK master. Now matches the exact
-    idiom the other 9 dual-master layouts use. Also confirmed: **no layout declares `pastel`** in the
-    catalog, because pastel is applied deck-wide by `_apply_color_theme` AFTER validation, never chosen
-    by the model.
-  - **The layout was inert until it got its own prompt block.** Phrased as a last resort ("only where a
-    prepared layout would distort the content"), a full generation used it **zero** times — with 30
-    prepared layouts on offer the model always finds one that fits. A dedicated COMPOSED SLIDE block
-    (same shape as the ingredient / executive-summary blocks) asking for exactly one fixed it: the
-    model then placed it at slide 16 of 18, on a "so what" synthesis beat, composing
-    stat(4,accent) + note(4,panel) + photo(4) over bullets(12,plain) — varied tones, real mixed shape.
-    Do NOT re-word this back to a last-resort phrasing; it stops being used.
-  - Dead space below block text was checked against the prepared layouts before "fixing" it:
-    `key_points` has an identical profile, so freeform matches house style and was left alone.
-  - **Latent bug fixed in `export_layout_gallery.py`**: it wrote `LAYOUT_USAGE` RAW into
-    `app/layout-gallery.json`, but those strings carry `{comparison_example}`, which
-    `planner._layout_guide` substitutes per brand at prompt time — so a literal `{comparison_example}`
-    would have appeared on the About page. Now substituted from the same brand theme; the stale
-    `revervia` entry was repaired in place (its template is not in the repo, so it cannot be
-    re-exported here).
-  - Gallery previews regenerated for superba in all 3 themes. NOTE the export re-encodes the 14
-    photo-bearing layouts' PNGs with ~80-byte, visually identical deltas — that churn was reverted, so
-    only the 3 new `freeform.png` files are committed. Expect the same churn on future runs.
-  - Verified: 18 unit cases over `_cap_freeform` (quota, downgrade fidelity, content preservation, env
-    override, 0-disable, bad-value fallback, truncation), 4 direct renders rasterised and inspected
-    (incl. a deliberate 11+5+3 span stress test proving wrap cannot overlap), and 2 real end-to-end
-    polished generations. Cost with polished + freeform: **~$1.17, ~300s, 5 model calls**.
+- **`freeform` (AI-composed slide) — BUILT AND REVERTED THE SAME DAY, 2026-08-13. DO NOT REBUILD.**
+  Client asked for an 80/20 split (80% catalogued layouts, 20% AI visual freedom), so a `freeform`
+  layout was built where the model composed the slide from bounded primitives — brand-locked by
+  construction (named colour tokens, flow layout from column spans so overlaps were impossible, the
+  existing type scale). It was capped at ONE slide per deck for evaluation, never the requested 20%.
+  **The client then decided the AI should not compose any slides at all, and it was fully removed** —
+  renderer functions + dispatch, `pipeline._cap_freeform`, the planner usage entry and COMPOSED SLIDE
+  prompt block, the `_synth` schema entry, the enum member, the `blocks` property whitelist, the
+  gallery sample, the 3 preview PNGs and the manifest entry. Catalog back to **42** layouts (superba)
+  / **38** (revervia). Verified by `scripts/build_gallery.py`: 42 of 42 layouts validate and render.
+  For the record, since it bears on any future proposal: the composed slides were NOT the source of
+  the problems in that day's decks. Every defect traced to the pre-existing template path — a blank
+  slide from a field-less native layout, a hard-fail from a native layout offered to the wrong brand,
+  an over-long native title. Three composed slides across three decks rendered correctly, and on the
+  Superba deck the composed slide was the evidence-boundaries slide. The decision was a deliberate
+  product call about who authors design, not a response to a defect. **Treat "let the AI design
+  slides" as settled and closed**, alongside the existing house rule that the LLM never emits styling.
+
 
 - **NON-DEFAULT BRAND GENERATION WAS BROKEN — fixed 2026-08-13.** `planner._call` accepted a `brand`
   argument, used it nowhere, and never passed it to `_tool_schema`, so the **forced-tool layout enum was

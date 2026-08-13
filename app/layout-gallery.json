@@ -18,7 +18,7 @@
     {
       "key": "key_points",
       "kind": "synthetic",
-      "usage": "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard Superba bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview."
+      "usage": "Up to FOUR parallel key points, each on a card with a branded ICON in a circle and a banner across the top. Emit `title`, a one-line `banner` summary, and `items`: 3 to 4 objects, each `heading` (1 to 2 words), `body`, and an `icon` (a health benefit) OR `icon_generic` (a science/quality keyword). Write each card's `body` as 3 SHORT bullet points, each on its OWN line (a newline between them) — they render as the standard brand bullets. Use close to the [bracketed] body limit across the bullets together, parallel phrasing, and make them concrete (the point plus its evidence or mechanism), never one long paragraph. Ideal for a benefits or 'why it works' overview."
     },
     {
       "key": "icon_grid",
@@ -149,6 +149,11 @@
       "key": "takeaways",
       "kind": "synthetic",
       "usage": "A NUMBERED key-messages / takeaways list of 2 to 6 rows. Emit `title` and `items`: each a bold `heading` (the message, a full sentence) and an optional `body` (supporting detail). Renders as numbered rows with dividers. Use for a summary, 'what this means', or key-messages slide."
+    },
+    {
+      "key": "freeform",
+      "kind": "synthetic",
+      "usage": "COMPOSE your own slide: the one layout where YOU arrange the elements rather than filling a prepared structure. Emit `title`, an optional `eyebrow`, and `blocks`: 2 to 6 objects each with a `type` (`stat` = `value` + `label`; `note` = `heading` + `body`; `bullets` = `heading` + up to 5 short `items`; `photo` = `asset_id`), a `span` (how many of 12 columns it takes, 3 to 12) and an optional `tone` (`plain` sits on the background, `panel` is a tinted card, `accent` is a solid teal card). Blocks flow left to right and wrap to a new row once the spans fill up, so the spans in each row should add up to about 12. Vary the tones so the slide has a focal point rather than a row of identical cards. Best for a MIXED slide no prepared layout carries: one hero figure beside two supporting notes, a photo beside a short bulleted list, or a wide summary band under two narrow columns."
     },
     {
       "key": "ingredient",
@@ -315,7 +320,7 @@
     {
       "key": "comparison",
       "kind": "synthetic",
-      "usage": "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. {comparison_example}), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings."
+      "usage": "A comparison TABLE. Emit `title`, `headers` (2 to 4 column labels, the first is the row-label column) and `rows` (each an object with `cells`: one string per column). Use for feature/option comparisons (e.g. algal oil vs fish oil), and ALWAYS prefer it over harvey balls when the rows carry EXACT VALUES (numbers, doses, durations, yes/no) — show the real figures rather than hiding them behind ratings."
     },
     {
       "key": "cause_effect",

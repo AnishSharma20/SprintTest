@@ -1953,6 +1953,142 @@ def _fill_icon_grid(prs, spec: dict, dark_index: int, light_index: int | None = 
                     it.get("body", ""), _SZ_SMALL, _muted(light), align=PP_ALIGN.CENTER)
 
 
+_FREEFORM_MIN_SPAN, _FREEFORM_COLS = 3, 12
+
+
+def _freeform_rows(blocks: list[dict]) -> list[list[tuple[dict, int]]]:
+    """Pack blocks into rows of a 12-column grid, wrapping when a block won't fit in what's left.
+
+    This is the whole safety story of the freeform layout, so it lives in its own function: the model
+    supplies a COLUMN SPAN, never an x/y. Geometry is derived here, which makes an overlap or an
+    off-canvas box arithmetically impossible rather than merely discouraged — the failure mode that
+    got the old SVG generation pipeline deleted for 'looking AI-generated'. Spans are clamped into
+    range, and a row is never left with a sliver too narrow to hold text."""
+    rows: list[list[tuple[dict, int]]] = []
+    row: list[tuple[dict, int]] = []
+    used = 0
+    for b in blocks:
+        try:
+            span = int(b.get("span") or 6)
+        except (TypeError, ValueError):
+            span = 6
+        span = max(_FREEFORM_MIN_SPAN, min(_FREEFORM_COLS, span))
+        if used + span > _FREEFORM_COLS:
+            if row:
+                rows.append(row)
+            row, used = [], 0
+        row.append((b, span))
+        used += span
+        # A remainder narrower than the minimum span can never be filled, so close the row and let
+        # the widths below absorb the slack instead of leaving a dead gutter.
+        if _FREEFORM_COLS - used < _FREEFORM_MIN_SPAN:
+            rows.append(row)
+            row, used = [], 0
+    if row:
+        rows.append(row)
+    return rows
+
+
+def _fill_freeform(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
+    """The ONE layout where the model composes the slide instead of choosing a prepared structure.
+
+    What the model controls: which primitives appear (stat / note / bullets / photo), their order,
+    their column span, and a `tone` per block. What it CANNOT control — by construction, not by
+    instruction — is anything that would make the slide look off-brand or AI-made:
+
+      * colours are named TOKENS (plain / panel / accent) resolved to brand constants here, so an
+        arbitrary hex is unrepresentable;
+      * type sizes are the existing scale (_SZ_HERO for data figures, _SZ_BODY, _SZ_SMALL);
+      * position is derived from the span by _freeform_rows, never supplied, so no overlaps;
+      * the slide uses the same _synth_slide skeleton as the other 30, so title/eyebrow/footer
+        chrome sit exactly where they do on every other slide.
+
+    Everything else already polices this slide too: qa_geometry checks margins/contrast/assets and
+    the vision gate looks at the rendered pixels."""
+    # Exactly the idiom every other dual-master layout uses — "light" is the schema's value for the
+    # white master; there is no "white" background value.
+    light = light_index is not None and spec.get("background") in ("light", "pastel")
+    pastel = light and spec.get("background") == "pastel"
+    slide = _synth_slide(prs, light_index if light else dark_index, white=light, pastel=pastel,
+                         title=spec.get("title", ""), eyebrow=spec.get("eyebrow"))
+
+    blocks = [b for b in (spec.get("blocks") or []) if isinstance(b, dict)][:6]
+    if not blocks:
+        return
+    rows = _freeform_rows(blocks)
+    if not rows:
+        return
+
+    top = _BODY_TOP if spec.get("eyebrow") is None else _BODY_TOP + 0.12
+    avail = _BODY_BOTTOM - top
+    rh = (avail - (len(rows) - 1) * _GUTTER) / len(rows)
+
+    for r, row in enumerate(rows):
+        y = top + r * (rh + _GUTTER)
+        # Widths share the row's slack so a part-full row still spans the full content width — a
+        # ragged right edge is one of the strongest "generated" tells.
+        span_total = sum(s for _, s in row)
+        unit = (_CONTENT_W - (len(row) - 1) * _GUTTER) / span_total
+        x = _MARGIN
+        for b, span in row:
+            w = unit * span
+            _freeform_block(slide, b, x, y, w, rh, light, pastel)
+            x += w + _GUTTER
+
+
+def _freeform_block(slide, b: dict, x: float, y: float, w: float, h: float,
+                    light: bool, pastel: bool) -> None:
+    """Draw ONE freeform primitive inside the cell _fill_freeform computed for it."""
+    tone = str(b.get("tone") or "plain").lower()
+    kind = str(b.get("type") or "note").lower()
+
+    # Named tone tokens → brand constants. Text colour follows the fill so contrast holds on both
+    # masters without the model ever choosing a colour (qa_geometry re-checks it regardless).
+    if tone == "accent":
+        fill, fg, sub = _TEAL, _WHITE, _WHITE
+    elif tone == "panel":
+        fill, fg, sub = (_WHITE if pastel else _PANEL) if light else _chip_bg(light, pastel), _INKC, _INKC
+    else:
+        fill, fg, sub = None, _ink(light), _muted(light)
+
+    if fill is not None and kind != "photo":
+        pan = slide.shapes.add_shape(_BOX, Inches(x), Inches(y), Inches(w), Inches(h))
+        pan.fill.solid(); pan.fill.fore_color.rgb = fill
+        pan.line.fill.background(); pan.shadow.inherit = False
+
+    ix, iw = x + _PAD, w - 2 * _PAD
+    if kind == "photo":
+        path = _photo_path(b.get("asset_id"))
+        # _place_cropped fills the cell and centre-crops; it returns False and warns on failure, and
+        # qa_geometry's asset check surfaces a photo the plan asked for that never rendered.
+        if path:
+            _place_cropped(slide, path, x, y, w, h)
+        return
+
+    if kind == "stat":
+        # Figure + label, same treatment as _fill_stat so a freeform stat is indistinguishable from
+        # the prepared one. _DATA (brand red) is the data accent; on an accent panel it would fail
+        # contrast, so white carries it there instead.
+        val_color = _WHITE if tone == "accent" else _DATA
+        _place_text(slide, ix, y + h * 0.18, iw, h * 0.42, str(b.get("value", "")), _SZ_HERO,
+                    val_color, bold=True, font=_HEAD, align=PP_ALIGN.CENTER)
+        _place_text(slide, ix, y + h * 0.62, iw, h * 0.3, str(b.get("label", "")), _SZ_SMALL,
+                    sub, align=PP_ALIGN.CENTER)
+        return
+
+    hy = y + _PAD
+    heading = str(b.get("heading", "")).strip()
+    if heading:
+        _place_text(slide, ix, hy, iw, 0.42, heading, _SZ_BODY, fg, bold=True, font=_HEAD)
+        hy += 0.5
+
+    if kind == "bullets":
+        lines = [str(i) for i in (b.get("items") or []) if str(i).strip()][:5]
+        _place_bullets(slide, ix, hy, iw, y + h - hy - _PAD, lines, _SZ_SMALL, fg)
+    else:                                   # "note" — a short paragraph
+        _place_text(slide, ix, hy, iw, y + h - hy - _PAD, str(b.get("body", "")), _SZ_SMALL, sub)
+
+
 def _fill_takeaways(prs, spec: dict, dark_index: int, light_index: int | None = None) -> None:
     """Numbered 'key messages' rows: a red-number chip + a bold statement + supporting detail, one per
     row with a thin divider between. Covers the client's summary / takeaways slides."""
@@ -2972,6 +3108,8 @@ def _make_slide(prs, spec: dict, catalog: dict, dark: int, light: int,
     if layout_name == "chart":        # native pptx chart (mechanism B)
         _fill_chart(prs, spec, dark, light)
         return
+    if layout_name == "freeform":
+        _fill_freeform(prs, spec, dark, light); return
     if layout_name == "matrix":
         _fill_matrix(prs, spec, dark, light); return
     if layout_name == "exec_summary":

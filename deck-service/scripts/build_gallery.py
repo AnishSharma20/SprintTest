@@ -185,6 +185,17 @@ SYNTH = [
         {"heading": "Superba absorbs better than standard fish oil.", "body": "Phospholipid delivery is the mechanism."},
         {"heading": "The proof base is deep, human and growing.", "body": "More than 50 clinical trials across body systems."},
         {"heading": "The supply chain is clean and traceable.", "body": "One certified Antarctic fishery, end to end."}]},
+    # The composed layout. Sample shows the case it exists for: one hero figure beside two
+    # supporting notes, a shape no prepared layout carries.
+    {"layout": "freeform", "title": "Two trials, one mechanism", "eyebrow": "Evidence summary",
+     "blocks": [
+         {"type": "stat", "span": 4, "tone": "accent", "value": "14%",
+          "label": "better working memory than placebo"},
+         {"type": "note", "span": 4, "tone": "panel", "heading": "Memory",
+          "body": "235 older adults, 6 months, 4 g per day. The primary endpoint was met."},
+         {"type": "bullets", "span": 4, "tone": "panel", "heading": "Joints",
+          "items": ["WOMAC pain 2.3 points below placebo", "Stiffness improved in step",
+                    "Tolerability matched placebo"]}]},
     {"layout": "ingredient"},
     {"layout": "closing", "title": "Let us build the evidence together",
      "tagline": "Superba krill oil by Aker BioMarine", "contact": "science@akerbiomarine.com"},

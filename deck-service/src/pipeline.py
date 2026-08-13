@@ -583,6 +583,67 @@ def _strip_dashes_plan(plan: dict) -> dict:
 _COLOR_THEMES = {"dark", "light", "pastel"}
 
 
+def _cap_freeform(plan: dict, limit: int | None = None) -> dict:
+    """Hold the composed `freeform` layout to a quota, DOWNGRADING the surplus rather than deleting it.
+
+    `freeform` is the one layout where the model arranges the slide itself, so it carries more
+    aesthetic risk than the 30 prepared structures. The quota is how that risk is bounded while the
+    layout is being evaluated: `DECK_FREEFORM_MAX` (default 1) sets it, so widening to the eventual
+    ~20% target is a config change, and 0 disables the layout outright without a deploy.
+
+    Enforcement is deterministic here rather than a validation error on purpose: a hard error that
+    survives the one revision RAISES and costs the user their whole deck (see the hard/soft split
+    below), which is far too steep a penalty for a layout choice. Surplus slides become `takeaways`
+    — the prepared layout whose shape (a heading plus supporting detail per row) maps onto freeform
+    blocks without inventing or discarding content. Values are truncated to `takeaways`' own schema
+    limits so the rewrite cannot introduce an overflow."""
+    if limit is None:
+        try:
+            limit = int(os.environ.get("DECK_FREEFORM_MAX", "1"))
+        except ValueError:
+            limit = 1
+    limit = max(0, limit)
+    slides = plan.get("slides") or []
+    seen = 0
+    for s in slides:
+        if s.get("layout") != "freeform":
+            continue
+        seen += 1
+        if seen <= limit:
+            continue
+        items = []
+        for b in (s.get("blocks") or [])[:6]:
+            if not isinstance(b, dict):
+                continue
+            if b.get("type") == "stat":
+                heading, body = str(b.get("value") or ""), str(b.get("label") or "")
+            elif b.get("type") == "bullets":
+                heading = str(b.get("heading") or "")
+                body = "; ".join(str(i) for i in (b.get("items") or []) if str(i).strip())
+            else:                                    # note / photo
+                heading, body = str(b.get("heading") or ""), str(b.get("body") or "")
+            if not (heading or body).strip():
+                continue
+            # A takeaways row needs a heading; promote the body when the block had none.
+            if not heading.strip():
+                heading, body = body, ""
+            items.append({"heading": heading[:90], "body": body[:170]})
+        if len(items) < 2:
+            # Too little to make a credible takeaways slide. Leave it as freeform rather than ship a
+            # one-row slide — one extra composed slide is the lesser problem.
+            print(f"[freeform] surplus slide '{s.get('title', '')[:40]}' had too few usable blocks "
+                  f"to downgrade; leaving it as freeform", file=sys.stderr)
+            seen -= 1
+            continue
+        print(f"[freeform] over quota ({limit}); downgrading '{s.get('title', '')[:40]}' to takeaways",
+              file=sys.stderr)
+        s["layout"] = "takeaways"
+        s["items"] = items[:6]
+        for k in ("blocks", "eyebrow"):
+            s.pop(k, None)
+    return plan
+
+
 def _apply_color_theme(plan: dict, color_theme: str | None,
                        override_keys: frozenset | set = frozenset(),
                        brand: str | None = None) -> dict:
@@ -806,6 +867,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
+    plan = _cap_freeform(plan)
     plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(
         _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,

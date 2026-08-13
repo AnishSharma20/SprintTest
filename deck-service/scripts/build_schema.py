@@ -449,6 +449,28 @@ def main(brand: str | None = None):
                            "body": {"type": "string", "maxLength": 150},
                            "icon": {"enum": benefits}, "icon_generic": {"enum": generic}}}}}, "icon tile grid")
 
+    # The ONE composed layout: the model arranges primitives instead of filling a prepared
+    # structure. Deliberately narrow — `span` (a 12-column share) is the only geometry it may
+    # express, so the renderer derives every position and an overlap is arithmetically impossible;
+    # `tone` is a NAMED token resolved to brand colours in renderer._freeform_block, so an
+    # off-brand colour is unrepresentable. See renderer._fill_freeform for the full rationale.
+    _synth("freeform", "freeform", ["dark", "light"], ["layout", "title", "blocks"], {
+        "title": {"type": "string", "maxLength": 50},
+        "eyebrow": {"type": "string", "maxLength": 60},
+        "blocks": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["type", "span"],
+            "properties": {
+                "type": {"enum": ["stat", "note", "bullets", "photo"]},
+                "span": {"type": "integer", "minimum": 3, "maximum": 12},
+                "tone": {"enum": ["plain", "panel", "accent"]},
+                "heading": {"type": "string", "maxLength": 40},
+                "body": {"type": "string", "maxLength": 220},
+                "items": {"type": "array", "maxItems": 5,
+                          "items": {"type": "string", "maxLength": 80}},
+                "value": {"type": "string", "maxLength": 12},
+                "label": {"type": "string", "maxLength": 60},
+                "asset_id": {"enum": asset_ids + [None]}}}}}, "composed freeform grid")
+
     _synth("takeaways", "takeaways", ["dark", "light"], ["layout", "title", "items"], {
         "title": {"type": "string", "maxLength": 50},
         "items": {"type": "array", "minItems": 2, "maxItems": 6, "items": {
@@ -653,7 +675,7 @@ def main(brand: str | None = None):
                                                             "serpentine", "coverage_matrix", "photo_stats",
                                                             "numbered_cards", "implications",
                                                             "breakdown", "chart_bands",
-                                                            "chart_takeaways"]},
+                                                            "chart_takeaways", "freeform"]},
                         "background": {"enum": ["dark", "light", "pastel"],
                                        "description": "dark = deep-sea master (default), light = white master, "
                                                        "pastel = the same white master with a solid pastel-mint "
@@ -723,6 +745,12 @@ def main(brand: str | None = None):
                                            "body": {"type": "string"}}}},
                         "tagline": {"type": "string"}, "contact": {"type": "string"},
                         "items": {"type": "array"},
+                        # freeform's composed blocks. Permissive here like every other field in this
+                        # whitelist — additionalProperties is False at the slide level, so a field
+                        # missing from THIS list is stripped before it can reach the renderer (that
+                        # is how the first freeform render lost its blocks entirely). The strict
+                        # shape lives in the per-layout conditional built by _synth above.
+                        "blocks": {"type": "array"},
                         "columns": {"type": "array", "items": {
                             "type": "object", "additionalProperties": False,
                             "properties": {"heading": {"type": "string"}, "body": {"type": "string"},

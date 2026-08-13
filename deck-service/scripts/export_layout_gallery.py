@@ -180,10 +180,16 @@ def main(brand: str | None = None) -> None:
         pastel_slides = [{**s, "background": "pastel"} for s in slides]
         _export_set(pastel_slides, keys, PNG_DIR_PASTEL / bname, "Pastel Blue (pastel)", brand)
 
+    # LAYOUT_USAGE carries brand placeholders that planner._layout_guide substitutes when it builds
+    # the prompt; writing the raw string here put a literal "{comparison_example}" on the About page.
+    # Substitute the same way, from the same brand theme, so the manifest matches what the model is
+    # actually told. (Latent since LAYOUT_USAGE was parameterised per brand — the committed manifest
+    # predated that, so it only surfaced the next time this script ran.)
+    usage_example = bt["comparison_example"]
     manifest = [{
         "key": k,
         "kind": "template" if k in TEMPLATE_KEYS else "synthetic",
-        "usage": LAYOUT_USAGE.get(k, ""),
+        "usage": LAYOUT_USAGE.get(k, "").replace("{comparison_example}", usage_example),
     } for k in keys]
     if bt.get("has_benefits_slide"):
         manifest.append({

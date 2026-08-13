@@ -655,6 +655,23 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     refine round, and 19 unit cases over `_plan_body`/`_plan_is_complete`/`_extract_plan` (incl. the
     real envelope shape). **Not exercised: `quality="polished"`** (the `qa_gate` vision path) — its
     change is a pure headroom bump.
+  - **`quality` default flipped `fast` → `polished` (same day).** The vision QA pass is the only stage
+    that looks at the actual PIXELS — everything else reasons about the plan — so it is the highest
+    value quality lever available, and it was off by default while the frontend never sent the field
+    at all. Flipped in all four places (`pipeline.generate`, `main._run_job`, the `/jobs` Form default,
+    `cli.py`). Safe by construction: `_visual_gate` never fails a deck, and a missing rasteriser makes
+    the vision half a no-op while the deterministic geometry pass still runs (it already ran in fast
+    mode too, so that half is unchanged). `DECK_QA_GATE` is now a proper two-way deploy override —
+    `off`/`0`/`false`/`no` force the gate OFF (kill switch, no code deploy needed, given LibreOffice's
+    history on the 512 MB instance), any other non-empty value forces it ON as before.
+    **Measured on a real polished run** (previously an unverified estimate): **4 model calls,
+    $0.9885, 259.8s** vs fast mode's 2 calls / ~$0.58 / ~161 to 229s — so polished costs **+$0.41 and
+    +60 to 100s**. Breakdown: plan $0.3684 (cache write) → refine copy $0.2466 (cache read) → **vision
+    QA $0.1274** (21,937 input tokens of slide images, 710 out, uncached — images and its own system
+    prompt are not part of the planner's cached prefix) → visual polish revision $0.2460 (cache read).
+    Note the vision call itself is the CHEAP part; the cost is the extra planner revision it triggers.
+    The gate flagged 7 slides and the revision ran, so on a normal deck expect it to fire rather than
+    no-op (the deterministic pass alone routinely leaves unfixed `asset` flags).
   - Known friction, PRE-EXISTING and unchanged: the model's first pass often lands titles at 52 to 57
     chars against a hard 50 char limit, so `revise_plan` ("Refining copy to fit") fires on most decks
     — about half the wall clock. The prompt says "roughly 50 characters"; tightening that wording (or

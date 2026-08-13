@@ -739,7 +739,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
 
 
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
-             length: str = "standard", tone: str = "balansert", quality: str = "fast",
+             length: str = "standard", tone: str = "balansert", quality: str = "polished",
              instructions: str = "", on_progress=None,
              study_meta: list[dict] | None = None,
              custom_rules: str = "", disabled_layouts: list[str] | None = None,
@@ -897,9 +897,22 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                            source_appendix=source_appendix,
                                            return_slide_map=True)
 
-    # Polished mode adds a visual QA pass (render → vision-check → fix flagged slides). Fast mode
-    # (default) ships the first render — the schema + renderer already guarantee it's well-formed.
-    if quality == "polished" or os.environ.get("DECK_QA_GATE"):
+    # Polished mode (now the DEFAULT) adds a visual QA pass: render → vision-check → fix flagged
+    # slides. Fast mode ships the first render — the schema + renderer already guarantee it is
+    # well-formed, but only a look at the pixels catches overflow, collision and icon mismatch.
+    #
+    # DECK_QA_GATE is a deploy-level override so the gate can be turned off WITHOUT a code deploy:
+    # "off"/"0"/"false"/"no" force it off (the kill switch if the rasteriser misbehaves on the host —
+    # LibreOffice on the 512 MB instance has a history), any other non-empty value forces it on
+    # regardless of `quality`, which preserves how this variable behaved before.
+    _gate_env = os.environ.get("DECK_QA_GATE", "").strip().lower()
+    if _gate_env in ("0", "off", "false", "no"):
+        run_gate = False
+    elif _gate_env:
+        run_gate = True
+    else:
+        run_gate = quality == "polished"
+    if run_gate:
         pptx, plan = _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instructions,
                                   brand=brand,
                                   study_meta=study_meta, custom_rules=custom_rules,

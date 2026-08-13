@@ -348,7 +348,7 @@ def _parse_custom_photos(custom_photos_meta: str,
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
-             kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
+             kvalitet: str = "polished", instruksjoner: str = "", innholdstype: str = "deck",
              sprak: str = "English", sider: str = "", study_meta: str = "",
              custom_rules: str = "", disabled_layouts: str = "", design_settings: str = "",
              custom_slides_meta: str = "",
@@ -583,7 +583,10 @@ async def create_job(
     filer: list[UploadFile],
     lengde: str = Form(default="standard"),
     tone: str = Form(default="balansert"),
-    kvalitet: str = Form(default="fast"),
+    # Default flipped to "polished" 2026-08-13: the vision QA pass is the highest value quality
+    # lever available (it is the only thing that looks at the actual pixels). Callers can still send
+    # "fast" per job, and DECK_QA_GATE=off disables it deploy-wide without a code change.
+    kvalitet: str = Form(default="polished"),
     instruksjoner: str = Form(default=""),
     innholdstype: str = Form(default="deck"),
     sprak: str = Form(default="English"),

@@ -497,6 +497,21 @@ def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str,
                 parsed_structure = loaded if isinstance(loaded, list) else None
             except Exception:  # noqa: BLE001
                 parsed_structure = None
+        # A structure rule about a TEAM slide may name the slide's bare database id, because the
+        # About page's rule picker identifies team slides that way. The pipeline matches on the
+        # LAYOUT key, which is "custom_<id>" (see _parse_custom_slides), so an unprefixed rule
+        # matched nothing: the slide was never moved to its slot, and the prose ask handed the model
+        # a layout key that is not in its vocabulary. Reported as "why didn't the thank you slide
+        # become the last slide" — it was never placed at all. Normalised here rather than only in
+        # the frontend so rules ALREADY saved with the bare id start working without being redone.
+        if parsed_structure:
+            known = {c["key"] for c in parsed_custom}
+            for r in parsed_structure:
+                if not isinstance(r, dict):
+                    continue
+                s = str(r.get("slide") or "")
+                if s and s not in known and f"custom_{s}" in known:
+                    r["slide"] = f"custom_{s}"
         parsed_preferred = [p.strip() for p in (preferred_layouts or "").split(",") if p.strip()]
         parsed_disabled_photos = [p.strip() for p in (disabled_photos or "").split(",") if p.strip()]
         parsed_preferred_photos = [p.strip() for p in (preferred_photos or "").split(",") if p.strip()]

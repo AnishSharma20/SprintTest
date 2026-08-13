@@ -853,6 +853,25 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     disclaimer contrast fix, the exec-summary slide-count fix, the gallery smoke-test fix, the
     team-slide rule picker, post-upload AI-fill conversion, and the position-slot conflict guard.
 
+- **A structure rule about a TEAM slide never matched — fixed 2026-08-13.** Reported: "why didn't the
+  thank you slide become the last slide" — and in fact it was not in the deck at all. The rule picker
+  identified team slides by their database **row id**, but the pipeline matches a structure rule against
+  the plan's `layout` field, and a team slide's layout key is **`custom_<id>`** (`main._parse_custom_slides`).
+  So `_apply_structure`'s `s["layout"] == r["slide"]` never matched (the slide was never moved) and
+  `_structure_asks` handed the model "Every deck includes a `ad5ac8d187804d7c` slide" — a layout key
+  absent from its enum, so it could not comply even if it tried. Introduced the same day, by the change
+  that put team slides in the picker.
+  - Frontend: `ruleTargets` now carries `key: custom_<id>` (what a rule must match) plus `slideId`
+    (the row id, which `patchSlide` needs for the "never used" switch). Built-ins carry both too so the
+    shapes match.
+  - Backend: `main.py` also normalises a rule whose `slide` is a bare id it recognises as a team slide,
+    so rules ALREADY saved with the wrong key start working without being recreated.
+  - Proven both ways: with `custom_<id>` the slide moves to last; with the bare id the order is
+    untouched, which is exactly what the user saw.
+  ⚠ Note the two key spaces are a live trap: `neverRules` and `patchSlide` want the ROW id, the planner,
+  validator and structure rules want the `custom_` LAYOUT key. Anything new that spans both must say
+  which it is holding.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

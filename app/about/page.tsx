@@ -482,7 +482,7 @@ export default function AboutV2Page() {
       // A team slide is switched off through custom_slides (mode "off"), not layout_settings — the
       // same branch the "Use it again" button above already makes.
       const ok = pickedTarget?.team
-        ? await patchSlide(newRuleSlide, { mode: "off" }, setRuleError)
+        ? await patchSlide(pickedTarget.slideId, { mode: "off" }, setRuleError)
         : await toggleLayout(newRuleSlide, false, setRuleError);
       setSavingRule(false);
       if (ok) {
@@ -1630,7 +1630,13 @@ export default function AboutV2Page() {
       ...customSlides
         .filter((c) => !c.removed)
         .map((c) => ({
-          key: c.id,
+          // The LAYOUT key, not the row id: a structure rule is matched against the plan's
+          // `layout` field, and the deck service names a team slide `custom_<id>`. Saving the bare
+          // id meant the rule matched nothing — the slide was never moved to its slot and the
+          // prose ask named a layout the model has no way to emit. `slideId` keeps the row id for
+          // the calls that need it (patchSlide takes the database id, not the layout key).
+          key: `custom_${c.id}`,
+          slideId: c.id,
           label: c.name,
           thumb: c.preview_b64 ? `data:image/jpeg;base64,${c.preview_b64}` : "",
           hint: c.description || "",
@@ -1642,6 +1648,7 @@ export default function AboutV2Page() {
         .filter((g) => g.kind !== "verbatim" && !layoutRemoved.has(g.key))
         .map((g) => ({
           key: g.key,
+          slideId: g.key,
           label: layoutNames[g.key]?.display_name || pretty(g.key),
           thumb: slideThumb(g.key),
           hint: cleanUsage(layoutNames[g.key]?.description || g.usage),

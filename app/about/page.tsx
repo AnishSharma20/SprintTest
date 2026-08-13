@@ -10,6 +10,9 @@ import gallery from "../layout-gallery.json";
 import photoLibrary from "../photo-library.json";
 import { BRAND_FEATURES, PRODUCTS, type ProductId } from "../products";
 import { ProductLogo } from "../product-logo";
+// The same ceiling appendDeckSettings draws its budget from — imported rather than restated so
+// the upload guard below cannot drift from the limit that actually drops the slide.
+import { MAX_BODY_BYTES } from "../generation-settings";
 
 const REVIEWER_KEY = "claimsReviewerName:v1"; // same key as the review pages — one name everywhere
 
@@ -1278,6 +1281,22 @@ export default function AboutV2Page() {
     try {
       if (file.size > 100 * 1024 * 1024)
         throw new Error("That file is too large (over 100 MB) — trim it down before uploading.");
+      // The 100 MB check above only guards THIS upload, which goes straight to Storage. The limit
+      // that actually decides whether the slide can ever be USED is smaller and applies later: every
+      // generation carries the slide's whole .pptx in the job body, and appendDeckSettings silently
+      // skips any slide that does not fit MAX_BODY_BYTES — a console.warn nobody sees. A team member
+      // uploaded a 4.9 MB thank-you slide, saw it listed as active with "In every deck" set, and it
+      // was dropped from every deck they made. Say it here, while the file is still in their hands
+      // and compressing its images is the obvious next step.
+      if (file.size > MAX_BODY_BYTES) {
+        const mb = (n: number) => (n / 1_000_000).toFixed(1) + " MB";
+        throw new Error(
+          `This PowerPoint is ${mb(file.size)}, and a generation can only carry about ` +
+            `${mb(MAX_BODY_BYTES)} of team slides, photos and sources together — so a slide from this ` +
+            `file would be left out of every deck. In PowerPoint, use Compress Pictures (or crop the ` +
+            `photos) and save a smaller copy, then upload that.`
+        );
+      }
       // Upload ONCE, straight to Storage (a signed URL, not the file, transits Vercel) — both the
       // preview below and the eventual save reuse this same stored path, so the file never rides
       // through Vercel's ~4.5 MB body ceiling, and never gets re-uploaded on save either.

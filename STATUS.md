@@ -872,6 +872,29 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   validator and structure rules want the `custom_` LAYOUT key. Anything new that spans both must say
   which it is holding.
 
+- **THE REAL REASON A TEAM SLIDE NEVER APPEARED: its .pptx was too big to send, and the skip was
+  invisible. 2026-08-13.** Reported as "the heart is on always on and asked to be at the end of every
+  deck, but it isn't in any of the decks I created even present". Measured against the live library:
+  the slide "The last slide - thank you" carries a **4.91 MB** .pptx (a full resolution photo) for a
+  total cost of **5.02 MB**, against `MAX_BODY_BYTES` of **4.0 MB** — the whole job body, shared by team
+  slides, team photos, overrides and the sources. So `appendDeckSettings`'s `if (cost > budget)` was
+  true on every run, no matter what else was in the deck: the slide was dropped before the job was even
+  sent, with only a `console.warn` nobody sees. `mode: "always"` cannot help a slide that never
+  reaches the service.
+  - The About page's upload now REFUSES a file over `MAX_BODY_BYTES` with the numbers and the fix
+    ("use Compress Pictures and save a smaller copy"), while the file is still in the user's hands.
+    It imports the constant from `generation-settings` rather than restating it, so the guard cannot
+    drift from the limit that does the dropping.
+  - The pre-existing 100 MB check is a red herring: it only guards the Storage upload, which bypasses
+    Vercel entirely via a signed URL. The limit that decides whether a slide can ever be USED is the
+    job body, an order of magnitude smaller, and nothing surfaced it.
+  - **Still not done:** the generator should also report which team slides it left out ("2 team slides
+    were too large to include"), so an already-saved oversized slide explains itself at generation time
+    rather than only at upload. `appendDeckSettings` has the names at the point it skips them.
+  - Worth remembering how this was found: three plausible causes were checked in order (the rule's key
+    space, the auto/always mode, the payload budget) and only measuring the actual blob size settled it.
+    The first two were real bugs, but neither was THIS bug.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

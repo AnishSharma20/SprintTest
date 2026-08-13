@@ -22,6 +22,7 @@ import io
 from pptx import Presentation
 from pptx.enum.dml import MSO_COLOR_TYPE, MSO_FILL_TYPE
 from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.oxml.ns import qn
 from pptx.util import Inches
 
 from . import renderer
@@ -237,6 +238,30 @@ def _rect_overlap_frac(inner, outer) -> float:
     return ((xb - xa) * (yb - ya)) / area if area else 0.0
 
 
+def _slide_bg_rgb(slide):
+    """The slide's own solid background colour, or None when it isn't a plain solid one.
+
+    Read straight out of the XML on purpose. python-pptx's `slide.background` is NOT a read
+    only view: the `.fill` property calls `get_or_add_bgPr()`, which INSERTS
+    `<p:bg><p:bgPr><a:noFill/></p:bgPr></p:bg>` into a slide that had no background of its own.
+    That element then overrides the layout's deep sea gradient with transparent, so merely
+    ASKING what colour a slide's background is turned every Blue Ocean slide white. QA must
+    never change the deck it is inspecting.
+
+    Only a direct `srgbClr` solid fill resolves to a colour, matching what the mutating version
+    returned: a gradient, a picture or a theme referenced fill (`bgRef`, `schemeClr`) reads as
+    unresolvable, and the caller then skips the contrast check for that text.
+    """
+    for holder in (slide, slide.slide_layout, slide.slide_layout.slide_master):
+        cSld = holder._element.find(qn("p:cSld"))
+        bg = cSld.find(qn("p:bg")) if cSld is not None else None
+        if bg is None:
+            continue    # nothing of its own; inherit from the layout, then the master
+        solid = bg.find(f"./{qn('p:bgPr')}/{qn('a:solidFill')}/{qn('a:srgbClr')}")
+        return _to_rgb(solid.get("val")) if solid is not None else None
+    return None
+
+
 def _effective_bg(slide, shapes, index, rect):
     """The colour actually behind a piece of text: its own fill if it has one, else the topmost
     solid-filled shape drawn earlier (lower z-order) that this text visually sits on top of, else
@@ -255,7 +280,7 @@ def _effective_bg(slide, shapes, index, rect):
     if best:
         return best
     try:
-        return _solid_fill_rgb(slide.background)
+        return _slide_bg_rgb(slide)
     except Exception:  # noqa: BLE001
         return None
 

@@ -15,6 +15,7 @@ right template, that text is legible, that a brand is not offered something it d
 """
 from __future__ import annotations
 
+import io
 import re
 import sys
 import zipfile
@@ -29,7 +30,7 @@ except Exception:  # noqa: BLE001
     pass
 
 from src import brand as brand_theme  # noqa: E402
-from src import config, planner, renderer  # noqa: E402
+from src import config, planner, qa_geometry, renderer  # noqa: E402
 
 FAILURES: list[str] = []
 
@@ -38,6 +39,43 @@ def check(ok: bool, label: str, detail: str = "") -> None:
     print(f"  {'PASS' if ok else 'FAIL'}  {label}" + (f"  — {detail}" if detail and not ok else ""))
     if not ok:
         FAILURES.append(f"{label}{': ' + detail if detail else ''}")
+
+
+def _slide_bgs(pptx_bytes: bytes) -> list[str]:
+    """Per slide: the background the slide sets ON ITSELF, as a comparable label. "inherit" means
+    it sets none and takes the layout's (that is the normal case, and the one a mutating read
+    silently destroyed)."""
+    z = zipfile.ZipFile(io.BytesIO(pptx_bytes))
+    out = []
+    for name in _slide_parts(z):
+        m = re.search(r"<p:bg>(.*?)</p:bg>", z.read(name).decode("utf8"), re.S)
+        if not m:
+            out.append("inherit")
+        elif "noFill" in m.group(1):
+            out.append("noFill")
+        else:
+            c = re.search(r'srgbClr val="([0-9A-Fa-f]{6})"', m.group(1))
+            out.append(c.group(1) if c else "other")
+    return out
+
+
+def _nudge_shape_off_canvas(pptx_bytes: bytes) -> bytes:
+    """Push one shape on the last slide out past the left edge, so the deck has a real defect for
+    the margin fixer to correct. Exactly the condition under which QA re-saves the deck."""
+    from pptx import Presentation
+    prs = Presentation(io.BytesIO(pptx_bytes))
+    for shape in prs.slides[-1].shapes:
+        if shape.left is not None and shape.width:
+            shape.left = -shape.width // 2
+            break
+    buf = io.BytesIO()
+    prs.save(buf)
+    return buf.getvalue()
+
+
+def _slide_parts(z: zipfile.ZipFile) -> list[str]:
+    return sorted((n for n in z.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", n)),
+                  key=lambda s: int(re.findall(r"\d+", s)[0]))
 
 
 def contrast(fg: str, bg: str) -> float:
@@ -87,9 +125,8 @@ def main() -> int:
             check(False, "renders a 5-slide deck", f"{type(e).__name__}: {e}")
             continue
 
-        z = zipfile.ZipFile(__import__("io").BytesIO(data))
-        slides = sorted((n for n in z.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", n)),
-                        key=lambda s: int(re.findall(r"\d+", s)[0]))
+        z = zipfile.ZipFile(io.BytesIO(data))
+        slides = _slide_parts(z)
         check(len(slides) == len(PLAN["slides"]),
               "one rendered slide per planned slide", f"{len(slides)} vs {len(PLAN['slides'])}")
 
@@ -137,7 +174,24 @@ def main() -> int:
         leaked = [o for o in others if o in sysmsg]
         check(not leaked, "prompt does not name another brand's product", ", ".join(leaked))
 
-        # 7. Photo ids offered to the model all resolve to a real staged file.
+        # 7. QA must not repaint the deck it inspects. Reading `slide.background` in python-pptx
+        #    INSERTS a transparent background, which overrides the template's own gradient — that
+        #    shipped whole decks WHITE when the user had asked for the dark Blue Ocean theme.
+        #    Tested on a deck that genuinely NEEDS a fix, because review_and_fix only saves its
+        #    python-pptx object when some fix fired: on a clean deck the stray background was
+        #    discarded with it, which is why this only hit some decks and looked random.
+        try:
+            nudged = _nudge_shape_off_canvas(data)
+            qa_data, issues = qa_geometry.review_and_fix(nudged, plan)
+            check(qa_data != nudged, "QA fixes an off-canvas shape (fixture really needs fixing)")
+            before, after = _slide_bgs(nudged), _slide_bgs(qa_data)
+            check("noFill" not in after, "QA leaves no slide background transparent",
+                  f"slides {[i + 1 for i, k in enumerate(after) if k == 'noFill']}")
+            check(before == after, "QA changes no slide's background", f"{before} -> {after}")
+        except Exception as e:  # noqa: BLE001
+            check(False, "deterministic QA runs over the rendered deck", f"{type(e).__name__}: {e}")
+
+        # 8. Photo ids offered to the model all resolve to a real staged file.
         renderer.apply_brand(arg)
         missing = [a["id"] for a in config.selectable_photos(arg)
                    if not config.resolve_asset(a["path"], arg).exists()]

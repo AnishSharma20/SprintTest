@@ -99,7 +99,10 @@ def generate_whitepaper_composed(client: anthropic.Anthropic, source_text: str, 
     else:
         _p(18, "Choosing which designed pages to use")
         msg = client.messages.create(
-            model=config.MODEL, max_tokens=2000, system=_selection_system(instructions),
+            # 2000 → 8000: the budget covers reasoning as well as the page pick, and running out
+            # yields no tool_use block, which the `picked is None` branch below treats as "use the
+            # default page set" — the page selection would quietly stop happening.
+            model=config.MODEL, max_tokens=8000, system=_selection_system(instructions),
             tools=[{"name": "choose_pages", "description": "Pick the pages to assemble, in order.",
                     "input_schema": lib.build_selection_schema()}],
             tool_choice={"type": "tool", "name": "choose_pages"},

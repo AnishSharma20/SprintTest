@@ -343,7 +343,11 @@ def review(client, images: list[bytes], plan: dict, *, model: str | None = None)
                         "media_type": "image/jpeg", "data": _jpeg_b64(images[i])}})
     try:
         msg = client.messages.create(
-            model=model or GATE_MODEL, max_tokens=2000, system=_SYSTEM,
+            # 2000 → 8000: the budget covers reasoning as well as the findings, and one call reviews
+            # EVERY slide of a deck (up to 26). A truncated response carries no tool_use block, which
+            # the except/[] path below reads as "deck is clean" — the gate would quietly stop
+            # gating instead of failing loudly.
+            model=model or GATE_MODEL, max_tokens=8000, system=_SYSTEM,
             tools=[{"name": "report_qa", "description": "Report per-slide visual QA findings.",
                     "input_schema": _SCHEMA}],
             tool_choice={"type": "tool", "name": "report_qa"},

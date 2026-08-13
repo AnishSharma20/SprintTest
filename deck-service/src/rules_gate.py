@@ -112,7 +112,10 @@ def review(client, plan: dict, custom_rules: str, *, model: str | None = None) -
         return []
     try:
         msg = client.messages.create(
-            model=model or GATE_MODEL, max_tokens=1500, system=_SYSTEM,
+            # 1500 → 6000: this budget covers the model's reasoning as well as the findings, and a
+            # gate that runs out of room returns no tool_use block, which the except/[] below treats
+            # as "no breaches" — i.e. the gate would switch itself off silently rather than fail.
+            model=model or GATE_MODEL, max_tokens=6000, system=_SYSTEM,
             tools=[{"name": "report_rule_findings",
                     "description": "Report which team rules the draft deck breaks.",
                     "input_schema": _SCHEMA}],

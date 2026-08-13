@@ -115,7 +115,11 @@ def generate_blog(client: anthropic.Anthropic, source_text: str, base_name: str,
         except Exception:  # noqa: BLE001
             pass
     msg = client.messages.create(
-        model=config.MODEL, max_tokens=6000, system=build_system(length, tone, instructions),
+        # 6000 → 16000: config.MODEL now reasons before it writes, and this budget covers BOTH the
+        # reasoning and the whole draft. Nothing below inspects stop_reason, so a draft that ran out
+        # of room would be handed to the user truncated mid-sentence rather than failing. 16000 also
+        # keeps a non-streaming request inside the SDK's own HTTP-timeout guard.
+        model=config.MODEL, max_tokens=16000, system=build_system(length, tone, instructions),
         messages=[{"role": "user", "content":
                    f"SOURCE MATERIAL:\n{source_text}\n\nWrite the Superba Krill blog draft now, in Markdown."}],
     )

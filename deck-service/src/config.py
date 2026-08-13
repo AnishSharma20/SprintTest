@@ -63,9 +63,21 @@ _DEFAULT_TEMPLATES = [
     ROOT / "brand_assets" / "05. Superba Brand Identity" / "Superba refresh power point template.pptx",
 ]
 
-# Content model. Defaults to claude-sonnet-5; overridable via DECK_MODEL (e.g. claude-opus-4-8
-# or a pinned dated version) without a code change. API key comes from ANTHROPIC_API_KEY only.
-MODEL = os.environ.get("DECK_MODEL", "claude-sonnet-5")
+# Content model. Defaults to claude-opus-5: the deck plan is ONE high-stakes structured call, and
+# the things that decide whether a deck reads as consultant-grade (is this the right layout for this
+# evidence, does the action title carry the finding, is the exec summary the real story) are exactly
+# the judgment validate.py cannot check — it enforces lengths and coverage, not editorial quality.
+# Overridable via DECK_MODEL (e.g. claude-sonnet-5 for cheaper bulk runs) without a code change.
+# API key comes from ANTHROPIC_API_KEY only.
+MODEL = os.environ.get("DECK_MODEL", "claude-opus-5")
+
+# Reasoning depth for the model calls. xhigh is the recommended level for structured planning and
+# agentic work, and sits between high and max. DECK_EFFORT can dial it back (medium/low) when a run
+# needs to be cheap or fast rather than best; an unknown value falls back rather than 400ing a job.
+_EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
+EFFORT = os.environ.get("DECK_EFFORT", "xhigh").strip().lower()
+if EFFORT not in _EFFORT_LEVELS:
+    EFFORT = "xhigh"
 
 SLIDE_TARGETS = {"kort": 9, "standard": 15, "detaljert": 19, "omfattende": 26}
 

@@ -11,6 +11,7 @@ just produces (and, on request, revises) a plan.
 from __future__ import annotations
 
 import json
+import sys
 
 import anthropic
 
@@ -367,8 +368,18 @@ def _max_tokens(target: int) -> int:
     """Output budget scaled to the deck size. Bumped alongside the larger slide targets and the
     fuller per-slide text density (TEXT DENSITY below) — the old 8000/12000/16000 ceilings were
     sized for shorter decks with shorter copy, and would start truncating a 15 to 19 slide deck
-    that actually fills its boxes."""
-    return 20000 if target > 16 else (14000 if target > 10 else 10000)
+    that actually fills its boxes.
+
+    Bumped AGAIN (10000/14000/20000 → 24000/32000/48000/64000) because this is a ceiling on
+    THINKING PLUS the plan JSON, not on the JSON alone: the planner model reasons before it emits,
+    so at the old tiers a long deck was competing with its own reasoning for room. That is what the
+    stop_reason == "max_tokens" retry in _call was papering over — it now behaves like the safety
+    net it reads as, instead of firing on ordinary large decks and paying for a second full plan.
+    'omfattende' (26 slides) gets its own tier; the old top tier stopped at >16 and made a 26 slide
+    deck share a budget sized for 19."""
+    if target > 20:
+        return 64000
+    return 48000 if target > 16 else (32000 if target > 10 else 24000)
 
 
 def photo_minimum(total: int, photo_level: str) -> int:
@@ -822,6 +833,32 @@ def remove_from_asset_enums(node, remove_ids: set[str]) -> None:
             remove_from_asset_enums(v, remove_ids)
 
 
+def _plan_is_complete(msg) -> bool:
+    """True only when the response carries a WHOLE emit_plan call.
+
+    Streaming is what makes this check necessary. The SDK re-parses a tool call's JSON on every
+    delta with jiter's `partial_mode=True` and does NOT re-parse it strictly at content_block_stop,
+    so an interrupted or truncated tool call yields a silently PARTIAL dict where non-streaming
+    create() used to raise. Unchecked, that shows up two ways: a dict with no `slides` (loud — the
+    user loses their deck), or a plausible-looking SHORT `slides` list that renders as a quietly
+    half-length deck. The second is the dangerous one, so re-parse the raw buffer strictly and let
+    _call treat anything incomplete as retryable."""
+    for block in msg.content:
+        if block.type != "tool_use" or getattr(block, "name", None) != "emit_plan":
+            continue
+        # Set by the streaming accumulator via setattr(), so no name mangling applies.
+        raw = getattr(block, "__json_buf", b"")
+        if raw:
+            try:
+                parsed = json.loads(raw)
+            except ValueError:
+                return False
+            return bool(isinstance(parsed, dict) and parsed.get("slides"))
+        # No buffer means this wasn't streamed; the SDK already parsed it strictly.
+        return bool(isinstance(block.input, dict) and block.input.get("slides"))
+    return False
+
+
 def _extract_plan(msg) -> dict:
     for block in msg.content:
         if block.type == "tool_use" and isinstance(block.input, dict) and block.input.get("slides"):
@@ -835,20 +872,45 @@ def _call(client, system, user, model, max_tokens, disabled: set[str] | None = N
           disabled_photo_ids: set[str] | None = None,
           layout_overrides: list[dict] | None = None,
           brand: str | None = None):
+    # Built ONCE, outside once(): _tool_schema deep-copies the cached schema on every call, and the
+    # retry below must send a byte-identical tools block or it invalidates the prompt cache (tools
+    # render ahead of system, so they are the very front of the cached prefix).
+    schema = _tool_schema(disabled, extra_layouts, extra_photo_ids,
+                          disabled_photo_ids, layout_overrides)
+
     def once(budget):
-        return client.messages.create(
-            model=model or config.MODEL, max_tokens=budget, system=system,
+        # Streaming rather than create(): at these budgets the SDK refuses a non-streaming request
+        # it estimates will outrun its ~10 minute HTTP timeout, raising before the call is even
+        # made. get_final_message() returns the same Message create() did, so _extract_plan and the
+        # stop_reason retry below are unchanged.
+        with client.messages.stream(
+            model=model or config.MODEL, max_tokens=budget,
+            # ONE cache breakpoint on the last (only) system block covers tools + system, i.e.
+            # everything above the user turn: the emit_plan schema, the layout guide, the team
+            # rules, the photo guide. plan_deck, revise_plan and revise_plan_visual all build the
+            # SAME prefix and differ only in their user message, so a revision or a truncation
+            # retry reads that prefix back at cache rates instead of re-paying full price for it.
+            # Anything volatile therefore has to stay in the user turn — never move per-run text
+            # into build_system, or nothing here will ever hit.
+            system=[{"type": "text", "text": system,
+                     "cache_control": {"type": "ephemeral"}}],
+            output_config={"effort": config.EFFORT},
             tools=[{"name": "emit_plan", "description": "Emit the full deck plan as structured JSON.",
-                    "input_schema": _tool_schema(disabled, extra_layouts, extra_photo_ids,
-                                                 disabled_photo_ids, layout_overrides)}],
+                    "input_schema": schema}],
             tool_choice={"type": "tool", "name": "emit_plan"},
             messages=user,
-        )
+        ) as stream:
+            return stream.get_final_message()
     msg = once(max_tokens)
     # A plan cut off mid-tool-call arrives without usable input (no slides) — seen in practice
     # when a photo-rich or team-slide-rich prompt makes the plan run longer than the length
     # tier's budget. One retry with real headroom beats failing the user's whole deck.
-    if msg.stop_reason == "max_tokens":
+    # stop_reason alone is NOT a sufficient trigger: an incomplete streamed tool call can arrive
+    # with stop_reason == "tool_use" and a partial plan (see _plan_is_complete), which was observed
+    # once in testing. Retry on either signal — the cached prefix makes the retry cheap.
+    if msg.stop_reason == "max_tokens" or not _plan_is_complete(msg):
+        print(f"[planner] incomplete plan (stop_reason={msg.stop_reason}); "
+              f"retrying at {int(max_tokens * 1.6)} max_tokens", file=sys.stderr)
         msg = once(int(max_tokens * 1.6))
     return msg
 

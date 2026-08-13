@@ -593,6 +593,55 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     landed at slide 2 with real numbers ("14% more than placebo, p=0.03") in every field, 69 words
     total, agenda at slide 3, notes present — `tsc` clean.
 
+- **Opus 5 + xhigh effort + prompt caching on the planner — NEW 2026-08-13.** Deck quality is decided
+  almost entirely by ONE structured call (`planner._call`), and the things that make a deck read as
+  consultant grade (right layout for the evidence, action titles that carry the finding, a real exec
+  summary) are exactly what `validate.py` cannot check — it enforces lengths and coverage, not
+  editorial judgment. So:
+  - `config.MODEL` default `claude-sonnet-5` → **`claude-opus-5`**, and a new `config.EFFORT`
+    (`DECK_EFFORT`, default **xhigh**, unknown values fall back rather than 400 a job) passed as
+    `output_config={"effort": ...}`. Both still env overridable, so `DECK_MODEL=claude-sonnet-5`
+    reverts for cheap bulk runs with no code change.
+  - **`_max_tokens` 10000/14000/20000 → 24000/32000/48000/64000**, and `omfattende` (26 slides) got
+    its own tier instead of sharing the 19 slide budget. The reason this mattered: `max_tokens` caps
+    **thinking PLUS the plan JSON**, and the planner model now reasons before it emits, so at the old
+    tiers a long deck competed with its own reasoning for room. That is what the `stop_reason ==
+    "max_tokens"` retry was papering over.
+  - **Prompt caching**: one `cache_control` breakpoint on the system block, which covers tools +
+    system (the `emit_plan` schema, layout guide, team rules, photo guide — ~29k tokens). `plan_deck`,
+    `revise_plan` and `revise_plan_visual` all build the SAME prefix and differ only in the user turn,
+    so revisions and retries read it back at ~0.1× instead of full price. **Verified live: 29060
+    cache_read, 517 uncached input.** ⚠️ Anything per run must stay in the USER turn — move volatile
+    text into `build_system` and caching silently stops hitting. `_tool_schema` is now built once
+    outside the retry closure so the retry's tools block is byte identical (tools render at the FRONT
+    of the cached prefix).
+  - **Streaming** (`client.messages.stream` + `get_final_message()`) because the SDK refuses a
+    non-streaming request it estimates will outrun its ~10 min HTTP timeout — at 48k/64k budgets it
+    would raise before the call was made.
+  - **New `planner._plan_is_complete` guard, and `_call` now retries on it as well as on
+    `stop_reason`.** Streaming made this necessary: the SDK re-parses a tool call's JSON on every
+    delta with jiter `partial_mode=True` and does **not** re-parse strictly at `content_block_stop`,
+    so an interrupted tool call yields a silently PARTIAL dict where non-streaming `create()` used to
+    raise. Two failure shapes: no `slides` (loud — user loses the deck, observed once in testing), or
+    a plausible looking SHORT `slides` list that renders as a quietly half length deck. The guard
+    strictly `json.loads` the raw `__json_buf` buffer and treats anything incomplete as retryable.
+    Confirmed `_extract_plan` alone ACCEPTS the plausible truncated case, so the guard is load bearing.
+  - **Other call sites had to grow too, because `config.MODEL` is shared and their budgets now cover
+    thinking — each one degraded SILENTLY, not loudly:** `qa_gate` 2000→8000 and `rules_gate`
+    1500→6000 (no tool_use block → their `except`/`[]` path reads as "nothing found", i.e. the gate
+    switches itself off); `whitepaper` page selection 2000→8000 (falls back to the default page set);
+    `blog` 6000→16000 (nothing inspects `stop_reason`, so a truncated draft ships to the user
+    mid-sentence). The whitepaper's main fill call already streamed at 24000/32000.
+  - Verified: real Opus 5 generations end to end (plan → validate → refine → rendered `.pptx`, 20
+    slides + spliced benefits slide, ~161 to 229s), cache read confirmed on the second call, notes on
+    every slide except the two verbatim splices (exempt by contract), no title over 50 chars after the
+    refine round, and 9 unit cases over `_plan_is_complete`. **Not exercised: `quality="polished"`**
+    (the `qa_gate` vision path) — its change is a pure headroom bump.
+  - Known friction, PRE-EXISTING and unchanged: the model's first pass often lands titles at 52 to 57
+    chars against a hard 50 char limit, so `revise_plan` ("Refining copy to fit") fires on most decks
+    — about half the wall clock. The prompt says "roughly 50 characters"; tightening that wording (or
+    raising the limit) would remove a whole round trip.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

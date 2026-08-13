@@ -791,6 +791,25 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     reported thank-you slide flipped to **AI WRITES TEXT with 3 measured text areas** — so that
     slide's original verbatim state was the upload-time choice, not a measuring failure.
 
+- **Two slides pinned to the SAME position slot no longer displace each other — fixed 2026-08-13.**
+  Asked: what happens if two slides both say "always comes last"? Measured, not guessed: nothing
+  complained. `sanitize_structure` deduped by SLIDE only, so both rules survived, and
+  `_apply_structure` moves each pinned slide in turn — so the later rule won the slot and the earlier
+  slide was shoved to **second to last, a spot no rule asked for**. Which one lost depended on the
+  order the rows came back from the database, invisible from the Rules tab, so the same rules could
+  produce different decks on different runs.
+  - `sanitize_structure` now guards the position SLOT as well as the slide: first claim keeps it, the
+    later claim is dropped from the structural pass and logged to stderr naming both slides. The rule
+    row still stands, so the team can see and delete it. Legitimate pairs are untouched (`last` +
+    `second_to_last` are different slots; two `always_include` rules claim no slot at all).
+  - The composer no longer OFFERS a claimed slot: each position option reads
+    "always comes last — taken by Thank you slide" and is disabled, computed from the enabled rules
+    (`slotHolder`). A disabled rule holds nothing, and a slide is never told it has taken its own
+    slot. This is the real fix — the pipeline guard is the backstop.
+  - Verified live: with their actual rules the select showed first/second/third/second-to-last/last all
+    correctly attributed to Title / Exec summary / Agenda / Benefits verbatim / Thank you slide, and
+    the self-exclusion confirmed by picking Title (its own "first" stayed available).
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

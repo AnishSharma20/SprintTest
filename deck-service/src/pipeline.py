@@ -68,9 +68,16 @@ _DEFAULT_STRUCTURE = [
 
 
 def sanitize_structure(structure_rules) -> list[dict]:
-    """Only well-formed rules, and never two rules fighting over the same slide or the same
-    deck-wide guarantee (first wins)."""
-    out, seen = [], set()
+    """Only well-formed rules, and never two rules fighting over the same slide, the same POSITION
+    SLOT, or the same deck-wide guarantee (first wins in all three cases).
+
+    The slot guard matters as much as the slide one. `_apply_structure` moves each pinned slide in
+    turn, so two slides both pinned "last" do not conflict loudly — the second move simply wins and
+    shoves the first to second-to-last. Which one lost then depended on the order the rows came back
+    from the database, something nobody can see or control from the Rules tab, so the same rules could
+    produce different decks. First claim keeps the slot; the loser is dropped from the structural pass
+    and logged, and the rule row itself still stands so the team can see and delete it."""
+    out, seen, slots = [], set(), {}
     for r in structure_rules or []:
         if not isinstance(r, dict):
             continue
@@ -85,8 +92,15 @@ def sanitize_structure(structure_rules) -> list[dict]:
         if not slide or slide in seen or action not in _SLIDE_ACTIONS:
             continue
         pos = str(r.get("position") or "").strip()
-        if action == "position" and pos not in _POSITION_SLOTS:
-            continue
+        if action == "position":
+            if pos not in _POSITION_SLOTS:
+                continue
+            if pos in slots:
+                print(f"[structure] '{slide}' also asks for the {pos!r} slot, which "
+                      f"'{slots[pos]}' already holds — ignoring the later rule so the deck is "
+                      f"deterministic. Delete one of the two rules.", file=sys.stderr)
+                continue
+            slots[pos] = slide
         seen.add(slide)
         out.append({"slide": slide, "action": action, "position": pos or None})
     return out

@@ -1655,6 +1655,25 @@ export default function AboutV2Page() {
   );
   const pickedTarget = ruleTargets.find((s) => s.key === newRuleSlide);
 
+  /** Which slide already holds each position slot, so the composer cannot create a second claim on
+   * it. Two slides pinned to the same slot do not conflict loudly: pipeline._apply_structure moves
+   * each in turn, so the later rule wins the slot and the earlier slide is shoved to a spot no rule
+   * asked for. The pipeline now ignores the later claim, but it is far better not to let the rule be
+   * written. Disabled rules are ignored — a switched-off rule holds nothing. */
+  const slotHolder = useMemo(() => {
+    const held: Record<string, string> = {};
+    for (const r of rules) {
+      if (!r.enabled || r.action !== "position" || !r.position || !r.slide_key) continue;
+      if (!held[r.position]) held[r.position] = r.slide_key;
+    }
+    return held;
+  }, [rules]);
+  const slotTakenBy = (slot: string) => {
+    const key = slotHolder[slot];
+    if (!key || key === newRuleSlide) return null;
+    return ruleTargets.find((s) => s.key === key)?.label || prettySlide(key);
+  };
+
   const removedLayoutEntries = brandGallery.filter((g) => layoutRemoved.has(g.key));
   const removedCustomSlides = customSlides.filter((c) => c.removed);
   const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
@@ -2071,11 +2090,27 @@ export default function AboutV2Page() {
                             onChange={(e) => setNewRulePosition(e.target.value)}
                             className="rounded-[4px] border border-[#C2D9E3] p-1.5 text-xs outline-none"
                           >
-                            <option value="first">always comes first</option>
-                            <option value="second">always comes second</option>
-                            <option value="third">always comes third</option>
-                            <option value="second_to_last">always comes second to last</option>
-                            <option value="last">always comes last</option>
+                            {/* A slot another enabled rule already holds is shown as taken rather
+                                than offered: two slides pinned to one slot silently displaces one of
+                                them (see slotHolder). "anywhere", "never" and "in my own words" claim
+                                no slot, so they are always available. */}
+                            {(
+                              [
+                                ["first", "always comes first"],
+                                ["second", "always comes second"],
+                                ["third", "always comes third"],
+                                ["second_to_last", "always comes second to last"],
+                                ["last", "always comes last"],
+                              ] as const
+                            ).map(([slot, label]) => {
+                              const taken = slotTakenBy(slot);
+                              return (
+                                <option key={slot} value={slot} disabled={!!taken}>
+                                  {label}
+                                  {taken ? ` — taken by ${taken}` : ""}
+                                </option>
+                              );
+                            })}
                             <option value="anywhere">is always included, anywhere</option>
                             <option value="never">is never used</option>
                             <option value="own">…something else, in my own words</option>

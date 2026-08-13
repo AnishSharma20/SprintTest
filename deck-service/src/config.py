@@ -63,21 +63,23 @@ _DEFAULT_TEMPLATES = [
     ROOT / "brand_assets" / "05. Superba Brand Identity" / "Superba refresh power point template.pptx",
 ]
 
-# Content model. Defaults to claude-opus-5: the deck plan is ONE high-stakes structured call, and
-# the things that decide whether a deck reads as consultant-grade (is this the right layout for this
-# evidence, does the action title carry the finding, is the exec summary the real story) are exactly
-# the judgment validate.py cannot check — it enforces lengths and coverage, not editorial quality.
-# Overridable via DECK_MODEL (e.g. claude-sonnet-5 for cheaper bulk runs) without a code change.
-# API key comes from ANTHROPIC_API_KEY only.
-MODEL = os.environ.get("DECK_MODEL", "claude-opus-5")
+# Content model. Back to claude-sonnet-5 by CLIENT DECISION 2026-08-13, after a day on claude-opus-5.
+# The reasoning for Opus still holds on paper (the deck plan is one high-stakes structured call, and
+# layout choice / action titles / the exec summary are judgment validate.py cannot check) but it was
+# not worth what it cost in practice: roughly 2x the money and 3x the wall clock, and side by side
+# against decks the team had already made on Sonnet the difference was not one they could see. Note
+# the evidence either way was one deck per brand, and run to run variance was larger than the gap.
+# DECK_MODEL=claude-opus-5 switches back with no code change if that ever looks worth revisiting.
+MODEL = os.environ.get("DECK_MODEL", "claude-sonnet-5")
 
-# Reasoning depth for the model calls. xhigh is the recommended level for structured planning and
-# agentic work, and sits between high and max. DECK_EFFORT can dial it back (medium/low) when a run
-# needs to be cheap or fast rather than best; an unknown value falls back rather than 400ing a job.
+# Reasoning depth. "high" is claude-sonnet-5's OWN default, so passing it changes nothing versus not
+# passing it at all — deliberate, so reverting the model reverts the behaviour with it. Measured on
+# Opus: effort barely moved this workload anyway (0.78x to 1.15x output across low..max), because
+# output is dominated by the plan JSON rather than by thinking. DECK_EFFORT still dials it.
 _EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
-EFFORT = os.environ.get("DECK_EFFORT", "xhigh").strip().lower()
+EFFORT = os.environ.get("DECK_EFFORT", "high").strip().lower()
 if EFFORT not in _EFFORT_LEVELS:
-    EFFORT = "xhigh"
+    EFFORT = "high"
 
 SLIDE_TARGETS = {"kort": 9, "standard": 15, "detaljert": 19, "omfattende": 26}
 

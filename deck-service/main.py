@@ -375,7 +375,7 @@ def _parse_custom_photos(custom_photos_meta: str,
 
 
 def _run_job(job_id: str, key: str, files: list[tuple[str, bytes]], lengde: str, tone: str,
-             kvalitet: str = "polished", instruksjoner: str = "", innholdstype: str = "deck",
+             kvalitet: str = "fast", instruksjoner: str = "", innholdstype: str = "deck",
              sprak: str = "English", sider: str = "", study_meta: str = "",
              custom_rules: str = "", disabled_layouts: str = "", design_settings: str = "",
              custom_slides_meta: str = "",
@@ -610,10 +610,14 @@ async def create_job(
     filer: list[UploadFile],
     lengde: str = Form(default="standard"),
     tone: str = Form(default="balansert"),
-    # Default flipped to "polished" 2026-08-13: the vision QA pass is the highest value quality
-    # lever available (it is the only thing that looks at the actual pixels). Callers can still send
-    # "fast" per job, and DECK_QA_GATE=off disables it deploy-wide without a code change.
-    kvalitet: str = Form(default="polished"),
+    # Back to "fast" 2026-08-13, the same day it was flipped to "polished". The vision pass is still
+    # the only stage that looks at the actual PIXELS, but on the 512 MB instance it was not
+    # affordable: it rasterises the finished deck through LibreOffice, so it roughly doubled peak
+    # memory AND made that spike happen on every deck rather than none. A generation then died mid
+    # job (a hard process restart, polls 200 OK right up to it, surfacing as "Server responded 502"),
+    # and it also roughly doubled the wall clock. Set kvalitet="polished" per job, or DECK_QA_GATE=1
+    # deploy wide, to turn it back on — ideally on a larger instance.
+    kvalitet: str = Form(default="fast"),
     instruksjoner: str = Form(default=""),
     innholdstype: str = Form(default="deck"),
     sprak: str = Form(default="English"),

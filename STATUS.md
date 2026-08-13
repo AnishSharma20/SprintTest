@@ -829,6 +829,30 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     Opus 5 with the polished gate; a push inside that window throws the work away and costs the user
     real money in model calls.
 
+- **REVERTED to claude-sonnet-5 and quality="fast" — CLIENT DECISION, end of 2026-08-13.** The Opus 5
+  day is undone at the two places that set the runtime cost profile; everything else from it stays.
+  - `config.MODEL` back to `claude-sonnet-5`; `config.EFFORT` back to `high`, which is Sonnet 5's OWN
+    default so passing it is a no-op. `DECK_MODEL` / `DECK_EFFORT` still switch either way with no
+    code change.
+  - `quality` default back to **`fast`** (`pipeline.generate`, `main._run_job`, the `/jobs` Form,
+    `cli.py`). The vision pass is still the only stage that sees actual pixels, but on the **512 MB**
+    instance it was not affordable: it rasterises the finished deck through LibreOffice, so it roughly
+    doubled peak memory AND moved that spike from never to every deck. A generation then died mid job
+    — polls 200 OK until 21:44:14, a fresh `Started server process` at 21:44:45, surfacing to the user
+    as **"Server responded 502"**. It also roughly doubled wall clock (161 to 229s → 260 to 440s).
+    Turn it back on per job with `kvalitet="polished"`, or deploy wide with `DECK_QA_GATE=1` — but on a
+    bigger instance, or lower `_HEAVY_TAIL_SEMAPHORE` from 2 to 1 first.
+  - **The reason was cost and time, not a defect.** Roughly 2x the money and 3x the clock, and side by
+    side against decks the team had already made on Sonnet the difference was not one they could see.
+    Fair on the evidence: one deck per brand each way, and run to run variance (content mix swung
+    90/10 → 67/33 on the SAME pipeline) was larger than the gap being read.
+  - **KEPT, because none of it depends on the model:** prompt caching on the planner prefix, the raised
+    `_max_tokens` tiers (24/32/48/64k — Sonnet 5 also thinks by default, so the old 10/14/20k tiers
+    would truncate), streaming, `_plan_body`'s envelope unwrapping, `_plan_is_complete`, the raised
+    gate/blog/whitepaper budgets, both brand fixes (forced-tool schema brand, field-less layouts), the
+    disclaimer contrast fix, the exec-summary slide-count fix, the gallery smoke-test fix, the
+    team-slide rule picker, post-upload AI-fill conversion, and the position-slot conflict guard.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

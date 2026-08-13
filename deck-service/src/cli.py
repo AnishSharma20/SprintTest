@@ -32,7 +32,7 @@ def main(argv=None) -> int:
     g.add_argument("input", type=Path)
     g.add_argument("--length", default="standard", choices=["kort", "standard", "detaljert"])
     g.add_argument("--tone", default="balansert", choices=["salg", "balansert", "vitenskap"])
-    g.add_argument("--quality", default="polished", choices=["fast", "polished"],
+    g.add_argument("--quality", default="fast", choices=["fast", "polished"],
                    help="polished adds a visual QA pass (render -> vision-check -> fix flagged slides)")
     g.add_argument("-o", "--out", type=Path, default=None)
     args = parser.parse_args(argv)

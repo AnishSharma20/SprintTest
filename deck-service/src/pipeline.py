@@ -777,7 +777,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
 
 
 def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
-             length: str = "standard", tone: str = "balansert", quality: str = "polished",
+             length: str = "standard", tone: str = "balansert", quality: str = "fast",
              instructions: str = "", on_progress=None,
              study_meta: list[dict] | None = None,
              custom_rules: str = "", disabled_layouts: list[str] | None = None,

@@ -1660,7 +1660,7 @@ export default function AboutV2Page() {
         {/* ----- slim masthead — no descriptive paragraph, unlike /about ----- */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#0A7A8A]">About V2</div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#0A7A8A]">Design settings</div>
             <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[#1D1D1F]">Generation settings</h1>
           </div>
           <ReviewerField value={reviewer} onChange={onReviewerChange} placeholder="Your name (recorded on changes)" />

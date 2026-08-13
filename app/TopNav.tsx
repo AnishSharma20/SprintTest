@@ -9,7 +9,7 @@ const TABS = [
   { href: "/", label: "Scientific Studies" },
   { href: "/claims", label: "Findings Library" },
   { href: "/generator", label: "Content Generator" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "Design settings" },
 ];
 
 export default function TopNav() {

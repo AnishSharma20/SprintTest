@@ -2142,7 +2142,9 @@ export default function AboutV2Page() {
                       <p className="mt-2 text-xs text-zinc-600">
                         Will be saved as:{" "}
                         <span className="font-semibold text-[#031B34]">
-                          {prettySlide(newRuleSlide)}{" "}
+                          {/* Same label the rule is SAVED with (see saveRule): prettySlide on a team
+                              slide's id renders the raw id, e.g. "Ad5ac8d187804". */}
+                          {pickedTarget?.team ? pickedTarget.label : prettySlide(newRuleSlide)}{" "}
                           {newRulePosition === "never"
                             ? NEVER_LABEL
                             : POSITION_LABEL[newRulePosition] ?? "is always included"}

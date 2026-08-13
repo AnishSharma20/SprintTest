@@ -267,6 +267,7 @@ export default function AboutV2Page() {
   const [rulesMigrated, setRulesMigrated] = useState(true);
   const [structureMigrated, setStructureMigrated] = useState(true); // migration 0013
   const [newRuleSlide, setNewRuleSlide] = useState("");             // "" = a writing rule
+  const [slotsBusyId, setSlotsBusyId] = useState("");                // slide being re-measured
   const [newRulePosition, setNewRulePosition] = useState("first");
   const [slidePicker, setSlidePicker] = useState(false);            // pick the slide by its picture
   const [rules, setRules] = useState<Rule[]>([]);
@@ -1114,6 +1115,35 @@ export default function AboutV2Page() {
     } catch (e) {
       notify((e as Error).message);
       return false;
+    }
+  }
+
+  /** Switch a slide the team already uploaded between "the AI writes its text" and "exactly as
+   * drawn". The choice previously existed only during upload, and it fell back to verbatim whenever
+   * measuring failed — with no way back short of deleting and re-uploading. The stored .pptx is
+   * re-measured server side, so no re-upload is needed. */
+  async function setSlideAiFills(id: string, on: boolean) {
+    setSlotsBusyId(id);
+    setCustomError("");
+    try {
+      const res = await fetch(
+        withBrand(`/api/custom-slides/${id}/slots${on ? "" : `?author=${encodeURIComponent(reviewer)}`}`),
+        on
+          ? {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ author: reviewer }),
+            }
+          : { method: "DELETE" }
+      );
+      const d = await safeJson(res);
+      if (!res.ok) throw new Error((d.error as string) || "Could not change this slide.");
+      const slide = d.slide as CustomSlide | undefined;
+      if (slide) setCustomSlides((s) => s.map((x) => (x.id === id ? { ...x, ...slide } : x)));
+    } catch (e) {
+      setCustomError((e as Error).message);
+    } finally {
+      setSlotsBusyId("");
     }
   }
 
@@ -2008,17 +2038,21 @@ export default function AboutV2Page() {
                         onClick={() => setSlidePicker((o) => !o)}
                         className="flex items-center gap-2 rounded-[4px] border border-[#C2D9E3] bg-white p-1 pr-2 text-xs text-[#031B34] outline-none hover:border-[#3FD0C9] disabled:opacity-50"
                       >
-                        {newRuleSlide && (
+                        {/* Thumb and label both come from pickedTarget, so a TEAM slide shows its own
+                            preview and its own name. slideThumb only knows built-in keys and
+                            layoutNames has no team entry, so this used to render a broken image next
+                            to the slide's raw id ("the ad5ac8d187804d7c slide"). */}
+                        {newRuleSlide && pickedTarget?.thumb && (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
-                            src={slideThumb(newRuleSlide)}
+                            src={pickedTarget.thumb}
                             alt=""
                             className="h-7 w-12 shrink-0 rounded-[2px] border border-[#E3EDF2] object-cover"
                           />
                         )}
                         <span>
                           {newRuleSlide
-                            ? `the ${(layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide`
+                            ? `the ${(pickedTarget?.label || layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide`
                             : "how the deck is written (any slide)"}
                         </span>
                         <span aria-hidden className="text-[9px] text-zinc-400">
@@ -2951,6 +2985,29 @@ export default function AboutV2Page() {
                           <div className="flex min-h-6 items-start justify-between gap-2">
                             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                               <div className="truncate text-sm font-bold text-[#031B34]">{c.name}</div>
+                              {/* The pill states which of the two an uploaded slide is; the button
+                                  next to it switches, re-measuring the stored .pptx server side.
+                                  Before this the choice was upload-time only, so a slide whose text
+                                  could not be measured was stuck verbatim for good. */}
+                              {c.mode !== "always" && (
+                                <button
+                                  type="button"
+                                  disabled={slotsBusyId === c.id}
+                                  onClick={() => void setSlideAiFills(c.id, !c.slots?.length)}
+                                  title={
+                                    c.slots?.length
+                                      ? "Insert this slide exactly as drawn instead, with the AI writing nothing on it"
+                                      : "Let the AI write this slide's text each deck, keeping your design. Needs real text boxes on the slide."
+                                  }
+                                  className="rounded-[4px] border border-[#C2D9E3] px-1.5 py-0.5 text-[10px] font-semibold text-[#06456B] hover:border-[#3FD0C9] disabled:opacity-50"
+                                >
+                                  {slotsBusyId === c.id
+                                    ? "Reading…"
+                                    : c.slots?.length
+                                      ? "Use as is"
+                                      : "Let AI write text"}
+                                </button>
+                              )}
                               {c.slots?.length ? (
                                 <span
                                   className={PILL_AI}

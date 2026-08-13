@@ -767,6 +767,30 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   hand-authored entry is added to `LAYOUTS_BY_BRAND` in `build_schema.py` with a `kind` the renderer
   can fill. Team uploads are the supported no-code path; a new native layout is a developer task.
 
+- **An uploaded slide can now be switched to AI-written text AFTER upload — NEW 2026-08-13.** The
+  choice ("the AI writes fresh text into this design" vs "insert exactly as drawn") existed only
+  DURING upload, in `measurePick`, and it silently fell back to verbatim whenever measuring failed —
+  with no way back short of deleting the slide and uploading it again. Reported by a team member whose
+  thank-you slide came out verbatim.
+  - New route **`/api/custom-slides/[id]/slots`**: `POST` re-measures the stored `.pptx` (from
+    `custom_slide_files.storage_path`, or `pptx_b64` for pre-0008 rows) via the deck service's
+    `/slides/inspect-slots` and saves the slots; `DELETE` clears them back to verbatim. No re-upload,
+    because the original file is retained. Forwards exactly as `inspect-slots/route.ts` does (`file`
+    + `slide_index`, `X-Deck-Token`) and passes the deck service's human refusals through unchanged
+    (embedded chart/video/object, no editable text, too many slots).
+  - Refuses the one combination the UI cannot represent: a slide in **"In every deck"** mode (`always`)
+    cannot be AI-filled, matching the upload form which disables that pair. Returns 409 telling the
+    team to switch it to "the AI decides where it fits" first.
+  - The Slide library card gained a **"Let AI write text" / "Use as is"** button next to the existing
+    pill, hidden for `always` slides, with a "Reading…" state.
+  - Also fixed two places that rendered a TEAM slide's raw id, both found by loading the page rather
+    than reading the code: the composer's "Will be saved as:" preview showed `Ad5ac8d187804`, and the
+    collapsed picker trigger showed "the ad5ac8d187804d7c slide" next to a broken image (`slideThumb`
+    only knows built-in keys and `layoutNames` has no team entry). Both now read from `pickedTarget`.
+  - Verified live in a browser against real data: the button rendered, the POST returned 200, and the
+    reported thank-you slide flipped to **AI WRITES TEXT with 3 measured text areas** — so that
+    slide's original verbatim state was the upload-time choice, not a measuring failure.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

@@ -810,6 +810,25 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     correctly attributed to Title / Exec summary / Agenda / Benefits verbatim / Thank you slide, and
     the self-exclusion confirmed by picking Title (its own "first" stayed available).
 
+- **⚠ A DEPLOY DESTROYS IN-FLIGHT AND UNDOWNLOADED DECKS. Known, only mitigated 2026-08-13.**
+  `JOBS` in `main.py` is a plain in-process dict, so every restart — a push to main (Render
+  auto-deploys), an OOM kill, a free-tier spin-down — loses every job: ones still generating AND
+  finished decks nobody has downloaded yet. Observed for real: a deck finished at 20:53:53 and a push
+  landed at 20:54:13, so the user's completed deck was gone twenty seconds after it was made and the UI
+  showed a bare "Unknown or expired job.", which reads like the generation failed.
+  - Mitigated, not fixed: `_unknown_job_message()` now distinguishes the two causes of a lookup miss.
+    If the process has been up for LESS than `JOB_TTL_SECONDS` no job can have expired yet, so a miss
+    must be the restart case, and the message says the service restarted, that nothing is wrong with
+    the sources or settings, and to generate again. Otherwise it explains the 1 hour link expiry.
+    Both 404 sites (`/jobs/{id}` and `/jobs/{id}/result`) use it; the frontend proxy already passes the
+    body through verbatim.
+  - **The real fix, not done:** persist the job record and the finished bytes outside the process
+    (Supabase Storage plus a row), so a restart cannot lose a deck. Render's local disk is ephemeral
+    too, so spilling to `_RESULT_TEMP_DIR` does not survive a restart either.
+  - **Operationally: do not push to main while someone is generating.** A deck takes ~5 to 7 minutes on
+    Opus 5 with the polished gate; a push inside that window throws the work away and costs the user
+    real money in model calls.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

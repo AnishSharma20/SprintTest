@@ -185,6 +185,33 @@ def _read_summary(name: str, data: bytes) -> str:
 JOBS: dict[str, dict] = {}
 JOB_TTL_SECONDS = 3600
 
+# When THIS process started. JOBS lives only in memory, so every restart — a deploy, an OOM kill, a
+# free-tier spin-down — silently loses every job, including finished decks nobody has downloaded yet.
+# The bare "Unknown or expired job." that produced told the user nothing and read like their deck had
+# failed, when in fact it had been generated seconds earlier (observed: a deploy landed 20 seconds
+# after a deck completed). Comparing a lookup miss against this timestamp lets the message say which
+# of the two it was.
+_STARTED_AT = time.time()
+
+
+def _unknown_job_message() -> str:
+    """Why a job id is not in JOBS, in the terms the person reading it needs.
+
+    A miss has two causes and they call for opposite responses: the job is genuinely older than the
+    TTL (nothing to be done), or the service restarted and took the job with it (generate again, it
+    will work). If this process has been up for less than the TTL, no job could have expired yet, so
+    a miss must be the restart case."""
+    up = time.time() - _STARTED_AT
+    if up < JOB_TTL_SECONDS:
+        mins = max(1, round(up / 60))
+        return ("The deck service restarted about "
+                f"{mins} minute{'s' if mins != 1 else ''} ago (a deploy or a restart), which loses "
+                "jobs that were in progress or waiting to be downloaded. Nothing is wrong with your "
+                "sources or settings — generate again.")
+    return (f"This job is no longer available. Finished decks are kept for "
+            f"{JOB_TTL_SECONDS // 3600} hour(s); after that the link expires and the deck has to be "
+            "generated again.")
+
 # Concurrency control: semaphore gates the render + QA gate (the heavy-tail part that uses
 # lots of memory) to prevent OOM on the free 512 MB tier. Planning (1–3 minutes, network-bound)
 # stays fully parallel. The render itself is also locked inside renderer.py to serialize access
@@ -1353,7 +1380,7 @@ async def studies_extract_text(
 def job_status(job_id: str):
     j = JOBS.get(job_id)
     if not j:
-        return JSONResponse({"feil": "Unknown or expired job."}, status_code=404)
+        return JSONResponse({"feil": _unknown_job_message()}, status_code=404)
     return {"status": j["status"], "progress": j.get("progress", 0),
             "step": j.get("step", ""), "filename": j.get("filename"), "error": j.get("error")}
 
@@ -1365,7 +1392,7 @@ def job_result(job_id: str):
     survive more than one GET. Files are cleaned up by _prune_jobs()'s JOB_TTL_SECONDS (1h)."""
     j = JOBS.get(job_id)
     if not j:
-        return JSONResponse({"feil": "Unknown or expired job."}, status_code=404)
+        return JSONResponse({"feil": _unknown_job_message()}, status_code=404)
     if j.get("status") != "done":
         return JSONResponse({"feil": f"Job is {j.get('status')}, not ready."}, status_code=409)
     # Try result_path first (new storage to disk), then fall back to legacy in-memory result.

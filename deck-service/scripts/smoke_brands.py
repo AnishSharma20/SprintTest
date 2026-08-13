@@ -30,7 +30,7 @@ except Exception:  # noqa: BLE001
     pass
 
 from src import brand as brand_theme  # noqa: E402
-from src import config, planner, qa_geometry, renderer  # noqa: E402
+from src import config, pipeline, planner, qa_geometry, renderer  # noqa: E402
 
 FAILURES: list[str] = []
 
@@ -191,7 +191,26 @@ def main() -> int:
         except Exception as e:  # noqa: BLE001
             check(False, "deterministic QA runs over the rendered deck", f"{type(e).__name__}: {e}")
 
-        # 8. Photo ids offered to the model all resolve to a real staged file.
+        # 8. A list written at the wrong shape must not cost the deck. Every layout reads its items
+        #    with it.get(...), so a plain string used to raise AttributeError mid-render and kill
+        #    the whole job — a client hit exactly that. Repaired before validation instead.
+        wrong = {"slides": [dict(s) | {"speaker_notes": "n"} for s in PLAN["slides"]] + [
+            {"layout": "takeaways", "title": "Strings, not objects",
+             "items": ["Alpha", "Beta", "Gamma"], "speaker_notes": "n"},
+            {"layout": "agenda", "title": "Objects, not strings",
+             "items": [{"heading": "Evidence", "body": "the trials"}], "speaker_notes": "n"},
+        ]}
+        pipeline._coerce_item_shapes(wrong, arg)
+        check(all(isinstance(v, dict) for v in wrong["slides"][-2]["items"])
+              and all(isinstance(v, str) for v in wrong["slides"][-1]["items"]),
+              "a wrongly shaped list is repaired to the shape its layout reads")
+        try:
+            renderer.render_deck(wrong, brand=arg, benefits_slot=None, source_appendix=False)
+            check(True, "a deck with a wrongly shaped list still renders")
+        except Exception as e:  # noqa: BLE001
+            check(False, "a deck with a wrongly shaped list still renders", f"{type(e).__name__}: {e}")
+
+        # 9. Photo ids offered to the model all resolve to a real staged file.
         renderer.apply_brand(arg)
         missing = [a["id"] for a in config.selectable_photos(arg)
                    if not config.resolve_asset(a["path"], arg).exists()]

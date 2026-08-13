@@ -3071,8 +3071,14 @@ def _render_deck_impl(plan: dict, study_meta: list[dict] | None,
     owners: list[int | None] = []  # parallel to prs.slides, kept in sync through every reorder
     for plan_idx, spec in enumerate(plan["slides"]):
         before = len(prs.slides._sldIdLst)
-        _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered,
-                    overrides_by_key)
+        try:
+            _make_slide(prs, spec, catalog, dark, light, custom_by_key, placed_custom, unnumbered,
+                        overrides_by_key)
+        except Exception as e:  # noqa: BLE001 — re-raised, only ever adds context
+            # A render error reaches the user as the job's failure message. Bare, it says only
+            # `AttributeError: 'str' object has no attribute 'get'`, which names neither the slide
+            # nor the layout and so cannot be acted on from a client report. Say which slide.
+            raise type(e)(f"slide {plan_idx + 1} (layout {spec.get('layout', '?')!r}): {e}") from e
         added = len(prs.slides._sldIdLst) - before
         owners.extend([plan_idx] * added)
         # Speaker notes are written HERE, on whatever slide the dispatch just added, so every

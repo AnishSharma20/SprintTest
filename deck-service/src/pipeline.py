@@ -236,6 +236,106 @@ def _cap_list_fields(plan: dict, brand: str | None = None) -> dict:
     return plan
 
 
+# When a bare string has to become the object a layout's list expects, it becomes THIS field —
+# the first of these the object actually declares. Ordered by how much of the slide the field
+# carries: a one line item is a heading/label, not a body paragraph.
+_ITEM_TEXT_KEYS = ("heading", "label", "name", "value", "text", "body", "cells")
+
+
+def _coerce_item_shapes(plan: dict, brand: str | None = None) -> dict:
+    """Repair list items the model wrote at the wrong shape, in place.
+
+    Every code built layout's list is EITHER strings (an agenda's lines) or objects (a takeaways
+    item's heading plus body), and the model occasionally writes the other one — usually strings
+    where objects belong, because a list of bullet lines is the obvious reading of "items".
+
+    That slip cost the whole deck twice over. It is a hard validation error, so a retry was the
+    only chance to recover it; and if it ever reached the renderer anyway, every layout reads its
+    items with `it.get(...)`, so a plain string raised `AttributeError: 'str' object has no
+    attribute 'get'` and killed the render outright.
+
+    Repaired rather than rejected, because no content is at stake: a string becomes the object's
+    own lead text field, and an object collapses to its most meaningful text. The slide then
+    renders with a heading and no body, which is exactly what the model actually supplied.
+    """
+    try:
+        conds = config.schema(brand)["properties"]["slides"]["items"].get("allOf", [])
+    except Exception:  # noqa: BLE001 — never fail a deck over the repair net itself
+        return plan
+    # layout -> field -> ("object", lead text key) | ("string", None) | ("text", None)
+    # "text" is a plain (non-list) string field, e.g. an org chart's `center`.
+    shapes: dict[str, dict[str, tuple[str, str | None]]] = {}
+    for cond in conds:
+        layout = cond.get("if", {}).get("properties", {}).get("layout", {}).get("const")
+        if not layout:
+            continue
+        for field, spec in (cond.get("then", {}).get("properties") or {}).items():
+            if not isinstance(spec, dict):
+                continue
+            if spec.get("type") == "string":
+                shapes.setdefault(layout, {})[field] = ("text", None)
+                continue
+            if spec.get("type") != "array":
+                continue
+            item = spec.get("items") or {}
+            if item.get("type") == "object":
+                props = item.get("properties") or {}
+                req = set(item.get("required") or ())
+                # A REQUIRED text field first, so the wrapped item is a schema-valid object and
+                # the deck never spends its one retry on a slip the code already understood.
+                lead = (next((k for k in _ITEM_TEXT_KEYS if k in props and k in req), None)
+                        or next((k for k in _ITEM_TEXT_KEYS if k in props), None))
+                if lead:
+                    shapes.setdefault(layout, {})[field] = ("object", lead)
+            elif item.get("type") == "string":
+                shapes.setdefault(layout, {})[field] = ("string", None)
+
+    def to_text(v) -> str:
+        """An object flattened for a list that wants plain strings: its lead text, then any
+        second line joined on, so a heading plus body does not silently lose the body."""
+        parts = [str(v[k]) for k in _ITEM_TEXT_KEYS if isinstance(v.get(k), str) and v[k].strip()]
+        return ": ".join(parts[:2]) if parts else ""
+
+    fixed = []
+    for i, slide in enumerate(plan.get("slides") or []):
+        if not isinstance(slide, dict):
+            continue
+        for field, (want, lead) in shapes.get(slide.get("layout") or "", {}).items():
+            val = slide.get(field)
+            if want == "text":
+                # The mirror slip: an object or a list where one plain line belongs. Left the
+                # renderer doing regex work on a dict (`TypeError: expected string or bytes-like
+                # object`), which killed the deck just as dead.
+                if isinstance(val, dict):
+                    slide[field] = to_text(val)
+                    fixed.append(f"slide {i + 1} {slide['layout']}.{field} -> text")
+                elif isinstance(val, list):
+                    slide[field] = " ".join(to_text(v) if isinstance(v, dict) else str(v)
+                                            for v in val).strip()
+                    fixed.append(f"slide {i + 1} {slide['layout']}.{field} -> text")
+                continue
+            if not isinstance(val, list):
+                continue
+            out, changed = [], False
+            for v in val:
+                if want == "object" and not isinstance(v, dict):
+                    # `cells` is itself a list of strings, so the wrapped value must be a list too.
+                    out.append({lead: [str(v)] if lead == "cells" else str(v)})
+                    changed = True
+                elif want == "string" and isinstance(v, dict):
+                    out.append(to_text(v))
+                    changed = True
+                else:
+                    out.append(v)
+            if changed:
+                fixed.append(f"slide {i + 1} {slide['layout']}.{field} -> {want}s")
+                slide[field] = [v for v in out if v != ""]
+    if fixed:
+        print(f"[shapes] repaired {len(fixed)} list(s) written at the wrong shape: "
+              + ", ".join(fixed[:6]) + (" ..." if len(fixed) > 6 else ""))
+    return plan
+
+
 def _sanitize_enums(plan: dict, brand: str | None = None,
                     extra_photo_ids: list[str] | None = None) -> dict:
     """Drop `background` and `asset_id` values the brand/layout does not actually offer, in place.
@@ -706,7 +806,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
-    plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(plan, brand), brand, photo_ids), brand)
+    plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(
+        _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
                                     layout_overrides=slot_layouts, brand=brand)
@@ -720,7 +821,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                    disabled_photos=disabled_photos, preferred_photos=preferred_photos,
                                    layout_overrides=layout_overrides, required_slides=required,
                                    managed_blocks=managed_blocks, brand=brand)
-        plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(plan, brand), brand, photo_ids), brand)
+        plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(
+            _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
                                         layout_overrides=slot_layouts, brand=brand)

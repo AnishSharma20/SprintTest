@@ -478,7 +478,11 @@ export default function AboutV2Page() {
     if (newRuleSlide && newRulePosition === "never") {
       setSavingRule(true);
       setRuleError("");
-      const ok = await toggleLayout(newRuleSlide, false, setRuleError);
+      // A team slide is switched off through custom_slides (mode "off"), not layout_settings — the
+      // same branch the "Use it again" button above already makes.
+      const ok = pickedTarget?.team
+        ? await patchSlide(newRuleSlide, { mode: "off" }, setRuleError)
+        : await toggleLayout(newRuleSlide, false, setRuleError);
       setSavingRule(false);
       if (ok) {
         setNewRuleSlide("");
@@ -492,9 +496,9 @@ export default function AboutV2Page() {
     const structural = !!newRuleSlide && newRulePosition !== "own";
     const aboutSlide = !!newRuleSlide && newRulePosition === "own";
     const t = structural
-      ? `${prettySlide(newRuleSlide)} ${POSITION_LABEL[newRulePosition] ?? "is always included"}`
+      ? `${pickedTarget?.team ? pickedTarget.label : prettySlide(newRuleSlide)} ${POSITION_LABEL[newRulePosition] ?? "is always included"}`
       : aboutSlide
-        ? `The ${(layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide: ${newRule.trim()}`
+        ? `The ${(pickedTarget?.label || layoutNames[newRuleSlide]?.display_name || pretty(newRuleSlide)).toLowerCase()} slide: ${newRule.trim()}`
         : newRule.trim();
     if (!t || savingRule) return;
     setSavingRule(true);
@@ -1093,7 +1097,9 @@ export default function AboutV2Page() {
     patch: { name?: string; description?: string; mode?: string; preferred?: boolean },
     // Same reason as toggleLayout's: a team slide can now be switched back on from the Rules tab.
     notify: (m: string) => void = setCustomError
-  ) {
+    // Returns whether it succeeded, matching toggleLayout: the Rules composer switches a team slide
+    // off through here and needs to know before it clears the picker.
+  ): Promise<boolean> {
     notify("");
     try {
       const res = await fetch(withBrand(`/api/custom-slides/${id}`), {
@@ -1104,8 +1110,10 @@ export default function AboutV2Page() {
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "Could not update the slide.");
       setCustomSlides((s) => s.map((x) => (x.id === id ? { ...x, ...d.slide } : x)));
+      return true;
     } catch (e) {
       notify((e as Error).message);
+      return false;
     }
   }
 
@@ -1582,6 +1590,41 @@ export default function AboutV2Page() {
       .map((c) => ({ key: c.id, label: c.name, team: true })),
   ];
 
+  // Every slide a rule can be ABOUT — team uploads first, then the built-ins, matching the Slide
+  // library's own order. The picker used to list brandGallery only, so a team slide could be
+  // uploaded and switched off but never named in a rule (reported: a "Thank you slide" that could
+  // not be ruled about). `asIs` slides carry no AI-written text, so the composer warns that a
+  // writing rule cannot apply to them and steers to a presence/position rule instead.
+  const ruleTargets = useMemo(
+    () => [
+      ...customSlides
+        .filter((c) => !c.removed)
+        .map((c) => ({
+          key: c.id,
+          label: c.name,
+          thumb: c.preview_b64 ? `data:image/jpeg;base64,${c.preview_b64}` : "",
+          hint: c.description || "",
+          team: true,
+          asIs: !c.slots,
+          off: c.mode === "off",
+        })),
+      ...brandGallery
+        .filter((g) => g.kind !== "verbatim" && !layoutRemoved.has(g.key))
+        .map((g) => ({
+          key: g.key,
+          label: layoutNames[g.key]?.display_name || pretty(g.key),
+          thumb: slideThumb(g.key),
+          hint: cleanUsage(layoutNames[g.key]?.description || g.usage),
+          team: false,
+          asIs: false,
+          off: disabled.has(g.key),
+        })),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [customSlides, brandGallery, layoutNames, layoutRemoved, disabled, galleryTheme, product]
+  );
+  const pickedTarget = ruleTargets.find((s) => s.key === newRuleSlide);
+
   const removedLayoutEntries = brandGallery.filter((g) => layoutRemoved.has(g.key));
   const removedCustomSlides = customSlides.filter((c) => c.removed);
   const deletedSlidesCount = removedLayoutEntries.length + removedCustomSlides.length;
@@ -2036,9 +2079,7 @@ export default function AboutV2Page() {
                           </span>
                         </button>
                         <div className="mt-2 grid max-h-80 grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
-                          {brandGallery
-                            .filter((g) => g.kind !== "verbatim" && !layoutRemoved.has(g.key))
-                            .map((g) => {
+                          {ruleTargets.map((g) => {
                               const picked = newRuleSlide === g.key;
                               return (
                                 <button
@@ -2048,31 +2089,53 @@ export default function AboutV2Page() {
                                     setNewRuleSlide(g.key);
                                     setSlidePicker(false);
                                   }}
-                                  title={cleanUsage(layoutNames[g.key]?.description || g.usage)}
+                                  title={g.hint}
                                   className={`overflow-hidden rounded-[4px] border text-left ${
                                     picked ? "border-[#3FD0C9] ring-1 ring-[#3FD0C9]" : "border-[#E3EDF2] hover:border-[#3FD0C9]"
                                   }`}
                                 >
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={slideThumb(g.key)}
-                                    alt={`Example of the ${layoutNames[g.key]?.display_name || pretty(g.key)} slide`}
-                                    className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
-                                    loading="lazy"
-                                  />
+                                  {g.thumb ? (
+                                    <img
+                                      src={g.thumb}
+                                      alt={`Example of the ${g.label} slide`}
+                                      className="aspect-video w-full border-b border-[#E3EDF2] object-cover"
+                                      loading="lazy"
+                                    />
+                                  ) : (
+                                    <span className="flex aspect-video w-full items-center justify-center border-b border-[#E3EDF2] bg-[#F4F8FA] text-[10px] text-zinc-400">
+                                      No preview
+                                    </span>
+                                  )}
                                   <span className="flex items-center justify-between gap-1 p-1.5">
                                     <span className="truncate text-[11px] font-semibold text-[#031B34]">
-                                      {layoutNames[g.key]?.display_name || pretty(g.key)}
+                                      {g.label}
                                     </span>
-                                    {disabled.has(g.key) && (
+                                    {g.team && (
+                                      <span className="shrink-0 text-[9px] uppercase text-[#3FD0C9]">team</span>
+                                    )}
+                                    {g.off && (
                                       <span className="shrink-0 text-[9px] uppercase text-zinc-400">off</span>
                                     )}
                                   </span>
                                 </button>
                               );
-                            })}
+                          })}
                         </div>
                       </div>
+                    )}
+
+                    {/* An "as is" team slide is spliced in exactly as drawn and the AI writes nothing
+                        on it, so a rule about its WORDING can never take effect. Presence and
+                        position rules still work: rules_gate sees the slide's layout line and the
+                        name given here (see rules_gate._plan_text's slide_names). Say so rather than
+                        letting a rule be saved that quietly does nothing. */}
+                    {pickedTarget?.asIs && (
+                      <p className="mt-2 rounded-[4px] bg-[#FFF7E6] px-2 py-1.5 text-[11px] text-[#7A5B00]">
+                        <strong>{pickedTarget.label}</strong> is inserted exactly as drawn, so the AI
+                        writes no text on it. A rule about where it goes, or whether every deck
+                        includes it, will work. A rule about its wording will not.
+                      </p>
                     )}
 
                     {newRuleSlide && newRulePosition !== "own" ? (

@@ -739,6 +739,34 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     removed, so a genuine later mention survives and a line that is nothing but a count is left alone
     rather than blanked. 10 unit cases.
 
+- **Team uploaded slides can now be named in a rule — fixed 2026-08-13.** Reported: a "Thank you
+  slide" uploaded via **Upload PowerPoint** appeared in the Slide library but could not be chosen in
+  the Rules composer. Cause: the composer's picker listed `brandGallery` only (the static
+  `app/layout-gallery.json` build artifact), while the "is never used" list right above it already
+  combined built-ins AND `customSlides`. Three parts, because a picker entry alone would have
+  produced rules nothing enforced:
+  - **`rules_gate` could not connect a rule to a team slide.** A rule says "the thank you slide"; the
+    plan calls it `custom_<id>`. `_plan_text` / `review` now take a `slide_names` map (built in
+    `pipeline.generate` from `custom_slides`) and render the slide as
+    `## Slide 21 (custom_ab12cd — "Thank you slide")`. Load-bearing: a **verbatim** team slide carries
+    no text at all, so that layout line is the ONLY thing a rule can be matched against.
+  - **The picker** now lists team slides first then built-ins (`ruleTargets`), with each team slide's
+    own `preview_b64` as the thumbnail, a `team` tag, and a "No preview" placeholder rather than a
+    broken image. The rule's prose uses the team's own name for the slide, so it matches what the
+    checker now sees.
+  - **"Never use this slide"** routes to `patchSlide(id, {mode:"off"})` for a team slide instead of
+    `toggleLayout` (which writes `layout_settings` and would silently miss). `patchSlide` gained a
+    `Promise<boolean>` return to match `toggleLayout`, since the composer needs to know before it
+    clears the picker — it previously returned void, so the branch would never have reset the form.
+  - **An "as is" team slide now says what a rule can do to it**: the AI writes nothing on a verbatim
+    slide, so a WORDING rule can never take effect while presence/position rules can. The composer
+    warns instead of letting a no-op rule be saved.
+  ⚠ Still true, and by design: **`app/layout-gallery.json` is a build artifact**, so a layout added to
+  a brand's `.pptx` template does NOT appear anywhere until the config chain is re-run
+  (`inspect_template.py` → `build_manifest.py` → `build_schema.py` → `export_layout_gallery.py`) AND a
+  hand-authored entry is added to `LAYOUTS_BY_BRAND` in `build_schema.py` with a `kind` the renderer
+  can fill. Team uploads are the supported no-code path; a new native layout is a developer task.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

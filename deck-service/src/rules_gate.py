@@ -71,8 +71,14 @@ Rules for your judgement:
 - A compliant deck returns an empty findings list. That is the expected, common outcome."""
 
 
-def _plan_text(plan: dict) -> str:
-    """The deck as the reviewer sees it: numbered slides, reader-facing text only."""
+def _plan_text(plan: dict, slide_names: dict[str, str] | None = None) -> str:
+    """The deck as the reviewer sees it: numbered slides, reader-facing text only.
+
+    `slide_names` maps a layout key to the name a PERSON uses for it. It exists for team uploaded
+    slides: a rule says "the thank you slide" while the plan calls that slide `custom_ab12cd`, so
+    without the mapping the checker cannot connect the two and every rule about a team slide passes
+    silently. A verbatim team slide carries no text at all, so this layout line is the ONLY thing the
+    checker can match it on."""
     def walk(value) -> list[str]:
         if isinstance(value, str):
             return [value.strip()] if value.strip() else []
@@ -91,7 +97,9 @@ def _plan_text(plan: dict) -> str:
 
     lines = [f"DECK TITLE: {plan.get('deck_title', '')}"]
     for i, s in enumerate(plan.get("slides", []), 1):
-        parts = [f"## Slide {i} ({s.get('layout', '?')})"]
+        layout_key = s.get("layout", "?")
+        named = (slide_names or {}).get(layout_key)
+        parts = [f'## Slide {i} ({layout_key}' + (f' — "{named}"' if named else "") + ")"]
         for key in _TEXT_KEYS:
             if isinstance(s.get(key), str) and s[key].strip():
                 parts.append(f"{key}: {s[key].strip()}")
@@ -104,7 +112,8 @@ def _plan_text(plan: dict) -> str:
     return "\n\n".join(lines)
 
 
-def review(client, plan: dict, custom_rules: str, *, model: str | None = None) -> list[str]:
+def review(client, plan: dict, custom_rules: str, *, model: str | None = None,
+           slide_names: dict[str, str] | None = None) -> list[str]:
     """Findings as `RULES:`-tagged instructions for planner.revise_plan. [] when there are no
     rules, or on any failure — a rule check must never cost the user their deck."""
     rules = (custom_rules or "").strip()
@@ -121,7 +130,7 @@ def review(client, plan: dict, custom_rules: str, *, model: str | None = None) -
                     "input_schema": _SCHEMA}],
             tool_choice={"type": "tool", "name": "report_rule_findings"},
             messages=[{"role": "user", "content":
-                       f"THE TEAM'S RULES:\n{rules}\n\nTHE DRAFT DECK:\n{_plan_text(plan)}\n\n"
+                       f"THE TEAM'S RULES:\n{rules}\n\nTHE DRAFT DECK:\n{_plan_text(plan, slide_names)}\n\n"
                        "Report any clear breaches via report_rule_findings."}],
         )
         findings = []

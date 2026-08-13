@@ -877,7 +877,13 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     )
     if checkable.strip():
         _p(62, "Checking the deck against your rules")
-        breaches = rules_gate.review(client, plan, checkable)
+        # A team slide appears in the plan as `custom_<id>`, but a team RULE calls it by the name they
+        # gave it ("the thank you slide"). Without this map the checker sees two different names for
+        # the same slide and every rule about a team slide passes silently — and a verbatim team slide
+        # has no text at all, so its layout line is the only thing a rule can be checked against.
+        slide_names = {c["key"]: c["name"] for c in (custom_slides or [])
+                       if c.get("key") and c.get("name")}
+        breaches = rules_gate.review(client, plan, checkable, slide_names=slide_names)
         if breaches:
             candidate = planner.revise_plan(client, summary_text, plan, breaches, length=length,
                                             tone=tone, instructions=instructions,

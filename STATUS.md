@@ -719,6 +719,26 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   (43 layouts, its `highlight` maps a title); revervia goes 40 → 39. Same principle as omitting
   `ingredient` for a brand whose template has no such slide.
 
+- **Two client-visible defects fixed 2026-08-13** (both found by generating real client decks, not by
+  testing):
+  - **The cover AI disclaimer was invisible on revervia.** `_add_disclaimer` hardcoded a light/dark
+    colour pair, and the pale blue it picked disappeared across revervia's pale left column, only
+    becoming legible where it crossed the green band. A cover is the one slide whose backdrop is
+    ARTWORK rather than a flat fill, so nothing downstream can rescue it — `qa_geometry` compares text
+    against a shape's own fill, which a free-standing textbox over cover art does not have. The colour
+    now comes from the brand: a `light_only` brand (pale cover everywhere) gets brand `ink`, a brand
+    with a dark master keeps the light tints that already work. Verified by rendering both covers and
+    inspecting the bottom strip — revervia now legible end to end, superba byte-for-byte unchanged.
+    `_LIGHT_ONLY` already existed as a renderer global, so no new config.
+  - **The executive summary invented a slide count.** The `contents` prompt example literally said
+    "12 slides: ...", so the model copied the shape and guessed a number — one real deck claimed
+    "15 slides" while shipping 22. It cannot know: it writes the summary as part of the same plan the
+    nets and the revision pass then add to. The prompt now asks for themes and says not to state a
+    count, plus `pipeline._clean_exec_contents` strips a LEADING count phrase as the backstop (the
+    same ask-then-enforce shape as the no-dash and photo-minimum rules). Only a leading phrase is
+    removed, so a genuine later mention survives and a line that is nothing but a count is left alone
+    rather than blanked. 10 unit cases.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

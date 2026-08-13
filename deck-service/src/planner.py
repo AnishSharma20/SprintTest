@@ -577,8 +577,9 @@ sentences:
   "WOMAC pain score fell 14% more than placebo at 6 months").
 - `supporting_findings`: one sentence covering the secondary results the deck also presents.
 - `relevance`: why this matters commercially for {product} — the so what for sales/marketing.
-- `contents`: what the deck covers, one line (e.g. "12 slides: study design, primary and
-  secondary endpoints, mechanism, positioning").
+- `contents`: what the deck covers, one line, as a list of themes (e.g. "Study design, primary and
+  secondary endpoints, mechanism, positioning"). Do NOT state a slide count: you are writing this
+  before the deck is final, and any number you give here will be wrong.
 RULES: full sentences, no orphan bullet fragments. Every claim here must already appear in the
 source material or the deck's own slides — invent NOTHING new at the summary level. Prefer a real
 number over an adjective ("14% reduction", never "a significant improvement"). Keep the five

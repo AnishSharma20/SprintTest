@@ -306,7 +306,16 @@ DISCLAIMER = ("AI generated draft from the source material. Review all content, 
 
 def _add_disclaimer(slide, dark: bool) -> None:
     """Add a small 'AI generated, review before use' note along the bottom of the cover slide.
-    A free-standing textbox (no template placeholder exists for it), so we set a subtle size/colour."""
+    A free-standing textbox (no template placeholder exists for it), so we set a subtle size/colour.
+
+    The colour comes from the BRAND, not a hardcoded light/dark pair. A cover is the one slide whose
+    backdrop is ARTWORK rather than a flat fill, so this note can sit over several tones at once and
+    nothing downstream can infer its contrast: qa_geometry compares text against a shape's own fill,
+    which a free-standing textbox over cover art does not have. On revervia the old hardcoded pale
+    blue was invisible across the cover's pale left column and only became legible where it crossed
+    the green band — a real defect shipped in a client deck. A light-only brand's cover is pale
+    everywhere, so brand `ink` reads across all of it; a brand with a dark master keeps the light
+    tints that already work there."""
     box = slide.shapes.add_textbox(Inches(0.5), Inches(6.98), Inches(10.5), Inches(0.4))
     tf = box.text_frame
     tf.word_wrap = True
@@ -314,7 +323,10 @@ def _add_disclaimer(slide, dark: bool) -> None:
     run = tf.paragraphs[0].runs[0]
     run.font.size = Pt(_SZ_SMALL)
     run.font.italic = True
-    run.font.color.rgb = RGBColor(0xBF, 0xE3, 0xEF) if dark else RGBColor(0x6B, 0x8B, 0x95)
+    if _LIGHT_ONLY:
+        run.font.color.rgb = _INKC
+    else:
+        run.font.color.rgb = RGBColor(0xBF, 0xE3, 0xEF) if dark else RGBColor(0x6B, 0x8B, 0x95)
 
 
 def _icon_path(benefit: str):

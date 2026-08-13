@@ -583,6 +583,30 @@ def _strip_dashes_plan(plan: dict) -> dict:
 _COLOR_THEMES = {"dark", "light", "pastel"}
 
 
+_SLIDE_COUNT_PREFIX = re.compile(r"^\s*(?:in\s+|across\s+|about\s+)?\d+\s*[-\s]?slides?\s*[:,;.\-–—]*\s*",
+                                 re.IGNORECASE)
+
+
+def _clean_exec_contents(plan: dict) -> dict:
+    """Strip an invented slide count off the executive summary's `contents` line.
+
+    The model writes the summary as part of the SAME plan whose length it is describing, and the
+    deterministic nets and the revision pass then add and move slides — so any count it states is
+    guessed and usually wrong (a real deck claimed "15 slides" while shipping 22). The prompt now
+    asks for themes without a number; this is the backstop, the same ask-then-enforce shape the
+    no-dash and photo-minimum rules use. Only a LEADING count phrase is removed, so a genuine
+    mention further into the sentence survives, and a line that is nothing but a count is left
+    alone rather than blanked."""
+    for s in plan.get("slides") or []:
+        if s.get("layout") != "exec_summary":
+            continue
+        txt = str(s.get("contents") or "")
+        stripped = _SLIDE_COUNT_PREFIX.sub("", txt, count=1)
+        if stripped and stripped != txt:
+            s["contents"] = stripped[0].upper() + stripped[1:]
+    return plan
+
+
 def _apply_color_theme(plan: dict, color_theme: str | None,
                        override_keys: frozenset | set = frozenset(),
                        brand: str | None = None) -> dict:
@@ -879,6 +903,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
     _p(70, f"Rendering slides on the {_brand.theme(brand)['product']} template")
     plan = _ensure_title(plan, required)
     plan = _ensure_exec_summary(plan, disabled_layouts, study_meta, required)
+    plan = _clean_exec_contents(plan)   # after the net, so a composed fallback is cleaned too
     plan = _ensure_agenda(plan, required)
     plan = _apply_structure(plan, structure)                # pin each slide to its slot
     if _has_action(structure, "speaker_notes"):

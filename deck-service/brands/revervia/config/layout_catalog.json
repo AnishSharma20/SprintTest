@@ -323,6 +323,18 @@
     "picture_slots": [],
     "removable_idx": []
   },
+  "freeform": {
+    "template_layout": "Blank",
+    "kind": "freeform",
+    "backgrounds": [
+      "dark",
+      "light"
+    ],
+    "fields": {},
+    "limits": {},
+    "picture_slots": [],
+    "removable_idx": []
+  },
   "takeaways": {
     "template_layout": "Blank",
     "kind": "takeaways",

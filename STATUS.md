@@ -728,6 +728,19 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     (incl. a deliberate 11+5+3 span stress test proving wrap cannot overlap), and 2 real end-to-end
     polished generations. Cost with polished + freeform: **~$1.17, ~300s, 5 model calls**.
 
+- **NON-DEFAULT BRAND GENERATION WAS BROKEN — fixed 2026-08-13.** `planner._call` accepted a `brand`
+  argument, used it nowhere, and never passed it to `_tool_schema`, so the **forced-tool layout enum was
+  always built from the DEFAULT brand**. Revervia has no `four_columns` / `picture_full` /
+  `two_columns`, but the model was offered them anyway; the layout GUIDE *was* brand-correct
+  (`_layout_guide` does take `brand`), so the model was told one thing and permitted another. The moment
+  it picked one of those three, `validate_plan` raised a hard error and — after the one retry — the
+  **whole deck failed**. Pre-existing, predating the Opus 5 work; surfaced generating the first real
+  Revervia deck from a client `.pptx`. Fix is one argument. Lesson worth keeping: prompt guidance and
+  the tool schema are two separate enforcement paths and BOTH need the brand, exactly as the
+  disabled-layouts switches already do.
+  Also regenerated `brands/revervia/config/` so revervia has `freeform` too (39 → 40 layouts;
+  `build_schema.py` defaults to superba, so a new layout needs `--brand revervia` as a second run).
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

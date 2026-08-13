@@ -71,7 +71,8 @@
               "implications",
               "breakdown",
               "chart_bands",
-              "chart_takeaways"
+              "chart_takeaways",
+              "freeform"
             ]
           },
           "background": {
@@ -424,6 +425,9 @@
             "type": "string"
           },
           "items": {
+            "type": "array"
+          },
+          "blocks": {
             "type": "array"
           },
           "columns": {
@@ -1663,6 +1667,165 @@
                           "sustainability",
                           "traceability",
                           "none"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "layout": {
+                  "const": "freeform"
+                }
+              },
+              "required": [
+                "layout"
+              ]
+            },
+            "then": {
+              "required": [
+                "layout",
+                "title",
+                "blocks"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "eyebrow": {
+                  "type": "string",
+                  "maxLength": 60
+                },
+                "blocks": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "span"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "stat",
+                          "note",
+                          "bullets",
+                          "photo"
+                        ]
+                      },
+                      "span": {
+                        "type": "integer",
+                        "minimum": 3,
+                        "maximum": 12
+                      },
+                      "tone": {
+                        "enum": [
+                          "plain",
+                          "panel",
+                          "accent"
+                        ]
+                      },
+                      "heading": {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      "body": {
+                        "type": "string",
+                        "maxLength": 220
+                      },
+                      "items": {
+                        "type": "array",
+                        "maxItems": 5,
+                        "items": {
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      "value": {
+                        "type": "string",
+                        "maxLength": 12
+                      },
+                      "label": {
+                        "type": "string",
+                        "maxLength": 60
+                      },
+                      "asset_id": {
+                        "enum": [
+                          "photo_algae_01",
+                          "photo_algae_02",
+                          "photo_algae_03",
+                          "photo_algae_04",
+                          "photo_algae_05",
+                          "photo_algae_06",
+                          "photo_algae_07",
+                          "photo_algae_08",
+                          "photo_algae_09",
+                          "photo_algae_10",
+                          "photo_algae_11",
+                          "photo_algae_12",
+                          "photo_algae_13",
+                          "photo_algae_14",
+                          "photo_algae_15",
+                          "photo_algae_16",
+                          "photo_algae_17",
+                          "photo_algae_18",
+                          "photo_algae_19",
+                          "photo_algae_20",
+                          "photo_algae_21",
+                          "photo_algae_22",
+                          "photo_algae_23",
+                          "photo_capsules_hands_17",
+                          "photo_capsules_hands_18",
+                          "photo_capsules_hands_20",
+                          "photo_capsules_hands_21",
+                          "photo_capsules_hands_27",
+                          "photo_capsules_hands_28",
+                          "photo_capsules_hands_38",
+                          "photo_capsules_hands_39",
+                          "photo_capsules_hands_40",
+                          "photo_capsules_hands_41",
+                          "photo_capsules_hands_42",
+                          "photo_capsules_hands_43",
+                          "photo_capsules_only_01",
+                          "photo_capsules_only_02",
+                          "photo_capsules_only_03",
+                          "photo_capsules_only_04",
+                          "photo_capsules_only_05",
+                          "photo_capsules_only_06",
+                          "photo_capsules_only_07",
+                          "photo_capsules_only_08",
+                          "photo_capsules_only_09",
+                          "photo_capsules_only_10",
+                          "photo_capsules_only_11",
+                          "photo_capsules_only_12",
+                          "photo_capsules_only_13",
+                          "photo_capsules_only_14",
+                          "photo_capsules_only_15",
+                          "photo_capsules_only_16",
+                          "photo_capsules_people_19",
+                          "photo_capsules_people_22",
+                          "photo_capsules_people_23",
+                          "photo_capsules_people_24",
+                          "photo_capsules_people_25",
+                          "photo_capsules_people_26",
+                          "photo_capsules_people_29",
+                          "photo_capsules_people_30",
+                          "photo_capsules_people_31",
+                          "photo_capsules_people_32",
+                          "photo_capsules_people_33",
+                          "photo_capsules_people_34",
+                          "photo_capsules_people_35",
+                          "photo_capsules_people_36",
+                          "photo_capsules_people_37",
+                          null
                         ]
                       }
                     }

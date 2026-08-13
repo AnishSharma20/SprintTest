@@ -922,8 +922,14 @@ def _call(client, system, user, model, max_tokens, disabled: set[str] | None = N
     # Built ONCE, outside once(): _tool_schema deep-copies the cached schema on every call, and the
     # retry below must send a byte-identical tools block or it invalidates the prompt cache (tools
     # render ahead of system, so they are the very front of the cached prefix).
+    # `brand` MUST reach _tool_schema: it selects which brand's slide_schema the forced-tool enum is
+    # built from. Without it the enum always came from the DEFAULT brand, so a non-default brand was
+    # offered layouts its template does not have (revervia has no four_columns / picture_full /
+    # two_columns) — the layout GUIDE was brand-correct, so the model was told one thing and
+    # permitted another, and the moment it picked one of those the deck died on a hard validation
+    # error. Pre-existing; found generating the first real revervia deck.
     schema = _tool_schema(disabled, extra_layouts, extra_photo_ids,
-                          disabled_photo_ids, layout_overrides)
+                          disabled_photo_ids, layout_overrides, brand)
 
     def once(budget):
         # Streaming rather than create(): at these budgets the SDK refuses a non-streaming request

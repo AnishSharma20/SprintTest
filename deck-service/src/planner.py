@@ -833,16 +833,46 @@ def remove_from_asset_enums(node, remove_ids: set[str]) -> None:
             remove_from_asset_enums(v, remove_ids)
 
 
-def _plan_is_complete(msg) -> bool:
-    """True only when the response carries a WHOLE emit_plan call.
+# Envelope keys the model has been seen to wrap the whole plan in instead of emitting the schema's
+# top-level shape. emit_plan is deliberately a NON-strict tool, so the API accepts the variant.
+_PLAN_ENVELOPES = ("plan", "deck", "deck_plan", "output", "result")
 
-    Streaming is what makes this check necessary. The SDK re-parses a tool call's JSON on every
-    delta with jiter's `partial_mode=True` and does NOT re-parse it strictly at content_block_stop,
-    so an interrupted or truncated tool call yields a silently PARTIAL dict where non-streaming
-    create() used to raise. Unchecked, that shows up two ways: a dict with no `slides` (loud — the
-    user loses their deck), or a plausible-looking SHORT `slides` list that renders as a quietly
-    half-length deck. The second is the dangerous one, so re-parse the raw buffer strictly and let
-    _call treat anything incomplete as retryable."""
+
+def _plan_body(inp) -> dict | None:
+    """The plan dict itself, unwrapping the envelope the model sometimes adds.
+
+    Measured: on roughly 2 of 11 planner calls the model emits {"plan": {...the real plan...}}
+    rather than {"deck_title": ..., "slides": [...]}. The plan inside is complete and valid — only
+    the top-level shape differs — so failing (or paying for a whole second planner call) over it is
+    waste. Unwrapping is free and deterministic. Returns None when there is no plan to be found."""
+    if not isinstance(inp, dict):
+        return None
+    if inp.get("slides"):
+        return inp
+    for k in _PLAN_ENVELOPES:
+        v = inp.get(k)
+        if isinstance(v, dict) and v.get("slides"):
+            return v
+    # A single-key wrapper under some other name: accept it if the value looks like a plan.
+    if len(inp) == 1:
+        v = next(iter(inp.values()))
+        if isinstance(v, dict) and v.get("slides"):
+            return v
+    return None
+
+
+def _plan_is_complete(msg) -> bool:
+    """True only when the response carries a WHOLE, usable emit_plan call.
+
+    Two distinct things can go wrong, and only one is worth retrying:
+
+    1. The model wrapped the plan in an envelope — handled by _plan_body, NOT a retry.
+    2. The tool call is genuinely truncated. Streaming makes this check necessary: the SDK
+       re-parses a tool call's JSON on every delta with jiter's `partial_mode=True` and does NOT
+       re-parse it strictly at content_block_stop, so an interrupted call yields a silently PARTIAL
+       dict where non-streaming create() used to raise. The nasty shape is not the empty one, it is
+       a plausible-looking SHORT `slides` list that renders as a quietly half-length deck — so
+       re-parse the raw buffer strictly and let _call retry anything that fails."""
     for block in msg.content:
         if block.type != "tool_use" or getattr(block, "name", None) != "emit_plan":
             continue
@@ -852,17 +882,20 @@ def _plan_is_complete(msg) -> bool:
             try:
                 parsed = json.loads(raw)
             except ValueError:
-                return False
-            return bool(isinstance(parsed, dict) and parsed.get("slides"))
+                return False          # truncated / invalid stream — worth one retry
+            return _plan_body(parsed) is not None
         # No buffer means this wasn't streamed; the SDK already parsed it strictly.
-        return bool(isinstance(block.input, dict) and block.input.get("slides"))
+        return _plan_body(block.input) is not None
     return False
 
 
 def _extract_plan(msg) -> dict:
     for block in msg.content:
-        if block.type == "tool_use" and isinstance(block.input, dict) and block.input.get("slides"):
-            return block.input
+        if block.type != "tool_use":
+            continue
+        body = _plan_body(block.input)
+        if body is not None:
+            return body
     raise ValueError(f"Planner returned no plan (no emit_plan tool call with slides; "
                      f"stop_reason={getattr(msg, 'stop_reason', '?')}).")
 
@@ -905,11 +938,12 @@ def _call(client, system, user, model, max_tokens, disabled: set[str] | None = N
     # A plan cut off mid-tool-call arrives without usable input (no slides) — seen in practice
     # when a photo-rich or team-slide-rich prompt makes the plan run longer than the length
     # tier's budget. One retry with real headroom beats failing the user's whole deck.
-    # stop_reason alone is NOT a sufficient trigger: an incomplete streamed tool call can arrive
-    # with stop_reason == "tool_use" and a partial plan (see _plan_is_complete), which was observed
-    # once in testing. Retry on either signal — the cached prefix makes the retry cheap.
+    # stop_reason alone is NOT a sufficient trigger: a truncated streamed tool call can arrive with
+    # stop_reason == "tool_use" and a partial plan (see _plan_is_complete). Note this does NOT fire
+    # for the model's envelope quirk — _plan_body absorbs that for free rather than paying for a
+    # second planner call.
     if msg.stop_reason == "max_tokens" or not _plan_is_complete(msg):
-        print(f"[planner] incomplete plan (stop_reason={msg.stop_reason}); "
+        print(f"[planner] unusable plan (stop_reason={msg.stop_reason}); "
               f"retrying at {int(max_tokens * 1.6)} max_tokens", file=sys.stderr)
         msg = once(int(max_tokens * 1.6))
     return msg

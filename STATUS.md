@@ -618,14 +618,31 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   - **Streaming** (`client.messages.stream` + `get_final_message()`) because the SDK refuses a
     non-streaming request it estimates will outrun its ~10 min HTTP timeout — at 48k/64k budgets it
     would raise before the call was made.
-  - **New `planner._plan_is_complete` guard, and `_call` now retries on it as well as on
-    `stop_reason`.** Streaming made this necessary: the SDK re-parses a tool call's JSON on every
-    delta with jiter `partial_mode=True` and does **not** re-parse strictly at `content_block_stop`,
-    so an interrupted tool call yields a silently PARTIAL dict where non-streaming `create()` used to
-    raise. Two failure shapes: no `slides` (loud — user loses the deck, observed once in testing), or
-    a plausible looking SHORT `slides` list that renders as a quietly half length deck. The guard
-    strictly `json.loads` the raw `__json_buf` buffer and treats anything incomplete as retryable.
-    Confirmed `_extract_plan` alone ACCEPTS the plausible truncated case, so the guard is load bearing.
+  - **`planner._plan_body` absorbs the model's envelope quirk — measured at 2 of 11 calls.** Opus 5
+    intermittently emits `{"plan": {...the real plan...}}` instead of the schema's top level shape.
+    `emit_plan` is deliberately a NON-strict tool so the API accepts it, and `_extract_plan` used to
+    fail the whole deck over a wrapper. Diagnosed rather than assumed: the raw streamed buffer PARSES
+    CLEANLY and the plan inside is complete and valid, so this is schema adherence, **not** truncation
+    (an earlier version of this entry called it truncation — wrong). `_plan_body` unwraps
+    `plan`/`deck`/`deck_plan`/`output`/`result`, or any single key wrapper whose value has `slides`.
+    Deterministic and free; retrying would have cost a second Opus call (~85s, ~$0.22) on roughly one
+    deck in five.
+  - **`planner._plan_is_complete` guard, and `_call` retries on it as well as on `stop_reason`** — a
+    separate concern, and it deliberately does NOT fire for the envelope case. Streaming made it
+    necessary: the SDK re-parses a tool call's JSON on every delta with jiter `partial_mode=True` and
+    does **not** re-parse strictly at `content_block_stop`, so a genuinely interrupted call yields a
+    silently PARTIAL dict where non-streaming `create()` used to raise. The dangerous shape is not the
+    empty one but a plausible looking SHORT `slides` list that renders as a quietly half length deck.
+    The guard strictly `json.loads` the raw `__json_buf` buffer. Confirmed `_extract_plan` alone
+    ACCEPTS the plausible truncated case, so the guard is load bearing.
+  - **Effort is NOT a spend dial on this workload — measured.** Sweeping low/medium/high/xhigh/max on
+    one identical planner call moved output tokens only 0.78× to 1.15× (low 5.1k → high 7.6k), because
+    output is dominated by the ~17 to 19 slides of plan JSON (~4.5 to 5k tokens) while thinking is only
+    ~1.5 to 2k of it. So "spend more for a better deck" cannot be bought with `effort`; the things that
+    actually move tokens are the deck length tier, source size, and number of passes (refine round,
+    `quality=polished`). Also observed: varying `effort` between requests appears to re-WRITE the cache
+    rather than read it (single data point, not isolated) — so do not expose effort as a per deck user
+    control without re-measuring.
   - **Other call sites had to grow too, because `config.MODEL` is shared and their budgets now cover
     thinking — each one degraded SILENTLY, not loudly:** `qa_gate` 2000→8000 and `rules_gate`
     1500→6000 (no tool_use block → their `except`/`[]` path reads as "nothing found", i.e. the gate
@@ -635,8 +652,9 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
   - Verified: real Opus 5 generations end to end (plan → validate → refine → rendered `.pptx`, 20
     slides + spliced benefits slide, ~161 to 229s), cache read confirmed on the second call, notes on
     every slide except the two verbatim splices (exempt by contract), no title over 50 chars after the
-    refine round, and 9 unit cases over `_plan_is_complete`. **Not exercised: `quality="polished"`**
-    (the `qa_gate` vision path) — its change is a pure headroom bump.
+    refine round, and 19 unit cases over `_plan_body`/`_plan_is_complete`/`_extract_plan` (incl. the
+    real envelope shape). **Not exercised: `quality="polished"`** (the `qa_gate` vision path) — its
+    change is a pure headroom bump.
   - Known friction, PRE-EXISTING and unchanged: the model's first pass often lands titles at 52 to 57
     chars against a hard 50 char limit, so `revise_plan` ("Refining copy to fit") fires on most decks
     — about half the wall clock. The prompt says "roughly 50 characters"; tightening that wording (or

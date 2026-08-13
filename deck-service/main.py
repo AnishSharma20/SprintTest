@@ -724,7 +724,11 @@ async def design_preview(payload: dict, x_deck_token: str | None = Header(defaul
         if not isinstance(design, dict):
             design = None
         pptx = renderer.render_deck(_PREVIEW_PLAN, design=design)
-        images = qa_gate.rasterize(pptx)
+        # Same LibreOffice rasteriser a full deck generation uses — must share its OOM-guarding
+        # semaphore or this can race a concurrent generation job's own render for memory on the
+        # 512 MB instance (see _HEAVY_TAIL_SEMAPHORE's definition).
+        with _HEAVY_TAIL_SEMAPHORE:
+            images = qa_gate.rasterize(pptx)
         if not images:
             return JSONResponse({"feil": "No slide renderer is available on the server."},
                                 status_code=503)
@@ -755,7 +759,9 @@ def _inspect_previews(data: bytes) -> list[dict]:
     from PIL import Image
 
     from src import qa_gate
-    images = qa_gate.rasterize(data, qa_gate.PREVIEW_MAX_DIM)
+    # Shares the generation path's OOM-guarding semaphore — see _HEAVY_TAIL_SEMAPHORE's definition.
+    with _HEAVY_TAIL_SEMAPHORE:
+        images = qa_gate.rasterize(data, qa_gate.PREVIEW_MAX_DIM)
     if not images:
         raise RuntimeError("No slide renderer is available on the server.")
     out = []
@@ -1047,7 +1053,11 @@ async def slides_inspect_slots(
                 except Exception as e:  # noqa: BLE001
                     print(f"[inspect-slots] single-slide trim failed ({e}); rendering the full file",
                           file=sys.stderr)
-            images = qa_gate.rasterize(raster_input, qa_gate.PREVIEW_MAX_DIM)
+            # Shares the generation path's OOM-guarding semaphore — see _HEAVY_TAIL_SEMAPHORE's
+            # definition; without this an override-recipe preview can race a concurrent deck
+            # generation's own LibreOffice render for memory and crash the single worker.
+            with _HEAVY_TAIL_SEMAPHORE:
+                images = qa_gate.rasterize(raster_input, qa_gate.PREVIEW_MAX_DIM)
             if images and raster_index < len(images):
                 im = Image.open(io.BytesIO(images[raster_index])).convert("RGB")
                 if im.width > 1280:

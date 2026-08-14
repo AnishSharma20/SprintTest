@@ -872,9 +872,31 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             # deny a non-technical user their deck over either.
             hard = [e for e in errors if not any(s in e for s in _SOFT_ERRORS)]
             if hard:
+                # Last resort before giving up entirely: a hard error is a broken SLIDE (a
+                # hallucinated layout name, a chart missing its data) far more often than a
+                # broken deck. `slides/9/series/0: ...` names which one. Drop just those and
+                # re-validate the rest, rather than destroy a multi-minute generation over one
+                # slide — the same rule already applied to a bad team slide/override/photo.
+                bad_idx = {int(m.group(1)) for e in hard
+                          if (m := re.match(r"^slides/(\d+)(?:/|$)", e))}
+                total = len(plan.get("slides") or [])
+                if bad_idx and len(bad_idx) < total:
+                    trimmed = {**plan, "slides": [s for i, s in enumerate(plan["slides"])
+                                                  if i not in bad_idx]}
+                    retry_errors = validate.validate_plan(
+                        trimmed, extra_layouts=extra, extra_photo_ids=photo_ids,
+                        photo_level=photo_level, disabled_layouts=disabled_layouts,
+                        layout_overrides=slot_layouts, brand=brand)
+                    if not [e for e in retry_errors if not any(s in e for s in _SOFT_ERRORS)]:
+                        print(f"[validate] dropped {len(bad_idx)} slide(s) still broken after "
+                              f"the retry ({sorted(bad_idx)}) rather than fail the whole deck:\n- "
+                              + "\n- ".join(hard), file=sys.stderr)
+                        plan, errors, hard = trimmed, retry_errors, []
+            if hard:
                 raise ValueError("Plan failed validation after one retry:\n- " + "\n- ".join(hard))
-            print("[warn] minor overflows/coverage nudges remain after retry; shipping anyway:\n- "
-                  + "\n- ".join(errors), file=sys.stderr)
+            if errors:
+                print("[warn] minor overflows/coverage nudges remain after retry; shipping anyway:\n- "
+                      + "\n- ".join(errors), file=sys.stderr)
 
     # The team's own standing rules are the one kind of instruction that can be neither enforced in
     # code nor caught by the schema, so they used to be a request nobody verified. Read the finished

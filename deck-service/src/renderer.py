@@ -3127,7 +3127,7 @@ def _render_deck_impl(plan: dict, study_meta: list[dict] | None,
         benefits = list(sldIdLst)[-1]
         n = len(sldIdLst)
         at = {"first": 0, "second": min(1, n - 1), "third": min(2, n - 1),
-              "last": n - 1}.get(benefits_slot, max(1, n - 1))   # default: second to last
+              "last": n - 1}.get(benefits_slot, max(1, n - 2))   # default: second to last
         sldIdLst.remove(benefits)
         sldIdLst.insert(at, benefits)
         ben_owner = owners.pop()                          # mirrors sldIdLst.remove(benefits) —

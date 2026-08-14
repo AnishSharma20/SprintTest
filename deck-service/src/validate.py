@@ -294,6 +294,8 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     ids = {a["id"] for a in config.selectable_photos(brand)} | set(extra_photo_ids or ())
     catalog = config.catalog(brand)
     for i, slide in enumerate(plan.get("slides", []), 1):
+        if not isinstance(slide, dict):
+            continue   # already reported by the schema's own "items": {"type": "object"}
         aid = slide.get("asset_id")
         if aid and aid not in ids:
             errors.append(f"slides/{i-1}/asset_id: '{aid}' is not a selectable photo id")
@@ -307,10 +309,16 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     # retry a plan gets can act on both at once. Gating this behind "only when otherwise clean"
     # meant a plan with even one trivial residual overflow (which ships anyway) never got its
     # coverage checked at all, silently shipping under the photo/variety minimums.
-    errors.extend(_coverage_warnings(plan, photo_level))
-    errors.extend(_text_density_warnings(plan, brand))
-    errors.extend(_notes_warnings(plan))
-    errors.extend(_summary_warning(plan, disabled_layouts))
-    errors.extend(_exec_summary_length_warning(plan))
+    #
+    # These helpers all assume every slide is an object — true for a well-formed plan, but a
+    # slide that ISN'T one is already reported above by the schema's own "type": "object" (and,
+    # for a plan that still has it after the retry, dropped by the pipeline's slide-drop
+    # fallback). Filtered out here too so a malformed slide crashes nothing further down.
+    well_formed = {**plan, "slides": [s for s in plan.get("slides", []) if isinstance(s, dict)]}
+    errors.extend(_coverage_warnings(well_formed, photo_level))
+    errors.extend(_text_density_warnings(well_formed, brand))
+    errors.extend(_notes_warnings(well_formed))
+    errors.extend(_summary_warning(well_formed, disabled_layouts))
+    errors.extend(_exec_summary_length_warning(well_formed))
 
     return errors[:25]

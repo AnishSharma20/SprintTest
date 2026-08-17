@@ -224,14 +224,14 @@ const AKBM_ROLES: Record<string, AkbmRole> = {
   "24098072": "competitor",    // Konagai 2013 — funded by Nippon Suisan Kaisha, whose employees are authors
   "24304605": "competitor",    // Ramprasath 2013 — Enzymotec K-REAL; Enzymotec employees are authors
   "25884846": "competitor",    // Kohler 2015 — Olympic Seafood (Rimfrost) author and product
-  // ⚠ These three are inferred from the SPONSOR, not from a named product: each paper says only
-  // "krill oil capsules" and never identifies the oil, so it could in principle be anyone's,
-  // Superba included. Tagged competitor because the practical consequence is the same (it cannot
-  // be cited as Superba evidence), but they are the weakest three calls in this table and are the
-  // ones to revisit if the science team can trace the actual supply chain.
-  "26328782": "competitor",    // Yurko-Mauro 2015 — DSM Nutritional Products authors; oil unnamed
-  "26504524": "competitor",    // Lobraico 2015 — Prograde Inc funded and supplied it; oil unnamed
-  "27279841": "competitor",    // Cicero 2016 — provided by Erbozeta S.r.l., a formulator; oil unnamed
+  // The paper never identifies the krill oil, so we genuinely do not know whose it was. These
+  // were briefly tagged `competitor` on the strength of the SPONSOR alone (DSM, Prograde,
+  // Erbozeta), which overstated what the papers actually say: the oil could in principle have
+  // been anyone's, Superba included. Recording the gap is more honest than guessing either way.
+  // Revisit if the science team can trace the real supply chain.
+  "26328782": "product_unnamed",  // Yurko-Mauro 2015 — DSM authors, but the oil is never named
+  "26504524": "product_unnamed",  // Lobraico 2015 — "two pure krill oil capsules", supplied by Prograde Inc
+  "27279841": "product_unnamed",  // Cicero 2016 — "kindly provided by Erbozeta S.r.l.", a formulator
 
   "26537218": "competitor",    // Ramprasath 2015 — Enzymotec authors
   "26557185": "competitor",    // Skarpanska 2015 — Enzymotec oil (the title's "Neptune" was corrected in an erratum)

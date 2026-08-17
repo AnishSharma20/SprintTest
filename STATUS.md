@@ -920,15 +920,22 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     scientist stands behind this". Per client decision **every study now starts unverified**, so
     the page shows 0 verified until the science team goes through them.
   - **Every study carries an AKBM role tag** (`study_assessment.akbm_role`), replacing the free
-    text `akerNote` that only 5 of 42 studies had. Six keys in `app/akbm-role.ts`:
-    `akbm_authors` / `akbm_funded` / `product_only` / `independent` / `competitor` / `third_party`.
-    All 42 built in defaults are **hand authored** in `studies.ts` `AKBM_ROLES` from each paper's
-    OWN funding, acknowledgements and conflict of interest statements (read out of
-    `assets/fulltext/` and PubMed's `CoiStatement`; `fetch_abstracts.py --roles` dumps that
-    evidence). Spread: 19 competitor, 9 AKBM authors, 7 product only, 3 third party, 2 independent,
-    2 AKBM funded. ⚠ **Do NOT infer this from PubMed's affiliation field** — it usually carries only
-    the corresponding author, so Maki 2009, Ulven 2011 and Banni 2011 all hide Kjetil Berge and
+    text `akerNote` that only 5 of 42 studies had. Seven keys in `app/akbm-role.ts`:
+    `akbm_authors` / `akbm_funded` / `product_only` / `independent` / `competitor` /
+    `product_unnamed` / `third_party`. All 42 built in defaults are **hand authored** in
+    `studies.ts` `AKBM_ROLES` from each paper's OWN funding, acknowledgements and conflict of
+    interest statements (read out of `assets/fulltext/` and PubMed's `CoiStatement`;
+    `fetch_abstracts.py --roles` dumps that evidence). Spread: 16 competitor, 9 AKBM authors,
+    7 product only, 3 third party, 3 product unnamed, 2 independent, 2 AKBM funded.
+    ⚠ **Do NOT infer this from PubMed's affiliation field** — it usually carries only the
+    corresponding author, so Maki 2009, Ulven 2011 and Banni 2011 all hide Kjetil Berge and
     Hogne Vik of AKBM in the author list with no AKBM affiliation shown.
+  - `product_unnamed` was added right after the first version, when the client challenged the
+    competitor count. Yurko-Mauro 2015, Lobraico 2015 and Cicero 2016 had been tagged `competitor`
+    on the strength of the SPONSOR alone (DSM / Prograde / Erbozeta) while each paper says only
+    "krill oil capsules" and never names the oil. That overstated the evidence in the opposite
+    direction from a false Superba claim, so the gap is now recorded as its own tag. Worth keeping
+    as a rule: a provenance tag must say what the paper says, not what the sponsor implies.
   - `app/akbm-role.ts` exists as its own import-free module because **both** the server
     (`studies.ts`, which holds the Supabase service role client) and client components need the
     labels; importing them from `studies.ts` would drag that module into the browser bundle.

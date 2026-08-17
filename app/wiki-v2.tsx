@@ -110,6 +110,9 @@ const ROLE_TONE: Record<AkbmRole, string> = {
   product_only: "bg-[#EFEFF1] text-[#4A4A4F]",
   independent: "bg-[#EFEFF1] text-[#4A4A4F]",
   competitor: "bg-[#FDF3E4] text-[#8A6A2B]",
+  // Amber like `competitor`, because the consequence for a marketing claim is the same: this
+  // cannot be cited as Superba evidence. Grey would read as "nothing to see here".
+  product_unnamed: "bg-[#FDF3E4] text-[#8A6A2B]",
   third_party: "bg-[#EFEFF1] text-[#4A4A4F]",
 };
 

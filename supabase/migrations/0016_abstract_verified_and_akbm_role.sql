@@ -20,10 +20,12 @@
 
 alter table study_assessment add column verified boolean not null default false;
 alter table study_assessment add column akbm_role text
-  check (akbm_role in ('akbm_authors', 'akbm_funded', 'product_only', 'independent', 'competitor', 'third_party'));
+  check (akbm_role in ('akbm_authors', 'akbm_funded', 'product_only', 'independent',
+                       'competitor', 'product_unnamed', 'third_party'));
 
 -- A study added through "Add study" carries every field directly (no PubMed lookup, no override
 -- layer), so it needs its own copies rather than reading study_assessment.
 alter table custom_studies add column verified boolean not null default false;
 alter table custom_studies add column akbm_role text
-  check (akbm_role in ('akbm_authors', 'akbm_funded', 'product_only', 'independent', 'competitor', 'third_party'));
+  check (akbm_role in ('akbm_authors', 'akbm_funded', 'product_only', 'independent',
+                       'competitor', 'product_unnamed', 'third_party'));

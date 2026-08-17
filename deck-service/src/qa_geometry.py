@@ -333,8 +333,16 @@ def _check_contrast(slide, ink_rgb, white_rgb):
 
 
 def _iter_pictures(shapes):
+    """Every real image on the slide, however it got there.
+
+    Matching on the ELEMENT TAG, not shape_type, is load-bearing. A photo dropped into a template
+    picture PLACEHOLDER (`insert_picture`, which is how text_with_picture and picture_full work)
+    becomes a PlaceholderPicture: still a `<p:pic>` element carrying the image, but it reports
+    shape_type PLACEHOLDER, not PICTURE. So a shape_type test missed it and every native
+    picture-placeholder slide was reported as "no image was inserted" while the image was sitting
+    right there in the XML — verified on a real deck (blip present, one image relationship)."""
     for shape in shapes:
-        if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+        if shape._element.tag.endswith("}pic"):
             yield shape
         elif shape.shape_type == MSO_SHAPE_TYPE.GROUP:
             yield from _iter_pictures(shape.shapes)

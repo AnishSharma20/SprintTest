@@ -303,7 +303,7 @@ def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
 # competitor challenges, and the ones a reviewer who already believes the deck will read straight
 # past. Checkable because each has a small, closed vocabulary.
 #
-# Same contract as NUMBERS: tagged CLAIMS:, soft, with its own revise_plan repair bucket. Verbatim
+# Same contract as NUMBERS: tagged OVERSTATEMENT:, soft, with its own repair bucket. Verbatim
 # slides are exempt (they carry pre-approved AKBM copy the model never wrote).
 _SAFETY_ABSOLUTE = re.compile(
     r"\b(no (serious )?(adverse events?|side effects?|safety (concerns?|signals?|issues?))"
@@ -392,7 +392,7 @@ def _verbatim_slide(slide: dict) -> bool:
     return layout == "ingredient" or layout.startswith("custom_")
 
 
-def _claim_strength_warnings(plan: dict, source_text: str | None) -> list[str]:
+def _overstatement_warnings(plan: dict, source_text: str | None) -> list[str]:
     """Soft nudge: flag claims that are STRONGER than the source supports (see the block above)."""
     if not (source_text or "").strip():
         return []
@@ -468,7 +468,7 @@ def _claim_strength_warnings(plan: dict, source_text: str | None) -> list[str]:
             seen.add(k)
             unique.append(f)
     shown, extra = unique[:8], len(unique) - 8
-    return [f"CLAIMS: {len(unique)} claim(s) are stronger than the source supports. "
+    return [f"OVERSTATEMENT: {len(unique)} statement(s) are stronger than the source supports. "
             + " ".join(shown) + (f" And {extra} more." if extra > 0 else "")]
 
 
@@ -737,6 +737,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_exec_summary_length_warning(well_formed))
     errors.extend(_number_warnings(well_formed, source_text))
     errors.extend(_quote_warnings(well_formed, source_text))
-    errors.extend(_claim_strength_warnings(well_formed, source_text))
+    errors.extend(_overstatement_warnings(well_formed, source_text))
 
     return errors[:25]

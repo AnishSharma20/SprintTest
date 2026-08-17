@@ -29,7 +29,7 @@ _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "captio
 # coverage/notes/summary nudges, and team-rule breaches the one repair pass could not resolve. ONE
 # definition — the two inline copies this replaces had already drifted apart once.
 _SOFT_ERRORS = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "CLAIMS:")
+                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:")
 
 
 # ---------------------------------------------------------------------------
@@ -100,6 +100,40 @@ def _with_fulltext(summary_text: str, study_meta: list[dict] | None,
         return summary_text
     print(f"[fulltext] added {len(papers)} full paper(s), {spent} chars", file=sys.stderr)
     return f"{summary_text}\n\n{_FULLTEXT_HEADER}\n" + "\n\n".join(papers)
+
+
+def _photo_capable_layouts(brand: str | None = None) -> frozenset[str]:
+    """Layouts that can actually SHOW a slide-level `asset_id`.
+
+    Only the native layouts carrying a picture placeholder (text_with_picture, picture_full) — the
+    renderer's slide-level photo path is the one that fills `fields["picture"]`. photo_stats takes
+    its photos per ITEM, not per slide, so it is deliberately not here."""
+    return frozenset(k for k, v in config.catalog(brand).items()
+                     if "picture" in (v.get("fields") or {}))
+
+
+def _strip_unusable_assets(plan: dict, brand: str | None = None) -> dict:
+    """Drop a slide-level `asset_id` from any layout that cannot render one.
+
+    The schema offers `asset_id` on every layout, so the model sets it on covers and closing slides
+    where there is no picture area, and the renderer silently ignores it. Two things went wrong
+    because the plan was left claiming a photo it could never show: qa_geometry reported it as a
+    photo that failed to insert, and — worse — the PHOTOS coverage nudge COUNTS slides with an
+    asset_id, so a deck with one real photo and two impossible ones scored as three. That inflated
+    count is exactly what made photo coverage look satisfied when it was not."""
+    capable = _photo_capable_layouts(brand)
+    dropped = []
+    slides = []
+    for i, s in enumerate(plan.get("slides", [])):
+        if isinstance(s, dict) and s.get("asset_id") and s.get("layout") not in capable:
+            dropped.append(f"slide {i + 1} ({s.get('layout')})")
+            s = {k: v for k, v in s.items() if k != "asset_id"}
+        slides.append(s)
+    if dropped:
+        print(f"[assets] dropped an asset_id on {len(dropped)} slide(s) whose layout has no photo "
+              f"area, so the photo count reflects real photos: " + ", ".join(dropped[:8]),
+              file=sys.stderr)
+    return {**plan, "slides": slides}
 
 
 def _strip_text(s: str) -> str:
@@ -918,8 +952,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                              layout_overrides=layout_overrides, required_slides=required,
                              managed_blocks=managed_blocks, brand=brand)
 
-    plan = _cap_list_fields(_sanitize_enums(_sanitize_icons(
-        _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
+    plan = _strip_unusable_assets(_cap_list_fields(_sanitize_enums(_sanitize_icons(
+        _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
                                     layout_overrides=slot_layouts, brand=brand, source_text=summary_text)

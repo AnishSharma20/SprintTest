@@ -255,11 +255,21 @@ def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
                 spoken_for.update((low, high))
                 if (low, high) not in src_pairs and f'"{raw}"' not in bad:
                     bad.append(f'"{raw}"')
-            # P values, compared only against the source's own p values (see _PVALUE).
+            # P values, compared against the source's own p values first (see _PVALUE), then
+            # falling back to any bare numeral in the source.
+            #
+            # The fallback is REQUIRED, not a softening. A journal reports exact per-outcome p values
+            # as bare TABLE COLUMNS ("-6.45 (-12.1, -0.9) 0.02"), with no "P =" to key on, and those
+            # tables are the whole reason full text is sent. Measured on a real generation: without
+            # the fallback this flagged the CORRECT stiffness P=0.02 and function P=0.047 straight
+            # out of Stonehouse's Table 3 — so the repair round would have been told to delete
+            # accurate values, which is worse than the error it was built to catch. Catching a real
+            # number attached to the wrong outcome is source_quote's job, not this scan's.
             for m in _PVALUE.finditer(text):
                 canon = _canon(m.group(1))
                 label = f'"{m.group(0).strip()}"'
-                if canon and canon not in src_pvalues and label not in bad:
+                if canon and canon not in src_pvalues and canon not in src_singles \
+                        and label not in bad:
                     bad.append(label)
                 if canon:
                     spoken_for.add(canon)
@@ -357,6 +367,26 @@ _ABSOLUTE_EFFICACY = re.compile(
     r"|treats (osteoarthritis|pain|disease))\b", re.I)
 
 
+# A claim is judged on ITS OWN SENTENCE, never on the whole field. Measured on a real generation: a
+# slide correctly said "No serious adverse events occurred in either group" (the pilot's own wording,
+# properly scoped) and was flagged as an all-trials claim because the speaker note ENDED with the
+# unrelated bridge "Now let's zoom out to the shared mechanism behind all three trials' results".
+def _sentence_of(text: str, start: int, end: int) -> str:
+    left = max(text.rfind(". ", 0, start), text.rfind("; ", 0, start)) + 1
+    right = text.find(". ", end)
+    return text[max(left, 0):right if right != -1 else len(text)].strip()
+
+
+# A deck that ATTRIBUTES a strong term to the study is doing exactly the right thing — "The authors
+# describe these effects as statistically and clinically significant in their conclusion" is honest
+# reporting, and flagging it teaches the model to delete correct attribution.
+_ATTRIBUTED = re.compile(
+    r"\b(the )?(authors?|paper|study|trial|investigators?|researchers?)\b[^.]{0,40}"
+    r"\b(describe|report|conclude|call|state|found|characteris|term)"
+    r"|\bin (their|the) conclusion\b|\baccording to the (authors?|paper|study)\b"
+    r"|\bthe (authors?|paper|study)'s own\b", re.I)
+
+
 def _verbatim_slide(slide: dict) -> bool:
     layout = slide.get("layout") or ""
     return layout == "ingredient" or layout.startswith("custom_")
@@ -386,9 +416,10 @@ def _claim_strength_warnings(plan: dict, source_text: str | None) -> list[str]:
         for raw_text in _prose_strings(slide):
             text = re.sub(r"\s+", " ", raw_text)   # a claim can straddle two bullet lines too
             if m := _SAFETY_ABSOLUTE.search(text):
+                sentence = _sentence_of(text, m.start(), m.end())
                 serious = "serious" in m.group(0).lower()
                 counted = sae_nonzero if serious else (sae_nonzero or ae_nonzero)
-                if _UNIVERSAL_SCOPE.search(text) and counted:
+                if _UNIVERSAL_SCOPE.search(sentence) and counted:
                     findings.append(
                         f'{where}: "{m.group(0)}" is claimed across ALL the trials, but the source '
                         f'reports "{counted.group(0)}". One trial\'s clean safety statement cannot '
@@ -399,7 +430,8 @@ def _claim_strength_warnings(plan: dict, source_text: str | None) -> list[str]:
                         f'{where}: "{m.group(0)}" — the source never states that adverse events were '
                         f'absent, and a trial that did not report them is not evidence that there '
                         f'were none. Drop the claim or scope it to a trial that does state it.')
-            if m := _CLINICAL_STRENGTH.search(text):
+            if (m := _CLINICAL_STRENGTH.search(text)) and \
+                    not _ATTRIBUTED.search(_sentence_of(text, m.start(), m.end())):
                 # Deliberately a VERIFY item, not a verdict. With several papers in one source the
                 # term can be one paper's own conclusion (Alkhedhairi calls its muscle results
                 # clinically significant) while another calls its results modest (Stonehouse, below

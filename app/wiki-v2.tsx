@@ -673,9 +673,13 @@ function StudyPanel({
 
         {/* The role tag, left aligned above the buttons and deliberately uncontained. It is the
             one piece of provenance worth carrying next to the abstract: it says how far Aker
-            BioMarine sat from this result, which changes how the text above should be read. */}
+            BioMarine sat from this result, which changes how the text above should be read.
+            The tag alone did not say what it was a tag OF, hence the lead in label. */}
         {!editingStudy && !removingStudy && (
-          <div className="mt-7">
+          <div className="mt-7 flex flex-wrap items-center gap-2">
+            <span className="text-[12.5px] font-semibold text-[#6E6E73]">
+              Aker BioMarine role:
+            </span>
             <AkbmRoleWord role={s.akbmRole ?? null} />
           </div>
         )}

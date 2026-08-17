@@ -1,9 +1,17 @@
 "use client";
 
-// Scientific Studies — sidebar explorer for browsing, reading panel for the summary.
+// Scientific Studies — sidebar explorer for browsing, reading panel for the paper's abstract.
 // Restyled 2026-08-10 to the "floating & focused" design the client picked from three
 // mockups: calm near-white page, text-only sidebar with the red Superba benefit icons,
 // floating white cards, status as words instead of badge pills. See app/v2/ui.tsx.
+//
+// 2026-08-17, three client changes:
+//   * the panel shows the paper's OWN ABSTRACT, not the AI written 4-section summary (which is
+//     gone from the whole app, generators included). The summary editor went with it.
+//   * "Verified by science" is a CHECKBOX a reviewer ticks. It used to be derived, and editing a
+//     summary silently flipped a study to verified, which meant "verified" could not be trusted.
+//   * every study shows what Aker BioMarine's role in it was, as a tag (see AKBM_ROLE_LABELS),
+//     replacing the free text akerNote that only 5 of the 42 studies had.
 //
 // "View diagrams" opens ONLY the charts/tables extracted from the study's PDF (app/v2/diagrams-
 // modal.tsx); "Open study in PDF" links straight to the real paper (app/study-pdfs.json) when
@@ -14,9 +22,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Studie } from "./studies";
-import type { Summary, OutcomeDirection } from "./studies-data";
+import { AKBM_ROLE_LABELS, AKBM_ROLE_HELP, AKBM_ROLE_KEYS, type AkbmRole } from "./akbm-role";
+import type { OutcomeDirection } from "./studies-data";
 import type { Category } from "./lib/claims-types";
-import { loadOverrides, saveOverride, type Override } from "./summary-overrides";
 import CategoryManager from "./category-manager";
 import DiagramsModal from "./v2/diagrams-modal";
 import studyPdfsRaw from "./study-pdfs.json";
@@ -88,6 +96,43 @@ function QualityWord({ s }: { s: Studie }) {
   );
 }
 
+/* What Aker BioMarine's role in the study was. A pill rather than a colored word like the two
+ * below, because this is provenance rather than a rating: it says how much distance there is
+ * between AKBM and the result, which a reader has to see before they read the numbers.
+ *
+ * The tints run from "AKBM was inside this study" (teal, our own science) through neutral grey
+ * for arm's length trials, to amber for a paper that is not about our product at all. Amber is
+ * deliberately a caution and not an error colour: a competitor trial is perfectly good evidence,
+ * it just does not transfer to Superba without care. */
+const ROLE_TONE: Record<AkbmRole, string> = {
+  akbm_authors: "bg-[#E4F2F4] text-[#0A6875]",
+  akbm_funded: "bg-[#E4F2F4] text-[#0A6875]",
+  product_only: "bg-[#EFEFF1] text-[#4A4A4F]",
+  independent: "bg-[#EFEFF1] text-[#4A4A4F]",
+  competitor: "bg-[#FDF3E4] text-[#8A6A2B]",
+  third_party: "bg-[#EFEFF1] text-[#4A4A4F]",
+};
+
+function AkbmRoleWord({ role }: { role: AkbmRole | null }) {
+  if (!role)
+    return (
+      <span
+        className="inline-block rounded-full bg-[#F5F5F7] px-2.5 py-1 text-[11.5px] font-semibold text-[#AEAEB2]"
+        title="Nobody has recorded what Aker BioMarine's role in this study was. Set it in the study panel."
+      >
+        Role not set
+      </span>
+    );
+  return (
+    <span
+      className={`inline-block rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${ROLE_TONE[role]}`}
+      title={AKBM_ROLE_HELP[role]}
+    >
+      {AKBM_ROLE_LABELS[role]}
+    </span>
+  );
+}
+
 /** Which way the study's own result pointed — deliberately separate from QualityWord above so
  * the two are never read as one thing (see QUALITY_DEF/OUTCOME_DEF). */
 function OutcomeWord({ s }: { s: Studie }) {
@@ -135,7 +180,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     setOutUnset(v);
   };
   const [visKastet, setVisKastet] = useState(false);
-  const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [reviewer, setReviewer] = useState("");
   const [meta, setMeta] = useState<StudyMeta>(EMPTY_META);
   const [administrerer, setAdministrerer] = useState(false);
@@ -173,16 +217,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       /* ignore */
     }
   };
-
-  useEffect(() => {
-    let alive = true;
-    loadOverrides().then((o) => {
-      if (alive) setOverrides(o);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   // Categories with a study in them, biggest first — the sidebar order.
   const kategorier = useMemo(() => {
@@ -235,8 +269,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       const lbl = s.quality?.label;
       const treffKval =
         lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : lbl === "Low" ? qualLow : qualUnscored;
-      const erVerifisert = !!overrides[s.pmid] || s.verified;
-      const treffVer = erVerifisert ? verVerified : verUnverified;
+      const treffVer = s.verified ? verVerified : verUnverified;
       const o = s.outcomeDirection;
       const treffUt = o === "positive" ? outPositive : o === "negative" ? outNegative : o === "neutral" ? outNeutral : outUnset;
       return treffSok && treffKat && treffKval && treffVer && treffUt;
@@ -266,7 +299,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     outNeutral,
     outNegative,
     outUnset,
-    overrides,
   ]);
 
   const valgt = useMemo(
@@ -338,7 +370,7 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
             Verified by science
           </SideCheck>
           <SideCheck checked={verUnverified} onChange={setVerUnverified}>
-            Unverified AI summaries
+            Not yet verified
           </SideCheck>
         </div>
       </SideSection>
@@ -481,7 +513,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
               <StudyRow
                 key={s.pmid}
                 s={s}
-                edited={!!overrides[s.pmid]}
                 selected={valgtPmid === s.pmid}
                 onOpen={() => setValgtPmid(s.pmid)}
               />
@@ -514,11 +545,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
         reviewer={reviewer}
         meta={meta}
         onMetaChanged={lastMeta}
-        override={overrides[s.pmid]}
-        onSave={(summary) => {
-          const o = saveOverride(s.pmid, summary);
-          setOverrides((prev) => ({ ...prev, [s.pmid]: o }));
-        }}
         onClose={() => setValgtPmid(null)}
       />
     );
@@ -529,17 +555,13 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
 
 function StudyRow({
   s,
-  edited,
   selected,
   onOpen,
 }: {
   s: Studie;
-  edited: boolean;
   selected: boolean;
   onOpen: () => void;
 }) {
-  const verified = edited ? true : s.verified;
-
   return (
     <li
       onClick={onOpen}
@@ -568,16 +590,14 @@ function StudyRow({
           )}
           <span className="sm:hidden"> · {s.ar}</span>
         </p>
-        {s.akerNote && <p className="mt-1 text-[12.5px] text-[#AEAEB2]">{s.akerNote}</p>}
-        <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
-          {edited ? (
-            <span className="font-semibold text-[#0A7A8A]">✓ Verified · edited</span>
-          ) : verified ? (
+        <div className="mt-2.5">
+          <AkbmRoleWord role={s.akbmRole ?? null} />
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
+          {s.verified ? (
             <span className="font-semibold text-[#0A7A8A]">✓ Verified by science</span>
           ) : (
-            <span className="font-semibold text-[#B4884A]">
-              AI summary, awaiting review{s.harFulltekst ? " · full text" : ""}
-            </span>
+            <span className="font-semibold text-[#B4884A]">Not yet verified</span>
           )}
           <QualityWord s={s} />
           <OutcomeWord s={s} />
@@ -609,16 +629,12 @@ function StudyPanel({
   reviewer,
   meta,
   onMetaChanged,
-  override,
-  onSave,
   onClose,
 }: {
   s: Studie;
   reviewer: string;
   meta: StudyMeta;
   onMetaChanged: () => Promise<void>;
-  override?: Override;
-  onSave: (summary: Summary) => void;
   onClose: () => void;
 }) {
   const [editingStudy, setEditingStudy] = useState(false);
@@ -635,13 +651,9 @@ function StudyPanel({
     setRemoveMessage(null);
   }, [s.pmid]);
 
-  const edited = !!override;
-  const summary: Summary | null | undefined = override?.summary ?? s.summary;
-  const verified = edited ? true : s.verified;
-
   return (
     <div>
-      <PanelHeader eyebrow="Plain language summary" onClose={onClose} title={s.tittel}>
+      <PanelHeader eyebrow="Abstract" onClose={onClose} title={s.tittel}>
         <p className="mt-2 text-[13px] text-[#6E6E73]">
           {s.forfattere}
           {s.flereForfattere && " et al."}
@@ -658,57 +670,40 @@ function StudyPanel({
       </PanelHeader>
 
       <div className="px-7 py-6">
-        {/* Shown regardless of whether an AI/curated summary exists below — a study added
-            through "Add study" never has one, only this. */}
-        {(s.abstract || s.keyFindingsAssessment) && !editingStudy && !removingStudy && (
-          <div className="mb-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#0A7A8A]">
-              Science team assessment
-            </p>
-            {s.abstract && <PanelSection label="Abstract" text={s.abstract} />}
-            {s.keyFindingsAssessment && (
-              <PanelSection label="Key findings assessment" text={s.keyFindingsAssessment} />
-            )}
-          </div>
-        )}
-
-        {removingStudy ? null : !summary ? (
-          <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
-            No AI or curated summary is available for this study.
-          </p>
-        ) : editingStudy ? (
-          <SummaryEditor
-            initial={summary}
-            onCancel={() => setEditingStudy(false)}
-            onSave={(next) => {
-              onSave(next);
-              setEditingStudy(false);
-            }}
-          />
-        ) : (
+        {/* The abstract used to be tucked into a small "Science team assessment" card below the
+            AI written summary. It is the main content now, so that card is gone and only the team's own
+            key-findings assessment stays as a supplement, below the abstract. */}
+        {removingStudy ? null : (
           <>
-            {!verified && (
-              <p className="mb-5 rounded-[12px] border border-[#F2E3BC] bg-[#FFF8E9] px-4 py-2.5 text-[12.5px] text-[#8A6A2B]">
-                AI generated summary from the abstract. Not yet verified by a scientist.
+            {/* Provenance and review state sit ABOVE the abstract on purpose: both change how the
+                text below should be read, so they must not be something you scroll past. */}
+            <StudyStatusStrip s={s} reviewer={reviewer} meta={meta} onMetaChanged={onMetaChanged} />
+
+            {!s.abstract ? (
+              <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
+                This paper has no published abstract. Add one under &ldquo;Edit study&rdquo; if you
+                have the text.
               </p>
+            ) : (
+              <AbstractText text={s.abstract} />
             )}
-            <PanelSection label="Background" text={summary.background} />
-            <PanelSection label="Design" text={summary.design} />
-            <PanelSection label="Key findings" text={summary.findings} />
-            <PanelSection label="Limitations" text={summary.limitations} />
+
+            {s.keyFindingsAssessment && (
+              <div className="mt-5 rounded-[14px] border border-[#D8E9EA] bg-[#F4FAFB] p-4">
+                <PanelSection label="Key findings assessment" text={s.keyFindingsAssessment} />
+              </div>
+            )}
           </>
         )}
 
         {!editingStudy && !removingStudy && (
           <div className="mt-7 flex flex-wrap gap-2.5">
-            {summary && (
-              <button
-                onClick={() => setDiagramsOpen(true)}
-                className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
-              >
-                View diagrams
-              </button>
-            )}
+            <button
+              onClick={() => setDiagramsOpen(true)}
+              className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
+            >
+              View diagrams
+            </button>
             {!s.removed && (
               <button
                 onClick={() => setAddingFinding(true)}
@@ -717,7 +712,7 @@ function StudyPanel({
                 Add finding
               </button>
             )}
-            {(summary || meta.editable) && (
+            {meta.editable && (
               <button
                 onClick={() => setEditingStudy(true)}
                 className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] transition-colors hover:bg-[#E4E4E7]"
@@ -812,6 +807,167 @@ function PanelSection({ label, text }: { label: string; text: string }) {
     <div className="mb-5">
       <div className="mb-1.5 text-[12.5px] font-semibold text-[#AEAEB2]">{label}</div>
       <p className="text-[14.5px] leading-[1.65] text-[#2C2C2E]">{text}</p>
+    </div>
+  );
+}
+
+/* ---------- the abstract ---------- */
+
+/** The paper's own abstract, verbatim. A structured abstract arrives from PubMed as
+ * "BACKGROUND: ..." paragraphs, so the label is pulled out and set in the same small caps as the
+ * page's other section labels; an unstructured one renders as plain paragraphs. Nothing is
+ * reworded or trimmed, which is the whole point of showing the abstract rather than a summary. */
+function AbstractText({ text }: { text: string }) {
+  const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  return (
+    <div>
+      {paragraphs.map((p, i) => {
+        // Only treat a leading run of capitals as a section label, so a sentence starting with an
+        // abbreviation ("EPA: the ...") is not mistaken for one.
+        const m = /^([A-Z][A-Z /&'-]{2,40}):\s*([\s\S]+)$/.exec(p);
+        return m ? (
+          <PanelSection key={i} label={sentenceCase(m[1])} text={m[2]} />
+        ) : (
+          <p key={i} className="mb-4 text-[14px] leading-[1.65] text-[#1D1D1F]">
+            {p}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+/* PubMed's own indexing truncates a few section labels, and the result reads as a defect on the
+ * page even though it is faithfully what they published: Alkhedhairi 2022's last section is
+ * labelled "GOV IDENTIFIER", because "CLINICALTRIALS.GOV IDENTIFIER" lost its first word. Only
+ * the LABEL is repaired here; the abstract body is always verbatim, which is the whole reason for
+ * showing an abstract rather than a summary. */
+const LABEL_FIXES: Record<string, string> = {
+  "GOV IDENTIFIER": "Trial registration",
+  "CLINICALTRIALS.GOV IDENTIFIER": "Trial registration",
+};
+
+/** "RESULTS AND DISCUSSION" reads as shouting next to the panel's other labels. */
+function sentenceCase(label: string): string {
+  const fixed = LABEL_FIXES[label];
+  if (fixed) return fixed;
+  const t = label.toLowerCase();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+/* ---------- provenance + review state ---------- */
+
+/** The two facts that change how the abstract below should be read: what Aker BioMarine's role in
+ * the study was, and whether a scientist has verified it.
+ *
+ * Both are editable right here rather than behind "Edit study", because both are one click and
+ * are the things a reviewer reads a study in order to set. Deliberately NOT coupled to anything
+ * else: before 2026-08-17 "verified" was a side effect of editing the summary, so it recorded
+ * "someone touched this" rather than "a scientist stands behind this". */
+function StudyStatusStrip({
+  s,
+  reviewer,
+  meta,
+  onMetaChanged,
+}: {
+  s: Studie;
+  reviewer: string;
+  meta: StudyMeta;
+  onMetaChanged: () => Promise<void>;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+
+  // A custom study keeps these on its own row (no PubMed record, no override layer), so it is
+  // patched through its own route. Everything else goes through the shared assessment override.
+  const erEgendefinert = s.pmid.startsWith("custom-");
+
+  async function lagre(patch: { verified?: boolean; akbmRole?: AkbmRole | null }) {
+    if (!reviewer.trim()) {
+      setFeil("Add your name in the Reviewer field in the sidebar first.");
+      return;
+    }
+    setBusy(true);
+    setFeil(null);
+    try {
+      const res = erEgendefinert
+        ? await fetch(`/api/custom-studies/${s.pmid.replace(/^custom-/, "")}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...patch, reviewer }),
+          })
+        : await fetch("/api/study-assessment", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pmid: s.pmid, ...patch, reviewer }),
+          });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeil(data.error ?? "Could not save.");
+        return;
+      }
+      await onMetaChanged();
+    } catch (e) {
+      setFeil((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mb-6 rounded-[14px] border border-[#E8E8ED] bg-[#FBFBFD] p-4">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <label className="flex cursor-pointer items-center gap-2.5 select-none">
+          <input
+            type="checkbox"
+            checked={!!s.verified}
+            disabled={busy || !meta.editableV2}
+            onChange={(e) => void lagre({ verified: e.target.checked })}
+            className="h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
+          />
+          <span className="text-[13.5px] font-semibold text-[#1D1D1F]">Verified by science</span>
+        </label>
+        <span className="flex-1" />
+        <AkbmRoleWord role={s.akbmRole ?? null} />
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2.5">
+        <label className="text-[11.5px] font-semibold text-[#6E6E73]">
+          Aker BioMarine role
+        </label>
+        <select
+          value={s.akbmRole ?? ""}
+          disabled={busy || !meta.editableV2}
+          onChange={(e) =>
+            void lagre({ akbmRole: (e.target.value || null) as AkbmRole | null })
+          }
+          className="rounded-[10px] border border-[#D9D9DE] bg-white px-2.5 py-1.5 text-[12.5px] text-[#1D1D1F]"
+        >
+          <option value="">Not set</option>
+          {AKBM_ROLE_KEYS.map((k) => (
+            <option key={k} value={k}>
+              {AKBM_ROLE_LABELS[k]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <p className="mt-2.5 text-[11.5px] leading-[1.55] text-[#AEAEB2]">
+        {s.verified && s.verifiedBy ? (
+          <>Verified by {s.verifiedBy} on {formatDate(s.verifiedAt)}. </>
+        ) : (
+          <>Tick this only once a scientist has read the paper and stands behind it. </>
+        )}
+        {s.akbmRole
+          ? AKBM_ROLE_HELP[s.akbmRole]
+          : "Recording Aker BioMarine's role tells a reader how much distance there is between us and this result."}
+      </p>
+      {!meta.editableV2 && (
+        <p className="mt-2 text-[11.5px] font-semibold text-[#B4884A]">
+          Read only until migrations 0010 and 0016 have been run in the Supabase SQL editor.
+        </p>
+      )}
+      {feil && <p className="mt-2 text-[11.5px] font-semibold text-[#B3403A]">{feil}</p>}
     </div>
   );
 }
@@ -1263,9 +1419,11 @@ function AssessmentEditor({
   return (
     <div className="mb-3 mt-3">
       <div className="mb-2 text-[12.5px] font-semibold text-[#AEAEB2]">
-        Science team assessment · your own abstract and evaluation, separate from the summary above
+        Abstract & assessment · the abstract shown in the panel, plus your own read of the findings
       </div>
-      <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">Abstract</label>
+      <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">
+        Abstract · leave as published unless it is wrong or missing
+      </label>
       <AutoTextarea value={abstract} onChange={setAbstract} />
       <label className="mb-1 mt-3 block text-[11.5px] font-semibold text-[#6E6E73]">
         Key findings assessment
@@ -1421,7 +1579,7 @@ function RemoveStudyEditor({
   );
 }
 
-/* ---------- summary editor (same write-through as V1) ---------- */
+/* ---------- shared text input ---------- */
 
 function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -1444,50 +1602,7 @@ function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
-function SummaryEditor({
-  initial,
-  onSave,
-  onCancel,
-}: {
-  initial: Summary;
-  onSave: (s: Summary) => void;
-  onCancel: () => void;
-}) {
-  const [draft, setDraft] = useState<Summary>(initial);
-  const fields: { key: keyof Summary; label: string }[] = [
-    { key: "background", label: "Background" },
-    { key: "design", label: "Design" },
-    { key: "findings", label: "Key findings" },
-    { key: "limitations", label: "Limitations" },
-  ];
-  return (
-    <div>
-      <p className="mb-4 rounded-[12px] border border-[#F2E3BC] bg-[#FFF8E9] px-4 py-2.5 text-[12.5px] text-[#8A6A2B]">
-        You are editing this summary. Saving marks it as human reviewed and shares it with the whole team.
-      </p>
-      <div className="space-y-4">
-        {fields.map((f) => (
-          <div key={f.key}>
-            <div className="text-[12.5px] font-semibold text-[#AEAEB2]">{f.label}</div>
-            <AutoTextarea value={draft[f.key]} onChange={(v) => setDraft((d) => ({ ...d, [f.key]: v }))} />
-          </div>
-        ))}
-      </div>
-      <div className="mt-5 flex flex-wrap items-center gap-2.5">
-        <button
-          onClick={() => onSave(draft)}
-          className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white hover:bg-[#3A3A3C]"
-        >
-          Save summary
-        </button>
-        <button
-          onClick={onCancel}
-          className="rounded-[12px] bg-[#EFEFF1] px-5 py-2.5 text-[13.5px] font-semibold text-[#1D1D1F] hover:bg-[#E4E4E7]"
-        >
-          Cancel
-        </button>
-        <span className="text-[11.5px] text-[#AEAEB2]">Saved to the shared library, visible to everyone.</span>
-      </div>
-    </div>
-  );
-}
+// SummaryEditor lived here until 2026-08-17. It edited the 4-section plain-language summary AND,
+// as a side effect of saving, marked the study "verified by science" — the coupling the client
+// asked to remove. The abstract is edited through AssessmentEditor above instead, and verifying
+// is its own explicit tick in StudyStatusStrip.

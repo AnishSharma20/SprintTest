@@ -7,6 +7,7 @@
 import { revalidatePath } from "next/cache";
 import { supabase, dbNotConfigured } from "../../lib/supabase";
 import { canonicalStudyPmids } from "../../studies";
+import { isAkbmRole } from "../../akbm-role";
 
 const LABELS = ["High", "Moderate", "Low"];
 const DIRECTIONS = ["positive", "neutral", "negative"];
@@ -42,6 +43,8 @@ export async function POST(req: Request) {
       quality_score,
       quality_label,
       outcome_direction,
+      verified,
+      akbm_role,
       category_ids,
       created_by,
     } = body as {
@@ -59,6 +62,8 @@ export async function POST(req: Request) {
       quality_score?: number | string;
       quality_label?: string;
       outcome_direction?: string;
+      verified?: boolean;
+      akbm_role?: string;
       category_ids?: string[];
       created_by?: string;
     };
@@ -105,6 +110,9 @@ export async function POST(req: Request) {
     const direction = (outcome_direction ?? "").trim() || null;
     if (direction && !DIRECTIONS.includes(direction))
       return Response.json({ error: "Outcome must be positive, neutral or negative." }, { status: 400 });
+    const role = (akbm_role ?? "").trim() || null;
+    if (role && !isAkbmRole(role))
+      return Response.json({ error: `Unknown Aker BioMarine role "${role}".` }, { status: 400 });
 
     const inserted = await sb
       .from("custom_studies")
@@ -123,6 +131,10 @@ export async function POST(req: Request) {
         quality_score: score,
         quality_label: label,
         outcome_direction: direction,
+        // Migration 0016. Both ticked on the "Add study" form, and changeable afterwards from the
+        // study panel through PATCH /api/custom-studies/[id].
+        verified: !!verified,
+        akbm_role: role,
         category_ids: cleanCatIds,
         created_by: reviewer,
       })
@@ -130,7 +142,7 @@ export async function POST(req: Request) {
       .single();
     if (inserted.error)
       return Response.json(
-        { error: `Could not save the study. ${inserted.error.message} (has migration 0011 been run?)` },
+        { error: `Could not save the study. ${inserted.error.message} (have migrations 0011 and 0016 been run?)` },
         { status: 500 }
       );
 

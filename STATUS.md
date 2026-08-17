@@ -895,6 +895,63 @@ template by `scripts/` (inspect → manifest → schema), so the pipeline is tem
     space, the auto/always mode, the payload budget) and only measuring the actual blob size settled it.
     The first two were real bugs, but neither was THIS bug.
 
+- **Abstract replaced the summary, "verified" became a real tick, and every study records AKBM's
+  role — NEW 2026-08-17** (**migration `0016_abstract_verified_and_akbm_role.sql`, must be run in
+  the Supabase SQL editor**; until then the two new controls render read only). Three client asks
+  in one sweep, all on the Scientific Studies page:
+  - **The paper's OWN ABSTRACT is now the study library's text of record**, replacing the AI
+    written Background/Design/Findings/Limitations summary EVERYWHERE, generators included. Base
+    text is `app/study-abstracts.json`, fetched verbatim from PubMed by the new
+    `deck-service/scripts/fetch_abstracts.py` (re-run it when AKBM supplies new papers; it rebuilds
+    the whole file from the ids it is given, like `extract_figures.py`). Structured abstracts keep
+    their published section labels, and `wiki-v2.tsx`'s `AbstractText` renders those as the panel's
+    own section headings. `study_assessment.abstract` keeps its old job as the reviewer's override.
+    **DELETED as dead:** `app/ai-summaries.json` (86 KB), `app/summary-overrides.ts`,
+    `/api/summaries`, `deck-service/scripts/gen_aker_summaries.py`, wiki-v2's `SummaryEditor`, and
+    `CuratedStudy.summary`/`akerNote` (the 5 curated trials keep only their quality score and
+    outcome direction). `summary_overrides` the TABLE is deliberately left in Supabase so earlier
+    edits stay recoverable; nothing reads it. The generator's study picker now gates on
+    `s.abstract` instead of `s.summary`, and the source file it synthesizes carries the abstract
+    verbatim plus the AKBM role line, so a deck quotes the paper rather than a paraphrase of it.
+  - **"Verified by science" is a checkbox** (`study_assessment.verified`), ticked deliberately and
+    attributed. It used to be DERIVED two ways, both removed: the 5 curated trials were verified by
+    definition, and `edited ? true : s.verified` in `wiki-v2.tsx` meant **editing any summary
+    silently flipped a study to verified** — so the flag recorded "someone touched this", not "a
+    scientist stands behind this". Per client decision **every study now starts unverified**, so
+    the page shows 0 verified until the science team goes through them.
+  - **Every study carries an AKBM role tag** (`study_assessment.akbm_role`), replacing the free
+    text `akerNote` that only 5 of 42 studies had. Six keys in `app/akbm-role.ts`:
+    `akbm_authors` / `akbm_funded` / `product_only` / `independent` / `competitor` / `third_party`.
+    All 42 built in defaults are **hand authored** in `studies.ts` `AKBM_ROLES` from each paper's
+    OWN funding, acknowledgements and conflict of interest statements (read out of
+    `assets/fulltext/` and PubMed's `CoiStatement`; `fetch_abstracts.py --roles` dumps that
+    evidence). Spread: 19 competitor, 9 AKBM authors, 7 product only, 3 third party, 2 independent,
+    2 AKBM funded. ⚠ **Do NOT infer this from PubMed's affiliation field** — it usually carries only
+    the corresponding author, so Maki 2009, Ulven 2011 and Banni 2011 all hide Kjetil Berge and
+    Hogne Vik of AKBM in the author list with no AKBM affiliation shown.
+  - `app/akbm-role.ts` exists as its own import-free module because **both** the server
+    (`studies.ts`, which holds the Supabase service role client) and client components need the
+    labels; importing them from `studies.ts` would drag that module into the browser bundle.
+  - New: `PATCH /api/custom-studies/[id]` (a custom study owns these fields on its own row, so it
+    cannot use the PMID-keyed assessment override); `PUT /api/study-assessment` now behaves as a
+    PATCH, writing only the keys present, so ticking verified cannot blank someone's abstract.
+    "Add study" gained the same checkbox + role picker.
+  - `seed-studies` lost its `ai-summaries.json` dependency and reads `canonicalStudyPmids()`
+    instead. NOTE the `studies.verification` column's `"ai"` value is now just a legacy label
+    meaning "not a curated key trial"; it no longer implies an AI summary.
+  - Verified: `tsc` + `next build` clean (the build is what proves the client/server split above),
+    and the statically prerendered `/` was inspected directly rather than through the login gate:
+    all 42 role pills present in exactly the hand authored distribution, every study carrying real
+    abstract text with its section labels, and every old string (`Plain language summary`,
+    `AI summary, awaiting review`, the akerNote prose) confirmed gone.
+  - **Known gaps:** Skarpanska 2015 (PMID 26557185) has **no abstract published in PubMed**, so its
+    panel shows the "no published abstract" message until someone pastes it in (its full text IS in
+    `assets/fulltext/`, but auto-extracting an abstract from a PDF was judged worse than showing
+    nothing). PubMed's own indexing truncates Alkhedhairi 2022's last section label to
+    `GOV IDENTIFIER`; `LABEL_FIXES` in `wiki-v2.tsx` repairs that ONE label, never the body.
+    The reading panel itself was not exercised in a browser (the local dev server sits behind the
+    shared password gate), only server rendered.
+
 **Claims library — Phase 1 (NEW 2026-07-08).** Summaries (one-pagers) are too thin to source a 30-slide deck, so
 we are moving to an **approved-claims library**: atomic, individually-approved facts the generators compose from.
 Two top-level categories — **science** (subcats heart/brain/joints/muscle/eye/metabolism/mechanism/absorption/

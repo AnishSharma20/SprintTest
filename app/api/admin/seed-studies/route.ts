@@ -1,16 +1,16 @@
 // POST /api/admin/seed-studies — one-shot, idempotent population of the studies table.
 //
-// Upserts the 4 curated key trials + every AI-summarised study into `studies` so the
-// claims library starts with the known evidence base as first-class rows. Safe to run
-// repeatedly (upsert on pmid). Claim extraction also creates study rows lazily, so this
-// is a convenience, not a prerequisite.
+// Upserts every study the Scientific Studies page can show into `studies`, so the claims
+// library starts with the known evidence base as first-class rows. Safe to run repeatedly
+// (upsert on pmid). Claim extraction also creates study rows lazily, so this is a
+// convenience, not a prerequisite.
 //
 // Gated by a token: send { token } matching SEED_TOKEN (or ADMIN_TOKEN). If neither env
 // var is set, seeding is allowed once from localhost only.
 
 import { supabase, dbNotConfigured } from "../../../lib/supabase";
 import { CURATED_STUDIES } from "../../../studies-data";
-import aiSummariesRaw from "../../../ai-summaries.json";
+import { canonicalStudyPmids } from "../../../studies";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -84,11 +84,16 @@ export async function POST(req: Request) {
     });
   }
 
-  // AI-summarised studies: keyed by pmid with only summary fields (no title). Fetch the
-  // titles/journals/years from PubMed so the rows are complete. Skip any already curated.
-  const aiPmids = Object.keys(aiSummariesRaw as Record<string, unknown>).filter((p) => !rows.has(p));
-  const meta = await fetchSummaries(aiPmids);
+  // Every other study the Scientific Studies page can show. This used to read the key set of
+  // ai-summaries.json, which was deleted in 2026-08-17's abstract change; canonicalStudyPmids()
+  // is the same 42 studies and is the list the rest of the app already validates against.
+  // Only PMIDs are known here, so titles/journals/years come from PubMed.
+  const restPmids = [...canonicalStudyPmids()].filter((p) => !rows.has(p));
+  const meta = await fetchSummaries(restPmids);
   for (const [pmid, m] of meta) {
+    // "ai" is a legacy label on the studies table meaning "not one of the curated key trials".
+    // It no longer implies an AI written summary; the page's own verified flag lives elsewhere
+    // (study_assessment.verified) and is set by a reviewer, never here.
     rows.set(pmid, { ...m, verification: "ai" });
   }
 
@@ -99,7 +104,7 @@ export async function POST(req: Request) {
   return Response.json({
     seeded: res.data?.length ?? 0,
     curated: CURATED_STUDIES.length,
-    ai_requested: aiPmids.length,
+    ai_requested: restPmids.length,
     ai_resolved: meta.size,
   });
 }

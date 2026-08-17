@@ -1,7 +1,11 @@
 // Shared study-fetching logic (used by the Scientific Studies tab AND the /api/studies route that
-// feeds the content generator's "pick from studies" picker). Fetches real studies from PubMed
-// (Aker BioMarine affiliation), attaches verified whitepaper summaries + AI summaries, and always
-// merges in the 4 curated key trials. Server-only (uses Next fetch caching).
+// feeds the content generator's "pick from studies" picker). Builds the list from AKBM's own
+// library (the PDFs they supplied + the curated key trials), attaches each paper's OWN abstract,
+// and records what Aker BioMarine's role in each study was. Server-only (uses Next fetch caching).
+//
+// 2026-08-17: the AI written / curated 4-section summary this file used to attach was replaced
+// everywhere by the paper's real abstract (app/study-abstracts.json). `verified` stopped being
+// derived (curated = true) and became a stored reviewer tick, so nothing here sets it.
 
 import {
   CURATED_STUDIES,
@@ -9,11 +13,11 @@ import {
   type CuratedStudy,
   type Quality,
   type OutcomeDirection,
-  type Summary,
 } from "./studies-data";
 import { canonicalIds } from "./lib/category-ids";
 import { supabase } from "./lib/supabase";
-import aiSummariesRaw from "./ai-summaries.json";
+import type { AkbmRole } from "./akbm-role";
+import studyAbstractsRaw from "./study-abstracts.json";
 import fulltextStudiesRaw from "./fulltext-studies.json";
 
 export type Studie = {
@@ -30,8 +34,15 @@ export type Studie = {
   kategoriIds?: string[];
   url: string;
   doiUrl: string | null;
-  summary?: Summary | null;
-  verified?: boolean; // true = science-verified (whitepaper); false = AI-generated
+  // Ticked by a reviewer in the reading panel, stored in study_assessment.verified (custom
+  // studies carry their own column). Never derived: every study starts unverified, and editing
+  // anything else about a study does not touch it.
+  verified?: boolean;
+  verifiedBy?: string | null;
+  verifiedAt?: string | null;
+  // What Aker BioMarine's role in this study was — see AKBM_ROLES below for the built in value
+  // and AKBM_ROLE_LABELS for what each key reads as on the page.
+  akbmRole?: AkbmRole | null;
   quality?: Quality | null;
   // Who set the quality score and when, for a score a reviewer entered (curated scores have none).
   qualityReviewer?: string | null;
@@ -41,12 +52,12 @@ export type Studie = {
   // can still land on a null/negative result, and vice versa). Curated studies carry one built
   // in; everything else is unset until a reviewer records one.
   outcomeDirection?: OutcomeDirection | null;
-  akerNote?: string | null;
-  // true = AKBM supplied the paper as a PDF, so summaries/findings come from the FULL TEXT.
-  // false = we only have the PubMed abstract for it.
+  // true = AKBM supplied the paper as a PDF, so findings can be grounded in the FULL TEXT.
+  // false = we only have the published abstract for it.
   harFulltekst?: boolean;
-  // Science team's own write up (migration 0010's study_assessment table) — distinct from the
-  // Background/Design/Findings/Limitations summary above, which is AI written or curated.
+  // The paper's OWN abstract — the study library's text of record since 2026-08-17. Base text
+  // comes from app/study-abstracts.json (verbatim from PubMed, structured abstracts keep their
+  // BACKGROUND:/METHODS:/RESULTS: labels); a reviewer can override it in study_assessment.
   abstract?: string | null;
   keyFindingsAssessment?: string | null;
   // Set once a reviewer removes the study from this page (migration 0010's study_removed table).
@@ -63,7 +74,9 @@ export type Studie = {
   customPdfUrl?: string | null;
 };
 
-const AI_SUMMARIES = aiSummariesRaw as Record<string, Summary>;
+// Each paper's own abstract, verbatim from PubMed. Rebuilt by
+// `python scripts/fetch_abstracts.py` in deck-service/ whenever AKBM supplies new papers.
+const ABSTRACTS = studyAbstractsRaw as Record<string, { title: string; abstract: string }>;
 // The papers AKBM supplied as PDFs — the study list is built from these.
 const FULLTEXT_STUDIES = fulltextStudiesRaw as Record<string,
   { pdf: string; title: string; year: string; first_author: string; chars: number }>;
@@ -159,6 +172,92 @@ const ARCHIVE_CATEGORIES: Record<string, string[]> = {
   // fulltext-studies.json, ai-summaries.json, study-figures.json and study-pdfs.json too.
 };
 
+/* ── What Aker BioMarine's role in each study was ─────────────────────────────────────────────
+ *
+ * The tag list, labels and help text live in app/akbm-role.ts, because client components need
+ * them too and this module is server only (it holds the Supabase service role client).
+ *
+ * Hand authored from each paper's OWN funding, acknowledgements and conflict of interest
+ * statements (read out of assets/fulltext/ and PubMed's CoiStatement, see
+ * deck-service/scripts/fetch_abstracts.py --roles). NOT keyword matched, and not inferred from
+ * PubMed's affiliation field alone: that field usually carries only the corresponding author, so
+ * it misses AKBM co-authors entirely (Maki 2009, Ulven 2011 and Banni 2011 all have Kjetil Berge
+ * and Hogne Vik of AKBM in the author list with no AKBM affiliation shown).
+ *
+ * This is the built in default. A reviewer's change is stored in study_assessment.akbm_role and
+ * laid over it by app/study-meta.ts, same as categories and quality.
+ */
+const AKBM_ROLES: Record<string, AkbmRole> = {
+  // AKBM employees among the authors.
+  "19854375": "akbm_authors",  // Maki 2009 — Berge K + Vik H (AKBM) in the author list, Superba
+  "21042875": "akbm_authors",  // Ulven 2011 — "K. Berge, H. Vik, Aker BioMarine ASA"; partially AKBM funded
+  "21276269": "akbm_authors",  // Banni 2011 — "K.B. and H.V. are employed by Aker Biomarine"; AKBM supported in part
+  "24461313": "akbm_authors",  // Berge K 2014 — first author at Aker BioMarine ASA
+  "31652561": "akbm_authors",  // Modinger 2019 — Hals (AKBM) corresponding; "sponsored by Aker BioMarine Antarctic AS"
+  "33015116": "akbm_authors",  // Storsve 2020 — Storsve, Johnsen, Burri all AKBM
+  "34444996": "akbm_authors",  // Gart 2021 — Storsve + Hals (AKBM); "provided a part of the funding"
+  "34959789": "akbm_authors",  // Drobnic 2021 — "L.B., A.B.S. and Y.D. are employees of Aker BioMarine"
+  "39169540": "akbm_authors",  // Handeland 2024 — Handeland + Burri (AKBM); AKBM funded
+
+  // AKBM money, no AKBM author.
+  "26407095": "akbm_funded",   // Da Boit 2015 — "supported with funding from Aker Biomarine Antarctic AS"
+  "31937352": "akbm_funded",   // Laslett 2020 protocol — NHMRC led, plus "additional funding from industry (Aker Biomarine)" and in kind product
+
+  // AKBM supplied the oil only; the trial was designed, funded and analysed elsewhere.
+  "27701428": "product_only",  // Suzuki 2016 — Superba product, trial funded by Sunsho Pharmaceutical
+  "35504165": "product_only",  // Alkhedhairi 2022 — "provided by Aker Biomarine... manufacturer had no role"
+  "35880828": "product_only",  // Stonehouse 2022 — Superba BOOST inside the Swisse product; trial supported by Swisse Wellness
+  "38776073": "product_only",  // KARAOKE 2024 — NHMRC / University of Tasmania funded, no AKBM disclosure
+  "40671417": "product_only",  // Alblaji 2025 — "provided free of charge by Aker BioMarine... no role in design, conduct, or analysis"
+  "41933837": "product_only",  // Tamargo 2026 — NIH funded; "supplied at no cost by Aker BioMarine... sponsor had no role"
+  "42144109": "product_only",  // Loukil 2026 — SuperbaBoost "provided by Aker BioMarine Antarctic AS"
+
+  // No stated AKBM involvement at all.
+  "27817918": "independent",   // Deinema 2017 — Rebecca L. Cooper Foundation + University of Melbourne grants
+  "29222893": "independent",   // Sung 2018 — no funding, product source or conflict declared
+
+  // The krill oil studied was someone else's product.
+  "12777162": "competitor",    // Sampalis 2003 — Neptune Krill Oil; lead author was Neptune's VP of R&D
+  "15656713": "competitor",    // Bunea 2004 — Neptune Krill Oil
+  "17353582": "competitor",    // Deutsch 2007 — Neptune Krill Oil
+  "21862301": "competitor",    // Schuchardt 2011 — krill arm was Neptune NKO; fish oils from Dr. Loges
+  "24098072": "competitor",    // Konagai 2013 — funded by Nippon Suisan Kaisha, whose employees are authors
+  "24304605": "competitor",    // Ramprasath 2013 — Enzymotec K-REAL; Enzymotec employees are authors
+  "25884846": "competitor",    // Kohler 2015 — Olympic Seafood (Rimfrost) author and product
+  // ⚠ These three are inferred from the SPONSOR, not from a named product: each paper says only
+  // "krill oil capsules" and never identifies the oil, so it could in principle be anyone's,
+  // Superba included. Tagged competitor because the practical consequence is the same (it cannot
+  // be cited as Superba evidence), but they are the weakest three calls in this table and are the
+  // ones to revisit if the science team can trace the actual supply chain.
+  "26328782": "competitor",    // Yurko-Mauro 2015 — DSM Nutritional Products authors; oil unnamed
+  "26504524": "competitor",    // Lobraico 2015 — Prograde Inc funded and supplied it; oil unnamed
+  "27279841": "competitor",    // Cicero 2016 — provided by Erbozeta S.r.l., a formulator; oil unnamed
+
+  "26537218": "competitor",    // Ramprasath 2015 — Enzymotec authors
+  "26557185": "competitor",    // Skarpanska 2015 — Enzymotec oil (the title's "Neptune" was corrected in an erratum)
+  "26666303": "competitor",    // Berge RK 2015 — RIMFROST Sublime; Rimfrost AS authors
+  "29372051": "competitor",    // Rundblad 2018 — "RIMFROST Sublime, batch 11335; Rimfrost AS"
+  "29854443": "competitor",    // Georges 2018 — authors are employees of Avoca Inc, a krill oil manufacturer
+  // No full text supplied, but this is the SAME cohort as Berge RK 2015 above (17 healthy
+  // volunteers, 18 to 36 years, 28 days), reported a second time, so the oil is RIMFROST.
+  "30261756": "competitor",    // Bjorndal 2018 — Rimfrost AS among the affiliations
+  "34989797": "competitor",    // Mozaffarian 2022 — Acasti Pharma's CaPre, Acasti funded
+  "36566465": "competitor",    // Yang 2023 — co-author from Aland Health Holding, a krill oil supplier
+  "39555189": "competitor",    // Katare 2024 — "Krill oil was provided by Rimfrost AS"; EU Horizon 2020 funded
+
+  // Evidence syntheses, not a trial of one product.
+  "28371906": "third_party",   // Ursoniu 2017 — systematic review and meta-analysis
+  "38039646": "third_party",   // Huang 2023 — systematic review and meta-analysis, Guangdong grants
+  "39974718": "third_party",   // Pham 2024 — network meta-analysis
+};
+
+/** AKBM's role in a study, or null when nobody has recorded one (a brand new PDF, or a study a
+ * reviewer added by hand and left blank). Null renders as "Role not set" rather than a guess —
+ * the wrong provenance tag on a scientific claim is worse than a missing one. */
+export function akbmRole(pmid: string): AkbmRole | null {
+  return AKBM_ROLES[pmid] ?? null;
+}
+
 // Fallback for a study not yet added to ARCHIVE_CATEGORIES (e.g. a brand new PDF AKBM sends before
 // anyone updates the table above). Best-effort keyword match against the SAME 10 categories — never
 // invents an 11th. Prefer adding the study to ARCHIVE_CATEGORIES over relying on this.
@@ -202,8 +301,9 @@ function curatedToStudie(c: CuratedStudy): Studie {
     forfattere: c.authors, flereForfattere: false, kategori: kat, kategoriIds: canonicalIds(kat),
     url: `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`,
     doiUrl: c.doi ? `https://doi.org/${c.doi}` : null,
-    summary: c.summary, verified: true, quality: c.quality, outcomeDirection: c.outcomeDirection,
-    akerNote: c.akerNote,
+    quality: c.quality, outcomeDirection: c.outcomeDirection,
+    abstract: ABSTRACTS[c.pmid]?.abstract ?? null,
+    akbmRole: akbmRole(c.pmid),
   };
 }
 
@@ -240,11 +340,12 @@ async function egendefinerteStudier(): Promise<Studie[]> {
       kategoriIds: ids,
       url: r.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/` : r.doi ? `https://doi.org/${r.doi}` : pdfUrl || "#",
       doiUrl: r.doi ? `https://doi.org/${r.doi}` : null,
-      summary: null,
-      verified: false,
+      // Both ticked on the "Add study" form. Unlike a built in study these live on the row
+      // itself, since a custom study has no PubMed record and no override layer to merge.
+      verified: !!r.verified,
+      akbmRole: (r.akbm_role ?? null) as AkbmRole | null,
       quality: r.quality_score != null && r.quality_label ? { score: r.quality_score, label: r.quality_label } : null,
       outcomeDirection: r.outcome_direction ?? null,
-      akerNote: null,
       harFulltekst: !!r.full_text,
       abstract: r.abstract ?? null,
       keyFindingsAssessment: r.key_findings_assessment ?? null,
@@ -291,7 +392,6 @@ async function basisStudier(): Promise<Studie[]> {
       const x: Esummary = res[id];
       const doi = x.articleids?.find((i) => i.idtype === "doi")?.value;
       const kurert = curatedByPmid.get(id) ?? (doi ? curatedByDoi.get(doi.toLowerCase()) : undefined);
-      const ai = AI_SUMMARIES[id];
       const kat = kategorier(id, x.title);
       return {
         pmid: id,
@@ -305,11 +405,11 @@ async function basisStudier(): Promise<Studie[]> {
         kategoriIds: canonicalIds(kat),
         url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
         doiUrl: doi ? `https://doi.org/${doi}` : null,
-        summary: kurert ? kurert.summary : ai ?? null,
-        verified: kurert ? true : ai ? false : undefined,
         quality: kurert ? kurert.quality : null,
-        akerNote: kurert ? kurert.akerNote : null,
-        // Do we have the paper itself (AKBM PDF), or only the PubMed abstract?
+        outcomeDirection: kurert ? kurert.outcomeDirection : null,
+        abstract: ABSTRACTS[id]?.abstract ?? null,
+        akbmRole: akbmRole(id),
+        // Do we have the paper itself (AKBM PDF), or only the published abstract?
         harFulltekst: !!FULLTEXT_STUDIES[id],
       };
     })

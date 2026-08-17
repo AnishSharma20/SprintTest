@@ -1,18 +1,16 @@
-// Curated, science-VERIFIED study summaries (from Aker BioMarine's krill-oil / joint-health
-// whitepaper). These are shown verbatim and flagged "Verified by science". The 4 are the key
-// clinical trials in the evidence base; they are added directly here because they are not all
-// retrievable via the "Aker BioMarine"[Affiliation] PubMed query (Deutsch is a Neptune/competitor
-// study; Suzuki was Sunsho-funded; Laslett/KARAOKE used Aker product but had no Aker authors).
+// The curated key trials from Aker BioMarine's krill-oil / joint-health whitepaper.
 //
-// AI-generated summaries for the OTHER (Aker-affiliated) studies live in `ai-summaries.json`
-// (produced by `scripts/gen-summaries.mjs`) and are flagged "AI summary — unverified".
-
-export type Summary = {
-  background: string;
-  design: string;
-  findings: string;
-  limitations: string;
-};
+// These 5 are listed here rather than derived from the PDF library for two reasons: KARAOKE
+// (Laslett 2024) is the only one AKBM never supplied as a PDF, and all 5 carry a hand-checked
+// scientific quality score and outcome direction that no automated pass could produce.
+//
+// HISTORY (2026-08-17): each of these also used to carry a 4-section plain-language Summary
+// (background / design / findings / limitations) and a free-text `akerNote`, and the page showed
+// those instead of the paper's own words. The client replaced both: the reading panel now shows
+// the study's real ABSTRACT (app/study-abstracts.json, verbatim from PubMed), and AKBM's role is
+// a tag from studies.ts AKBM_ROLES rather than prose. The AI-written summaries in
+// `ai-summaries.json` went in the same sweep. If a plain-language layer is ever wanted again,
+// it belongs next to the abstract, not instead of it.
 
 export type Quality = { score: number; label: "High" | "Moderate" | "Low" };
 
@@ -29,10 +27,8 @@ export type CuratedStudy = {
   journal: string;
   year: string;
   authors: string;
-  akerNote: string; // relationship to Aker BioMarine — shown for transparency
   quality: Quality;
   outcomeDirection: OutcomeDirection;
-  summary: Summary;
 };
 
 export const CURATED_STUDIES: CuratedStudy[] = [
@@ -44,19 +40,9 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     journal: "Am J Clin Nutr",
     year: "2022",
     authors: "Stonehouse W, Benassi-Evans B, Bednarz J, et al.",
-    akerNote: "Aker BioMarine (Superba krill oil) — strongest positive evidence to date",
+    // Met all eight pre-specified methodological criteria.
     quality: { score: 100, label: "High" },
     outcomeDirection: "positive",
-    summary: {
-      background:
-        "At publication, the largest, longest and highest-dose RCT of krill oil in knee osteoarthritis. Designed to overcome earlier methodological limitations and generate high-quality evidence for clinical and regulatory discussions.",
-      design:
-        "235 adults aged 40–75 with mild-to-moderate knee OA and regular knee pain (VAS 4–8) across four Australian sites; 6-month double-blind, placebo-controlled, parallel-arm. 4 g/day krill oil (~0.60 g EPA, 0.28 g DHA, 0.45 mg astaxanthin) vs mixed-vegetable-oil placebo. Primary outcome: change in WOMAC knee pain. Full intention-to-treat, pre-specified analysis, centralised randomisation.",
-      findings:
-        "Significant, clinically meaningful improvement in WOMAC knee pain vs placebo at 6 months (mean difference −5.18; 95% CI −10.0 to −0.32; p = 0.030). Knee stiffness (p = 0.001) and physical function (p < 0.05) also improved significantly. Omega-3 Index rose from 6.0% to 8.9%, confirming strong tissue incorporation. NSAID use, serum lipids and systemic inflammatory markers were unchanged, suggesting a localised rather than systemic mechanism. No safety concerns.",
-      limitations:
-        "Population was normo- to borderline hyperlipidaemic, limiting observable lipid effects. Included participants without effusion-synovitis (broader than KARAOKE). The MCID for WOMAC pain is debated. Quality score 100% (High) — met all eight pre-specified methodological criteria.",
-    },
   },
   {
     pmid: "38776073",
@@ -65,21 +51,10 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     journal: "JAMA",
     year: "2024",
     authors: "Laslett LL, Scheepers LEJM, Antony B, et al.",
-    akerNote: "Independent (NHMRC / University of Tasmania funded) — Aker BioMarine supplied product only, no role in analysis",
-    quality: { score: 100, label: "High" },
     // Rigorous, well powered JAMA RCT — the null primary-endpoint result doesn't make the study
     // itself weak, so research quality stays High; only the outcome direction is negative.
+    quality: { score: 100, label: "High" },
     outcomeDirection: "negative",
-    summary: {
-      background:
-        "The KARAOKE trial — the most ambitious krill-oil study to date, published in JAMA. Funded independently by the Australian NHMRC and the University of Tasmania; Aker BioMarine provided supplements only, with no role in data analysis or interpretation.",
-      design:
-        "262 adults with clinical knee OA, significant pain and MRI-confirmed effusion-synovitis, randomised 1:1 to 2 g/day krill oil or identical placebo for 24 weeks across five Australian cities. Primary outcome: change in knee pain (VAS 0–100). Secondary: MRI effusion-synovitis volume, WOMAC subscales, Omega-3 Index, lipids, inflammatory markers. Pre-specified intention-to-treat.",
-      findings:
-        "No significant difference in VAS knee pain between krill oil and placebo over 24 weeks (mean difference 0.30; 95% CI −6.9 to 6.4; p = 0.94). The authors concluded the findings do not support 2 g/day krill oil for knee pain in people with OA who have significant pain and effusion-synovitis.",
-      limitations:
-        "Used 2 g/day — half the dose that produced significant effects in Stonehouse (4 g/day); dose-response for omega-3 is well established. Enrolled a more advanced structural subphenotype (MRI effusion-synovitis) than Stonehouse's broader population. The null result does not contradict the 4 g/day evidence in broader OA. Quality score 100% (High).",
-    },
   },
   {
     pmid: "27701428",
@@ -88,19 +63,10 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     journal: "PLoS ONE",
     year: "2016",
     authors: "Suzuki Y, Fukushima M, Sakuraba K, et al.",
-    akerNote: "Superba krill oil (Aker BioMarine product); study funded by Sunsho Pharmaceutical",
+    // Small (n = 50), short (30 days), per-protocol rather than ITT, allocation concealment
+    // not clearly described.
     quality: { score: 63, label: "Moderate" },
     outcomeDirection: "positive",
-    summary: {
-      background:
-        "Building on Deutsch, this trial targeted a more commercially relevant population: adults with mild knee pain not yet requiring pharmacotherapy — the primary consumer segment for krill-oil supplements. Conducted at an orthopaedic clinic in rural Japan.",
-      design:
-        "50 adults aged 38–85 (mean ~64) with mild knee pain, randomised to 2 g/day Superba krill oil (240 mg EPA, 110 mg DHA) or safflower-oil placebo for 30 days. Primary outcomes: Japanese Knee Osteoarthritis Measure (JKOM) and JOA score. Secondary: plasma fatty acids and biochemical markers.",
-      findings:
-        "Both groups improved (notable placebo effect). After adjusting for age, sex, weight and lifestyle, krill oil gave significantly greater improvement than placebo in knee pain during sleep (p < 0.001) and while standing (p < 0.001), and in range of motion (p = 0.011). Plasma EPA and the EPA/arachidonic-acid ratio rose significantly, confirming uptake and a favourable n-6/n-3 shift.",
-      limitations:
-        "Small (n = 50), short (30 days), per-protocol (not ITT) analysis. Allocation concealment not clearly described. Industry-funded (Sunsho Pharmaceutical, with stated separation). Single ethnically homogeneous population, uncontrolled diet — limits generalisability. Quality score 63% (Moderate).",
-    },
   },
   {
     pmid: "17353582",
@@ -110,19 +76,10 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     journal: "J Am Coll Nutr",
     year: "2007",
     authors: "Deutsch L.",
-    akerNote: "Neptune Krill Oil (NKO™) — a competitor product, NOT Aker BioMarine; included as the first clinical evidence",
+    // Early proof of concept: heterogeneous sample, 30 days, and allocation concealment, ITT
+    // analysis, sample-size justification and dropout reporting all unreported.
     quality: { score: 25, label: "Low" },
     outcomeDirection: "positive",
-    summary: {
-      background:
-        "The first RCT to examine krill oil specifically in humans with arthritic and inflammatory conditions. Motivated by pre-clinical evidence that omega-3s could lower C-reactive protein (CRP) and attenuate arthritic symptoms (WOMAC).",
-      design:
-        "90 patients with cardiovascular disease and/or rheumatoid arthritis and/or osteoarthritis, all with elevated baseline CRP (>1.0 mg/dL), randomised double-blind to Neptune Krill Oil (NKO™) 300 mg/day or placebo for 30 days. CRP and WOMAC (pain, stiffness, function) at baseline and days 7, 14, 30.",
-      findings:
-        "After 7 days, krill oil reduced CRP vs an increase on placebo (p = 0.049). By day 14, CRP fell 29.7% (krill) vs +32.1% (placebo) (p < 0.001), maintained at day 30. All three WOMAC subscales improved significantly in favour of krill oil at every visit.",
-      limitations:
-        "Early proof-of-concept only. Heterogeneous sample (CVD + RA + OA mixed), short (30 days); allocation concealment, ITT analysis, sample-size justification and dropout reporting were not reported. Quality score 25% (Low), reflecting limited methodological transparency of early-era trials.",
-    },
   },
   {
     pmid: "12777162",
@@ -132,19 +89,10 @@ export const CURATED_STUDIES: CuratedStudy[] = [
     journal: "Altern Med Rev",
     year: "2003",
     authors: "Sampalis F, Bunea R, Pelland MF, et al.",
-    akerNote: "Neptune Krill Oil (NKO™) — a competitor product, NOT Aker BioMarine; lead author was Vice President of Research & Development at the manufacturer (Neptune Technologies & Bioressources Inc.), a significant conflict of interest",
+    // Reasonably transparent for its era (explicit power calculation, zero dropouts, double
+    // blind) but undermined by a missing placebo arm and a severe sponsor/author conflict.
     quality: { score: 50, label: "Moderate" },
     outcomeDirection: "positive",
-    summary: {
-      background:
-        "The first (and to date only) RCT evaluating krill oil specifically for premenstrual syndrome (PMS) and dysmenorrhea. Motivated by evidence that omega-3 fatty acids counter the omega-6 driven inflammatory prostaglandin and leukotriene pathway implicated in menstrual pain and PMS, and by krill oil's phospholipid-bound omega-3 form.",
-      design:
-        "70 women of reproductive age meeting DSM-III-R diagnostic criteria for PMS, randomised double-blind to Neptune Krill Oil (2 g/day for month 1, then 2 g/day cyclically 8 days before through 2 days into menstruation) or omega-3 fish oil (18% EPA, 12% DHA, same dosing) for 3 months (3 cycles). NO placebo arm; an active-comparator design only. Primary outcome: an ACOG-based PMS self-assessment questionnaire (0 to 10 scale) at baseline, 45 and 90 days; also analgesic consumption for dysmenorrhea. Powered for a 20% between-group difference at 90% power.",
-      findings:
-        "All 70 patients completed the trial (zero dropouts). The krill oil group improved significantly across every measured symptom (breast tenderness, feeling overwhelmed, stress, irritability, depression, joint pain, weight gain, abdominal pain, swelling, bloating) at both 45 and 90 days (p<0.001), while the fish oil group only reached significance for weight gain, abdominal pain and swelling. Krill oil was significantly more effective than fish oil for emotional symptoms (p<0.01), breast tenderness (p<0.01) and joint pain (p<0.04). Analgesic use for dysmenorrhea fell 50% in the krill oil group by 90 days, a significantly greater reduction than in the fish oil group (p<0.03 between groups). No serious adverse events; krill oil caused no gastrointestinal reflux, versus 64% of the fish oil group reporting unpleasant reflux.",
-      limitations:
-        "No placebo arm: the trial only compares krill oil against fish oil, so it cannot rule out a shared placebo response for these highly subjective, cyclical symptoms. Allocation concealment mechanism not described beyond a random number list. The lead author was Vice President of Research & Development at the product's manufacturer, a substantial conflict of interest for an early-era (2003) trial. Small (n=70) and short (3 cycles). Quality score 50% (Moderate): reasonably transparent for its era (explicit power calculation, zero dropouts, double-blind) but undermined by the missing placebo arm and the severe sponsor and author conflict of interest.",
-    },
   },
 ];
 

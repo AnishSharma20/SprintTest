@@ -4,13 +4,16 @@
 // (no PMID, or AKBM never supplied it as part of the curated/full text library). Upload the PDF
 // straight to Storage, extract its text plus its own verbatim abstract/year/authors (deck-service
 // + Claude), then review/fill in the rest by hand — benefit areas, findings (same shape as the
-// Findings Library), research quality, and marketing outcome. Saves to custom_studies (migration
-// 0011) and, per finding entered, to claims (the same table the Findings Library reads).
+// Findings Library), research quality, marketing outcome, and (added 2026-08-17, migration 0016)
+// whether it is verified by science plus what Aker BioMarine's role in it was, the same two
+// controls the study reading panel carries. Saves to custom_studies (migration 0011) and, per
+// finding entered, to claims (the same table the Findings Library reads).
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import type { Category, ClaimSentiment } from "./lib/claims-types";
 import type { OutcomeDirection } from "./studies-data";
+import { AKBM_ROLE_LABELS, AKBM_ROLE_HELP, AKBM_ROLE_KEYS, type AkbmRole } from "./akbm-role";
 import { OUTCOME_LABEL, suggestLabel } from "./study-meta";
 import { benefitIcon } from "./v2/benefit-icons";
 import CategorySelect from "./category-select";
@@ -53,7 +56,11 @@ export default function AddStudyModal({
   const [year, setYear] = useState("");
   const [yearAuto, setYearAuto] = useState(false);
   const [abstract, setAbstract] = useState("");
+  // Whether the extracted abstract matched the PDF word for word. Nothing to do with `verified`
+  // below, which is a scientist vouching for the STUDY.
   const [abstractVerified, setAbstractVerified] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [akbmRole, setAkbmRole] = useState("");
   const [qualityScore, setQualityScore] = useState("");
   const qualityLabel = qualityScore.trim() ? suggestLabel(Number(qualityScore)) : "";
   const [outcomeDirection, setOutcomeDirection] = useState<OutcomeDirection | "">("");
@@ -158,6 +165,8 @@ export default function AddStudyModal({
           pdf_filename: pdfFilename,
           full_text: fullText || null,
           abstract: abstract.trim() || null,
+          verified,
+          akbm_role: akbmRole || null,
           quality_score: qualityScore.trim() ? Number(qualityScore) : null,
           quality_label: qualityLabel || null,
           outcome_direction: outcomeDirection || null,
@@ -335,6 +344,47 @@ export default function AddStudyModal({
                 placeholder="Paste the paper's own abstract if it wasn't found automatically"
                 className="w-full rounded-[12px] border border-[#E8E8ED] p-3 text-[14px] outline-none placeholder:text-[#AEAEB2] focus:border-[#C7C7CC]"
               />
+
+              {/* Same two controls as the study reading panel's status strip, so a study added
+                  here starts out described the same way every other study is. */}
+              <label className="mb-1 mt-5 block text-[11.5px] font-semibold text-[#6E6E73]">
+                Aker BioMarine role · how close was Aker BioMarine to this study
+              </label>
+              <select
+                value={akbmRole}
+                onChange={(e) => setAkbmRole(e.target.value)}
+                className="w-full rounded-[12px] border border-[#E8E8ED] bg-white p-3 text-[14px] outline-none focus:border-[#C7C7CC]"
+              >
+                <option value="">Not set</option>
+                {AKBM_ROLE_KEYS.map((k) => (
+                  <option key={k} value={k}>
+                    {AKBM_ROLE_LABELS[k]}
+                  </option>
+                ))}
+              </select>
+              {akbmRole && (
+                <p className="mt-1.5 text-[11.5px] leading-[1.5] text-[#AEAEB2]">
+                  {AKBM_ROLE_HELP[akbmRole as AkbmRole]}
+                </p>
+              )}
+
+              <label className="mt-4 flex cursor-pointer items-start gap-2.5 select-none">
+                <input
+                  type="checkbox"
+                  checked={verified}
+                  onChange={(e) => setVerified(e.target.checked)}
+                  className="mt-0.5 h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
+                />
+                <span>
+                  <span className="text-[13.5px] font-semibold text-[#1D1D1F]">
+                    Verified by science
+                  </span>
+                  <span className="block text-[11.5px] leading-[1.5] text-[#AEAEB2]">
+                    Tick this only if a scientist has read the paper and stands behind it. It can be
+                    changed later from the study panel.
+                  </span>
+                </span>
+              </label>
 
               <div className="mb-1.5 mt-5 flex items-center justify-between">
                 <div className="text-[12.5px] font-semibold text-[#6E6E73]">

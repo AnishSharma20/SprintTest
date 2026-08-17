@@ -1,16 +1,18 @@
 // The editable layer on top of the study list.
 //
-// The list itself (PubMed metadata, summaries, the built in benefit categories and the curated
-// quality scores) is still produced by app/studies.ts. What a reviewer can change from the UI —
-// category names, which categories a study belongs to, its scientific quality/outcome, its
-// Science team assessment, and whether it's removed from the page — lives in Supabase and is
-// laid over the list here, on the client, so an edit is visible immediately without waiting out
-// the 24 hour cache on the PubMed data.
+// The list itself (PubMed metadata, each paper's abstract, the built in benefit categories, the
+// curated quality scores and the built in AKBM role) is still produced by app/studies.ts. What a
+// reviewer can change from the UI — category names, which categories a study belongs to, its
+// scientific quality/outcome, its abstract and assessment, whether it is verified by science,
+// what AKBM's role was, and whether it's removed from the page — lives in Supabase and is laid
+// over the list here, on the client, so an edit is visible immediately without waiting out the
+// 24 hour cache on the PubMed data.
 //
 // Everything degrades to the built in values when the database is not configured or the
 // relevant migration has not been run yet.
 
 import type { Studie } from "./studies";
+import type { AkbmRole } from "./akbm-role";
 import type { Category } from "./lib/claims-types";
 import type { OutcomeDirection } from "./studies-data";
 
@@ -26,6 +28,10 @@ export type StudyQuality = {
 export type StudyAssessment = {
   abstract: string | null;
   keyFindingsAssessment: string | null;
+  /** Migration 0016. Ticked deliberately in the reading panel; never derived from anything else. */
+  verified: boolean;
+  /** Migration 0016. Overrides the built in AKBM_ROLES value in app/studies.ts. */
+  akbmRole: AkbmRole | null;
   updated_by: string;
   updated_at: string;
 };
@@ -120,6 +126,12 @@ export function applyStudyMeta(studier: Studie[], meta: StudyMeta): Studie[] {
       outcomeDirection: q ? q.outcomeDirection : s.outcomeDirection,
       abstract: a?.abstract ?? s.abstract ?? null,
       keyFindingsAssessment: a?.keyFindingsAssessment ?? s.keyFindingsAssessment ?? null,
+      // A stored row always wins, including a stored `false`, so unticking really unticks. Only
+      // the absence of a row falls back (to a custom study's own column, else unverified).
+      verified: a ? a.verified : !!s.verified,
+      verifiedBy: a?.verified ? a.updated_by : null,
+      verifiedAt: a?.verified ? a.updated_at : null,
+      akbmRole: a?.akbmRole ?? s.akbmRole ?? null,
       removed: !!r,
       removedReason: r?.reason ?? null,
       removedBy: r?.removed_by ?? null,

@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../studies";
-import { loadOverrides, type Override } from "../summary-overrides";
+import { AKBM_ROLE_LABELS } from "../akbm-role";
 import { applyStudyMeta, loadStudyMeta } from "../study-meta";
 import {
   loadApprovedClaims,
@@ -217,7 +217,6 @@ export default function ContentGenerator() {
   const [kontekst, setKontekst] = useState("");
   const [studier, setStudier] = useState<Studie[]>([]);
   const [valgteStudier, setValgteStudier] = useState<Set<string>>(new Set());
-  const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [studieSok, setStudieSok] = useState("");
   const [studieKat, setStudieKat] = useState<string | null>(null);
 
@@ -325,15 +324,17 @@ export default function ContentGenerator() {
   }, [studier, studieSok, studieKat]);
 
   useEffect(() => {
-    void loadOverrides().then(setOverrides);
-    // Same overlay as V1: the picker's categories follow the reviewer edits on the studies page.
+    // Same overlay as the studies page: the picker's categories follow the reviewer edits there.
+    // Only studies with an ABSTRACT are offered, since that is what gets written into the source
+    // file below. Before 2026-08-17 the gate was `s.summary` and the source file carried the AI
+    // written summary; the abstract is the paper's own words, so a deck now quotes the paper.
     void Promise.all([
       fetch("/api/studies").then((r) => (r.ok ? r.json() : [])),
       loadStudyMeta(),
     ])
       .then(([d, meta]) =>
         setStudier(
-          applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.summary) : [], meta).filter(
+          applyStudyMeta(Array.isArray(d) ? d.filter((s: Studie) => s.abstract) : [], meta).filter(
             (s) => !s.removed
           )
         )
@@ -443,13 +444,18 @@ export default function ContentGenerator() {
       }));
       const tekst = valgte
         .map((s) => {
-          const sum = overrides[s.pmid]?.summary ?? s.summary;
           const cite = `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`;
+          // The paper's own abstract, verbatim, plus what Aker BioMarine's role in it was so the
+          // model can be honest about provenance (a competitor trial must not be written up as
+          // evidence for Superba). The team's own key-findings assessment rides along when they
+          // wrote one, clearly labelled so the two are never conflated.
+          const role = s.akbmRole ? AKBM_ROLE_LABELS[s.akbmRole] : null;
           return (
-            `# ${s.tittel}\n${cite}\n${s.akerNote ? `(${s.akerNote})\n` : ""}` +
-            (sum
-              ? `\nBackground & rationale: ${sum.background}\nDesign & participants: ${sum.design}\n` +
-                `Key findings: ${sum.findings}\nLimitations & quality: ${sum.limitations}\n`
+            `# ${s.tittel}\n${cite}\n` +
+            (role ? `Aker BioMarine role: ${role}\n` : "") +
+            (s.abstract ? `\nAbstract (the paper's own words):\n${s.abstract}\n` : "") +
+            (s.keyFindingsAssessment
+              ? `\nScience team assessment of the key findings:\n${s.keyFindingsAssessment}\n`
               : "")
           );
         })
@@ -734,7 +740,6 @@ export default function ContentGenerator() {
                     ) : (
                       filtrerteStudier.map((s) => {
                         const valgt = valgteStudier.has(s.pmid);
-                        const verified = !!overrides[s.pmid] || s.verified;
                         const funn = funnByPmid[s.pmid] ?? [];
                         return (
                           <div key={s.pmid}>
@@ -747,10 +752,13 @@ export default function ContentGenerator() {
                               <span className="min-w-0 flex-1">
                                 <span className="block truncate font-medium text-[#052A4E]">{s.tittel}</span>
                                 <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px]">
-                                  {verified ? (
+                                  {s.verified ? (
                                     <span className="rounded-md bg-[#DFF3E4] px-1.5 py-0.5 font-bold uppercase text-[#1B7A3D]">Verified</span>
                                   ) : (
-                                    <span className="rounded-md bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">AI</span>
+                                    <span className="rounded-md bg-[#EEE7D6] px-1.5 py-0.5 font-bold uppercase text-[#8A6A2B]">Unverified</span>
+                                  )}
+                                  {s.akbmRole && (
+                                    <span className="text-zinc-400">{AKBM_ROLE_LABELS[s.akbmRole]}</span>
                                   )}
                                   {s.quality && <span className="text-zinc-400">Quality {s.quality.score}%</span>}
                                   <span className="text-zinc-400">{s.ar}</span>

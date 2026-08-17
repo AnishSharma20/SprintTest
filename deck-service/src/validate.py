@@ -9,6 +9,7 @@ fails loudly rather than rendering a broken deck.
 """
 from __future__ import annotations
 
+import re
 import sys
 
 import jsonschema
@@ -87,6 +88,210 @@ def _notes_warnings(plan: dict) -> list[str]:
     return [f"NOTES: {len(missing)} slide(s) have no `speaker_notes`. Every slide needs a presenter "
             f"script (3 to 6 spoken sentences: takeaway, walk-through, supporting detail, bridge to "
             f"the next slide). Missing on: " + "; ".join(missing)]
+
+
+# ---------------------------------------------------------------------------
+# Numeric grounding — is every figure on the deck actually IN the source?
+#
+# CLAIM FIDELITY has always been prompt-only: an instruction, with nothing checking it. Measured on
+# a real client deck, the model wrote an age range of "40 to 75" where the paper says 40 to 65, a
+# WOMAC pain p value of 0.030 where the paper says 0.04, and a stiffness p value of 0.001 that
+# appears nowhere (the paper's table says 0.02). All three were in the source and came out wrong, so
+# no amount of better sourcing fixes them — only a check does.
+#
+# Deliberately SOFT (tagged NUMBERS:, so pipeline's split never hard-fails a deck over it), because
+# CLAIM_RULES explicitly PERMITS reframing a true figure into a correct equivalent ("+3.2 points"
+# from 4.9% to 8.1%), and a derived figure legitimately appears nowhere in the source. A hard failure
+# would ban allowed arithmetic; a warning plus one repair round asks the model to justify or fix it.
+#
+# Fields whose value is an enum, an id or a tag the model picks rather than prose it wrote — a digit
+# inside one of these is a layout name or an asset id, never a claim. `source_quote` is excluded
+# because it is checked separately, and verbatim.
+_NON_PROSE_KEYS = {"layout", "background", "asset_id", "icon", "icon_generic", "chart_type",
+                   "language", "benefit", "source_quote"}
+
+# A bare numeral, with thousands separators tolerated (1,288 / 1 288 / 1288 all read as 1288).
+_NUMERAL = re.compile(r"(?<![\w.])(\d{1,3}(?:[,   ]\d{3})+|\d+(?:\.\d+)?)(?![\w])")
+
+# What the numeral is attached to decides whether it is a CLAIM or furniture. A bare small integer
+# is almost always structural ("3 reasons", "6 months", "week 12"), so it is only checked when a
+# unit or a statistical marker makes it a real measurement.
+_UNIT_AFTER = re.compile(r"\A\s*(%|/\s*\d{1,3}\b|mg\b|mcg\b|µg\b|kg\b|g\b|ml\b|points?\b|pp\b|"
+                         r"fold\b|x\b)", re.I)
+_STAT_BEFORE = re.compile(r"(p\s*[=<>]|n\s*=|d\s*=|r\s*=|ci\b|or\b|rr\b|hr\b|odds ratio|"
+                          r"rate ratio|risk ratio|hazard ratio|mean|median|sd\b|se\b)\s*$", re.I)
+# "40 to 75", "4 to 8", "6-8", "between 4 and 8" — a range is a single claim, and its ENDPOINTS can
+# each appear in the source while the PAIR does not. That is exactly the 40-to-75 case (40 is in the
+# paper, 75 is not) and the 4-to-8 case (both are, as a different pair).
+_RANGE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:to|and|[–—-])\s*(\d+(?:\.\d+)?)", re.I)
+
+_SMALL_INT_CEILING = 12   # below this, a bare integer needs a unit or a stat marker to be checked
+
+# P values get their own TYPED check, compared only against the p values in the source rather than
+# against every numeral in it. The reason is a real dilution effect, measured: a bare numeral scan
+# over a 2k-char abstract catches an invented p of 0.030, but over the same paper's 76k-char full
+# text the digits 0.03 turn up incidentally somewhere and it stops being flagged. Comparing p
+# against p keeps the check just as sharp on a long source, and a p value is both the figure this
+# deck type cites most and the one a reader trusts most on sight.
+_PVALUE = re.compile(r"\bp\s*[=<>≤≥]\s*(\d*\.\d+)", re.I)
+
+
+def _canon(raw: str) -> str | None:
+    """A numeral's canonical form, so 1,288 == 1288 and 0.030 == 0.03 but 0.030 != 0.04."""
+    cleaned = re.sub(r"[,   ]", "", raw)
+    try:
+        val = float(cleaned)
+    except ValueError:
+        return None
+    return repr(int(val)) if val == int(val) else repr(val)
+
+
+def _pvalues(text: str) -> set[str]:
+    """Canonical p values stated in `text` (see _PVALUE)."""
+    return {c for m in _PVALUE.finditer(text) if (c := _canon(m.group(1)))}
+
+
+def _source_numbers(source_text: str) -> tuple[set[str], set[tuple[str, str]]]:
+    """Every numeral in the source, plus every adjacent numeric PAIR (a range as written)."""
+    singles = {c for m in _NUMERAL.finditer(source_text) if (c := _canon(m.group(1)))}
+    pairs = set()
+    for m in _RANGE.finditer(source_text):
+        a, b = _canon(m.group(1)), _canon(m.group(2))
+        if a and b:
+            pairs.add((a, b))
+    return singles, pairs
+
+
+def _prose_strings(node, key: str | None = None) -> list[str]:
+    """Every model-written string in a slide, enum/id fields excluded."""
+    if isinstance(node, str):
+        return [] if key in _NON_PROSE_KEYS else [node]
+    if isinstance(node, dict):
+        out = []
+        for k, v in node.items():
+            out.extend([] if k in _NON_PROSE_KEYS else _prose_strings(v, k))
+        return out
+    if isinstance(node, list):
+        out = []
+        for v in node:
+            out.extend(_prose_strings(v, key))
+        return out
+    return []
+
+
+def _checkable(text: str) -> list[str]:
+    """(as written, canonical) for each numeral in `text` that reads as a real measurement.
+
+    The raw form is carried so a warning names the figure exactly as the slide spells it: a model
+    told to fix "0.03" cannot find the "0.030" it actually wrote."""
+    found = []
+    for m in _NUMERAL.finditer(text):
+        raw = m.group(1)
+        canon = _canon(raw)
+        if canon is None:
+            continue
+        is_decimal = "." in raw
+        big = abs(float(re.sub(r"[,   ]", "", raw))) > _SMALL_INT_CEILING
+        united = bool(_UNIT_AFTER.match(text[m.end():m.end() + 12]))
+        statted = bool(_STAT_BEFORE.search(text[max(0, m.start() - 14):m.start()]))
+        if is_decimal or big or united or statted:
+            found.append((raw, canon))
+    return found
+
+
+def _measured_ranges(text: str) -> list[tuple[str, str, str]]:
+    """(low, high, as written) for each range in `text` that reads as a measurement.
+
+    A bare small-integer range is furniture ("3 to 6 sentences", "2 to 4 markets"), so a range only
+    counts here when a decimal, a trailing unit, or a value above the small-integer ceiling makes it
+    a real quantity. Its endpoints are still covered individually by _checkable."""
+    out = []
+    for m in _RANGE.finditer(text):
+        low, high = _canon(m.group(1)), _canon(m.group(2))
+        if not (low and high):
+            continue
+        if not ("." in m.group(1) + m.group(2)
+                or max(float(m.group(1)), float(m.group(2))) > _SMALL_INT_CEILING
+                or _UNIT_AFTER.match(text[m.end():m.end() + 12])):
+            continue
+        out.append((low, high, m.group(0).strip()))
+    return out
+
+
+def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
+    """Soft nudge: flag figures on the deck that do not appear in the source at all.
+
+    Skipped entirely without a source (build_gallery.py and the design preview validate synthetic
+    plans against no source; flagging every number there would be pure noise)."""
+    if not (source_text or "").strip():
+        return []
+    src_singles, src_pairs = _source_numbers(source_text)
+    if not src_singles:
+        return []      # a source with no numbers at all cannot ground anything; stay quiet
+    src_pvalues = _pvalues(source_text)
+    ungrounded: list[str] = []
+    for i, slide in enumerate(plan.get("slides", [])):
+        if not isinstance(slide, dict):
+            continue
+        where = f"slides/{i} ({slide.get('layout')})"
+        bad: list[str] = []
+        for text in _prose_strings(slide):
+            # Ranges first: a flagged range already names both its endpoints, so reporting them
+            # again individually would just triple the noise for one mistake.
+            spoken_for: set[str] = set()
+            for low, high, raw in _measured_ranges(text):
+                spoken_for.update((low, high))
+                if (low, high) not in src_pairs and f'"{raw}"' not in bad:
+                    bad.append(f'"{raw}"')
+            # P values, compared only against the source's own p values (see _PVALUE).
+            for m in _PVALUE.finditer(text):
+                canon = _canon(m.group(1))
+                label = f'"{m.group(0).strip()}"'
+                if canon and canon not in src_pvalues and label not in bad:
+                    bad.append(label)
+                if canon:
+                    spoken_for.add(canon)
+            for raw, canon in _checkable(text):
+                if canon in spoken_for or canon in src_singles or raw in bad:
+                    continue
+                bad.append(raw)
+        if bad:
+            ungrounded.append(f"{where}: " + ", ".join(bad))
+    if not ungrounded:
+        return []
+    shown, extra = ungrounded[:8], len(ungrounded) - 8
+    return [f"NUMBERS: {len(ungrounded)} slide(s) state a figure that does not appear anywhere in "
+            f"the source. Either correct it to the source's own value, or drop it. If it is a "
+            f"CORRECT figure you derived from the source (a difference, a relative change), keep it "
+            f"and put the numbers it came from in that slide's `source_quote`. "
+            + "; ".join(shown) + (f"; and {extra} more slide(s)" if extra > 0 else "")]
+
+
+def _quote_warnings(plan: dict, source_text: str | None) -> list[str]:
+    """Soft nudge: a `source_quote` must be VERBATIM from the source.
+
+    This is the check the numeric scan above cannot do. A real number bolted to the wrong metric
+    (a stiffness p value of 0.001, where 0.001 is genuinely in the source but belongs to the
+    Omega 3 Index) passes a token-level scan and fails here, because no sentence in the source
+    carries both. Same deterministic substring test the claims library uses."""
+    if not (source_text or "").strip():
+        return []
+    norm_src = re.sub(r"\s+", " ", source_text).lower()
+    bad = []
+    for i, slide in enumerate(plan.get("slides", [])):
+        if not isinstance(slide, dict):
+            continue
+        quote = (slide.get("source_quote") or "").strip()
+        if not quote:
+            continue
+        if re.sub(r"\s+", " ", quote).lower() not in norm_src:
+            bad.append(f"slides/{i} ({slide.get('layout')}): \"{quote[:80]}\"")
+    if not bad:
+        return []
+    return [f"NUMBERS: {len(bad)} `source_quote` value(s) are not verbatim in the source. A quote "
+            f"must be copied EXACTLY from the source text, not paraphrased or reassembled from "
+            f"different sentences. Fix the quote, or correct the figure it was meant to support: "
+            + "; ".join(bad[:6])]
 
 
 def _summary_warning(plan: dict, disabled_layouts=None) -> list[str]:
@@ -269,8 +474,13 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   photo_level: str = "default",
                   disabled_layouts=None,
                   layout_overrides: list[dict] | None = None,
-                  brand: str | None = None) -> list[str]:
-    """Return a list of human-readable violations ('' if the plan is valid)."""
+                  brand: str | None = None,
+                  source_text: str | None = None) -> list[str]:
+    """Return a list of human-readable violations ('' if the plan is valid).
+
+    source_text: the deck's own source material. Supplied by the pipeline so every figure on the
+    deck can be checked against it; omitted by callers that validate a synthetic plan (the gallery
+    builder, the design preview), which skips the numeric checks rather than flagging everything."""
     errors: list[str] = []
     validator = jsonschema.Draft202012Validator(
         _schema_with_extras(extra_layouts, extra_photo_ids, layout_overrides, brand))
@@ -320,5 +530,7 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_notes_warnings(well_formed))
     errors.extend(_summary_warning(well_formed, disabled_layouts))
     errors.extend(_exec_summary_length_warning(well_formed))
+    errors.extend(_number_warnings(well_formed, source_text))
+    errors.extend(_quote_warnings(well_formed, source_text))
 
     return errors[:25]

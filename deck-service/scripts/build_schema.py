@@ -753,6 +753,12 @@ def main(brand: str | None = None):
                         "supporting_findings": {"type": "string"}, "relevance": {"type": "string"},
                         "contents": {"type": "string"},
                         "speaker_notes": {"type": "string", "maxLength": 1400},
+                        # The verbatim source sentence a DERIVED figure came from. Never rendered;
+                        # validate._quote_warnings checks it is really in the source, which is how a
+                        # true number attached to the wrong outcome gets caught (a token-level scan
+                        # of the figures alone cannot see that). Optional on every layout — a slide
+                        # that copies its figures straight from the source needs none.
+                        "source_quote": {"type": "string", "maxLength": 400},
                         "source_citations": {"type": "array", "maxItems": 6,
                                              "items": {"type": "string", "maxLength": 160}},
                     },

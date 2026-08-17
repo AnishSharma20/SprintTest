@@ -150,3 +150,18 @@ def figures_index(brand: str | None = None) -> dict:
 
 def figure_path(pmid: str, filename: str, brand: str | None = None) -> Path:
     return assets_dir(brand) / "figures" / pmid / filename
+
+
+@functools.lru_cache(maxsize=None)
+def fulltext_index(brand: str | None = None) -> dict:
+    """pmid -> {pdf, pages, chars, title, first_author, year, ...}, written by
+    scripts/import_fulltext_pdfs.py. Empty dict when no PDFs have been imported yet.
+
+    Same PubMed-keyed, default-brand-only shape as figures_index(): full papers are science, not
+    brand design, so a brand with no study library simply gets none."""
+    p = assets_dir(brand) / "fulltext" / "index.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def fulltext_path(pmid: str, brand: str | None = None) -> Path:
+    return assets_dir(brand) / "fulltext" / f"{pmid}.txt"

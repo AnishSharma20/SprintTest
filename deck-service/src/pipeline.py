@@ -29,7 +29,77 @@ _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "captio
 # coverage/notes/summary nudges, and team-rule breaches the one repair pass could not resolve. ONE
 # definition — the two inline copies this replaces had already drifted apart once.
 _SOFT_ERRORS = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                "EXEC_LENGTH:", "RULES:")
+                "EXEC_LENGTH:", "RULES:", "NUMBERS:")
+
+
+# ---------------------------------------------------------------------------
+# Full papers for the picked studies.
+#
+# A picked study reaches us as its PubMed ABSTRACT (~2k chars); the paper itself is 50k to 80k and
+# already sits on this box in assets/fulltext/, imported for claim and figure extraction. The
+# abstract is a summary, so it states some results only as "P < 0.05" while the exact per-outcome
+# value lives in the paper's own tables — and a model asked to put a number on a slide it cannot
+# source will write one regardless (measured on a real deck: a WOMAC stiffness p-value of 0.001,
+# where the abstract said only "P < 0.05" and the paper's table says 0.02). So the full text rides
+# along under the abstract whenever we have it.
+#
+# study_meta already carries the pmids (it is what the appendix uses), so nothing new crosses the
+# wire: this reads straight off local disk, the same way renderer._add_appendix_slides does.
+_FULLTEXT_HEADER = (
+    "=== FULL PAPERS FOR THE PICKED STUDIES ===\n"
+    "Each paper below is the COMPLETE published text of a study whose abstract appears earlier in "
+    "this source. The abstract is that paper's headline; THIS is where the exact figures live (the "
+    "per outcome p values, confidence intervals, table values and the real inclusion criteria). "
+    "When a slide or a speaker note states a figure, take it from here rather than from the "
+    "abstract's summary wording, and state no figure that appears in neither.\n")
+
+# Characters of full text across ALL picked studies, ~60k tokens. Sized to leave room for the
+# ~29k-token cached system prefix and the plan's own output budget (up to 64k) inside the model's
+# window. Three papers land at ~190k, so a normal deck is unaffected.
+_FULLTEXT_BUDGET = 240_000
+
+
+def _with_fulltext(summary_text: str, study_meta: list[dict] | None,
+                   brand: str | None = None) -> str:
+    """Append each picked study's full paper to the source, under a labelled header.
+
+    Skips are LOGGED, never silent: a study whose paper we do not have, or which does not fit the
+    budget, is named on stderr so an under-sourced deck explains itself."""
+    if not study_meta:
+        return summary_text
+    index = config.fulltext_index(brand)
+    papers: list[str] = []
+    skipped: list[str] = []
+    spent = 0
+    for meta in study_meta:
+        pmid = str((meta or {}).get("pmid") or "").strip()
+        if not pmid:
+            continue
+        cite = str((meta or {}).get("cite") or "").strip() or f"PMID {pmid}"
+        if pmid not in index:
+            skipped.append(f"{cite}: no full text imported")
+            continue
+        path = config.fulltext_path(pmid, brand)
+        try:
+            body = path.read_text(encoding="utf-8", errors="replace").strip()
+        except OSError as e:  # indexed but missing/unreadable on this box
+            skipped.append(f"{cite}: {e.__class__.__name__} reading {path.name}")
+            continue
+        if not body:
+            skipped.append(f"{cite}: full text file is empty")
+            continue
+        if spent + len(body) > _FULLTEXT_BUDGET:
+            skipped.append(f"{cite}: {len(body)} chars would exceed the "
+                           f"{_FULLTEXT_BUDGET} char full text budget")
+            continue
+        spent += len(body)
+        papers.append(f"--- FULL TEXT: {cite} (PMID {pmid}) ---\n{body}")
+    for s in skipped:
+        print(f"[fulltext] abstract only, {s}", file=sys.stderr)
+    if not papers:
+        return summary_text
+    print(f"[fulltext] added {len(papers)} full paper(s), {spent} chars", file=sys.stderr)
+    return f"{summary_text}\n\n{_FULLTEXT_HEADER}\n" + "\n\n".join(papers)
 
 
 def _strip_text(s: str) -> str:
@@ -737,7 +807,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         errs = validate.validate_plan(candidate, extra_layouts=extra,
                                       extra_photo_ids=photo_ids, photo_level=photo_level,
                                       disabled_layouts=disabled_layouts,
-                                      layout_overrides=slot_layouts, brand=brand)
+                                      layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -753,7 +823,7 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts, brand=brand)
+                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -813,6 +883,10 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             except Exception:  # noqa: BLE001 — progress must never break generation
                 pass
 
+    # Done ONCE, before any model call, so the planner, every revision and the number check all
+    # read the same source. It rides the USER turn, so the cached system prefix is unaffected.
+    summary_text = _with_fulltext(summary_text, study_meta, brand)
+
     extra = [c["key"] for c in planner.auto_custom_slides(custom_slides)]
     photo_ids = planner.custom_photo_ids(custom_photos)
     photo_level = (design or {}).get("photo_level", "default")
@@ -848,7 +922,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
         _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                    layout_overrides=slot_layouts, brand=brand)
+                                    layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -863,7 +937,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                        layout_overrides=slot_layouts, brand=brand)
+                                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -886,7 +960,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                     retry_errors = validate.validate_plan(
                         trimmed, extra_layouts=extra, extra_photo_ids=photo_ids,
                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                        layout_overrides=slot_layouts, brand=brand)
+                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
                     if not [e for e in retry_errors if not any(s in e for s in _SOFT_ERRORS)]:
                         print(f"[validate] dropped {len(bad_idx)} slide(s) still broken after "
                               f"the retry ({sorted(bad_idx)}) rather than fail the whole deck:\n- "
@@ -934,7 +1008,7 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                             managed_blocks=managed_blocks, brand=brand)
             errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
                                           photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts, brand=brand)
+                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
             hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
             if hard:
                 print("[rules-gate] the rule fix broke validation; keeping the pre-fix plan:\n- "

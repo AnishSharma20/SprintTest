@@ -587,6 +587,10 @@
             "type": "string",
             "maxLength": 1400
           },
+          "source_quote": {
+            "type": "string",
+            "maxLength": 400
+          },
           "source_citations": {
             "type": "array",
             "maxItems": 6,

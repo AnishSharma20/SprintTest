@@ -28,7 +28,24 @@ CLAIM_RULES = """CLAIM FIDELITY (non-negotiable):
 - EFSA / regulatory: only state an approved claim when the source explicitly says so. Keep null or
   negative results honestly. Never invent a citation, journal, or year.
 - Put heavy detail (effect sizes, CI, p-values, dose, study design, full citations) in speaker_notes,
-  not on the slide."""
+  not on the slide. Speaker notes are held to this rule EXACTLY as strictly as the slide is: they
+  carry the most figures, so they are the likeliest place for a wrong one to hide.
+- Read for the figure you need, do not recall it. Where the source includes a paper's FULL text,
+  its results tables are the authority and its abstract is only a summary: an abstract that reports
+  an outcome as "P < 0.05" often has the exact value in a table. Never sharpen an inequality into an
+  exact number, and never attach a figure to an outcome it does not belong to (a p value quoted
+  against the wrong endpoint is the single most common way a deck goes wrong).
+- NO FRAMING SLIDE MAY CARRY AN INVENTED STATISTIC. When you set up why a topic matters (market
+  size, prevalence, "affects millions", a typical patient profile), use only figures the source
+  actually states. A trial's ELIGIBILITY CRITERIA are not epidemiology: "adults aged 40 to 65 were
+  enrolled" must never be recast as "the typical age range affected", and a screening threshold must
+  never be recast as what patients typically report. If the source supports no real context figure,
+  frame the section qualitatively instead, or leave the slide out.
+- `source_quote` (optional, per slide): when a slide states a figure you DERIVED rather than copied
+  (a difference between two stated values, a relative change, a converted unit), set `source_quote`
+  to the verbatim sentence from the source carrying the numbers you worked from. Copy it EXACTLY,
+  from one place in the source; never paraphrase it or stitch two sentences together. It is never
+  rendered on the slide, and it is checked."""
 
 # Applied only when the source contains an approved-claims block (Phase 2 — claims library). The
 # block is injected by the frontend from the science team's APPROVED claims; each claim is numbered
@@ -1007,7 +1024,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                          if "is a required property" in e or "is too short" in e]
     other_schema_errors = [e for e in errors
                            if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                                                "EXEC_LENGTH:", "RULES:"))
+                                                "EXEC_LENGTH:", "RULES:", "NUMBERS:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
@@ -1015,6 +1032,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     summary_errors = [e for e in errors if e.startswith("SUMMARY:")]
     exec_length_errors = [e for e in errors if e.startswith("EXEC_LENGTH:")]
     rules_errors = [e for e in errors if e.startswith("RULES:")]
+    number_errors = [e for e in errors if e.startswith("NUMBERS:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -1056,6 +1074,24 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "bridge to the next slide) exactly as the SPEAKER NOTES rule describes. This adds "
                       "one field to those slides; keep every other field byte-for-byte "
                       "identical:\n- " + "\n- ".join(notes_errors))
+    if number_errors:
+        parts.append("CLAIM FIDELITY FEEDBACK — the strongest kind of error a deck can carry, because a "
+                      "wrong figure reads exactly as confidently as a right one. The figures named below "
+                      "do not appear in the source. For EACH one, do exactly one of these:\n"
+                      "  1. Replace it with the source's OWN value, found by reading the source again. This "
+                      "is almost always the right answer: check the paper's results tables, not just its "
+                      "abstract, and check you have not taken a number that belongs to a DIFFERENT outcome "
+                      "(a p value attached to the wrong endpoint is the most common form of this).\n"
+                      "  2. If the source states it less precisely than the slide does (the abstract says "
+                      "only 'P < 0.05' and no table gives more), say exactly what the source says. Never "
+                      "sharpen an inequality into an exact value.\n"
+                      "  3. If you legitimately DERIVED it from the source (a difference between two stated "
+                      "values, a relative change), keep it and set that slide's `source_quote` to the "
+                      "verbatim sentence from the source carrying the numbers you derived it from.\n"
+                      "  4. If none of the above holds, DELETE the figure and rewrite the sentence without "
+                      "it. A slide with no number beats a slide with a wrong one.\n"
+                      "Change only the wording of the fields carrying these figures; keep every slide's "
+                      "layout, order and structure identical:\n- " + "\n- ".join(number_errors))
     if summary_errors:
         parts.append("EXECUTIVE SUMMARY FEEDBACK — the deck is missing its executive summary. INSERT one "
                       "`exec_summary` slide as the SECOND slide, immediately after the cover (before the "

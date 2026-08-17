@@ -359,6 +359,44 @@ _PRIORITY_GROUPS: dict[str, tuple[re.Pattern, re.Pattern]] = {
                       re.compile(r"\bonly[^.]{0,40}(study|trial)|\bunique\b|\bunprecedented\b", re.I)),
 }
 
+# Multiplier / fold claims, checked the same way as priority claims: the source must state the SAME
+# ratio. Added after one shipped in a slide TITLE — "Krill oil nearly tripled the Omega 3 Index gain
+# versus placebo", where the slide's own subtitle gave krill 6.0% to 8.9% against placebo 5.5% to
+# 5.4%. Krill gained 3.0 points and placebo LOST 0.1, so there is no multiple at all; the paper's
+# real figure is a between-group difference of 3.22 percentage POINTS, which is what got read as
+# "3x". Invisible to both other checks: the numeric scan only sees numerals, and a multiplier is a
+# word, so a deck can restate a difference as a ratio and nothing notices.
+#
+# A ratio the source really states passes ("more than double the MCII benchmark" is Stonehouse's own
+# comparison). Frequencies are excluded — "twice daily" is a dose, not a claim.
+_FREQUENCY_AFTER = re.compile(r"\A\s*(daily|a day|per day|weekly|a week|per week|monthly|"
+                              r"a month|per month|/d\b|/day\b|in each|per (hand|leg|limb|site))", re.I)
+
+# The source side needs the ratio inside a COMPARISON, never the bare word — the same lesson the
+# priority groups taught, and it bit again here. The only "three times" anywhere in these three
+# papers is "Grip strength was measured three times in each hand", a measurement repetition, and a
+# bare-word test let the fabricated "nearly tripled" through on its strength.
+_COMPARATIVE = r"(?:than|versus|vs\.?|compared|relative to|greater|higher|lower|more|increase)"
+_MULTIPLIER_GROUPS: dict[str, tuple[re.Pattern, str]] = {
+    "double / 2x":    (re.compile(r"\b(doubl(e|ed|ing)|twice|two[- ]fold|2[- ]fold|2x)\b", re.I),
+                       r"(?:doubl(?:e|ed)|twice|two[- ]fold|2[- ]fold|2x)"),
+    "triple / 3x":    (re.compile(r"\b(tripl(e|ed|ing)|three times|three[- ]fold|3[- ]fold|3x)\b", re.I),
+                       r"(?:tripl(?:e|ed)|three times|three[- ]fold|3[- ]fold|3x)"),
+    "quadruple / 4x": (re.compile(r"\b(quadrupl(e|ed)|four times|four[- ]fold|4[- ]fold|4x)\b", re.I),
+                       r"(?:quadrupl(?:e|ed)|four times|four[- ]fold|4[- ]fold|4x)"),
+    "halved":         (re.compile(r"\b(halv(e|ed)|cut in half|by half)\b", re.I),
+                       r"(?:halv(?:e|ed)|in half|by half)"),
+}
+
+
+def _ratio_stated_in_source(term: str, source_text: str) -> bool:
+    """True only when the source uses that ratio to COMPARE two things.
+
+    "more than double the MCII" counts (Stonehouse's own comparison); "measured three times in each
+    hand" does not."""
+    return bool(re.search(rf"\b{term}\b[^.]{{0,50}}{_COMPARATIVE}", source_text, re.I)
+                or re.search(rf"{_COMPARATIVE}[^.]{{0,50}}\b{term}\b", source_text, re.I))
+
 # Absolute efficacy language. Never appropriate for a supplement deck regardless of the source, so
 # these are flagged on sight rather than checked against anything.
 _ABSOLUTE_EFFICACY = re.compile(
@@ -448,6 +486,16 @@ def _overstatement_warnings(plan: dict, source_text: str | None) -> list[str]:
                         f'{where}: "{m.group(0)}" — the source never uses clinical-significance '
                         f'language at all. It is a term of art; remove it and state what was measured.'
                         + (f' The source calls this result "{modest.group(0)}".' if modest else ""))
+            for label, (in_plan, src_term) in _MULTIPLIER_GROUPS.items():
+                m = in_plan.search(text)
+                if not m or _FREQUENCY_AFTER.match(text[m.end():m.end() + 14]):
+                    continue          # "twice daily" is a dose, not a ratio claim
+                if not _ratio_stated_in_source(src_term, source_text):
+                    findings.append(
+                        f'{where}: "{m.group(0)}" states a RATIO the source never states. Check what '
+                        f'you are comparing: a difference in percentage POINTS is not a multiple, and '
+                        f'a ratio is undefined when the comparator moved the other way. Give the '
+                        f'source\'s own figure instead.')
             for label, (in_plan, in_source) in _PRIORITY_GROUPS.items():
                 if (m := in_plan.search(text)) and not in_source.search(source_text):
                     findings.append(

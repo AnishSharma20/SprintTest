@@ -41,6 +41,22 @@ CLAIM_RULES = """CLAIM FIDELITY (non-negotiable):
   enrolled" must never be recast as "the typical age range affected", and a screening threshold must
   never be recast as what patients typically report. If the source supports no real context figure,
   frame the section qualitatively instead, or leave the slide out.
+- CLAIM STRENGTH is a claim like any other, and is checked. A figure being right does not make the
+  sentence around it right. Specifically:
+  * SAFETY. Never state that adverse events, side effects or safety concerns were absent unless the
+    source says so IN THOSE TERMS, and never generalise one trial's safety statement across several
+    trials. A trial that did not report adverse events is not evidence that there were none. If the
+    source says none were TREATMENT RELATED, say exactly that, not that there were none.
+  * SIZE OF EFFECT. Use the authors' own characterisation. If a paper calls a result "modest", or
+    reports it below a minimal clinically important difference, then it is modest, and calling it
+    "clinically meaningful" contradicts the source you are citing. "Clinically significant" is a
+    term of art: use it only where the source itself does.
+  * PRIORITY. Never write "first", "only", "largest", "longest", "highest" or "unique" unless the
+    source makes that exact claim. Superlatives do not transfer between studies: a paper describing
+    itself as the largest trial has NOT claimed to be the first, and one paper's superlative says
+    nothing about another paper in the same deck.
+  * ABSOLUTES. Never "proven", "clinically proven", "guarantees", "cures", "eliminates", "treats"
+    or "reverses". State what the trial measured and over what period.
 - `source_quote` (optional, per slide): when a slide states a figure you DERIVED rather than copied
   (a difference between two stated values, a relative change, a converted unit), set `source_quote`
   to the verbatim sentence from the source carrying the numbers you worked from. Copy it EXACTLY,
@@ -1024,7 +1040,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                          if "is a required property" in e or "is too short" in e]
     other_schema_errors = [e for e in errors
                            if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                                                "EXEC_LENGTH:", "RULES:", "NUMBERS:"))
+                                                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "CLAIMS:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
@@ -1033,6 +1049,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     exec_length_errors = [e for e in errors if e.startswith("EXEC_LENGTH:")]
     rules_errors = [e for e in errors if e.startswith("RULES:")]
     number_errors = [e for e in errors if e.startswith("NUMBERS:")]
+    claim_errors = [e for e in errors if e.startswith("CLAIMS:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -1092,6 +1109,16 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "it. A slide with no number beats a slide with a wrong one.\n"
                       "Change only the wording of the fields carrying these figures; keep every slide's "
                       "layout, order and structure identical:\n- " + "\n- ".join(number_errors))
+    if claim_errors:
+        parts.append("CLAIM STRENGTH FEEDBACK — each item below says something STRONGER than the source "
+                      "does. This is not a wording preference: a safety, efficacy or priority claim the "
+                      "study does not make is the kind a regulator or a competitor challenges, and it "
+                      "cannot be defended by pointing at the paper. For each one, either restate it as "
+                      "exactly what the source says (name the outcome the trial actually measured, keep "
+                      "the authors' own characterisation of its size) or DELETE the claim. Do not swap "
+                      "one strong word for another strong word. Change only the wording of those fields; "
+                      "keep every slide's layout, order and figures identical:\n- "
+                      + "\n- ".join(claim_errors))
     if summary_errors:
         parts.append("EXECUTIVE SUMMARY FEEDBACK — the deck is missing its executive summary. INSERT one "
                       "`exec_summary` slide as the SECOND slide, immediately after the cover (before the "

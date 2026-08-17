@@ -151,12 +151,24 @@ def _pvalues(text: str) -> set[str]:
     return {c for m in _PVALUE.finditer(text) if (c := _canon(m.group(1)))}
 
 
+# Journals punctuate a confidence interval with a COMMA ("95% CI: 0.41, 0.84") while a deck spells
+# it out ("95% CI 0.41 to 0.84"). Accepted on the SOURCE side only, so a correctly quoted CI stops
+# being flagged on every deck; the plan side stays strict, since being permissive about what the
+# source ALLOWS can only remove false positives.
+#
+# The second number sits in a LOOKAHEAD so a match does not consume it. Without that, finditer's
+# non-overlapping scan over "n = 235, 40-65 y old" pairs (235, 40), swallows the 40, and the real
+# (40, 65) range is never formed — which flagged the CORRECT age range as ungrounded. Caught by the
+# false-positive regression test, not by reading the regex.
+_SOURCE_PAIR = re.compile(r"(\d+(?:\.\d+)?)\s*(?:to|and|[,;–—-])\s*(?=(-?\d+(?:\.\d+)?))", re.I)
+
+
 def _source_numbers(source_text: str) -> tuple[set[str], set[tuple[str, str]]]:
     """Every numeral in the source, plus every adjacent numeric PAIR (a range as written)."""
     singles = {c for m in _NUMERAL.finditer(source_text) if (c := _canon(m.group(1)))}
     pairs = set()
-    for m in _RANGE.finditer(source_text):
-        a, b = _canon(m.group(1)), _canon(m.group(2))
+    for m in _SOURCE_PAIR.finditer(source_text):
+        a, b = _canon(m.group(1).lstrip("-")), _canon(m.group(2).lstrip("-"))
         if a and b:
             pairs.add((a, b))
     return singles, pairs
@@ -265,6 +277,167 @@ def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
             f"CORRECT figure you derived from the source (a difference, a relative change), keep it "
             f"and put the numbers it came from in that slide's `source_quote`. "
             + "; ".join(shown) + (f"; and {extra} more slide(s)" if extra > 0 else "")]
+
+
+# ---------------------------------------------------------------------------
+# Claim STRENGTH — is the deck saying something stronger than the source does?
+#
+# The numeric checks above verify figures. They are blind to the other way a deck goes wrong, and
+# every error found in the second real deck was of this second kind, with no figure involved:
+#   "No serious adverse events occurred in any of the three trials"  (Stonehouse reports 4 SAEs)
+#   "a clinically meaningful incremental benefit"                    (the paper says "modest", and
+#                                                                     reports the effect BELOW MCII)
+#   "This is the first study to show these benefits"                 (that paper claims no priority;
+#                                                                     the word "first" never appears)
+# These are safety, efficacy-strength and priority claims — precisely the ones a regulator or a
+# competitor challenges, and the ones a reviewer who already believes the deck will read straight
+# past. Checkable because each has a small, closed vocabulary.
+#
+# Same contract as NUMBERS: tagged CLAIMS:, soft, with its own revise_plan repair bucket. Verbatim
+# slides are exempt (they carry pre-approved AKBM copy the model never wrote).
+_SAFETY_ABSOLUTE = re.compile(
+    r"\b(no (serious )?(adverse events?|side effects?|safety (concerns?|signals?|issues?))"
+    r"|zero adverse|without (any )?side effects?|completely safe|entirely safe"
+    r"|no safety (concerns?|signals?|issues?))\b", re.I)
+# Reporting adverse-event COUNTS is normal and is NOT a contradiction — measured against the real
+# papers: Tamargo reports "controls: 58; the krill oil group: 34" adverse events in the same breath
+# as "No serious adverse events occurred in either group". So only a nonzero count of SERIOUS events
+# contradicts a no-serious-events claim, and the two must be compared like with like.
+_SAE_NONZERO = re.compile(r"\b([1-9]\d*)\s+(SAEs?|serious adverse events?)\b", re.I)
+_AE_NONZERO = re.compile(r"\b([1-9]\d*)\s+(AEs?|adverse events?)\b", re.I)
+_AE_ABSENT_IN_SOURCE = re.compile(
+    r"\bno (serious )?(adverse events?|SAEs?)\b|\b(SAEs?|adverse events?) (were|was) not (reported|observed)",
+    re.I)
+# A claim spanning every trial is the dangerous shape: one paper's clean safety statement cannot
+# carry it, and this is exactly the error that shipped ("in any of the three trials").
+_UNIVERSAL_SCOPE = re.compile(
+    r"\b(any|all|each|every|none) of the (three|3|studies|trials)\b|\ball (three|3) (trials|studies)\b"
+    r"|\bevery (trial|study)\b|\bacross (all|the) (three|3|trials|studies)\b|\bin any trial\b", re.I)
+
+_CLINICAL_STRENGTH = re.compile(r"\bclinical(ly)?\s+(meaningful|significant|important|relevant)\b"
+                                r"|\bclinical (significance|importance|relevance)\b", re.I)
+# What the source says when it is being modest about the same result.
+_MODEST_IN_SOURCE = re.compile(r"\bmodest\b|\bbelow the (suggested )?MCII\b|\bMCII\b"
+                               r"|\bunlikely to be of clinical relevance\b|\bsmall (effect|difference)\b",
+                               re.I)
+
+# Priority/superlative claims, grouped by meaning: a claim only counts as supported when the SOURCE
+# makes a claim from the SAME group. Stonehouse says "largest, longest, and highest-dose study" but
+# never "first", so a "first study" claim is unsupported even though the source is full of
+# superlatives — which is exactly the error that shipped.
+# The SOURCE side must match a priority CLAIM, never the bare superlative. A paper 76k characters
+# long contains "first" in a dozen innocent senses ("the first visit", "first 3 months"), so a bare
+# word test passes on every source and the check silently never fires — measured: it let the real
+# "first study to show" error straight through. Hence the windowed forms below, which require the
+# superlative to be attached to a study noun, and which still match a compound claim like
+# Stonehouse's "the largest, longest, and highest-dose study".
+_PRIORITY_GROUPS: dict[str, tuple[re.Pattern, re.Pattern]] = {
+    "first / novel": (
+        re.compile(r"\b(the )?first (study|trial|RCT|randomi[sz]ed|to (show|demonstrate|report|prove))"
+                   r"|\bfirst[- ]ever\b|\bnovel (finding|study|trial)\b", re.I),
+        re.compile(r"\bfirst[^.]{0,60}(study|trial|RCT|to show|to demonstrate|to report)"
+                   r"|\bfirst[- ]ever\b|\bto our knowledge\b|\bnot previously\b|\bno previous\b"
+                   r"|\bnovel (finding|study|trial)\b", re.I)),
+    "largest": (re.compile(r"\b(the )?largest\b|\bbiggest\b", re.I),
+                re.compile(r"\b(largest|biggest)[^.]{0,60}(study|trial|RCT|sample|cohort)", re.I)),
+    "longest": (re.compile(r"\b(the )?longest\b", re.I),
+                re.compile(r"\blongest[^.]{0,60}(study|trial|RCT|duration)", re.I)),
+    "highest": (re.compile(r"\bhighest([- ]dose)?\b", re.I),
+                re.compile(r"\bhighest[- ]?dos(e|age)|\bhighest[^.]{0,60}(study|trial|dose)", re.I)),
+    "only / unique": (re.compile(r"\b(the )?only (study|trial|ingredient|product)\b|\bunique(ly)?\b"
+                                 r"|\bunprecedented\b|\bno other (study|trial|ingredient)\b", re.I),
+                      re.compile(r"\bonly[^.]{0,40}(study|trial)|\bunique\b|\bunprecedented\b", re.I)),
+}
+
+# Absolute efficacy language. Never appropriate for a supplement deck regardless of the source, so
+# these are flagged on sight rather than checked against anything.
+_ABSOLUTE_EFFICACY = re.compile(
+    r"\b(proven to|clinically proven|proves|guarantees?|guaranteed|cures?|curing"
+    r"|eliminates?|eradicates?|reverses (ageing|aging|osteoarthritis)"
+    r"|treats (osteoarthritis|pain|disease))\b", re.I)
+
+
+def _verbatim_slide(slide: dict) -> bool:
+    layout = slide.get("layout") or ""
+    return layout == "ingredient" or layout.startswith("custom_")
+
+
+def _claim_strength_warnings(plan: dict, source_text: str | None) -> list[str]:
+    """Soft nudge: flag claims that are STRONGER than the source supports (see the block above)."""
+    if not (source_text or "").strip():
+        return []
+    # Whitespace-normalised FIRST, and this is load-bearing. The source is PDF-extracted text, so a
+    # phrase routinely straddles a line break ("No serious adverse\nevents occurred"), and every
+    # multi-word pattern below is written with single spaces. Without this, matching silently fails
+    # against exactly the statements that make a claim legitimate — measured: the real Tamargo
+    # "No serious adverse events occurred in either group" went unseen, so honest slides were
+    # flagged as unsupported. _quote_warnings normalises for the same reason.
+    source_text = re.sub(r"\s+", " ", source_text)
+    sae_nonzero = _SAE_NONZERO.search(source_text)
+    ae_nonzero = _AE_NONZERO.search(source_text)
+    ae_absent = bool(_AE_ABSENT_IN_SOURCE.search(source_text))
+    modest = _MODEST_IN_SOURCE.search(source_text)
+    clinical_in_source = _CLINICAL_STRENGTH.search(source_text)
+    findings: list[str] = []
+    for i, slide in enumerate(plan.get("slides", [])):
+        if not isinstance(slide, dict) or _verbatim_slide(slide):
+            continue
+        where = f"slides/{i} ({slide.get('layout')})"
+        for raw_text in _prose_strings(slide):
+            text = re.sub(r"\s+", " ", raw_text)   # a claim can straddle two bullet lines too
+            if m := _SAFETY_ABSOLUTE.search(text):
+                serious = "serious" in m.group(0).lower()
+                counted = sae_nonzero if serious else (sae_nonzero or ae_nonzero)
+                if _UNIVERSAL_SCOPE.search(text) and counted:
+                    findings.append(
+                        f'{where}: "{m.group(0)}" is claimed across ALL the trials, but the source '
+                        f'reports "{counted.group(0)}". One trial\'s clean safety statement cannot '
+                        f'cover the others. Scope the claim to the trial that states it, or say '
+                        f'that none were treatment related if that is what the source says.')
+                elif not ae_absent:
+                    findings.append(
+                        f'{where}: "{m.group(0)}" — the source never states that adverse events were '
+                        f'absent, and a trial that did not report them is not evidence that there '
+                        f'were none. Drop the claim or scope it to a trial that does state it.')
+            if m := _CLINICAL_STRENGTH.search(text):
+                # Deliberately a VERIFY item, not a verdict. With several papers in one source the
+                # term can be one paper's own conclusion (Alkhedhairi calls its muscle results
+                # clinically significant) while another calls its results modest (Stonehouse, below
+                # MCII) — and nothing deterministic can tell which paper this slide is citing. So
+                # state both facts and make the model confirm, rather than assert an error.
+                if clinical_in_source and modest:
+                    findings.append(
+                        f'{where}: "{m.group(0)}" needs confirming against the SPECIFIC paper this '
+                        f'slide cites. The source uses clinical-significance language somewhere, but '
+                        f'also describes results as "{modest.group(0)}" elsewhere. Keep the term only '
+                        f'if the paper behind THIS slide applies it to THIS outcome.')
+                elif not clinical_in_source:
+                    findings.append(
+                        f'{where}: "{m.group(0)}" — the source never uses clinical-significance '
+                        f'language at all. It is a term of art; remove it and state what was measured.'
+                        + (f' The source calls this result "{modest.group(0)}".' if modest else ""))
+            for label, (in_plan, in_source) in _PRIORITY_GROUPS.items():
+                if (m := in_plan.search(text)) and not in_source.search(source_text):
+                    findings.append(
+                        f'{where}: "{m.group(0)}" — the source makes no "{label}" claim anywhere, so '
+                        f'this priority claim is yours, not the study\'s. Remove it.')
+            if m := _ABSOLUTE_EFFICACY.search(text):
+                findings.append(
+                    f'{where}: "{m.group(0)}" — absolute efficacy language is never usable for a '
+                    f'supplement. Restate as what the trial measured.')
+    if not findings:
+        return []
+    # Deduplicated case-insensitively: the same claim in a slide's body and its notes differs only
+    # in capitalisation ("No serious adverse events" / "no serious adverse events") and is one
+    # mistake, not two.
+    seen, unique = set(), []
+    for f in findings:
+        if (k := f.lower()) not in seen:
+            seen.add(k)
+            unique.append(f)
+    shown, extra = unique[:8], len(unique) - 8
+    return [f"CLAIMS: {len(unique)} claim(s) are stronger than the source supports. "
+            + " ".join(shown) + (f" And {extra} more." if extra > 0 else "")]
 
 
 def _quote_warnings(plan: dict, source_text: str | None) -> list[str]:
@@ -532,5 +705,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_exec_summary_length_warning(well_formed))
     errors.extend(_number_warnings(well_formed, source_text))
     errors.extend(_quote_warnings(well_formed, source_text))
+    errors.extend(_claim_strength_warnings(well_formed, source_text))
 
     return errors[:25]

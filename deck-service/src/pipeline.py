@@ -29,7 +29,7 @@ _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "captio
 # coverage/notes/summary nudges, and team-rule breaches the one repair pass could not resolve. ONE
 # definition — the two inline copies this replaces had already drifted apart once.
 _SOFT_ERRORS = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                "EXEC_LENGTH:", "RULES:", "NUMBERS:")
+                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "CLAIMS:")
 
 
 # ---------------------------------------------------------------------------

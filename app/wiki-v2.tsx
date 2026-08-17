@@ -164,13 +164,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     setQualLow(v);
     setQualUnscored(v);
   };
-  const [verVerified, setVerVerified] = useState(true);
-  const [verUnverified, setVerUnverified] = useState(true);
-  const verAll = verVerified && verUnverified;
-  const setVerAll = (v: boolean) => {
-    setVerVerified(v);
-    setVerUnverified(v);
-  };
+  // A "Verification" facet (Verified by science / Not yet verified) lived here until 2026-08-17.
+  // It filtered on a flag that nothing sets or shows any more, so every study fell into one
+  // bucket. See the note above VerifiedCheck's removal for why the concept went.
   const [outPositive, setOutPositive] = useState(true);
   const [outNeutral, setOutNeutral] = useState(true);
   const [outNegative, setOutNegative] = useState(true);
@@ -272,10 +268,9 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
       const lbl = s.quality?.label;
       const treffKval =
         lbl === "High" ? qualHigh : lbl === "Moderate" ? qualModerate : lbl === "Low" ? qualLow : qualUnscored;
-      const treffVer = s.verified ? verVerified : verUnverified;
       const o = s.outcomeDirection;
       const treffUt = o === "positive" ? outPositive : o === "negative" ? outNegative : o === "neutral" ? outNeutral : outUnset;
-      return treffSok && treffKat && treffKval && treffVer && treffUt;
+      return treffSok && treffKat && treffKval && treffUt;
     });
     return list.sort((a, b) => {
       if (sortBy === "quality") {
@@ -296,8 +291,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
     qualModerate,
     qualLow,
     qualUnscored,
-    verVerified,
-    verUnverified,
     outPositive,
     outNeutral,
     outNegative,
@@ -361,19 +354,6 @@ export default function WikiV2({ studier: grunnStudier }: { studier: Studie[] })
           </SideCheck>
           <SideCheck checked={qualUnscored} onChange={setQualUnscored}>
             Unscored
-          </SideCheck>
-        </div>
-      </SideSection>
-      <SideSection title="Verification">
-        <SideCheck checked={verAll} onChange={setVerAll}>
-          All studies
-        </SideCheck>
-        <div className="pl-1">
-          <SideCheck checked={verVerified} onChange={setVerVerified}>
-            Verified by science
-          </SideCheck>
-          <SideCheck checked={verUnverified} onChange={setVerUnverified}>
-            Not yet verified
           </SideCheck>
         </div>
       </SideSection>
@@ -593,15 +573,11 @@ function StudyRow({
           )}
           <span className="sm:hidden"> · {s.ar}</span>
         </p>
-        <div className="mt-2.5">
-          <AkbmRoleWord role={s.akbmRole ?? null} />
-        </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
-          {s.verified ? (
-            <span className="font-semibold text-[#0A7A8A]">✓ Verified by science</span>
-          ) : (
-            <span className="font-semibold text-[#B4884A]">Not yet verified</span>
-          )}
+        {/* The card face carries only what helps you CHOOSE a study: quality, outcome, date. The
+            Aker BioMarine role tag lives in the reading panel instead, where you are actually
+            reading the result it qualifies, and a verification word is gone entirely (these are
+            published papers, so there was never an AI claim here for a scientist to sign off). */}
+        <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
           <QualityWord s={s} />
           <OutcomeWord s={s} />
           {s.removed && <Pill tone="red">Removed</Pill>}
@@ -695,12 +671,12 @@ function StudyPanel({
           </>
         )}
 
-        {/* Role tag, then the review state, then the buttons. Right aligned and deliberately
-            uncontained: two separate facts, not a panel. */}
+        {/* The role tag, left aligned above the buttons and deliberately uncontained. It is the
+            one piece of provenance worth carrying next to the abstract: it says how far Aker
+            BioMarine sat from this result, which changes how the text above should be read. */}
         {!editingStudy && !removingStudy && (
-          <div className="mt-7 flex flex-col items-end gap-2">
+          <div className="mt-7">
             <AkbmRoleWord role={s.akbmRole ?? null} />
-            <VerifiedCheck s={s} reviewer={reviewer} meta={meta} onMetaChanged={onMetaChanged} />
           </div>
         )}
 
@@ -904,50 +880,11 @@ async function patchStudyReview(
   }
 }
 
-/** "Verified by science", on its own at the bottom right above the buttons. */
-function VerifiedCheck({
-  s,
-  reviewer,
-  meta,
-  onMetaChanged,
-}: {
-  s: Studie;
-  reviewer: string;
-  meta: StudyMeta;
-  onMetaChanged: () => Promise<void>;
-}) {
-  const [busy, setBusy] = useState(false);
-  const [feil, setFeil] = useState<string | null>(null);
-
-  async function toggle(neste: boolean) {
-    setBusy(true);
-    const err = await patchStudyReview(s, reviewer, { verified: neste });
-    setFeil(err);
-    if (!err) await onMetaChanged();
-    setBusy(false);
-  }
-
-  return (
-    <div className="text-right">
-      <label className="inline-flex cursor-pointer items-center gap-2.5 select-none">
-        <span className="text-[13.5px] font-semibold text-[#1D1D1F]">Verified by science</span>
-        <input
-          type="checkbox"
-          checked={!!s.verified}
-          disabled={busy || !meta.editableV2}
-          onChange={(e) => void toggle(e.target.checked)}
-          className="h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
-        />
-      </label>
-      {s.verified && s.verifiedBy && (
-        <p className="mt-1 text-[11.5px] text-[#AEAEB2]">
-          {s.verifiedBy} on {formatDate(s.verifiedAt)}
-        </p>
-      )}
-      {feil && <p className="mt-1 text-[11.5px] font-semibold text-[#B3403A]">{feil}</p>}
-    </div>
-  );
-}
+// A "Verified by science" checkbox lived here for one afternoon on 2026-08-17 and was removed the
+// same day, on the client's reasoning: the panel shows the paper's OWN abstract, so there is no
+// AI written claim for a scientist to sign off. The concept was inherited from the summary era and
+// lost its purpose when the summary did. `patchStudyReview` still accepts `verified` and
+// study_assessment still stores it, so nothing has to be unpicked if it ever comes back.
 
 /** The role selector, in the "Edit study" card with the other reviewer fields. */
 function AkbmRoleEditor({
@@ -1630,5 +1567,6 @@ function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string
 
 // SummaryEditor lived here until 2026-08-17. It edited the 4-section plain-language summary AND,
 // as a side effect of saving, marked the study "verified by science" — the coupling the client
-// asked to remove. The abstract is edited through AssessmentEditor above instead, and verifying
-// is its own explicit tick in VerifiedCheck.
+// asked to remove. The abstract is edited through AssessmentEditor above instead. Verification
+// briefly became an explicit tick the same day, then was dropped altogether: with the paper's own
+// abstract on the page there is no AI written claim to sign off.

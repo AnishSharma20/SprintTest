@@ -56,10 +56,8 @@ export default function AddStudyModal({
   const [year, setYear] = useState("");
   const [yearAuto, setYearAuto] = useState(false);
   const [abstract, setAbstract] = useState("");
-  // Whether the extracted abstract matched the PDF word for word. Nothing to do with `verified`
-  // below, which is a scientist vouching for the STUDY.
+  // Whether the extracted abstract matched the PDF word for word.
   const [abstractVerified, setAbstractVerified] = useState(false);
-  const [verified, setVerified] = useState(false);
   const [akbmRole, setAkbmRole] = useState("");
   const [qualityScore, setQualityScore] = useState("");
   const qualityLabel = qualityScore.trim() ? suggestLabel(Number(qualityScore)) : "";
@@ -165,7 +163,6 @@ export default function AddStudyModal({
           pdf_filename: pdfFilename,
           full_text: fullText || null,
           abstract: abstract.trim() || null,
-          verified,
           akbm_role: akbmRole || null,
           quality_score: qualityScore.trim() ? Number(qualityScore) : null,
           quality_label: qualityLabel || null,
@@ -368,23 +365,10 @@ export default function AddStudyModal({
                 </p>
               )}
 
-              <label className="mt-4 flex cursor-pointer items-start gap-2.5 select-none">
-                <input
-                  type="checkbox"
-                  checked={verified}
-                  onChange={(e) => setVerified(e.target.checked)}
-                  className="mt-0.5 h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
-                />
-                <span>
-                  <span className="text-[13.5px] font-semibold text-[#1D1D1F]">
-                    Verified by science
-                  </span>
-                  <span className="block text-[11.5px] leading-[1.5] text-[#AEAEB2]">
-                    Tick this only if a scientist has read the paper and stands behind it. It can be
-                    changed later from the study panel.
-                  </span>
-                </span>
-              </label>
+              {/* A "Verified by science" checkbox sat here for one afternoon on 2026-08-17.
+                  Removed with the rest of that concept: the page shows each paper's own abstract,
+                  so there is no AI written claim for a scientist to sign off, and a checkbox that
+                  sets a field nothing displays is worse than no checkbox. */}
 
               <div className="mb-1.5 mt-5 flex items-center justify-between">
                 <div className="text-[12.5px] font-semibold text-[#6E6E73]">

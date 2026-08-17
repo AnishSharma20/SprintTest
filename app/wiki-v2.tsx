@@ -678,10 +678,6 @@ function StudyPanel({
             key-findings assessment stays as a supplement, below the abstract. */}
         {removingStudy ? null : (
           <>
-            {/* Provenance and review state sit ABOVE the abstract on purpose: both change how the
-                text below should be read, so they must not be something you scroll past. */}
-            <StudyStatusStrip s={s} reviewer={reviewer} meta={meta} onMetaChanged={onMetaChanged} />
-
             {!s.abstract ? (
               <p className="py-6 text-center text-[13.5px] text-[#AEAEB2]">
                 This paper has no published abstract. Add one under &ldquo;Edit study&rdquo; if you
@@ -699,8 +695,17 @@ function StudyPanel({
           </>
         )}
 
+        {/* Role tag, then the review state, then the buttons. Right aligned and deliberately
+            uncontained: two separate facts, not a panel. */}
         {!editingStudy && !removingStudy && (
-          <div className="mt-7 flex flex-wrap gap-2.5">
+          <div className="mt-7 flex flex-col items-end gap-2">
+            <AkbmRoleWord role={s.akbmRole ?? null} />
+            <VerifiedCheck s={s} reviewer={reviewer} meta={meta} onMetaChanged={onMetaChanged} />
+          </div>
+        )}
+
+        {!editingStudy && !removingStudy && (
+          <div className="mt-4 flex flex-wrap gap-2.5">
             <button
               onClick={() => setDiagramsOpen(true)}
               className="rounded-[12px] bg-[#1D1D1F] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#3A3A3C]"
@@ -755,6 +760,7 @@ function StudyPanel({
               )}
             </p>
             <div className="mt-3">
+              <AkbmRoleEditor s={s} reviewer={reviewer} onMetaChanged={onMetaChanged} />
               <ReviewerTools s={s} meta={meta} reviewer={reviewer} onMetaChanged={onMetaChanged} />
             </div>
           </div>
@@ -860,14 +866,46 @@ function sentenceCase(label: string): string {
 
 /* ---------- provenance + review state ---------- */
 
-/** The two facts that change how the abstract below should be read: what Aker BioMarine's role in
- * the study was, and whether a scientist has verified it.
+/* These two used to sit together in one grey card above the abstract. The client's point was that
+ * grouping them implies a relationship that does not exist: AKBM's role in a study is a fact about
+ * the paper, while "verified" is a statement about our own review of it. One never follows from the
+ * other, and coupling the two is exactly the bug that was removed on 2026-08-17 (editing a summary
+ * used to set "verified"). So they are now two independent elements, no shared container and no
+ * background, stacked at the foot of the panel above the action buttons.
  *
- * Both are editable right here rather than behind "Edit study", because both are one click and
- * are the things a reviewer reads a study in order to set. Deliberately NOT coupled to anything
- * else: before 2026-08-17 "verified" was a side effect of editing the summary, so it recorded
- * "someone touched this" rather than "a scientist stands behind this". */
-function StudyStatusStrip({
+ * The role SELECTOR moved into "Edit study" with the other reviewer fields; what stays out here is
+ * the tag itself, read only, next to the review state it must not be confused with. */
+
+/** Writes one field of the study's review state. A custom study keeps these on its own row (no
+ * PubMed record, no override layer), so it is patched through its own route; everything else goes
+ * through the shared assessment override. */
+async function patchStudyReview(
+  s: Studie,
+  reviewer: string,
+  patch: { verified?: boolean; akbmRole?: AkbmRole | null }
+): Promise<string | null> {
+  if (!reviewer.trim()) return "Add your name in the Reviewer field in the sidebar first.";
+  try {
+    const res = s.pmid.startsWith("custom-")
+      ? await fetch(`/api/custom-studies/${s.pmid.replace(/^custom-/, "")}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...patch, reviewer }),
+        })
+      : await fetch("/api/study-assessment", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pmid: s.pmid, ...patch, reviewer }),
+        });
+    const data = await res.json();
+    return res.ok ? null : data.error ?? "Could not save.";
+  } catch (e) {
+    return (e as Error).message;
+  }
+}
+
+/** "Verified by science", on its own at the bottom right above the buttons. */
+function VerifiedCheck({
   s,
   reviewer,
   meta,
@@ -881,96 +919,81 @@ function StudyStatusStrip({
   const [busy, setBusy] = useState(false);
   const [feil, setFeil] = useState<string | null>(null);
 
-  // A custom study keeps these on its own row (no PubMed record, no override layer), so it is
-  // patched through its own route. Everything else goes through the shared assessment override.
-  const erEgendefinert = s.pmid.startsWith("custom-");
-
-  async function lagre(patch: { verified?: boolean; akbmRole?: AkbmRole | null }) {
-    if (!reviewer.trim()) {
-      setFeil("Add your name in the Reviewer field in the sidebar first.");
-      return;
-    }
+  async function toggle(neste: boolean) {
     setBusy(true);
-    setFeil(null);
-    try {
-      const res = erEgendefinert
-        ? await fetch(`/api/custom-studies/${s.pmid.replace(/^custom-/, "")}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...patch, reviewer }),
-          })
-        : await fetch("/api/study-assessment", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pmid: s.pmid, ...patch, reviewer }),
-          });
-      const data = await res.json();
-      if (!res.ok) {
-        setFeil(data.error ?? "Could not save.");
-        return;
-      }
-      await onMetaChanged();
-    } catch (e) {
-      setFeil((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
+    const err = await patchStudyReview(s, reviewer, { verified: neste });
+    setFeil(err);
+    if (!err) await onMetaChanged();
+    setBusy(false);
   }
 
   return (
-    <div className="mb-6 rounded-[14px] border border-[#E8E8ED] bg-[#FBFBFD] p-4">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <label className="flex cursor-pointer items-center gap-2.5 select-none">
-          <input
-            type="checkbox"
-            checked={!!s.verified}
-            disabled={busy || !meta.editableV2}
-            onChange={(e) => void lagre({ verified: e.target.checked })}
-            className="h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
-          />
-          <span className="text-[13.5px] font-semibold text-[#1D1D1F]">Verified by science</span>
-        </label>
-        <span className="flex-1" />
-        <AkbmRoleWord role={s.akbmRole ?? null} />
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center gap-2.5">
-        <label className="text-[11.5px] font-semibold text-[#6E6E73]">
-          Aker BioMarine role
-        </label>
-        <select
-          value={s.akbmRole ?? ""}
+    <div className="text-right">
+      <label className="inline-flex cursor-pointer items-center gap-2.5 select-none">
+        <span className="text-[13.5px] font-semibold text-[#1D1D1F]">Verified by science</span>
+        <input
+          type="checkbox"
+          checked={!!s.verified}
           disabled={busy || !meta.editableV2}
-          onChange={(e) =>
-            void lagre({ akbmRole: (e.target.value || null) as AkbmRole | null })
-          }
-          className="rounded-[10px] border border-[#D9D9DE] bg-white px-2.5 py-1.5 text-[12.5px] text-[#1D1D1F]"
-        >
-          <option value="">Not set</option>
-          {AKBM_ROLE_KEYS.map((k) => (
-            <option key={k} value={k}>
-              {AKBM_ROLE_LABELS[k]}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <p className="mt-2.5 text-[11.5px] leading-[1.55] text-[#AEAEB2]">
-        {s.verified && s.verifiedBy ? (
-          <>Verified by {s.verifiedBy} on {formatDate(s.verifiedAt)}. </>
-        ) : (
-          <>Tick this only once a scientist has read the paper and stands behind it. </>
-        )}
-        {s.akbmRole
-          ? AKBM_ROLE_HELP[s.akbmRole]
-          : "Recording Aker BioMarine's role tells a reader how much distance there is between us and this result."}
-      </p>
-      {!meta.editableV2 && (
-        <p className="mt-2 text-[11.5px] font-semibold text-[#B4884A]">
-          Read only until migrations 0010 and 0016 have been run in the Supabase SQL editor.
+          onChange={(e) => void toggle(e.target.checked)}
+          className="h-[17px] w-[17px] cursor-pointer accent-[#0A7A8A]"
+        />
+      </label>
+      {s.verified && s.verifiedBy && (
+        <p className="mt-1 text-[11.5px] text-[#AEAEB2]">
+          {s.verifiedBy} on {formatDate(s.verifiedAt)}
         </p>
       )}
-      {feil && <p className="mt-2 text-[11.5px] font-semibold text-[#B3403A]">{feil}</p>}
+      {feil && <p className="mt-1 text-[11.5px] font-semibold text-[#B3403A]">{feil}</p>}
+    </div>
+  );
+}
+
+/** The role selector, in the "Edit study" card with the other reviewer fields. */
+function AkbmRoleEditor({
+  s,
+  reviewer,
+  onMetaChanged,
+}: {
+  s: Studie;
+  reviewer: string;
+  onMetaChanged: () => Promise<void>;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [feil, setFeil] = useState<string | null>(null);
+
+  async function set(role: AkbmRole | null) {
+    setBusy(true);
+    const err = await patchStudyReview(s, reviewer, { akbmRole: role });
+    setFeil(err);
+    if (!err) await onMetaChanged();
+    setBusy(false);
+  }
+
+  return (
+    <div className="mb-3 mt-3">
+      <label className="mb-1 block text-[11.5px] font-semibold text-[#6E6E73]">
+        Aker BioMarine role · how close was Aker BioMarine to this study
+      </label>
+      <select
+        value={s.akbmRole ?? ""}
+        disabled={busy}
+        onChange={(e) => void set((e.target.value || null) as AkbmRole | null)}
+        className="rounded-[10px] border border-[#D9D9DE] bg-white px-2.5 py-1.5 text-[12.5px] text-[#1D1D1F]"
+      >
+        <option value="">Not set</option>
+        {AKBM_ROLE_KEYS.map((k) => (
+          <option key={k} value={k}>
+            {AKBM_ROLE_LABELS[k]}
+          </option>
+        ))}
+      </select>
+      <p className="mt-1.5 text-[11.5px] leading-[1.5] text-[#AEAEB2]">
+        {s.akbmRole
+          ? AKBM_ROLE_HELP[s.akbmRole]
+          : "Recording this tells a reader how much distance there is between us and the result."}
+      </p>
+      {feil && <p className="mt-1 text-[11.5px] font-semibold text-[#B3403A]">{feil}</p>}
     </div>
   );
 }
@@ -1608,4 +1631,4 @@ function AutoTextarea({ value, onChange }: { value: string; onChange: (v: string
 // SummaryEditor lived here until 2026-08-17. It edited the 4-section plain-language summary AND,
 // as a side effect of saving, marked the study "verified by science" — the coupling the client
 // asked to remove. The abstract is edited through AssessmentEditor above instead, and verifying
-// is its own explicit tick in StudyStatusStrip.
+// is its own explicit tick in VerifiedCheck.

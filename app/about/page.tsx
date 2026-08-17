@@ -109,10 +109,13 @@ type CustomPhoto = {
 type BuiltinPhoto = { id: string; description: string; bg_fit: string };
 
 type TabKey = "rules" | "design" | "slides" | "photos";
+// Order is display only: the tab bar maps over this array, and each panel renders behind its own
+// `activeTab === ...` check, so moving an entry here moves the tab without touching any panel.
+// Slide library leads as of 2026-08-17 (client's call, it is the most used of the four).
 const TABS: { id: TabKey; label: string }[] = [
-  { id: "rules", label: "Rules" },
-  { id: "design", label: "Design" },
   { id: "slides", label: "Slide library" },
+  { id: "design", label: "Design" },
+  { id: "rules", label: "Rules" },
   { id: "photos", label: "Photo library" },
 ];
 
@@ -263,7 +266,10 @@ export default function AboutV2Page() {
   const [reviewer, setReviewer] = useState("");
   const [product, setProduct] = useState<ProductId>("superba");
   const selectedProduct = PRODUCTS.find((p) => p.id === product) ?? PRODUCTS[0];
-  const [activeTab, setActiveTab] = useState<TabKey>("rules");
+  // Follows TABS rather than naming a tab, so the page always opens on whichever tab is first.
+  // It was hardcoded to "rules", which after the 2026-08-17 reorder would have opened the page on
+  // the THIRD tab with the first one sitting unselected.
+  const [activeTab, setActiveTab] = useState<TabKey>(TABS[0].id);
 
   // ----- rules -----
   const [rulesConfigured, setRulesConfigured] = useState(true);

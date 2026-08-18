@@ -163,15 +163,42 @@ def _pvalues(text: str) -> set[str]:
 _SOURCE_PAIR = re.compile(r"(\d+(?:\.\d+)?)\s*(?:to|and|[,;–—-])\s*(?=(-?\d+(?:\.\d+)?))", re.I)
 
 
-def _source_numbers(source_text: str) -> tuple[set[str], set[tuple[str, str]]]:
-    """Every numeral in the source, plus every adjacent numeric PAIR (a range as written)."""
-    singles = {c for m in _NUMERAL.finditer(source_text) if (c := _canon(m.group(1)))}
+_ROUND_MAX_DP = 4       # source values are pre-rounded to 0..4 decimal places
+
+
+def _decimals(raw: str) -> int:
+    return len(raw.split(".")[1]) if "." in raw else 0
+
+
+def _source_numbers(source_text: str) -> tuple[set[str], set[tuple[str, str]], dict[int, set[str]]]:
+    """Source numerals, adjacent numeric PAIRS, and the numerals pre-ROUNDED to 0..4 decimals.
+
+    The rounded sets exist because a deck legitimately rounds what a paper reports to more figures,
+    and exact matching called that an invented number. Measured on a real deck: the paper says an
+    adipocyte area of 5063.1 and a p value of 0.2690, the deck correctly wrote 5063 and 0.27, and
+    all of it was flagged. Rounding is the normal way to put a paper's figure on a slide, so a plan
+    number counts as grounded when a source number rounds to it AT THE PLAN'S OWN PRECISION. That
+    keeps the real catches: 0.030 against a source 0.04 still fails at 3 decimals, and a 75 that
+    appears nowhere still fails at 0."""
+    singles: set[str] = set()
+    values: list[float] = []
+    for m in _NUMERAL.finditer(source_text):
+        raw = m.group(1)
+        if (c := _canon(raw)) is None:
+            continue
+        singles.add(c)
+        try:
+            values.append(float(re.sub(r"[,  ]", "", raw)))
+        except ValueError:
+            pass
+    rounded = {d: {_canon(f"{round(v, d):.{d}f}") for v in values} for d in range(_ROUND_MAX_DP + 1)}
+    rounded = {d: {c for c in s if c is not None} for d, s in rounded.items()}
     pairs = set()
     for m in _SOURCE_PAIR.finditer(source_text):
         a, b = _canon(m.group(1).lstrip("-")), _canon(m.group(2).lstrip("-"))
         if a and b:
             pairs.add((a, b))
-    return singles, pairs
+    return singles, pairs, rounded
 
 
 def _prose_strings(node, key: str | None = None) -> list[str]:
@@ -222,6 +249,12 @@ def _measured_ranges(text: str) -> list[tuple[str, str, str]]:
         low, high = _canon(m.group(1)), _canon(m.group(2))
         if not (low and high):
             continue
+        # "...0, 0.5, 1, 2, 4, 8, 12 and 24 hours" is an ENUMERATION, and its last two items are not
+        # a range. Measured on a real deck: that exact blood-sampling schedule was flagged as an
+        # ungrounded "12 to 24" range. A comma-separated numeral immediately before the match is the
+        # tell, and a genuine range ("between 4 and 8 cm") never has one.
+        if re.search(r"\d\s*,\s*$", text[:m.start()]):
+            continue
         if not ("." in m.group(1) + m.group(2)
                 or max(float(m.group(1)), float(m.group(2))) > _SMALL_INT_CEILING
                 or _UNIT_AFTER.match(text[m.end():m.end() + 12])):
@@ -237,10 +270,16 @@ def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
     plans against no source; flagging every number there would be pure noise)."""
     if not (source_text or "").strip():
         return []
-    src_singles, src_pairs = _source_numbers(source_text)
+    src_singles, src_pairs, src_rounded = _source_numbers(source_text)
     if not src_singles:
         return []      # a source with no numbers at all cannot ground anything; stay quiet
     src_pvalues = _pvalues(source_text)
+
+    def grounded(raw: str, canon: str) -> bool:
+        """Exact, or a source value that rounds to it at the plan's own precision."""
+        return canon in src_singles or canon in src_rounded.get(
+            min(_decimals(raw), _ROUND_MAX_DP), ())
+
     ungrounded: list[str] = []
     for i, slide in enumerate(plan.get("slides", [])):
         if not isinstance(slide, dict):
@@ -266,15 +305,16 @@ def _number_warnings(plan: dict, source_text: str | None) -> list[str]:
             # accurate values, which is worse than the error it was built to catch. Catching a real
             # number attached to the wrong outcome is source_quote's job, not this scan's.
             for m in _PVALUE.finditer(text):
-                canon = _canon(m.group(1))
+                raw_p = m.group(1)
+                canon = _canon(raw_p)
                 label = f'"{m.group(0).strip()}"'
-                if canon and canon not in src_pvalues and canon not in src_singles \
+                if canon and canon not in src_pvalues and not grounded(raw_p, canon) \
                         and label not in bad:
                     bad.append(label)
                 if canon:
                     spoken_for.add(canon)
             for raw, canon in _checkable(text):
-                if canon in spoken_for or canon in src_singles or raw in bad:
+                if canon in spoken_for or grounded(raw, canon) or raw in bad:
                     continue
                 bad.append(raw)
         if bad:

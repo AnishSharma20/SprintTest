@@ -442,12 +442,24 @@ _MULTIPLIER_GROUPS: dict[str, tuple[re.Pattern, str]] = {
 
 
 def _ratio_stated_in_source(term: str, source_text: str) -> bool:
-    """True only when the source uses that ratio to COMPARE two things.
+    """True only when the source uses that ratio to COMPARE two quantities.
 
-    "more than double the MCII" counts (Stonehouse's own comparison); "measured three times in each
-    hand" does not."""
-    return bool(re.search(rf"\b{term}\b[^.]{{0,50}}{_COMPARATIVE}", source_text, re.I)
-                or re.search(rf"{_COMPARATIVE}[^.]{{0,50}}\b{term}\b", source_text, re.I))
+    "more than double the MCII" counts (Stonehouse's own comparison). Two things do not, and both
+    were measured on real decks:
+      "Grip strength was measured three times in each hand"     — a repetition, no comparison
+      "fish consumption more than TWICE PER WEEK" (an exclusion) — a FREQUENCY that happens to sit
+                                                                  next to the comparative "more than"
+    The second is why the frequency exclusion has to apply on the SOURCE side too, not just the
+    plan side: at eight studies of source, that one exclusion criterion licensed a deck's claim that
+    krill oil "nearly doubled" an index which actually rose 1.5x."""
+    for m in re.finditer(rf"\b{term}\b", source_text, re.I):
+        if _FREQUENCY_AFTER.match(source_text[m.end():m.end() + 14]):
+            continue                      # "twice per week" is a dose schedule, not a ratio
+        before = source_text[max(0, m.start() - 50):m.start()]
+        after = source_text[m.end():m.end() + 50]
+        if re.search(_COMPARATIVE, before, re.I) or re.search(_COMPARATIVE, after, re.I):
+            return True
+    return False
 
 # Absolute efficacy language. Never appropriate for a supplement deck regardless of the source, so
 # these are flagged on sight rather than checked against anything.
@@ -475,6 +487,63 @@ _ATTRIBUTED = re.compile(
     r"\b(describe|report|conclude|call|state|found|characteris|term)"
     r"|\bin (their|the) conclusion\b|\baccording to the (authors?|paper|study)\b"
     r"|\bthe (authors?|paper|study)'s own\b", re.I)
+
+
+# A multiplier claim checked against the slide's OWN numbers, which is the only version of this
+# check that survives a large source. Measured twice: a deck titled a slide "nearly TRIPLED the
+# Omega 3 Index" whose own subtitle said 6.0% to 8.9% (1.5x), and another titled one "nearly DOUBLED
+# the Omega 3 Index" whose own notes said 6.0% to 9.0% (also 1.5x). Both passed the source-side check
+# because Stonehouse legitimately writes "the high inflammatory subgroup (20) was more than twice the
+# MCII value (9)" — one real ratio anywhere in 375k characters licenses every multiplier in the deck.
+#
+# So this ignores the source entirely and asks a self-contained question: the slide claims a multiple
+# and the slide states a change, do they agree? A contradiction inside one slide needs no external
+# evidence to be wrong.
+_CLAIMED_FACTOR = [
+    (re.compile(r"\b(doubl(e|ed|ing)|two[- ]fold|2[- ]fold|2x)\b", re.I), 2.0),
+    (re.compile(r"\b(tripl(e|ed|ing)|three[- ]fold|3[- ]fold|3x)\b", re.I), 3.0),
+    (re.compile(r"\b(quadrupl(e|ed)|four[- ]fold|4[- ]fold|4x)\b", re.I), 4.0),
+]
+_NUMERIC_FACTOR = re.compile(r"\b(\d+(?:\.\d+)?)\s*(?:[- ]?fold|x)\b(?!\w)", re.I)
+_FROM_TO = re.compile(r"\bfrom\s+(\d+(?:\.\d+)?)\s*%?\s*(?:to|up to)\s+(\d+(?:\.\d+)?)", re.I)
+_FACTOR_TOLERANCE = 0.25          # a claimed 2x is wrong if the slide's own change is under 1.5x
+
+
+def _multiplier_contradiction_warnings(plan: dict) -> list[str]:
+    """Flag a slide whose multiplier claim disagrees with a change the same slide states."""
+    bad = []
+    for i, slide in enumerate(plan.get("slides", [])):
+        if not isinstance(slide, dict) or _verbatim_slide(slide):
+            continue
+        text = re.sub(r"\s+", " ", " ".join(_prose_strings(slide)))
+        changes = []
+        for m in _FROM_TO.finditer(text):
+            a, b = float(m.group(1)), float(m.group(2))
+            if a > 0:
+                changes.append((b / a, m.group(0)))
+        if not changes:
+            continue
+        claims = [(f, m.group(0)) for pat, f in _CLAIMED_FACTOR
+                  if (m := pat.search(text))]
+        for m in _NUMERIC_FACTOR.finditer(text):
+            try:
+                claims.append((float(m.group(1)), m.group(0)))
+            except ValueError:
+                pass
+        for factor, phrase in claims:
+            # Silent when ANY change on the slide is consistent with the claim: a slide can legitimately
+            # state several figures, and only a claim matched by none of them is a contradiction.
+            if any(abs(actual - factor) / factor <= _FACTOR_TOLERANCE for actual, _ in changes):
+                continue
+            actual, src_phrase = min(changes, key=lambda c: abs(c[0] - factor))
+            bad.append(f'slides/{i}: claims "{phrase}" (about {factor:g}x) but this slide\'s own '
+                       f'"{src_phrase}" is {actual:.2f}x')
+    if not bad:
+        return []
+    return [f"OVERSTATEMENT: {len(bad)} slide(s) claim a multiple their OWN figures contradict. A "
+            f"change of a few percentage POINTS is not a multiple: state the point difference or the "
+            f"real ratio, whichever the source gives, and never round a 1.5x rise up to doubled or "
+            f"tripled: " + "; ".join(bad[:6])]
 
 
 def _verbatim_slide(slide: dict) -> bool:
@@ -952,5 +1021,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_overstatement_warnings(well_formed, source_text))
     errors.extend(_unused_source_warnings(well_formed, study_meta))
     errors.extend(_chart_warnings(well_formed))
+    errors.extend(_multiplier_contradiction_warnings(well_formed))
 
     return errors[:25]

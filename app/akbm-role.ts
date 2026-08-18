@@ -64,13 +64,19 @@ export const AKBM_ROLE_HELP: Record<AkbmRole, string> = {
  * science is science about krill oil whoever sold the capsules, and a deck about a competitor's oil
  * is a legitimate thing to build. What is never acceptable is quietly passing another
  * manufacturer's result off as this brand's. */
+// ⚠ AUTHORSHIP AND FUNDING DO NOT TELL YOU WHOSE OIL WAS TESTED, and an earlier version of these
+// notes said they did. Measured on a real deck: Drobnic 2021 is tagged akbm_authors (Aker BioMarine
+// employees really are among the authors) but the trial dosed "Neptune krill oil™", a competitor's
+// brand. The note then read "Usable as evidence for this brand's own oil", and the deck wrote "our
+// own Neptune krill oil" — attributing a rival's product to us. Only the PAPER says which oil was
+// tested, so these notes now send the model to the paper instead of asserting an answer.
 export const AKBM_ROLE_SOURCE_NOTE: Record<AkbmRole, string> = {
   akbm_authors:
-    "Aker BioMarine employees are authors. Usable as evidence for this brand's own oil.",
+    "Aker BioMarine employees are among the authors. Use it fully. Authorship does NOT tell you whose krill oil was dosed, so name the product the paper itself names and never call it ours unless the paper does.",
   akbm_funded:
-    "Aker BioMarine funded it, with no Aker BioMarine author. Usable as evidence for this brand's own oil.",
+    "Aker BioMarine funded it, with no Aker BioMarine author. Use it fully. Funding does NOT tell you whose krill oil was dosed, so name the product the paper itself names.",
   product_only:
-    "Aker BioMarine supplied the oil and placebo; others designed and analysed it. Usable as evidence for this brand's own oil.",
+    "Aker BioMarine supplied the krill oil and placebo; others designed, funded and analysed it. Usable as evidence for our own oil, and worth saying the trial was run independently.",
   independent:
     "No stated Aker BioMarine involvement. Usable, and worth saying it was independent.",
   competitor:

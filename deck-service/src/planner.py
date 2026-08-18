@@ -1050,7 +1050,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     other_schema_errors = [e for e in errors
                            if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
                                                 "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:",
-                                                "SOURCES:"))
+                                                "SOURCES:", "CHARTS:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
@@ -1061,6 +1061,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     number_errors = [e for e in errors if e.startswith("NUMBERS:")]
     overstatement_errors = [e for e in errors if e.startswith("OVERSTATEMENT:")]
     sources_errors = [e for e in errors if e.startswith("SOURCES:")]
+    chart_errors = [e for e in errors if e.startswith("CHARTS:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -1120,6 +1121,16 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "it. A slide with no number beats a slide with a wrong one.\n"
                       "Change only the wording of the fields carrying these figures; keep every slide's "
                       "layout, order and structure identical:\n- " + "\n- ".join(number_errors))
+    if chart_errors:
+        parts.append("CHART DATA FEEDBACK — a chart is read as measurement, so plotting an index or "
+                      "an illustrative shape invents a magnitude the study never reported, which is "
+                      "worse than showing no chart at all. For each chart below, either plot the "
+                      "source's OWN values (real numbers for every point, on both series), or DELETE "
+                      "the chart and put the finding in words on a `text`, `stat` or `takeaways` "
+                      "slide, stating exactly what the source states. If the source says a difference "
+                      "was significant without publishing the values, say that in a sentence: it is a "
+                      "perfectly good slide, and an invented bar is not. Never normalise a comparator "
+                      "to 100 to make a shape:\n- " + "\n- ".join(chart_errors))
     if sources_errors:
         parts.append("MISSING SOURCE FEEDBACK — the team PICKED the study/studies below and the deck "
                       "does not mention them. Picking a study is an explicit instruction, so leaving "

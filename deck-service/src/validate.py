@@ -418,7 +418,11 @@ _PRIORITY_GROUPS: dict[str, tuple[re.Pattern, re.Pattern]] = {
 # A ratio the source really states passes ("more than double the MCII benchmark" is Stonehouse's own
 # comparison). Frequencies are excluded — "twice daily" is a dose, not a claim.
 _FREQUENCY_AFTER = re.compile(r"\A\s*(daily|a day|per day|weekly|a week|per week|monthly|"
-                              r"a month|per month|/d\b|/day\b|in each|per (hand|leg|limb|site))", re.I)
+                              r"a month|per month|/d\b|/day\b|in each|per (hand|leg|limb|site)"
+                              # "randomized DOUBLE BLIND design" is a study design, not a ratio.
+                              # Measured on a real deck: two such mentions were flagged as
+                              # unsupported multiplier claims.
+                              r"|[- ]?blind|[- ]?mask|[- ]?dummy|[- ]?cross)", re.I)
 
 # The source side needs the ratio inside a COMPARISON, never the bare word — the same lesson the
 # priority groups taught, and it bit again here. The only "three times" anywhere in these three
@@ -608,6 +612,50 @@ def _fold(s: str) -> str:
     """Lowercase and strip diacritics, so Mödinger == Modinger and Bjørndal == Bjorndal."""
     decomposed = unicodedata.normalize("NFKD", s.translate(_FOLD))
     return "".join(c for c in decomposed if not unicodedata.combining(c)).lower()
+
+
+# A chart is read as data. Measured on a real deck: a `chart` slide plotted "Krill oil group
+# (relative CK)" at 75 and 70 against a placebo flat at 100, and its own speaker note admitted the
+# bars were "indexed to illustrate the relative pattern rather than exact absolute numbers" because
+# the source reported significance without values. Nothing caught it. The numeral scan cannot: chart
+# `values` are numbers rather than prose, and even if they were scanned, 75, 70 and 100 appear
+# somewhere in any large paper, so membership proves nothing for small round numbers.
+#
+# What IS detectable is the deck admitting it. An index baseline pinned at exactly 100 with
+# everything else below it, or a series name or note that says relative/indexed/illustrative, means
+# the numbers are not measurements. The chart layout's own prompt already says to use only figures
+# stated in the source, so this is the check that instruction never had.
+_INDEX_WORDS = re.compile(r"\b(relative|indexed|index(ed)? to|illustrat\w+|conceptual|schematic|"
+                          r"for illustration|not exact|approximate bars|normali[sz]ed to 100)\b", re.I)
+
+
+def _chart_warnings(plan: dict) -> list[str]:
+    """Soft nudge: a chart whose numbers are an illustration rather than the source's own data."""
+    bad = []
+    for i, slide in enumerate(plan.get("slides", [])):
+        if not isinstance(slide, dict) or slide.get("layout") != "chart":
+            continue
+        series = [s for s in (slide.get("series") or []) if isinstance(s, dict)]
+        names = " ".join(str(s.get("name") or "") for s in series)
+        haystack = " ".join([names, str(slide.get("caption") or ""),
+                             str(slide.get("title") or ""), str(slide.get("speaker_notes") or "")])
+        reasons = []
+        if m := _INDEX_WORDS.search(haystack):
+            reasons.append(f'says "{m.group(0)}"')
+        for s in series:
+            vals = [v for v in (s.get("values") or []) if isinstance(v, (int, float))]
+            if vals and all(v == 100 for v in vals):
+                reasons.append(f'series "{s.get("name")}" is flat at 100, an index baseline')
+        if reasons:
+            bad.append(f"slides/{i}: " + "; ".join(reasons))
+    if not bad:
+        return []
+    return [f"CHARTS: {len(bad)} chart(s) plot illustrative numbers rather than the source's own "
+            f"data. A chart is read as measurement, so indexed or relative bars invent a magnitude "
+            f"the study never reported. Either plot the real values, or drop the chart and state the "
+            f"finding in words on a `text`, `stat` or `takeaways` slide, saying what the source says "
+            f"(for example that a difference was significant without published values): "
+            + "; ".join(bad[:6])]
 
 
 def _unused_source_warnings(plan: dict, study_meta: list[dict] | None) -> list[str]:
@@ -903,5 +951,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_quote_warnings(well_formed, source_text))
     errors.extend(_overstatement_warnings(well_formed, source_text))
     errors.extend(_unused_source_warnings(well_formed, study_meta))
+    errors.extend(_chart_warnings(well_formed))
 
     return errors[:25]

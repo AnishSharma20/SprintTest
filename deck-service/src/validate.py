@@ -623,16 +623,28 @@ def _unused_source_warnings(plan: dict, study_meta: list[dict] | None) -> list[s
         if isinstance(s, dict):
             for c in s.get("source_citations") or []:
                 haystack += " " + _fold(str(c))
-    missing = []
-    for meta in study_meta:
-        cite = str((meta or {}).get("cite") or "").strip()
-        if not cite:
-            continue
-        # "Stonehouse W et al. · The American journal of clinical nutrition 2022" -> "stonehouse"
+    def needle(cite: str) -> tuple[str, str]:
+        """(surname, year) from a citation like "Stonehouse W et al. · The AJCN 2022"."""
         surname = _fold(re.split(r"[\s,]+", cite)[0].strip())
+        return surname, (re.findall(r"\b((?:19|20)\d{2})\b", cite) or [""])[-1]
+
+    picked = [(str((m or {}).get("cite") or "").strip()) for m in study_meta]
+    picked = [c for c in picked if c]
+    surnames = [needle(c)[0] for c in picked]
+    # Two studies in this library really can share a surname (Berge x2, Ramprasath x2 out of 42), and
+    # a shared surname would let a deck that cites only ONE of the pair look like it covered both.
+    # Where the PICKED set collides, the year has to appear too; elsewhere the surname alone stays the
+    # needle, because a deck often credits a study without repeating its year.
+    collided = {s for s in surnames if surnames.count(s) > 1}
+    missing = []
+    for cite in picked:
+        surname, year = needle(cite)
         if len(surname) < 4:          # an initial or a stray token is not a reliable needle
             continue
-        if surname not in haystack:
+        found = surname in haystack
+        if found and surname in collided and year:
+            found = year in haystack
+        if not found:
             missing.append(cite[:90])
     if not missing:
         return []

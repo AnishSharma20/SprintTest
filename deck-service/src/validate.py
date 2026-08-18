@@ -256,6 +256,13 @@ def _measured_ranges(text: str) -> list[tuple[str, str, str]]:
         # tell, and a genuine range ("between 4 and 8 cm") never has one.
         if re.search(r"\d\s*,\s*$", text[:m.start()]):
             continue
+        # "reduced FROM 170.2 TO 92.2" is a CHANGE between two separate measurements, not a range, so
+        # the source holds them as two table cells and never as a pair. Measured on a real deck: the
+        # HOMA-IR drop was flagged even though both values sit in Gart's own table. Skipping the pair
+        # check here is safe because _checkable still tests each endpoint on its own; a genuine range
+        # ("aged 40 to 75", "between 4 and 8 cm") does not say "from".
+        if re.search(r"\bfrom\s*$", text[:m.start()], re.I):
+            continue
         if not ("." in m.group(1) + m.group(2)
                 or max(float(m.group(1)), float(m.group(2))) > _SMALL_INT_CEILING
                 or _UNIT_AFTER.match(text[m.end():m.end() + 12])):

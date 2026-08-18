@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import re
 import sys
+import unicodedata
 
 import jsonschema
 
@@ -587,6 +588,21 @@ def _quote_warnings(plan: dict, source_text: str | None) -> list[str]:
             + "; ".join(bad[:6])]
 
 
+# Author surnames in this corpus are Norwegian and German as often as not, and the citation and the
+# deck's own prose do not agree on the diacritics: PubMed gives "Mödinger Y, Schön C" while a real
+# deck's exec summary wrote "(Modinger et al)". A byte exact surname match would therefore have
+# reported the study as missing on a deck that cited it perfectly. NFKD handles the composed letters;
+# ø, æ and friends carry no combining mark to strip, so they need the explicit table.
+_FOLD = str.maketrans({"ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "å": "a", "Å": "A",
+                       "ß": "ss", "đ": "d", "Đ": "D", "ł": "l", "Ł": "L", "þ": "th", "Þ": "Th"})
+
+
+def _fold(s: str) -> str:
+    """Lowercase and strip diacritics, so Mödinger == Modinger and Bjørndal == Bjorndal."""
+    decomposed = unicodedata.normalize("NFKD", s.translate(_FOLD))
+    return "".join(c for c in decomposed if not unicodedata.combining(c)).lower()
+
+
 def _unused_source_warnings(plan: dict, study_meta: list[dict] | None) -> list[str]:
     """Soft nudge: a study the team PICKED that the deck never mentions.
 
@@ -600,20 +616,20 @@ def _unused_source_warnings(plan: dict, study_meta: list[dict] | None) -> list[s
     deck reliably repeats when it cites a paper (in a citation, an eyebrow or the speaker notes)."""
     if not study_meta:
         return []
-    haystack = " ".join(_prose_strings(plan.get("slides"))).lower()
+    haystack = _fold(" ".join(_prose_strings(plan.get("slides"))))
     # source_citations is excluded from _prose_strings, so add it back: it is the single most likely
     # place a study is credited.
     for s in plan.get("slides", []):
         if isinstance(s, dict):
             for c in s.get("source_citations") or []:
-                haystack += " " + str(c).lower()
+                haystack += " " + _fold(str(c))
     missing = []
     for meta in study_meta:
         cite = str((meta or {}).get("cite") or "").strip()
         if not cite:
             continue
         # "Stonehouse W et al. · The American journal of clinical nutrition 2022" -> "stonehouse"
-        surname = re.split(r"[\s,]+", cite)[0].strip().lower()
+        surname = _fold(re.split(r"[\s,]+", cite)[0].strip())
         if len(surname) < 4:          # an initial or a stray token is not a reliable needle
             continue
         if surname not in haystack:

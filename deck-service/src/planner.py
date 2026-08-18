@@ -57,6 +57,15 @@ CLAIM_RULES = """CLAIM FIDELITY (non-negotiable):
     nothing about another paper in the same deck.
   * ABSOLUTES. Never "proven", "clinically proven", "guarantees", "cures", "eliminates", "treats"
     or "reverses". State what the trial measured and over what period.
+- PROVENANCE: USE EVERY SOURCE YOU ARE GIVEN, and attribute each result to the product actually
+  studied. A source may carry an "Aker BioMarine role:" line saying the krill oil tested was another
+  manufacturer's, or that the paper never named the oil. That is NOT a reason to leave the study out.
+  Krill oil science is evidence about krill oil whoever sold the capsules, and a deck whose whole
+  subject is another manufacturer's oil is a legitimate thing to build. What is never acceptable is
+  quietly presenting another manufacturer's result, or an unattributed one, as though it were this
+  brand's own product result: name whose oil it was, or say "krill oil" rather than the brand, and
+  the claim is fine. A study you were given and did not use at all is a worse outcome than one used
+  with a careful attribution.
 - `source_quote` (optional, per slide): when a slide states a figure you DERIVED rather than copied
   (a difference between two stated values, a relative change, a converted unit), set `source_quote`
   to the verbatim sentence from the source carrying the numbers you worked from. Copy it EXACTLY,
@@ -1040,7 +1049,8 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                          if "is a required property" in e or "is too short" in e]
     other_schema_errors = [e for e in errors
                            if not e.startswith(("VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                                                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:"))
+                                                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:",
+                                                "SOURCES:"))
                            and e not in shorten_errors and e not in structural_errors]
     coverage_errors = [e for e in errors if e.startswith(("VARIETY:", "PHOTOS:"))]
     text_errors = [e for e in errors if e.startswith("TEXT:")]
@@ -1050,6 +1060,7 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
     rules_errors = [e for e in errors if e.startswith("RULES:")]
     number_errors = [e for e in errors if e.startswith("NUMBERS:")]
     overstatement_errors = [e for e in errors if e.startswith("OVERSTATEMENT:")]
+    sources_errors = [e for e in errors if e.startswith("SOURCES:")]
 
     parts = ["Your previous plan needs revision before it can ship. Re-emit the COMPLETE plan via emit_plan."]
     if shorten_errors:
@@ -1109,6 +1120,17 @@ def revise_plan(client: anthropic.Anthropic, summary: str, prior: dict, errors: 
                       "it. A slide with no number beats a slide with a wrong one.\n"
                       "Change only the wording of the fields carrying these figures; keep every slide's "
                       "layout, order and structure identical:\n- " + "\n- ".join(number_errors))
+    if sources_errors:
+        parts.append("MISSING SOURCE FEEDBACK — the team PICKED the study/studies below and the deck "
+                      "does not mention them. Picking a study is an explicit instruction, so leaving "
+                      "one out is wrong even when every slide you did write is accurate, and the "
+                      "team cannot see the omission. Give each named study real coverage: at least "
+                      "one finding of its own, credited in `source_citations`, and reflected in the "
+                      "executive summary's `source` line if it is not already. A study that reaches "
+                      "you as an abstract only still gets covered, just with less numeric detail. "
+                      "If a study genuinely supports nothing the deck argues, say that ON the deck "
+                      "in one line rather than dropping it silently. Add or recast slides as needed; "
+                      "keep the deck's existing accurate content:\n- " + "\n- ".join(sources_errors))
     if overstatement_errors:
         parts.append("OVERSTATEMENT FEEDBACK — each item below says something STRONGER than the source "
                       "does. This is not a wording preference: a safety, efficacy or priority statement "

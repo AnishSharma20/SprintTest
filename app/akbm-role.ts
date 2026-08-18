@@ -52,6 +52,35 @@ export const AKBM_ROLE_HELP: Record<AkbmRole, string> = {
     "A meta-analysis or systematic review pooling other people's trials, not a trial of one product.",
 };
 
+/** What the GENERATOR is told about a study's provenance, as opposed to AKBM_ROLE_HELP above, which
+ * is written for a human reviewer reading one study card.
+ *
+ * These exist because the generator used to receive only the two word label. Measured on a real
+ * deck: a competitor tagged study (Bjorndal 2018) was picked, its 1357 char abstract went into the
+ * source, and the deck did not mention it once, on a deck whose whole subject was choline. Two bare
+ * words reading like a stop sign was the only provenance signal the model ever got.
+ *
+ * So these say USE THE STUDY and name what to be careful about, which is attribution. Krill oil
+ * science is science about krill oil whoever sold the capsules, and a deck about a competitor's oil
+ * is a legitimate thing to build. What is never acceptable is quietly passing another
+ * manufacturer's result off as this brand's. */
+export const AKBM_ROLE_SOURCE_NOTE: Record<AkbmRole, string> = {
+  akbm_authors:
+    "Aker BioMarine employees are authors. Usable as evidence for this brand's own oil.",
+  akbm_funded:
+    "Aker BioMarine funded it, with no Aker BioMarine author. Usable as evidence for this brand's own oil.",
+  product_only:
+    "Aker BioMarine supplied the oil and placebo; others designed and analysed it. Usable as evidence for this brand's own oil.",
+  independent:
+    "No stated Aker BioMarine involvement. Usable, and worth saying it was independent.",
+  competitor:
+    "The krill oil studied was ANOTHER manufacturer's. Use this study fully, as krill oil evidence and for mechanism, and say whose oil it was where it matters. Do NOT present the result as this brand's own product result.",
+  product_unnamed:
+    "The paper never says whose krill oil it used. Use it fully as krill oil evidence, and attribute it to krill oil generally rather than to any one brand.",
+  third_party:
+    "A meta analysis or review pooling other people's trials rather than testing one product. Use it for the state of the evidence, not as a product result.",
+};
+
 export const AKBM_ROLE_KEYS = Object.keys(AKBM_ROLE_LABELS) as AkbmRole[];
 
 /** True when `v` is one of the six roles. Used by the two API routes to refuse a bad value before

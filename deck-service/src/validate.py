@@ -587,6 +587,46 @@ def _quote_warnings(plan: dict, source_text: str | None) -> list[str]:
             + "; ".join(bad[:6])]
 
 
+def _unused_source_warnings(plan: dict, study_meta: list[dict] | None) -> list[str]:
+    """Soft nudge: a study the team PICKED that the deck never mentions.
+
+    Measured on a real deck: three studies were picked, the deck covered two, and the third (whose
+    subject was the deck's own headline topic) appeared nowhere. Nothing noticed, because every other
+    check reads the plan against the source rather than against what the team asked for. The silent
+    drop is the problem: picking a study is an explicit instruction, and the team had no way to see
+    it had been ignored.
+
+    Matched on the study's own author surname, taken from its citation, which is the one token a
+    deck reliably repeats when it cites a paper (in a citation, an eyebrow or the speaker notes)."""
+    if not study_meta:
+        return []
+    haystack = " ".join(_prose_strings(plan.get("slides"))).lower()
+    # source_citations is excluded from _prose_strings, so add it back: it is the single most likely
+    # place a study is credited.
+    for s in plan.get("slides", []):
+        if isinstance(s, dict):
+            for c in s.get("source_citations") or []:
+                haystack += " " + str(c).lower()
+    missing = []
+    for meta in study_meta:
+        cite = str((meta or {}).get("cite") or "").strip()
+        if not cite:
+            continue
+        # "Stonehouse W et al. · The American journal of clinical nutrition 2022" -> "stonehouse"
+        surname = re.split(r"[\s,]+", cite)[0].strip().lower()
+        if len(surname) < 4:          # an initial or a stray token is not a reliable needle
+            continue
+        if surname not in haystack:
+            missing.append(cite[:90])
+    if not missing:
+        return []
+    return [f"SOURCES: {len(missing)} picked study(ies) are not mentioned anywhere in the deck. The "
+            f"team chose these deliberately, so a deck that silently omits one is wrong even if "
+            f"every slide in it is accurate. Give each of them real coverage, at least a finding of "
+            f"its own with its citation, and if a study genuinely cannot support a slide say so on "
+            f"the deck rather than dropping it: " + "; ".join(missing[:6])]
+
+
 def _summary_warning(plan: dict, disabled_layouts=None) -> list[str]:
     """Soft nudge: every deck opens with an executive summary as slide 2, right after the cover
     and before the agenda (skipped when the About page turned the exec_summary layout off).
@@ -768,7 +808,8 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
                   disabled_layouts=None,
                   layout_overrides: list[dict] | None = None,
                   brand: str | None = None,
-                  source_text: str | None = None) -> list[str]:
+                  source_text: str | None = None,
+                  study_meta: list[dict] | None = None) -> list[str]:
     """Return a list of human-readable violations ('' if the plan is valid).
 
     source_text: the deck's own source material. Supplied by the pipeline so every figure on the
@@ -826,5 +867,6 @@ def validate_plan(plan: dict, extra_layouts: list[str] | None = None,
     errors.extend(_number_warnings(well_formed, source_text))
     errors.extend(_quote_warnings(well_formed, source_text))
     errors.extend(_overstatement_warnings(well_formed, source_text))
+    errors.extend(_unused_source_warnings(well_formed, study_meta))
 
     return errors[:25]

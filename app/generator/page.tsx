@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Studie } from "../studies";
-import { AKBM_ROLE_LABELS } from "../akbm-role";
+import { AKBM_ROLE_LABELS, AKBM_ROLE_SOURCE_NOTE } from "../akbm-role";
 import { applyStudyMeta, loadStudyMeta } from "../study-meta";
 import {
   loadApprovedClaims,
@@ -446,13 +446,19 @@ export default function ContentGenerator() {
         .map((s) => {
           const cite = `${s.forfattere}${s.flereForfattere ? " et al." : ""} · ${s.tidsskrift} ${s.ar}`;
           // The paper's own abstract, verbatim, plus what Aker BioMarine's role in it was so the
-          // model can be honest about provenance (a competitor trial must not be written up as
-          // evidence for Superba). The team's own key-findings assessment rides along when they
-          // wrote one, clearly labelled so the two are never conflated.
+          // model can be honest about provenance. The team's own key-findings assessment rides
+          // along when they wrote one, clearly labelled so the two are never conflated.
+          //
+          // The role carries its SOURCE NOTE, not just the label. The label alone is two words, and
+          // "Competitor product" read as a stop sign: measured on a real deck, a competitor tagged
+          // study was picked, its 1357 char abstract was sent, and the deck never mentioned it once
+          // even though choline was the deck's whole subject. The note says to USE the study and
+          // names the real constraint, which is attribution.
           const role = s.akbmRole ? AKBM_ROLE_LABELS[s.akbmRole] : null;
+          const roleNote = s.akbmRole ? AKBM_ROLE_SOURCE_NOTE[s.akbmRole] : null;
           return (
             `# ${s.tittel}\n${cite}\n` +
-            (role ? `Aker BioMarine role: ${role}\n` : "") +
+            (role ? `Aker BioMarine role: ${role}. ${roleNote}\n` : "") +
             (s.abstract ? `\nAbstract (the paper's own words):\n${s.abstract}\n` : "") +
             (s.keyFindingsAssessment
               ? `\nScience team assessment of the key findings:\n${s.keyFindingsAssessment}\n`

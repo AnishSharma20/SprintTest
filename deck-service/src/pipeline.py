@@ -29,7 +29,7 @@ _DASH_TEXT_KEYS = {"deck_title", "title", "subtitle", "body", "eyebrow", "captio
 # coverage/notes/summary nudges, and team-rule breaches the one repair pass could not resolve. ONE
 # definition — the two inline copies this replaces had already drifted apart once.
 _SOFT_ERRORS = ("shorten it by at least", "VARIETY:", "PHOTOS:", "TEXT:", "NOTES:", "SUMMARY:",
-                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:")
+                "EXEC_LENGTH:", "RULES:", "NUMBERS:", "OVERSTATEMENT:", "SOURCES:")
 
 
 # ---------------------------------------------------------------------------
@@ -99,7 +99,20 @@ def _with_fulltext(summary_text: str, study_meta: list[dict] | None,
     if not papers:
         return summary_text
     print(f"[fulltext] added {len(papers)} full paper(s), {spent} chars", file=sys.stderr)
-    return f"{summary_text}\n\n{_FULLTEXT_HEADER}\n" + "\n\n".join(papers)
+    out = f"{summary_text}\n\n{_FULLTEXT_HEADER}\n" + "\n\n".join(papers)
+    # Say OUT LOUD which picked studies have no full paper. Without this a thin study competes
+    # silently against tens of thousands of characters of full text and simply loses: measured on a
+    # real deck, an abstract-only study relevant to the deck's own subject went unmentioned while
+    # two full papers filled every slide. The model cannot see which studies it is short on unless
+    # it is told, since every study's block looks the same from inside the source.
+    if skipped:
+        out += ("\n\n=== STUDIES BELOW WITH NO FULL PAPER ===\n"
+                "These picked studies reach you as their ABSTRACT ONLY, so they are much shorter "
+                "than the papers above. That is a limit on DETAIL, not a signal to leave them out: "
+                "cover each of them on its own merits, and keep their figures to what the abstract "
+                "actually states rather than reaching for a precision it does not give.\n"
+                + "\n".join(f"  {s.split(':')[0]}" for s in skipped))
+    return out
 
 
 def _photo_capable_layouts(brand: str | None = None) -> frozenset[str]:
@@ -841,7 +854,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
         errs = validate.validate_plan(candidate, extra_layouts=extra,
                                       extra_photo_ids=photo_ids, photo_level=photo_level,
                                       disabled_layouts=disabled_layouts,
-                                      layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                                      layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
         if errs:
             candidate = planner.revise_plan(client, summary_text, candidate, errs,
                                             length=length, tone=tone, instructions=instructions,
@@ -857,7 +871,8 @@ def _visual_gate(client, summary_text, plan, pptx, length, tone, _p, instruction
             errs = validate.validate_plan(candidate, extra_layouts=extra,
                                           extra_photo_ids=photo_ids, photo_level=photo_level,
                                           disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
         # Same soft-error tags as generate()'s split below — validate_plan() always appends
         # VARIETY:/PHOTOS:/TEXT: nudges now, and this second, separate hard/soft split had
         # fallen out of sync with that (missing the exemption), so a visual fix on an otherwise
@@ -956,7 +971,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
         _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand), brand)
     errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                     photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                    layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                                    layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
     if errors:
         _p(40, "Refining copy to fit")
         plan = planner.revise_plan(client, summary_text, plan, errors, length=length, tone=tone,
@@ -971,7 +987,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
             _coerce_item_shapes(plan, brand), brand), brand, photo_ids), brand)
         errors = validate.validate_plan(plan, extra_layouts=extra, extra_photo_ids=photo_ids,
                                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
         if errors:
             # Split structural violations (broken plan -> fail loudly) from residual length
             # overages and the VARIETY:/PHOTOS: coverage nudges. Title/heading/body placeholders
@@ -994,7 +1011,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                     retry_errors = validate.validate_plan(
                         trimmed, extra_layouts=extra, extra_photo_ids=photo_ids,
                         photo_level=photo_level, disabled_layouts=disabled_layouts,
-                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                        layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
                     if not [e for e in retry_errors if not any(s in e for s in _SOFT_ERRORS)]:
                         print(f"[validate] dropped {len(bad_idx)} slide(s) still broken after "
                               f"the retry ({sorted(bad_idx)}) rather than fail the whole deck:\n- "
@@ -1042,7 +1060,8 @@ def generate(client: anthropic.Anthropic, summary_text: str, base_name: str, *,
                                             managed_blocks=managed_blocks, brand=brand)
             errs = validate.validate_plan(candidate, extra_layouts=extra, extra_photo_ids=photo_ids,
                                           photo_level=photo_level, disabled_layouts=disabled_layouts,
-                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text)
+                                          layout_overrides=slot_layouts, brand=brand, source_text=summary_text,
+                                    study_meta=study_meta)
             hard = [e for e in errs if not any(s in e for s in _SOFT_ERRORS)]
             if hard:
                 print("[rules-gate] the rule fix broke validation; keeping the pre-fix plan:\n- "

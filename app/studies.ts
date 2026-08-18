@@ -147,7 +147,13 @@ const ARCHIVE_CATEGORIES: Record<string, string[]> = {
   "31652561": ["Liver Support"], // Modinger 2019 (absorption tag dropped; liver retained)
   "31937352": ["Joint Support"], // KARAOKE protocol (Laslett 2020); not in the archive
   "33015116": ["Sports Performance Support"], // Storsve 2020 (absorption tag dropped; sports retained)
-  "34444996": ["Liver Support"], // Gart 2021
+  // 34444996 (Gart 2021, 28 week krill oil feeding study in Ldlr-/-.Leiden mice) was REMOVED
+  // 2026-08-18: preclinical, not a human trial, same reason as SenGupta/Nilsen below. It slipped
+  // past the earlier sweep because its ABSTRACT never says mice, mouse, murine, animal, rodent or
+  // Ldlr; only the full text does ("Animal Welfare Body (IVD TNO)", "Male Ldlr-/-.Leiden mice were
+  // obtained from the breeding facility"). Removed from study-abstracts.json, study-figures.json,
+  // study-pdfs.json, fulltext-studies.json, both assets/*/index.json, the fulltext .txt, the PDF and
+  // both figure directories, plus its 15 pending findings in Supabase.
   "34959789": ["Wellness & Immune Support", "Sports Performance Support"], // Drobnic 2021 (absorption/omega-3 index tags dropped)
   "34989797": ["Heart Support"], // Mozaffarian 2022
   "35504165": ["Healthy Aging Support"], // Alkhedhairi 2022 (omega-3 index tag dropped)
@@ -195,7 +201,7 @@ const AKBM_ROLES: Record<string, AkbmRole> = {
   "24461313": "akbm_authors",  // Berge K 2014 — first author at Aker BioMarine ASA
   "31652561": "akbm_authors",  // Modinger 2019 — Hals (AKBM) corresponding; "sponsored by Aker BioMarine Antarctic AS"
   "33015116": "akbm_authors",  // Storsve 2020 — Storsve, Johnsen, Burri all AKBM
-  "34444996": "akbm_authors",  // Gart 2021 — Storsve + Hals (AKBM); "provided a part of the funding"
+  // 34444996 (Gart 2021) removed as preclinical, see the note in ARCHIVE_CATEGORIES above.
   "34959789": "akbm_authors",  // Drobnic 2021 — "L.B., A.B.S. and Y.D. are employees of Aker BioMarine"
   "39169540": "akbm_authors",  // Handeland 2024 — Handeland + Burri (AKBM); AKBM funded
 

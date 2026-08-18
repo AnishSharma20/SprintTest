@@ -25,7 +25,10 @@ type ContentType = "deck" | "blog" | "video" | "podcast" | "whitepaper_mix";
 
 const CONTENT_TYPES: { id: ContentType; label: string; hint: string; available: boolean }[] = [
   { id: "deck", label: "PowerPoint deck", hint: "Branded slides", available: true },
-  { id: "whitepaper_mix", label: "Whitepaper", hint: "Designed, on brand", available: true },
+  // Turned off 2026-08-18 at the team's request: shown as a "Soon" tile like Video and Podcast
+  // rather than offered. The whitepaper_mix pipeline itself is untouched and still reachable from
+  // the deck service, so flipping this back to true is the only change needed to re-offer it.
+  { id: "whitepaper_mix", label: "Whitepaper", hint: "Designed, on brand", available: false },
   { id: "blog", label: "Blog post", hint: "Grounded in science", available: true },
   { id: "video", label: "Video", hint: "Script & storyboard", available: false },
   { id: "podcast", label: "Podcast", hint: "Episode audio", available: false },

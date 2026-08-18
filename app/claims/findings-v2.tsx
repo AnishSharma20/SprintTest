@@ -107,7 +107,10 @@ export default function FindingsV2({
   onChanged: () => Promise<void>;
 }) {
   const [q, setQ] = useState("");
-  const [status, setStatus] = useState<StatusFilter>("pending");
+  // Opens on APPROVED, not the review queue: the page's job for most visitors is "what can we
+  // actually say about the product", and that is the approved set. Reviewers still reach the queue
+  // in one click via the Needs review filter.
+  const [status, setStatus] = useState<StatusFilter>("approved");
   const [valgtKategori, setValgtKategori] = useState<string | null>(null);
   const [valgtId, setValgtId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
